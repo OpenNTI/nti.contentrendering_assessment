@@ -12,11 +12,8 @@ import unittest
 
 import anyjson as json
 
-import plasTeX
-from plasTeX.TeX import TeX
-
 from ..ntiassessment import naquestion, naquestionset
-
+from ..interfaces import IAssessmentExtractor
 from nti.contentrendering.tests import buildDomFromString as _buildDomFromString
 from nti.contentrendering.tests import simpleLatexDocumentText
 from nti.contentrendering.tests import RenderContext
@@ -26,8 +23,8 @@ from nti.externalization.tests import externalizes
 from nti.testing.matchers import verifiably_provides
 
 import nti.contentrendering
-import nti.assessment
-from nti.assessment import interfaces as asm_interfaces
+from ... import interfaces as asm_interfaces
+
 import nti.externalization
 
 def _simpleLatexDocument(maths):
@@ -35,7 +32,7 @@ def _simpleLatexDocument(maths):
 									bodies=maths )
 
 # Nose module-level setup and teardown
-setUpModule = lambda: nti.testing.base.module_setup( set_up_packages=(nti.contentrendering,nti.assessment,nti.externalization) )
+setUpModule = lambda: nti.testing.base.module_setup( set_up_packages=(nti.contentrendering,'nti.assessment',nti.externalization) )
 tearDownModule = nti.testing.base.module_teardown
 
 def test_macros():
@@ -445,7 +442,7 @@ class TestRenderableSymMathPart(unittest.TestCase):
 			rendered_book.document = dom
 			rendered_book.contentLocation = ctx.docdir
 
-			extractor = component.getAdapter(rendered_book, cdr_interfaces.IAssessmentExtractor)
+			extractor = component.getAdapter(rendered_book, IAssessmentExtractor)
 			extractor.transform( rendered_book )
 
 			jsons = open(os.path.join( ctx.docdir, 'assessment_index.json' ), 'rU' ).read()

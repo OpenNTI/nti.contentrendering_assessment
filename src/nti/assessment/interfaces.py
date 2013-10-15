@@ -8,6 +8,7 @@ __docformat__ = "restructuredtext en"
 
 from zope import interface
 from zope import schema
+from zope.mimetype.interfaces import mimeTypeConstraint
 
 from nti.utils import schema as dmschema
 
@@ -18,7 +19,6 @@ TypedIterable = dmschema.IndexedIterable
 from nti.contentfragments.schema import LatexFragmentTextLine as _LatexTextLine
 from nti.contentfragments.schema import HTMLContentFragment as _HTMLContentFragment
 from nti.contentfragments.schema import TextUnicodeContentFragment as _ContentFragment
-from nti.contentfragments.schema import TextLineUnicodeContentFragment as _ContentFragmentTextLine
 
 class IQHint(interface.Interface):
 	"""
@@ -297,6 +297,35 @@ class IQMatchingPartGrader(IQPartGrader):
 	"""
 	A grader for matching questions.
 	"""
+
+class IQFilePart(IQPart):
+	"""
+	A part that requires the student to upload a file
+	from their own computer. Note that this part cannot be
+	automatically graded, it can merely be routed to a
+	responsible party for grading manually.
+
+	In this interface you specify MIME types and/or
+	filename extensions that can be used as input. If the incoming
+	data matches any of the types or extensions, it will be allowed.
+	To allow anything (unwise), include "*/*" in the ``allowed_mime_types``
+	or include "*" in the ``allowed_extensions``.
+	"""
+
+	allowed_mime_types = TypedIterable( title="Mime types that are accepted for upload",
+										min_length=1,
+										value_type=schema.Text(title="An allowed mimetype",
+															   constraint=mimeTypeConstraint) )
+	allowed_extensions = TypedIterable( title="Extensions like '.doc' that are accepted for upload",
+										min_length=0,
+										value_type=schema.Text(title="An allowed extension") )
+
+	def is_mime_type_allowed( mime_type ):
+		"""
+		Return whether or not the given mime type, which must match
+		the mime type constraint, is one of the allowed types of this
+		part, taking into account wildcards.
+		"""
 
 class IQuestion(interface.Interface):
 	"""

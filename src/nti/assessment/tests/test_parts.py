@@ -9,6 +9,7 @@ from hamcrest import is_, is_not
 from unittest import TestCase
 from nti.testing.matchers import is_true, is_false
 from nti.testing.matchers import verifiably_provides
+from nti.testing.matchers import validly_provides
 from nti.externalization.tests import externalizes
 from nose.tools import assert_raises
 
@@ -199,3 +200,54 @@ def test_superhash_iterable():
 
 	# TODO: The hash algorithm fails badly with integers
 	assert_that( superhash( [1,2] ), is_( superhash( [2, 1] ) ) )
+
+def test_file_part_allowed_mime():
+	part = parts.QFilePart()
+
+	def af(mt):
+		assert_that( part.is_mime_type_allowed(mt), is_false() )
+	def at(mt):
+		assert_that( part.is_mime_type_allowed(mt), is_true() )
+
+	# Bad input
+	af( None )
+	af( 'foobar' )
+	# no types
+	af( 'text/plain' )
+
+	part.allowed_mime_types = ('application/*', 'text/plain')
+	assert_that( part, validly_provides(interfaces.IQFilePart) )
+
+	# exact match
+	at( 'text/plain' )
+	# incomplete type
+	af( 'text/*' )
+	# partial
+	at( 'application/pdf' )
+
+	# wildcard
+	part.allowed_mime_types = ('*/*',)
+	at( 'audio/video' )
+
+def test_file_part_allowed_extension():
+	part = parts.QFilePart()
+
+	def af(mt):
+		assert_that( part.is_filename_allowed(mt), is_false() )
+	def at(mt):
+		assert_that( part.is_filename_allowed(mt), is_true() )
+
+	# Bad input
+	af( None )
+	af( 'noext' )
+
+	# empty list
+	af( 'file.doc' )
+
+	part.allowed_extensions = ('.doc',)
+	at( 'file.DOC' )
+
+	part.allowed_extensions = ('*',)
+	at( 'file.doc' )
+	at( 'file.mp3' )
+	af( None )
