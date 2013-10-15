@@ -13,8 +13,8 @@ from zope.mimetype import interfaces as mime_interfaces
 
 from persistent import Persistent
 
-from nti.assessment import interfaces
-from nti.assessment._util import superhash
+from . import interfaces
+from ._util import superhash
 
 @interface.implementer(interfaces.IQuestion, mime_interfaces.IContentTypeAware)
 class QQuestion(Persistent, zope.container.contained.Contained):

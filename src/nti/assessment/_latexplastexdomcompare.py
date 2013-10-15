@@ -16,7 +16,7 @@ from zope import interface
 from zope import component
 from zope.component.interfaces import ComponentLookupError
 
-from nti.assessment import interfaces
+from . import interfaces
 
 def _mathIsEqual( solution, response):
 	if solution is None or response is None:
@@ -124,7 +124,7 @@ def grade( solution, response ):
 	__traceback_info__ = solution, response
 	try:
 		converter = component.getMultiAdapter( (solution,response), interfaces.IResponseToSymbolicMathConverter )
-	except ComponentLookupError:
+	except ComponentLookupError: # pragma: no cover
 		logger.warning( "Unable to grade math, assuming wrong", exc_info=True )
 		return False
 

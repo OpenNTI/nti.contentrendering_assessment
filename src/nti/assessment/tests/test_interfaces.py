@@ -1,4 +1,6 @@
 #!/usr/bin/env python
 
+from zope.dottedname import resolve as dottedname
+
 def test_import_interfaces():
-	pass
+	dottedname.resolve('nti.assessment.interfaces')

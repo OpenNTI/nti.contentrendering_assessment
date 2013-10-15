@@ -37,7 +37,7 @@ class QAssessedPart(SchemaConfigured, persistent.Persistent):
 		try:
 			return self is other or (self.submittedResponse == other.submittedResponse
 									 and self.assessedValue == other.assessedValue)
-		except AttributeError:
+		except AttributeError: # pragma: no cover
 			return NotImplemented
 
 	def __ne__(self, other):
@@ -68,7 +68,7 @@ def _dctimes_property_fallback(attrname, dcname):
 				self.__dict__[attrname] = result  # migrate
 				self._p_changed = True
 				return result
-			except KeyError:
+			except KeyError: # pragma: no cover
 				pass
 
 		return 0
@@ -103,7 +103,7 @@ class QAssessedQuestion(SchemaConfigured, persistent.Persistent):
 		try:
 			return self is other or (self.questionId == other.questionId
 									 and self.parts == other.parts)
-		except AttributeError:
+		except AttributeError: # pragma: no cover
 			return NotImplemented
 
 	def __ne__(self, other):
@@ -141,7 +141,7 @@ class QAssessedQuestionSet(SchemaConfigured, persistent.Persistent):
 		try:
 			return self is other or (self.questionSetId == other.questionSetId
 									 and self.questions == other.questions)
-		except AttributeError:
+		except AttributeError: # pragma: no cover
 			return NotImplemented
 
 	def __ne__(self, other):
@@ -204,7 +204,7 @@ def assess_question_set_submission(set_submission, questions=None):
 		# because we have an equality bug. It should go away as soon as equality is fixed
 		if question in question_set.questions or getattr(question, 'ntiid', None) in [getattr(q, 'ntiid', None) for q in question_set.questions]:
 			assessed.append(interfaces.IQAssessedQuestion(sub_question))
-		else:
+		else: # pragma: no cover
 			logger.debug("Bad input, question (%s) not in question set (%s) (kownn: %s)", question, question_set, question_set.questions)
 
 	# NOTE: We're not really creating some sort of aggregate grade here

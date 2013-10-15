@@ -8,7 +8,7 @@ __docformat__ = "restructuredtext en"
 
 from zope import interface
 
-from nti.assessment import interfaces
+from . import interfaces
 from ._util import TrivialValuedMixin
 
 from persistent import Persistent

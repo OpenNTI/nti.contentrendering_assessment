@@ -9,15 +9,15 @@ from __future__ import print_function, unicode_literals
 from hamcrest import assert_that, is_, is_not
 from hamcrest import has_entry
 from unittest import TestCase
-from nti.testing.matchers import is_true, is_false
 
+import nti.testing.base
+from nti.testing.matchers import is_true, is_false
 from nti.testing.matchers import verifiably_provides
 
 from zope import interface
 
-import nti.assessment
-from nti.assessment import solution, response
-from nti.assessment import interfaces
+from .. import solution, response
+from .. import interfaces
 
 
 from nti.externalization.externalization import toExternalObject
@@ -28,7 +28,7 @@ grades_correct = grades_right
 
 
 # nose module-level setup
-setUpModule = lambda: nti.testing.base.module_setup( set_up_packages=(nti.assessment,) )
+setUpModule = lambda: nti.testing.base.module_setup( set_up_packages=(__name__,) )
 tearDownModule = nti.testing.base.module_teardown
 
 

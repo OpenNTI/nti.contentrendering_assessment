@@ -9,16 +9,16 @@ from nti.testing.matchers import verifiably_provides
 from zope import component
 
 import nti.assessment
-from nti.assessment import response, solution
-from nti.assessment import grade_one_response
-from nti.assessment import interfaces
-from nti.assessment._latexplastexdomcompare import _mathChildIsEqual as mce
+from .. import response, solution
+from .. import grade_one_response
+from .. import interfaces
+from .._latexplastexdomcompare import _mathChildIsEqual as mce
 
 from .test_solution import grades_right, grades_wrong
 
 class TestLatex(SharedConfiguringTestBase):
 
-	set_up_packages = (nti.assessment,)
+	set_up_packages = (__name__,)
 
 	def test_simple_grade(self):
 

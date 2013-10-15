@@ -12,7 +12,7 @@ import numbers
 
 from zope import interface
 
-from nti.assessment import interfaces
+from . import interfaces
 
 @staticmethod
 def _id(o):

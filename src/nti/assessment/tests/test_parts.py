@@ -16,16 +16,16 @@ from zope import interface
 
 import nti.assessment
 
-from nti.assessment import interfaces
-from nti.assessment import parts
-from nti.assessment import solution as solutions
+from .. import interfaces
+from .. import parts
+from .. import solution as solutions
 
 from . import grades_right
 from . import grades_wrong
 
 
 # nose module-level setup
-setUpModule = lambda: nti.testing.base.module_setup( set_up_packages=(nti.assessment,) )
+setUpModule = lambda: nti.testing.base.module_setup( set_up_packages=(__name__,) )
 tearDownModule = nti.testing.base.module_teardown
 
 

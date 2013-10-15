@@ -11,10 +11,10 @@ from zope import interface
 from persistent import Persistent
 from nti.externalization.externalization import make_repr
 
-from nti.assessment import parts
-from nti.assessment import interfaces
-from nti.assessment._util import TrivialValuedMixin as _TrivialValuedMixin
-from nti.assessment._util import superhash
+from . import parts
+from . import interfaces
+from ._util import TrivialValuedMixin as _TrivialValuedMixin
+from ._util import superhash
 
 @interface.implementer(interfaces.IQSolution)
 class QSolution(Persistent):

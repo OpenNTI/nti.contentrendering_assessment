@@ -11,20 +11,17 @@ from nti.testing.base import SharedConfiguringTestBase
 from nti.testing.matchers import verifiably_provides
 from nti.externalization.tests import externalizes
 
-
-
-import nti.assessment
 from nti.externalization.externalization import toExternalObject
 from nti.externalization import internalization
 
 
-from nti.assessment import interfaces
+from .. import interfaces
 
 
 #pylint: disable=R0904
 
 class TestTextHint(SharedConfiguringTestBase):
-	set_up_packages = (nti.assessment,)
+	set_up_packages = (__name__,)
 
 	def test_externalizes(self):
 		hint = interfaces.IQTextHint( "The hint" )

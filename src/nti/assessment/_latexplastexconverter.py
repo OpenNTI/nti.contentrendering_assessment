@@ -14,7 +14,7 @@ from StringIO import StringIO
 
 from zope import interface
 
-from nti.assessment import interfaces
+from . import interfaces
 import nti.openmath as openmath
 
 import plasTeX

@@ -13,9 +13,9 @@ from dm.zope.schema.schema import SchemaConfigured
 
 from nti.externalization.externalization import make_repr
 
-from nti.assessment import interfaces
-from nti.assessment.interfaces import convert_response_for_solution
-from nti.assessment._util import superhash
+from . import interfaces
+from .interfaces import convert_response_for_solution
+from ._util import superhash
 
 from persistent import Persistent
 

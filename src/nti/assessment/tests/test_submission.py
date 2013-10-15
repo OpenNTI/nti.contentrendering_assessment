@@ -22,12 +22,12 @@ from nti.externalization.internalization import update_from_external_object
 from nti.externalization import internalization
 from nti.externalization import interfaces as ext_interfaces
 
-from nti.assessment import interfaces
-from nti.assessment import submission
+from .. import interfaces
+from .. import submission
 
 
 # nose module-level setup
-setUpModule = lambda: nti.testing.base.module_setup( set_up_packages=(nti.assessment,) )
+setUpModule = lambda: nti.testing.base.module_setup( set_up_packages=(__name__,) )
 tearDownModule = nti.testing.base.module_teardown
 
 

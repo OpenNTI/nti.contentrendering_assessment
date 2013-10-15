@@ -14,7 +14,7 @@ from dm.zope.schema.schema import SchemaConfigured
 
 from nti.externalization.externalization import make_repr
 
-from nti.assessment import interfaces
+from . import interfaces
 
 @interface.implementer(interfaces.IQuestionSubmission)
 class QuestionSubmission(SchemaConfigured):

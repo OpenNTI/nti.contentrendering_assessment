@@ -6,18 +6,16 @@ import nti.testing.base
 
 from nti.testing.matchers import validly_provides
 
-import nti.assessment
-
-from nti.assessment import grade_one_response, assess
-from nti.assessment.interfaces import IResponseToSymbolicMathConverter
-from nti.assessment._latexplastexconverter import _mathTexToDOMNodes as mathTexToDOMNodes
-from nti.assessment._latexplastexdomcompare import _mathIsEqual as mathIsEqual
-from nti.assessment._latexplastexconverter import factory
+from .. import grade_one_response, assess
+from ..interfaces import IResponseToSymbolicMathConverter
+from .._latexplastexconverter import _mathTexToDOMNodes as mathTexToDOMNodes
+from .._latexplastexdomcompare import _mathIsEqual as mathIsEqual
+from .._latexplastexconverter import factory
 
 import plasTeX
 
 class TestAssessment(nti.testing.base.SharedConfiguringTestBase):
-	set_up_packages = (nti.assessment,)
+	set_up_packages = (__name__,)
 
 	def test_latex_factory(self):
 		from nti.assessment.response import QTextResponse

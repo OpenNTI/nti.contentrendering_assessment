@@ -11,15 +11,14 @@ from hamcrest import has_length
 from unittest import TestCase
 from nti.testing.matchers import is_false
 from nti.testing.matchers import validly_provides, verifiably_provides
+import nti.testing.base
 from nti.externalization.tests import externalizes
 
 from zope import interface
 from zope import component
-import zope.annotation
 from zope.annotation.interfaces import IAttributeAnnotatable
 from zope.dublincore.annotatableadapter import ZDCAnnotatableAdapter
 
-import nti.assessment
 from nti.externalization.externalization import toExternalObject
 from nti.externalization import internalization
 from nti.externalization.internalization import update_from_external_object
@@ -27,21 +26,21 @@ from nti.externalization.internalization import update_from_external_object
 import datetime
 import time
 
-from nti.assessment import interfaces
+from .. import interfaces
 from nti.dataserver import interfaces as nti_interfaces
-from nti.assessment import parts
-from nti.assessment import response
-from nti.assessment import submission
-from nti.assessment import assessed
-from nti.assessment import solution as solutions
-from nti.assessment.question import QQuestion, QQuestionSet
+from .. import parts
+from .. import response
+from .. import submission
+from .. import assessed
+from .. import solution as solutions
+from ..question import QQuestion, QQuestionSet
 
 
 #pylint: disable=R0904
 
 
 # nose module-level setup
-setUpModule = lambda: nti.testing.base.module_setup( set_up_packages=(nti.assessment,zope.annotation) )
+setUpModule = lambda: nti.testing.base.module_setup( set_up_packages=(__name__,'zope.annotation') )
 tearDownModule = nti.testing.base.module_teardown
 
 def _check_old_dublin_core( qaq ):

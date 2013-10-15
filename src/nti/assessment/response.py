@@ -12,8 +12,8 @@ from persistent import Persistent
 from six import text_type
 from six import string_types
 
-from nti.assessment import interfaces
-from nti.assessment._util import TrivialValuedMixin
+from . import interfaces
+from ._util import TrivialValuedMixin
 
 @interface.implementer(interfaces.IQResponse)
 class QResponse(Persistent):
@@ -30,8 +30,10 @@ class QTextResponse(TrivialValuedMixin,QResponse):
 	def __init__( self, *args, **kwargs ):
 		super(QTextResponse,self).__init__( *args, **kwargs )
 		if self.value is not None and not isinstance(self.value, string_types):
+			# Convert e.g., numbers, to text values
 			self.value = text_type(self.value)
-		if isinstance(self.value, bytes):
+		if isinstance(self.value, bytes): # pragma: no cover
+			# Decode incoming byte strings to text
 			self.value = text_type(self.value, 'utf-8')
 
 @interface.implementer(interfaces.IQListResponse)
