@@ -5,31 +5,28 @@
 	<include package="zope.component" />
 	<include package="zope.traversing" /> <!-- For rendering -->
 
+	<!-- Register the package under the short name and the legacy long name -->
 	<utility component=".contentrendering.ntiassessment"
-			 provides="plasTeX.interfaces.IPythonPackage"
 			 name="ntiassessment" />
 
 	<utility component=".contentrendering.ntiassessment"
-			 provides="plasTeX.interfaces.IPythonPackage"
 			 name="nti.contentrendering.plastexpackages.ntiassessment" />
-
-	<!-- TODO: These interfaces need to move -->
 
 	<adapter factory=".contentrendering.extractors._AssessmentExtractor"
 			 for="nti.contentrendering.interfaces.IRenderedBook"
-			 provides="nti.contentrendering.interfaces.IAssessmentExtractor" />
+			 provides=".contentrendering.interfaces.IAssessmentExtractor" />
 
 	<utility factory=".contentrendering.extractors._AssessmentExtractor"
-			 provides="nti.contentrendering.interfaces.IAssessmentExtractor"
+			 provides=".contentrendering.interfaces.IAssessmentExtractor"
 			 name="AssessmentExtractor" />
 
 	<!-- FIXME: These do not belong here -->
 	<adapter factory=".contentrendering.extractors._LessonQuestionSetExtractor"
 			 for="nti.contentrendering.interfaces.IRenderedBook"
-			 provides="nti.contentrendering.interfaces.ILessonQuestionSetExtractor" />
+			 provides=".contentrendering.interfaces.ILessonQuestionSetExtractor" />
 
 	<utility factory=".contentrendering.extractors._LessonQuestionSetExtractor"
-			 provides="nti.contentrendering.interfaces.ILessonQuestionSetExtractor"
+			 provides=".contentrendering.interfaces.ILessonQuestionSetExtractor"
 			 name="LessonQuestionSetExtractor" />
 
 

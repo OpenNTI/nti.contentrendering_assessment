@@ -21,11 +21,13 @@ from zope import interface
 from plasTeX.Renderers import render_children
 
 from nti.contentrendering import interfaces as crd_interfaces
+from .interfaces import IAssessmentExtractor
+from .interfaces import ILessonQuestionSetExtractor
 
 from nti.externalization import internalization
 from nti.externalization.externalization import toExternalObject
 
-@interface.implementer(crd_interfaces.IAssessmentExtractor)
+@interface.implementer(IAssessmentExtractor)
 @component.adapter(crd_interfaces.IRenderedBook)
 class _AssessmentExtractor(object):
 	"""
@@ -147,7 +149,7 @@ class _AssessmentExtractor(object):
 
 
 
-@interface.implementer(crd_interfaces.ILessonQuestionSetExtractor)
+@interface.implementer(ILessonQuestionSetExtractor)
 @component.adapter(crd_interfaces.IRenderedBook)
 class _LessonQuestionSetExtractor(object):
 

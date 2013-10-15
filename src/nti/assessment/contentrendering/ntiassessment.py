@@ -78,6 +78,9 @@ import os
 #: The directory in which to find our templates.
 #: Used by plastext because we implement IPythonPackage
 template_directory = os.path.abspath( os.path.dirname(__file__) )
+#: The directory containing our style files
+texinputs_directory = os.path.abspath( os.path.dirname(__file__) )
+
 
 class _LocalContentMixin(_BaseLocalContentMixin):
 	# SAJ: HACK. Something about naqvideo and _LocalContentMixin? ALl the parts
