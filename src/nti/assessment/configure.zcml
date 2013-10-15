@@ -137,4 +137,6 @@
 	<ext:registerMimeFactories module=".question" />
 
 
+	<include package="." file="plastex.zcml" />
+
 </configure>
