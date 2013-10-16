@@ -35,7 +35,7 @@ def _simpleLatexDocument(maths):
 setUpModule = lambda: nti.testing.base.module_setup( set_up_packages=(nti.contentrendering,'nti.assessment',nti.externalization) )
 tearDownModule = nti.testing.base.module_teardown
 
-def test_macros():
+def test_generic_macros():
 	example = br"""
 	\begin{naquestion}[individual=true]
 		Arbitrary content goes here.
@@ -76,6 +76,35 @@ def test_macros():
 	assert_that( part.content, is_( "Arbitrary content goes here." ) )
 	assert_that( part.hints, has_length( 1 ) )
 	assert_that( part.hints, contains( verifiably_provides( asm_interfaces.IQHint ) ) )
+
+def test_file_macros():
+	example = br"""
+	\begin{naquestion}[individual=true]
+		Arbitrary content goes here.
+		\begin{naqfilepart}(application/pdf,text/*,.txt,*,*/*)[1024]
+		Arbitrary content goes here.
+		\begin{naqhints}
+			\naqhint Some hint
+		\end{naqhints}
+		\end{naqfilepart}
+	\end{naquestion}
+	"""
+
+	dom = _buildDomFromString( _simpleLatexDocument( (example,) ) )
+
+	naq = dom.getElementsByTagName('naquestion')[0]
+	part_el = naq.getElementsByTagName( 'naqfilepart' )[0]
+
+	part = part_el.assessment_object()
+	assert_that( part, verifiably_provides( part_el.part_interface ) )
+	assert_that( part.content, is_( "Arbitrary content goes here." ) )
+
+	assert_that( part.allowed_extensions, contains( '.txt', '*' ) )
+	assert_that( part.allowed_mime_types, contains( 'application/pdf', 'text/*', '*/*' ) )
+
+	# TODO: Hints seem broken?
+	#assert_that( part.hints, has_length( 1 ) )
+	#assert_that( part.hints, contains( verifiably_provides( asm_interfaces.IQHint ) ) )
 
 def test_question_set_macros():
 	example = br"""
@@ -495,4 +524,76 @@ class TestRenderableSymMathPart(unittest.TestCase):
 				   'filename': 'index.html',
 				   'href': 'index.html'}},
 				 'href': 'index.html'}
+			assert_that( obj, is_( exp_value ) )
+
+
+	def test_assessment_index_with_file_part(self):
+
+		example = br"""
+		\chapter{Chapter One}
+
+		We have a paragraph.
+
+		\section{Section One}
+
+		\begin{naquestion}[individual=true]\label{testquestion}
+			Arbitrary content goes here.
+			\begin{naqfilepart}(application/pdf)
+			Arbitrary content goes here.
+			\end{naqfilepart}
+		\end{naquestion}
+
+		"""
+
+		with RenderContext(_simpleLatexDocument( (example,) )) as ctx:
+			dom  = ctx.dom
+			dom.getElementsByTagName( 'document' )[0].filenameoverride = 'index'
+			render = ResourceRenderer.createResourceRenderer( 'XHTML', None )
+			render.importDirectory( os.path.join( os.path.dirname(__file__), '..' ) )
+			render.render( dom )
+
+			rendered_book = _MockRenderedBook()
+			rendered_book.document = dom
+			rendered_book.contentLocation = ctx.docdir
+
+			extractor = component.getAdapter(rendered_book, IAssessmentExtractor)
+			extractor.transform( rendered_book )
+
+			jsons = open(os.path.join( ctx.docdir, 'assessment_index.json' ), 'rU' ).read()
+			obj = json.loads( jsons )
+
+			question = {'Class': 'Question',
+						'MimeType': 'application/vnd.nextthought.naquestion',
+						'NTIID': 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.testquestion',
+						'content': '<a name="testquestion"></a> Arbitrary content goes here.',
+						'parts': [{'Class': 'FilePart',
+								   'MimeType': 'application/vnd.nextthought.assessment.filepart',
+								   'allowed_extensions': [],
+								   'allowed_mime_types': ['application/pdf'],
+								   'content': 'Arbitrary content goes here.',
+								   'explanation': u'',
+								   'hints': [],
+								   'max_file_size': None,
+								   'solutions': []}]}
+
+			exp_value = {'Items': {'tag:nextthought.com,2011-10:testing-HTML-temp.0':
+								   {'AssessmentItems': {},
+									'Items': {'tag:nextthought.com,2011-10:testing-HTML-temp.chapter_one':
+											  {'AssessmentItems': {},
+											   'Items': {'tag:nextthought.com,2011-10:testing-HTML-temp.section_one':
+														 {'AssessmentItems': {'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.testquestion': question},
+														  'NTIID': 'tag:nextthought.com,2011-10:testing-HTML-temp.section_one',
+														  'filename': 'tag_nextthought_com_2011-10_testing-HTML-temp_section_one.html',
+														  'href': 'tag_nextthought_com_2011-10_testing-HTML-temp_section_one.html'}
+														  },
+														  'NTIID': 'tag:nextthought.com,2011-10:testing-HTML-temp.chapter_one',
+														  'filename': 'tag_nextthought_com_2011-10_testing-HTML-temp_chapter_one.html',
+														  'href': 'tag_nextthought_com_2011-10_testing-HTML-temp_chapter_one.html'}
+														  },
+										  'NTIID': 'tag:nextthought.com,2011-10:testing-HTML-temp.0',
+										  'filename': 'index.html',
+										  'href': 'index.html'}
+										  },
+							'href': 'index.html'}
+
 			assert_that( obj, is_( exp_value ) )

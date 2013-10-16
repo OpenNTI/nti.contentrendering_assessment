@@ -320,11 +320,21 @@ class IQFilePart(IQPart):
 										min_length=0,
 										value_type=schema.Text(title="An allowed extension") )
 
+	max_file_size = schema.Int( title="Maximum size in bytes for the file",
+								min=1,
+								required=False )
+
 	def is_mime_type_allowed( mime_type ):
 		"""
 		Return whether or not the given mime type, which must match
 		the mime type constraint, is one of the allowed types of this
 		part, taking into account wildcards.
+		"""
+
+	def is_filename_allowed( filename ):
+		"""
+		Return whether the filename given is allowed according to
+		the allowed list of extensions.
 		"""
 
 class IQuestion(interface.Interface):

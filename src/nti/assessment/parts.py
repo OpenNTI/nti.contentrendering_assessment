@@ -167,6 +167,7 @@ class QFilePart(QPart):
 
 	allowed_mime_types = ()
 	allowed_extensions = ()
+	max_file_size = None
 
 	def is_mime_type_allowed( self, mime_type ):
 		if mime_type:

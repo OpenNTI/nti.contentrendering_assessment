@@ -59,6 +59,7 @@ import itertools
 
 from zope import interface
 from zope import schema
+from zope.mimetype.interfaces import mimeTypeConstraint
 from zope.cachedescriptors.property import readproperty
 
 from plasTeX import Base
@@ -176,11 +177,11 @@ class naqsolexplanation(_LocalContentMixin, Base.Environment):
 _LocalContentMixin._asm_ignorable_renderables += (naqsolexplanation,)
 class _AbstractNAQPart(_LocalContentMixin,Base.Environment):
 
-	# Defines the type of part this maps too
+	#: Defines the type of part this maps too
 	part_interface = None
-	# Defines the type of solution this part produces.
-	# Solution objects will be created by adapting the text content of the solution DOM nodes
-	# into this interface.
+	#: Defines the type of solution this part produces.
+	#: Solution objects will be created by adapting the text content of the solution DOM nodes
+	#: into this interface.
 	soln_interface = None
 	part_factory = None
 	hint_interface = as_interfaces.IQHTMLHint
@@ -423,6 +424,63 @@ class naqmultiplechoicemultipleanswerpart(_AbstractNAQPart):
 		self.insertAfter( _naqsolns, _naqchoices )
 		return res
 
+class naqfilepart(_AbstractNAQPart):
+	"""
+	A part specifying that the user must upload a file::
+
+	   \begin{naquestion}
+	       Arbitrary prefix content.
+		   \begin{naqfilepart}(application/pdf,text/*,.txt)[1024]
+		      Arbitrary part content.
+		   \end{naqfilepart}
+		\end{naquestion}
+
+	An optional argument in parenthesis is a list of mimetypes and file
+	extensions to allow; to allow arbitrary types use "*/*". The optional
+	argument in square brackets is the max size of the file in kilobytes;
+	the example above thus specifies a 1MB cap.
+	"""
+
+	args = "(types:list:str)[size:int]"
+
+	part_interface = as_interfaces.IQFilePart
+	part_factory = parts.QFilePart
+
+	_max_file_size = None
+	_allowed_mime_types = ()
+	_allowed_extensions = ()
+
+	@property
+	def allowed_mime_types(self):
+		return ','.join(self._allowed_mime_types) if self._allowed_mime_types else None
+
+	def _asm_solutions(self):
+		"Solutions currently unsupported"
+		return ()
+
+	def _asm_object_kwargs(self):
+		kw = {}
+		for k in 'allowed_extensions', 'allowed_mime_types', 'max_file_size':
+			mine = getattr(self, '_' + k)
+			if min:
+				kw[k] = mine
+		return kw
+
+	def digest( self, tokens ):
+		res = super(naqfilepart,self).digest(tokens)
+
+		if self.attributes.get('size'):
+			self._max_file_size = self.attributes['size'] * 1024 # KB to bytes
+		if self.attributes.get('types'):
+			for mime_or_ext in self.attributes['types']:
+				if mimeTypeConstraint(mime_or_ext):
+					self._allowed_mime_types += (mime_or_ext,)
+				elif mime_or_ext.startswith('.') or mime_or_ext == '*':
+					self._allowed_extensions += (mime_or_ext,)
+				else: # pragma: no cover
+					raise ValueError("Type is not MIME, extension, or wild", mime_or_ext )
+		return res
+
 class naqmatchingpart(_AbstractNAQPart):
 	"""
 	A matching part (usually used as the sole part to a question).
@@ -544,7 +602,15 @@ class naqhint(_LocalContentMixin,Base.List.item):
 	def _after_render( self, rendered ):
 		self._asm_local_content = rendered
 
-_LocalContentMixin._asm_ignorable_renderables += (naqchoices, naqmlabels, naqmvalues, naqvalue, naqchoice, naqmlabel, naqmvalue, naqhints, naqhint)
+_LocalContentMixin._asm_ignorable_renderables += (naqchoices,
+												  naqmlabels,
+												  naqmvalues,
+												  naqvalue,
+												  naqchoice,
+												  naqmlabel,
+												  naqmvalue,
+												  naqhints,
+												  naqhint)
 
 class naqvideo(ntiincludevideo):
 	blockType = True
@@ -587,7 +653,7 @@ class naquestion(_LocalContentMixin,Base.Environment,plastexids.NTIIDMixin):
 
 	def assessment_object(self):
 		result = question.QQuestion( content=self._asm_local_content,
-					     parts=self._asm_question_parts())
+									 parts=self._asm_question_parts())
 		errors = schema.getValidationErrors( as_interfaces.IQuestion, result )
 		if errors: # pragma: no cover
 			raise errors[0][1]

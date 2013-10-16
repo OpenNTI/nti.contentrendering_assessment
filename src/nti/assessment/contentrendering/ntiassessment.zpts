@@ -3,6 +3,14 @@
 # reserved for the client
 # All parts have the 'naquestionpart' class
 
+name: naqfilepart
+<div class="naquestionpart naqfilepart" tal:attributes="id self/id" >
+	 <a tal:attributes="name self/id"></a>
+	 <span tal:content="self" ></span>
+	 <input type="file" name="content" tal:attributes="accept self/allowed_mime_types"></input>
+</div>
+
+
 name: naqsymmathpart
 <div class="naquestionpart naqsymmathpart" tal:attributes="id self/id" >
 	 <a tal:attributes="name self/id"></a>
