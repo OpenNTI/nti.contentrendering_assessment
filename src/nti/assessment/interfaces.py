@@ -7,18 +7,20 @@ from __future__ import unicode_literals, print_function, absolute_import
 __docformat__ = "restructuredtext en"
 
 from zope import interface
-from zope import schema
 from zope.mimetype.interfaces import mimeTypeConstraint
 
-from nti.utils import schema as dmschema
+from nti.utils import schema
 
 NTIID_TYPE = 'NAQ'
 
-TypedIterable = dmschema.IndexedIterable
+TypedIterable = schema.IndexedIterable
 
 from nti.contentfragments.schema import LatexFragmentTextLine as _LatexTextLine
 from nti.contentfragments.schema import HTMLContentFragment as _HTMLContentFragment
 from nti.contentfragments.schema import TextUnicodeContentFragment as _ContentFragment
+
+from nti.monkey import plonefile_zopefile_patch_on_import
+plonefile_zopefile_patch_on_import.patch()
 
 class IQHint(interface.Interface):
 	"""
@@ -64,10 +66,10 @@ class IQPart(interface.Interface):
 
 	content = _ContentFragment( title="The content to present to the user for this portion, if any." )
 	hints = TypedIterable( title="Any hints that pertain to this part",
-						   value_type=dmschema.Object(IQHint, title="A hint for the part") )
+						   value_type=schema.Object(IQHint, title="A hint for the part") )
 	solutions = TypedIterable( title="Acceptable solutions for this question part in no particular order.",
 								description="All solutions must be of the same type, and there must be at least one.",
-								value_type=dmschema.Object(IQSolution, title="A solution for this part")	)
+								value_type=schema.Object(IQSolution, title="A solution for this part")	)
 	explanation = _ContentFragment( title="An explanation of how the solution is arrived at.",
 									default='' )
 
@@ -111,9 +113,9 @@ class IQMultiValuedSolution(IQSolution):
 	A solution consisting of a set of values.
 	"""
 	value = schema.List( title="The correct answer selections",
-			     description="The correct answer as a tuple of items which are a zero-based index into the choices list.",
-			     min_length=0,
-			     value_type=schema.TextLine( title="The value" ) )
+						 description="The correct answer as a tuple of items which are a zero-based index into the choices list.",
+						 min_length=0,
+						 value_type=schema.TextLine( title="The value" ) )
 
 class IQMathSolution(IQSolution):
 	"""
@@ -214,7 +216,7 @@ class IQMultipleChoicePart(IQPart):
 						   value_type=_ContentFragment( title="A rendered value" ) )
 	solutions = TypedIterable( title="The multiple-choice solutions",
 							   min_length=1,
-							   value_type=dmschema.Object( IQMultipleChoiceSolution, title="Multiple choice solution" ) )
+							   value_type=schema.Object( IQMultipleChoiceSolution, title="Multiple choice solution" ) )
 
 class IQMultipleChoicePartGrader(IQPartGrader):
 	"""
@@ -244,7 +246,7 @@ class IQMultipleChoiceMultipleAnswerPart(IQMultipleChoicePart):
 
 	solutions = TypedIterable( title="The multiple-choice solutions",
 				   min_length=1,
-				   value_type=dmschema.Object( IQMultipleChoiceMultipleAnswerSolution, title="Multiple choice / multiple answer solution" ) )
+				   value_type=schema.Object( IQMultipleChoiceMultipleAnswerSolution, title="Multiple choice / multiple answer solution" ) )
 
 
 class IQMultipleChoiceMultipleAnswerPartGrader(IQPartGrader):
@@ -291,7 +293,7 @@ class IQMatchingPart(IQPart):
 						  value_type=_ContentFragment( title="A value-column value" ) )
 	solutions = TypedIterable( title="The matching solution",
 							   min_length=1,
-							   value_type=dmschema.Object( IQMatchingSolution, title="Matching solution" ) )
+							   value_type=schema.Object( IQMatchingSolution, title="Matching solution" ) )
 
 class IQMatchingPartGrader(IQPartGrader):
 	"""
@@ -348,7 +350,7 @@ class IQuestion(interface.Interface):
 	content = schema.Text( title="The content to present to the user, if any." )
 	parts = schema.List( title="The ordered parts of the question.",
 						 min_length=1,
-						 value_type=dmschema.Object( IQPart, title="A question part" ) )
+						 value_type=schema.Object( IQPart, title="A question part" ) )
 
 class IQuestionSet(interface.Interface):
 	"""
@@ -358,7 +360,7 @@ class IQuestionSet(interface.Interface):
 
 	questions = TypedIterable( title="The ordered questions in the set.",
 							   min_length=1,
-							   value_type=dmschema.Object( IQuestion, title="The questions" ) )
+							   value_type=schema.Object( IQuestion, title="The questions" ) )
 
 class IQResponse(interface.Interface):
 	"""
@@ -388,6 +390,23 @@ class IQDictResponse(IQResponse):
 	value = schema.Dict( title="The response dictionary",
 						 key_type=schema.TextLine( title="The key" ),
 						 value_type=schema.TextLine(title="The value") )
+
+import plone.namedfile.interfaces
+class IQUploadedFile(plone.namedfile.interfaces.INamedFile):
+	pass
+
+class IQFileResponse(IQResponse):
+	"""
+	A response containing a file and associated metadata.
+	The file is uploaded as a ``data`` URI (:mod:`nti. utils. dataurl`)
+	which should contain a MIME type definition;  the original
+	filename may be given as well. Externalization refers to these
+	two fields as
+	"""
+
+	value = schema.Object( IQUploadedFile,
+						   title="The uploaded file" )
+
 
 IQMathSolution.setTaggedValue( 'response_type', IQTextResponse )
 IQFreeResponseSolution.setTaggedValue( 'response_type', IQTextResponse )
@@ -444,7 +463,7 @@ class IQAssessedPart(interface.Interface):
 	"""
 	# TODO: Matching to question?
 
-	submittedResponse = dmschema.Object( IQResponse,
+	submittedResponse = schema.Object( IQResponse,
 									   title="The response as the student submitted it.")
 	assessedValue = schema.Float( title="The relative correctness of the submitted response, from 0.0 (entirely wrong) to 1.0 (perfectly correct)",
 								  min=0.0,
@@ -460,7 +479,7 @@ class IQAssessedQuestion(interface.Interface):
 
 	questionId = schema.TextLine( title="Identifier of the question being responded to." )
 	parts = TypedIterable( title="Ordered assessed values, one for each part of the question.",
-						   value_type=dmschema.Object( IQAssessedPart, title="The assessment of a part." ) )
+						   value_type=schema.Object( IQAssessedPart, title="The assessment of a part." ) )
 
 
 class IQuestionSetSubmission(interface.Interface):
@@ -474,7 +493,7 @@ class IQuestionSetSubmission(interface.Interface):
 	questions = TypedIterable( title="Submissions, one for each question in the set.",
 							   description="""Order is not important. Depending on the question set,
 							   missing answers may or may not be allowed; the set may refuse to grade, or simply consider them wrong.""",
-							   value_type=dmschema.Object( IQuestionSubmission, title="The submission for a particular question.") )
+							   value_type=schema.Object( IQuestionSubmission, title="The submission for a particular question.") )
 
 class IQAssessedQuestionSet(interface.Interface):
 	"""
@@ -485,7 +504,7 @@ class IQAssessedQuestionSet(interface.Interface):
 
 	questionSetId = schema.TextLine( title="Identifier of the question set being responded to." )
 	questions = TypedIterable( title="Assessed questions, one for each question in the set.",
-							   value_type=dmschema.Object( IQAssessedQuestion, title="The assessed value for a particular question.") )
+							   value_type=schema.Object( IQAssessedQuestion, title="The assessed value for a particular question.") )
 
 class IQuestionMap(interface.common.mapping.IReadMapping):
 	"""

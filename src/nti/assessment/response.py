@@ -47,3 +47,19 @@ class QDictResponse(TrivialValuedMixin,QResponse):
 	"""
 	A dictionary response.
 	"""
+
+from plone.namedfile.file import NamedBlobFile
+from plone.namedfile.file import NamedBlobImage
+
+@interface.implementer(interfaces.IQUploadedFile)
+class QUploadedFile(NamedBlobFile):
+	pass
+
+@interface.implementer(interfaces.IQUploadedFile)
+class QUploadedImageFile(NamedBlobImage):
+	pass
+
+class QFileResponse(TrivialValuedMixin,QResponse):
+	"""
+	An uploaded file response.
+	"""

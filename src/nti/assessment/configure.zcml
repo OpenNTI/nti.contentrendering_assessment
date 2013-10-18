@@ -8,6 +8,8 @@
 
 	<include package="nti.externalization" />
 	<include package="nti.contentfragments" />
+	<include package="plone.namedfile"
+			 file="z3c-blobfile.zcml" />
 
 	<!-- Response types -->
 
@@ -135,7 +137,18 @@
 	<include package="nti.externalization" file="meta.zcml" />
 	<ext:registerMimeFactories module=".submission" />
 	<ext:registerMimeFactories module=".question" />
-
+	<!--
+	File uploads, which are handled manually because
+	they deviate from the pattern.
+	-->
+	<adapter factory=".externalization._QUploadedFileFactory"
+			 for="dolmen.builtins.IDict"
+			 provides="nti.externalization.interfaces.IMimeObjectFactory"
+			 name="application/vnd.nextthought.assessment.uploadedfile"
+			 />
+	<adapter factory=".externalization._QUploadedFileObjectIO"
+			 for=".interfaces.IQUploadedFile"
+			 />
 
 	<include package="." file="plastex.zcml" />
 
