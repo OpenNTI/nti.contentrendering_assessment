@@ -3,14 +3,18 @@
 """
 $Id$
 """
-from __future__ import unicode_literals, print_function, absolute_import
+from __future__ import unicode_literals, print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
-
-from zope import interface
-from persistent import Persistent
 
 from six import text_type
 from six import string_types
+
+from zope import interface
+
+from persistent import Persistent
+
+from plone.namedfile.file import NamedBlobFile
+from plone.namedfile.file import NamedBlobImage
 
 from . import interfaces
 from ._util import TrivialValuedMixin
@@ -48,9 +52,6 @@ class QDictResponse(TrivialValuedMixin,QResponse):
 	A dictionary response.
 	"""
 
-from plone.namedfile.file import NamedBlobFile
-from plone.namedfile.file import NamedBlobImage
-
 @interface.implementer(interfaces.IQUploadedFile)
 class QUploadedFile(NamedBlobFile):
 	pass
@@ -59,7 +60,8 @@ class QUploadedFile(NamedBlobFile):
 class QUploadedImageFile(NamedBlobImage):
 	pass
 
-class QFileResponse(TrivialValuedMixin,QResponse):
+@interface.implementer(interfaces.IQFileResponse)
+class QFileResponse(TrivialValuedMixin, QResponse):
 	"""
 	An uploaded file response.
 	"""

@@ -5,24 +5,31 @@ Externalization for assessment objects.
 
 $Id$
 """
-from __future__ import unicode_literals, print_function, absolute_import
+from __future__ import unicode_literals, print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
 from zope import component
-from . import interfaces
+
+from zope.file.upload import nameFinder
+
+from nti.dataserver import links
+from nti.dataserver import interfaces as nti_interfaces
 
 from nti.externalization import interfaces as ext_interfaces
-from nti.externalization.datastructures import AbstractDynamicObjectIO
 from nti.externalization.externalization import to_external_object
 from nti.externalization.externalization import to_external_ntiid_oid
+from nti.externalization.datastructures import AbstractDynamicObjectIO
 from nti.externalization.autopackage import AutoPackageSearchingScopedInterfaceObjectIO
 
 from nti.utils.schema import DataURI
 from nti.utils.dataurl import DataURL
-from zope.file.upload import nameFinder
+
+from . import interfaces
+from .response import QUploadedFile
+from .response import QUploadedImageFile
 
 @interface.implementer(ext_interfaces.IInternalObjectIO)
 class _AssessmentInternalObjectIO(AutoPackageSearchingScopedInterfaceObjectIO):
@@ -121,8 +128,6 @@ class _QUploadedFileObjectIO(AbstractDynamicObjectIO):
 		ext_dict['value'] = ext_dict['url']
 		return ext_dict
 
-from .response import QUploadedFile
-from .response import QUploadedImageFile
 def _QUploadedFileFactory(ext_obj):
 	factory = QUploadedFile
 	url = ext_obj.get( 'url', ext_obj.get('value') )
