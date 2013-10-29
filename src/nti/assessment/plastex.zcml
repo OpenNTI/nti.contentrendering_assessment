@@ -18,7 +18,7 @@
 
 	<utility factory=".contentrendering.extractors._AssessmentExtractor"
 			 provides=".contentrendering.interfaces.IAssessmentExtractor"
-			 name="AssessmentExtractor" />
+			 name="001.AssessmentExtractor" />
 
 	<!-- FIXME: These do not belong here -->
 	<adapter factory=".contentrendering.extractors._LessonQuestionSetExtractor"
@@ -27,7 +27,7 @@
 
 	<utility factory=".contentrendering.extractors._LessonQuestionSetExtractor"
 			 provides=".contentrendering.interfaces.ILessonQuestionSetExtractor"
-			 name="LessonQuestionSetExtractor" />
+			 name="040.LessonQuestionSetExtractor" />
 
 
 </configure>
