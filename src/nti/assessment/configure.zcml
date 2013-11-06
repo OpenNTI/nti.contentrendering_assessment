@@ -109,34 +109,16 @@
 
 
 	<!-- Externalization -->
-	<adapter factory=".externalization._AssessmentInternalObjectIO"
-			 for=".interfaces.IQHint" />
-	<adapter factory=".externalization._AssessmentInternalObjectIO"
-			 for=".interfaces.IQPart" />
-	<adapter factory=".externalization._AssessmentInternalObjectIO"
-			 for=".interfaces.IQSolution" />
-	<adapter factory=".externalization._AssessmentInternalObjectIO"
-			 for=".interfaces.IQuestion" />
-	<adapter factory=".externalization._AssessmentInternalObjectIO"
-			 for=".interfaces.IQuestionSet" />
-	<adapter factory=".externalization._AssessmentInternalObjectIO"
-			 for=".interfaces.IQuestionSubmission" />
-	<adapter factory=".externalization._AssessmentInternalObjectIO"
-			 for=".interfaces.IQAssessedPart" />
-	<adapter factory=".externalization._AssessmentInternalObjectIO"
-			 for=".interfaces.IQAssessedQuestion" />
-	<adapter factory=".externalization._AssessmentInternalObjectIO"
-			 for=".interfaces.IQuestionSetSubmission" />
-	<adapter factory=".externalization._AssessmentInternalObjectIO"
-			 for=".interfaces.IQAssessedQuestionSet" />
-
-	<!--
-		 Make sure and do this after the .externalization package has
-		 worked its magic.
-	-->
 	<include package="nti.externalization" file="meta.zcml" />
-	<ext:registerMimeFactories module=".submission" />
-	<ext:registerMimeFactories module=".question" />
+	<ext:registerAutoPackageIO
+		root_interfaces=".interfaces.IQPart .interfaces.IQuestion .interfaces.IQSolution
+						 .interfaces.IQuestionSubmission .interfaces.IQAssessedPart .interfaces.IQAssessedQuestion
+						 .interfaces.IQuestionSetSubmission .interfaces.IQAssessedQuestionSet
+						 .interfaces.IQHint .interfaces.IQuestionSet"
+		modules=".hint .assessed .parts .question .response .solution .submission"
+		factory_modules=".submission .question"
+		iobase=".externalization._AssessmentInternalObjectIOBase"/>
+
 	<!--
 	File uploads, which are handled manually because
 	they deviate from the pattern.

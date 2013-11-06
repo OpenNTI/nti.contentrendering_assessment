@@ -22,7 +22,6 @@ from nti.externalization import interfaces as ext_interfaces
 from nti.externalization.externalization import to_external_object
 from nti.externalization.externalization import to_external_ntiid_oid
 from nti.externalization.datastructures import AbstractDynamicObjectIO
-from nti.externalization.autopackage import AutoPackageSearchingScopedInterfaceObjectIO
 
 from nti.utils.schema import DataURI
 from nti.utils.dataurl import DataURL
@@ -32,7 +31,8 @@ from .response import QUploadedFile
 from .response import QUploadedImageFile
 
 @interface.implementer(ext_interfaces.IInternalObjectIO)
-class _AssessmentInternalObjectIO(AutoPackageSearchingScopedInterfaceObjectIO):
+class _AssessmentInternalObjectIOBase(object):
+	"Base class to customize object IO. See zcml."
 
 	@classmethod
 	def _ap_compute_external_class_name_from_interface_and_instance(cls, iface, impl):
@@ -46,18 +46,6 @@ class _AssessmentInternalObjectIO(AutoPackageSearchingScopedInterfaceObjectIO):
 		ext_class_name = k[1:] if not k.startswith('Question') else k
 		return ext_class_name
 
-	@classmethod
-	def _ap_enumerate_externalizable_root_interfaces(cls, asm_interfaces):
-		return (asm_interfaces.IQPart, asm_interfaces.IQuestion, asm_interfaces.IQSolution,
-				asm_interfaces.IQuestionSubmission, asm_interfaces.IQAssessedPart, asm_interfaces.IQAssessedQuestion,
-				asm_interfaces.IQuestionSetSubmission, asm_interfaces.IQAssessedQuestionSet,
-				asm_interfaces.IQHint, asm_interfaces.IQuestionSet)
-
-	@classmethod
-	def _ap_enumerate_module_names(cls):
-		return ('hint', 'assessed', 'parts', 'question', 'response', 'solution', 'submission')
-
-_AssessmentInternalObjectIO.__class_init__()
 
 ##
 # File uploads
