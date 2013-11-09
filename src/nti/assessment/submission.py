@@ -28,3 +28,11 @@ class QuestionSetSubmission(SchemaConfigured):
 	questionSetId = None
 	questions = ()
 	__repr__ = make_repr()
+
+
+@interface.implementer(interfaces.IQAssignmentSubmission)
+class AssignmentSubmission(SchemaConfigured):
+
+	assignmentId = None
+	parts = ()
+	__repr__ = make_repr()

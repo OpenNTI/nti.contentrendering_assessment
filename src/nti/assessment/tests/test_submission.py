@@ -9,6 +9,7 @@ from hamcrest import has_key
 from hamcrest import not_none
 from unittest import TestCase
 from nti.testing.matchers import verifiably_provides
+from nti.testing.matchers import validly_provides
 from nti.externalization.tests import externalizes
 from nose.tools import assert_raises
 
@@ -85,3 +86,27 @@ class TestQuestionSetSubmission(TestCase):
 										   "questions": [submission.QuestionSubmission(questionId='foo', parts=[])]}, require_updater=True )
 
 		assert_that( qss, has_property( 'questions', contains( is_( submission.QuestionSubmission ) ) ) )
+
+class TestAssignmentSubmission(TestCase):
+
+	def test_externalizes(self):
+		assert_that( submission.AssignmentSubmission(), verifiably_provides( interfaces.IQAssignmentSubmission ) )
+		assert_that( submission.AssignmentSubmission(), externalizes( has_entry( 'Class', 'AssignmentSubmission' ) ) )
+
+		asub = submission.AssignmentSubmission()
+		# Recursive validation
+		with assert_raises(sch_interfaces.WrongContainedType) as wct:
+			update_from_external_object( asub,
+										 {'parts': [submission.QuestionSetSubmission()]},
+										 require_updater=True )
+		assert_that( wct.exception.args[0][0][0][0][1], is_( sch_interfaces.RequiredMissing ) )
+
+
+		update_from_external_object( asub,
+									 {'parts': [submission.QuestionSetSubmission(questionSetId='foo')],
+									  'assignmentId': 'baz'},
+									 require_updater=True )
+
+		assert_that( asub, has_property( 'parts', contains( is_( submission.QuestionSetSubmission ) ) ) )
+
+		assert_that( asub, validly_provides( interfaces.IQAssignmentSubmission ))

@@ -111,11 +111,12 @@
 	<!-- Externalization -->
 	<include package="nti.externalization" file="meta.zcml" />
 	<ext:registerAutoPackageIO
-		root_interfaces=".interfaces.IQPart .interfaces.IQuestion .interfaces.IQSolution
+		root_interfaces=".interfaces.IQPart .interfaces.IQuestion .interfaces.IQSolution .interfaces.IQAssignment .interfaces.IQAssignmentPart
 						 .interfaces.IQuestionSubmission .interfaces.IQAssessedPart .interfaces.IQAssessedQuestion
 						 .interfaces.IQuestionSetSubmission .interfaces.IQAssessedQuestionSet
+						 .interfaces.IQAssignmentSubmission
 						 .interfaces.IQHint .interfaces.IQuestionSet"
-		modules=".hint .assessed .parts .question .response .solution .submission"
+		modules=".hint .assessed .parts .question .response .solution .submission .assignment"
 		factory_modules=".submission .question"
 		iobase=".externalization._AssessmentInternalObjectIOBase"/>
 

@@ -362,6 +362,79 @@ class IQuestionSet(interface.Interface):
 							   min_length=1,
 							   value_type=schema.Object( IQuestion, title="The questions" ) )
 
+class IQAssignmentPart(interface.Interface):
+	"""
+	One portion of an assignment.
+	"""
+
+	content = schema.Text( title="Additional content for the question set in the context of an assignment.")
+
+	question_set = schema.Object(IQuestionSet,
+								 title="The question set to submit with this part")
+	auto_grade = schema.Bool(title="Should this part be run through the grading machinery?",
+							 default=True)
+
+class IQAssignment(interface.Interface):
+	"""
+	An assignment differs from either plain questions or question sets
+	in that there is an expectation that it must be completed,
+	typically within a set portion of time, and that completion will
+	be reviewed by some other entity (such as a course teacher or
+	teaching assistant, or by peers; this is context specific and
+	beyond the scope of this package). A (*key*) further difference is that,
+	unlike questions and question sets, assignments are *not* intended
+	to be used by reference. Each assignment is a unique object appearing
+	exactly once within the content tree.
+
+	An assignment is a collection of one or more assignment parts that
+	are all submitted together. Each assignment part holds a question
+	set, and whether or not the submission of that question set should
+	be automatically assessed (keeping in mind that some types of questions
+	cannot be automatically assessed).
+
+	Submitting an assignment will fail if: not all parts have
+	submissions (or the submitted part does not match the correct
+	question set); if the submission window is not open (too early or too late).
+
+	When an assignment is submitted, each auto-gradeable part is
+	graded. Any remaining parts are left alone; events are emitted to
+	alert the appropriate entity that grading needs to take place.
+	"""
+
+	content = schema.Text( title="The content to present to the user, if any." )
+
+	available_for_submission_beginning = schema.Datetime(
+		title="Submissions are accepted no earlier than this.",
+		description="""When present, this specifies the time instant at which
+		submissions of this assignment may begin to be accepted. If this is absent,
+		submissions are always allowed. While this is represented here as an actual
+		concrete timestamp, it is expected that in many cases the source representation
+		will be relative to something else (a ``timedelta``) and conversion to absolute
+		timestamp will be done as needed.""",
+		required=False)
+	available_for_submission_ending = schema.Datetime(
+		title="Submissions are accepted no later than this.",
+		description="""When present, this specifies the last instance at which
+		submissions will be accepted. As with ``available_for_submission_beginning``,
+		this will typically be relative and converted.""",
+		required=False )
+
+	parts = schema.List( title="The ordered parts of the assignment.",
+						 min_length=1,
+						 value_type=schema.Object( IQAssignmentPart,
+												   title="An assignment part" ) )
+
+	# A note on handling assignments that have an associated time limit
+	# (e.g., you have one hour to complete this assignment once you begin):
+	# That information will be encoded as a timedelta on the assignment.
+	# The server will accept an "open" request for the assignment and make a
+	# note of the time stamp. When submission is attempted, the server
+	# will check that the assignment has been opened, and the elapsed time.
+	# Depending on the policy and context, submission will either be blocked,
+	# or the elapsed time will simply be recorded.
+
+
+
 class IQResponse(interface.Interface):
 	"""
 	A response submitted by the student.
@@ -505,6 +578,23 @@ class IQAssessedQuestionSet(interface.Interface):
 	questionSetId = schema.TextLine( title="Identifier of the question set being responded to." )
 	questions = TypedIterable( title="Assessed questions, one for each question in the set.",
 							   value_type=schema.Object( IQAssessedQuestion, title="The assessed value for a particular question.") )
+
+class IQAssignmentSubmission(interface.Interface):
+	"""
+	A student's submission in response to an assignment.
+	"""
+
+	assignmentId = schema.TextLine(title="Identifier of the assignment being responded to.")
+	parts = TypedIterable( title="Question set submissions, one for each part of the assignment.",
+						   description="""Order is not significant, each question set will be matched
+						   with the corresponding part by ID. However, each part *must* have a
+						   submission.""",
+						   value_type=schema.Object(IQuestionSetSubmission,
+													title="The submission for a particular part.") )
+
+	# TODO: What does the result of submitting an assignment look like?
+	# It's not always an `Assessed` object, because not all parts will have been
+	# assessed in all cases.
 
 class IQuestionMap(interface.common.mapping.IReadMapping):
 	"""
