@@ -99,7 +99,7 @@
 			 provides=".interfaces.IQMatchingPartGrader" />
 
 
-	<!-- Submissions can be adapted to assessments -->
+	<!-- Incoming submissions can be adapted to finalized assessments -->
 	<adapter factory=".assessed.assess_question_submission"
 			 for=".interfaces.IQuestionSubmission"
 			 provides=".interfaces.IQAssessedQuestion" />
@@ -133,6 +133,7 @@
 			 for=".interfaces.IQUploadedFile"
 			 />
 
+	<!-- Authoring -->
 	<include package="." file="plastex.zcml" />
 
 </configure>

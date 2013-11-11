@@ -9,6 +9,8 @@ __docformat__ = "restructuredtext en"
 from zope import interface
 from zope.mimetype.interfaces import mimeTypeConstraint
 
+from zope.annotation.interfaces import IAnnotatable
+
 from nti.utils import schema
 
 NTIID_TYPE = 'NAQ'
@@ -339,12 +341,15 @@ class IQFilePart(IQPart):
 		the allowed list of extensions.
 		"""
 
-class IQuestion(interface.Interface):
+class IQuestion(IAnnotatable):
 	"""
 	A question consists of one or more parts (typically one) that require answers.
 	It may have prefacing text. It may have other metadata, such as what
 	concepts it relates to (e.g., Common Core Standards numbers); such concepts
 	will be domain specific.
+
+	Questions are annotatable. Uses of this include things like references
+	to where questions appear in question sets or other types of content.
 	"""
 
 	content = schema.Text( title="The content to present to the user, if any." )
@@ -352,10 +357,14 @@ class IQuestion(interface.Interface):
 						 min_length=1,
 						 value_type=schema.Object( IQPart, title="A question part" ) )
 
-class IQuestionSet(interface.Interface):
+class IQuestionSet(IAnnotatable):
 	"""
 	An ordered group of related questions generally intended to be
 	completed as a unit (aka, a Quiz or worksheet).
+
+	Question sets are annotatable; Uses of this include things like
+	references to where question sets are defined in content or
+	which assignments reference them.
 	"""
 
 	questions = TypedIterable( title="The ordered questions in the set.",
@@ -374,7 +383,7 @@ class IQAssignmentPart(interface.Interface):
 	auto_grade = schema.Bool(title="Should this part be run through the grading machinery?",
 							 default=True)
 
-class IQAssignment(interface.Interface):
+class IQAssignment(IAnnotatable):
 	"""
 	An assignment differs from either plain questions or question sets
 	in that there is an expectation that it must be completed,
@@ -399,6 +408,9 @@ class IQAssignment(interface.Interface):
 	When an assignment is submitted, each auto-gradeable part is
 	graded. Any remaining parts are left alone; events are emitted to
 	alert the appropriate entity that grading needs to take place.
+
+	Assignments are annotatable: Uses of this include things like references to
+	where assignments are defined in content.
 	"""
 
 	content = schema.Text( title="The content to present to the user, if any." )
@@ -599,4 +611,9 @@ class IQAssignmentSubmission(interface.Interface):
 class IQuestionMap(interface.common.mapping.IReadMapping):
 	"""
 	Something to look questions/question sets up by their IDs.
+
+	.. note:: This is deprecated. We will begin registering
+		questions and question sets as named utilities.
+		We will also begin annotating content units with
+		the questions and question sets they contain.
 	"""

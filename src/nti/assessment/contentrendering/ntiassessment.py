@@ -292,7 +292,7 @@ class naqfreeresponsepart(_AbstractNAQPart):
 
 
 class naqmultiplechoicepart(_AbstractNAQPart):
-	"""
+	r"""
 	A multiple-choice part (usually used as the sole part to a question).
 	It must have a child listing the possible choices; the solutions are collapsed
 	into this child; at least one of them must have a weight equal to 1::
@@ -351,7 +351,7 @@ class naqmultiplechoicepart(_AbstractNAQPart):
 		return res
 
 class naqmultiplechoicemultipleanswerpart(_AbstractNAQPart):
-	"""
+	r"""
 	A multiple-choice / multiple-answer part (usually used as the sole part to a question).
 	It must have a child listing the possible choices; the solutions are collapsed
 	into this child; at least one of them must have a weight equal to 1::.  Further the all
@@ -425,7 +425,7 @@ class naqmultiplechoicemultipleanswerpart(_AbstractNAQPart):
 		return res
 
 class naqfilepart(_AbstractNAQPart):
-	"""
+	r"""
 	A part specifying that the user must upload a file::
 
 	   \begin{naquestion}
@@ -482,7 +482,7 @@ class naqfilepart(_AbstractNAQPart):
 		return res
 
 class naqmatchingpart(_AbstractNAQPart):
-	"""
+	r"""
 	A matching part (usually used as the sole part to a question).
 	It must have two children, one listing the possible labels, with the
 	correct solution's index in brackets, and the other listing the possible
