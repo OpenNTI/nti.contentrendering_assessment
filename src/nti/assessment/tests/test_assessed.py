@@ -96,13 +96,12 @@ class TestAssessedQuestion(TestCase):
 	def test_assess( self ):
 		part = parts.QFreeResponsePart(solutions=(solutions.QFreeResponseSolution(value='correct'),))
 		question = QQuestion( parts=(part,) )
-		question_map = {1: question}
-		component.provideUtility( question_map, provides=interfaces.IQuestionMap )
+		component.provideUtility( question, provides=interfaces.IQuestion,  name="1")
 
-		sub = submission.QuestionSubmission( questionId=1, parts=('correct',) )
+		sub = submission.QuestionSubmission( questionId="1", parts=('correct',) )
 
 		result = interfaces.IQAssessedQuestion( sub )
-		assert_that( result, has_property( 'questionId', 1 ) )
+		assert_that( result, has_property( 'questionId', "1" ) )
 		assert_that( result, has_property( 'parts', contains( assessed.QAssessedPart( submittedResponse='correct', assessedValue=1.0 ) ) ) )
 
 		_check_old_dublin_core( result )
@@ -121,15 +120,19 @@ class TestAssessedQuestionSet(TestCase):
 		question = QQuestion( parts=(part,) )
 		question_set = QQuestionSet( questions=(question,) )
 
-		question_map = {1: question, 2: question_set}
-		component.provideUtility( question_map, provides=interfaces.IQuestionMap )
+		component.provideUtility( question,
+								  provides=interfaces.IQuestion,
+								  name="1" )
+		component.provideUtility( question_set,
+								  provides=interfaces.IQuestionSet,
+								  name="2" )
 
-		sub = submission.QuestionSubmission( questionId=1, parts=('correct',) )
-		set_sub = submission.QuestionSetSubmission( questionSetId=2, questions=(sub,) )
+		sub = submission.QuestionSubmission( questionId="1", parts=('correct',) )
+		set_sub = submission.QuestionSetSubmission( questionSetId="2", questions=(sub,) )
 
 		result = interfaces.IQAssessedQuestionSet( set_sub )
 
-		assert_that( result, has_property( 'questionSetId', 2 ) )
+		assert_that( result, has_property( 'questionSetId', "2" ) )
 		assert_that( result, has_property( 'questions',
 										   contains(
 											   has_property( 'parts', contains( assessed.QAssessedPart( submittedResponse='correct', assessedValue=1.0 ) ) ) ) ) )
@@ -147,22 +150,29 @@ class TestAssessedQuestionSet(TestCase):
 		question.ntiid = 'abc'
 		question_set = QQuestionSet( questions=(question,) )
 
+		component.provideUtility( question,
+								  provides=interfaces.IQuestion,
+								  name='abc')
+		component.provideUtility( question_set,
+								  provides=interfaces.IQuestionSet,
+								  name="2" )
 		# New instance
 		part = parts.QFreeResponsePart(solutions=(solutions.QFreeResponseSolution(value='correct2'),))
 		question = QQuestion( parts=(part,) )
 		question.ntiid = 'abc'
 
+		component.provideUtility( question,
+								  provides=interfaces.IQuestion,
+								  name='abc')
+
 		assert_that( question, is_not( question_set.questions[0] ) )
 
-		question_map = {'abc': question, 2: question_set}
-		component.provideUtility( question_map, provides=interfaces.IQuestionMap )
-
 		sub = submission.QuestionSubmission( questionId='abc', parts=('correct2',) )
-		set_sub = submission.QuestionSetSubmission( questionSetId=2, questions=(sub,) )
+		set_sub = submission.QuestionSetSubmission( questionSetId="2", questions=(sub,) )
 
 		result = interfaces.IQAssessedQuestionSet( set_sub )
 
-		assert_that( result, has_property( 'questionSetId', 2 ) )
+		assert_that( result, has_property( 'questionSetId', "2" ) )
 		assert_that( result, has_property( 'questions',
 										   contains(
 											   has_property( 'parts', contains( assessed.QAssessedPart( submittedResponse='correct2', assessedValue=1.0 ) ) ) ) ) )
@@ -187,16 +197,19 @@ class TestAssessedQuestionSet(TestCase):
 		assert_that( question != question, is_false() )
 		assert_that( question_set != question_set, is_false() )
 
-
-		question_map = {'abc': question, 2: question_set}
-		component.provideUtility( question_map, provides=interfaces.IQuestionMap )
+		component.provideUtility( question,
+								  provides=interfaces.IQuestion,
+								  name="abc" )
+		component.provideUtility( question_set,
+								  provides=interfaces.IQuestionSet,
+								  name="2")
 
 		sub = submission.QuestionSubmission( questionId='abc', parts=('correct',) )
-		set_sub = submission.QuestionSetSubmission( questionSetId=2, questions=(sub,) )
+		set_sub = submission.QuestionSetSubmission( questionSetId="2", questions=(sub,) )
 
 		result = interfaces.IQAssessedQuestionSet( set_sub )
 
-		assert_that( result, has_property( 'questionSetId', 2 ) )
+		assert_that( result, has_property( 'questionSetId', "2" ) )
 		assert_that( result, has_property( 'questions',
 										   contains(
 											   has_property( 'parts', contains( assessed.QAssessedPart( submittedResponse='correct', assessedValue=1.0 ) ) ) ) ) )

@@ -153,21 +153,20 @@ class QAssessedQuestionSet(SchemaConfigured, persistent.Persistent):
 		return hash((self.questionSetId, tuple(self.questions)))
 
 
-def assess_question_submission(submission, questions=None):
+def assess_question_submission(submission, registry=component):
 	"""
 	Assess the given question submission.
 
 	:return: An :class:`.interfaces.IQAssessedQuestion`.
 	:param submission: An :class:`.interfaces.IQuestionSubmission`.
-	:param questions: If given, an :class:`.interfaces.IQuestionMap`. If
-		not given, one will be looked up from the component registry.
-	:raises KeyError: If no question can be found for the submission.
+	:param registry: If given, an :class:`.IComponents`. If
+		not given, the current component registry will be used.
+		Used to look up the question set and question by id.
+	:raises LookupError: If no question can be found for the submission.
 	"""
 
-	if questions is None:
-		questions = component.getUtility(interfaces.IQuestionMap)
-
-	question = questions[submission.questionId]
+	question = component.getUtility(interfaces.IQuestion,
+									name=submission.questionId)
 	if len(question.parts) != len(submission.parts):
 		raise ValueError("Question (%s) and submission (%s) have different numbers of parts." % (len(question.parts), len(submission.parts)))
 
@@ -178,28 +177,28 @@ def assess_question_submission(submission, questions=None):
 
 	return QAssessedQuestion(questionId=submission.questionId, parts=assessed_parts)
 
-def assess_question_set_submission(set_submission, questions=None):
+def assess_question_set_submission(set_submission, registry=component):
 	"""
 	Assess the given question set submission.
 
 	:return: An :class:`.interfaces.IQAssessedQuestionSet`.
 	:param set_submission: An :class:`.interfaces.IQuestionSetSubmission`.
-	:param questions: If given, an :class:`.interfaces.IQuestionMap`. If
-		not given, one will be looked up from the component registry.
-	:raises KeyError: If no question can be found for the submission.
+	:param registry: If given, an :class:`.IComponents`. If
+		not given, the current component registry will be used.
+		Used to look up the question set and question by id.
+	:raises LookupError: If no question can be found for the submission.
 	"""
 
-	if questions is None:
-		questions = component.getUtility(interfaces.IQuestionMap)
-
-	question_set = questions[set_submission.questionSetId]
+	question_set = registry.getUtility(interfaces.IQuestionSet,
+										name=set_submission.questionSetId)
 	# NOTE: At this point we need to decide what to do for missing values
 	# We are currently not really grading them at all, which is what we
 	# did for the old legacy quiz stuff
 
 	assessed = persistent.list.PersistentList()
 	for sub_question in set_submission.questions:
-		question = questions[sub_question.questionId]
+		question = registry.getUtility( interfaces.IQuestion,
+										name=sub_question.questionId )
 		# FIXME: Checking an 'ntiid' property that is not defined here is a hack
 		# because we have an equality bug. It should go away as soon as equality is fixed
 		if question in question_set.questions or getattr(question, 'ntiid', None) in [getattr(q, 'ntiid', None) for q in question_set.questions]:

@@ -608,12 +608,12 @@ class IQAssignmentSubmission(interface.Interface):
 	# It's not always an `Assessed` object, because not all parts will have been
 	# assessed in all cases.
 
-class IQuestionMap(interface.common.mapping.IReadMapping):
-	"""
-	Something to look questions/question sets up by their IDs.
+# class IQuestionMap(interface.common.mapping.IReadMapping):
+# 	"""
+# 	Something to look questions/question sets up by their IDs.
 
-	.. note:: This is deprecated. We will begin registering
-		questions and question sets as named utilities.
-		We will also begin annotating content units with
-		the questions and question sets they contain.
-	"""
+# 	.. note:: This is deprecated. We will begin registering
+# 		questions and question sets as named utilities.
+# 		We will also begin annotating content units with
+# 		the questions and question sets they contain.
+# 	"""
