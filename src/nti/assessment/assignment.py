@@ -15,6 +15,7 @@ logger = __import__('logging').getLogger(__name__)
 import zope.container.contained
 from zope import interface
 from zope.mimetype import interfaces as mime_interfaces
+from zope.annotation.interfaces import IAttributeAnnotatable
 
 from persistent import Persistent # Why are these persistent exactly?
 
@@ -26,7 +27,8 @@ from . import interfaces
 from ._util import superhash
 
 @interface.implementer(interfaces.IQAssignmentPart,
-					   mime_interfaces.IContentTypeAware)
+					   mime_interfaces.IContentTypeAware,
+					   IAttributeAnnotatable)
 class QAssignmentPart(Persistent,
 					  SchemaConfigured,
 					  zope.container.contained.Contained):
@@ -40,7 +42,8 @@ class QAssignmentPart(Persistent,
 	__repr__ = make_repr()
 
 @interface.implementer(interfaces.IQAssignment,
-					   mime_interfaces.IContentTypeAware)
+					   mime_interfaces.IContentTypeAware,
+					   IAttributeAnnotatable)
 class QAssignment(Persistent,
 				  SchemaConfigured,
 				  zope.container.contained.Contained):

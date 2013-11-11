@@ -10,14 +10,17 @@ __docformat__ = "restructuredtext en"
 import zope.container.contained
 from zope import interface
 from zope.mimetype import interfaces as mime_interfaces
-
+from zope.annotation.interfaces import IAttributeAnnotatable
 from persistent import Persistent
 
 from . import interfaces
 from ._util import superhash
 
-@interface.implementer(interfaces.IQuestion, mime_interfaces.IContentTypeAware)
-class QQuestion(Persistent, zope.container.contained.Contained):
+@interface.implementer(interfaces.IQuestion,
+					   mime_interfaces.IContentTypeAware,
+					   IAttributeAnnotatable)
+class QQuestion(Persistent,
+				zope.container.contained.Contained):
 	mime_type = 'application/vnd.nextthought.naquestion'
 
 	content = ''
@@ -39,8 +42,11 @@ class QQuestion(Persistent, zope.container.contained.Contained):
 	def __hash__(self):
 		return 47 + (superhash(self.content) << 2) ^ superhash(self.parts)
 
-@interface.implementer(interfaces.IQuestionSet, mime_interfaces.IContentTypeAware)
-class QQuestionSet(Persistent, zope.container.contained.Contained):
+@interface.implementer(interfaces.IQuestionSet,
+					   mime_interfaces.IContentTypeAware,
+					   IAttributeAnnotatable)
+class QQuestionSet(Persistent,
+				   zope.container.contained.Contained):
 	mime_type = 'application/vnd.nextthought.naquestionset'
 
 	questions = ()
