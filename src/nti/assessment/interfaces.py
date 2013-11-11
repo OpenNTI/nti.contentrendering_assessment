@@ -617,3 +617,13 @@ class IQAssignmentSubmission(interface.Interface):
 # 		We will also begin annotating content units with
 # 		the questions and question sets they contain.
 # 	"""
+
+class IQAssessmentItemContainer(interface.common.sequence.IReadSequence):
+	"""
+	Something that is an unordered bag of assessment items (such as
+	questions, question sets, and assignments).
+
+	This package provides no implementation of this interface. (But
+	something like the content library package may be adaptable to this,
+	typically with annotations).
+	"""
