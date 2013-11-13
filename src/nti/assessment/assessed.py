@@ -165,8 +165,7 @@ def assess_question_submission(submission, registry=component):
 	:raises LookupError: If no question can be found for the submission.
 	"""
 
-	question = component.getUtility(interfaces.IQuestion,
-									name=submission.questionId)
+	question = registry.getUtility(interfaces.IQuestion, name=submission.questionId)
 	if len(question.parts) != len(submission.parts):
 		raise ValueError("Question (%s) and submission (%s) have different numbers of parts." % (len(question.parts), len(submission.parts)))
 
