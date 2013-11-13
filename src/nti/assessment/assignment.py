@@ -64,3 +64,5 @@ class QAssignmentSubmissionPendingAssessment(Persistent,
 	assignmentId = None
 	parts = ()
 	__repr__ = make_repr()
+
+	__external_can_create__ = False

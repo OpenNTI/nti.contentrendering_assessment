@@ -4,10 +4,15 @@ $Id$
 """
 from __future__ import print_function, unicode_literals
 
-from hamcrest import assert_that, has_entry, is_, has_property, contains
+from hamcrest import assert_that
+from hamcrest import has_entry
+from hamcrest import is_
+from hamcrest import has_property
+from hamcrest import contains
 from hamcrest import none
 from hamcrest import is_not
 from hamcrest import has_length
+from hamcrest import has_item
 from unittest import TestCase
 from nti.testing.matchers import is_false
 from nti.testing.matchers import validly_provides, verifiably_provides
@@ -105,6 +110,13 @@ class TestAssessedQuestion(TestCase):
 		assert_that( result, has_property( 'parts', contains( assessed.QAssessedPart( submittedResponse='correct', assessedValue=1.0 ) ) ) )
 
 		_check_old_dublin_core( result )
+
+
+		assert_that( result, externalizes( has_entry( 'parts',
+													  has_item(
+														  has_entry( 'solutions',
+																	 has_item( has_entry( 'value',
+																						  'correct' ))) ) ) ) )
 
 class TestAssessedQuestionSet(TestCase):
 

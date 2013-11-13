@@ -121,6 +121,10 @@
 		modules=".hint .assessed .parts .question .response .solution .submission .assignment"
 		factory_modules=".submission .question"
 		iobase=".externalization._AssessmentInternalObjectIOBase"/>
+	<subscriber
+		factory=".externalization._QAssessedQuestionExplanationSolutionAdder"
+		for=".interfaces.IQAssessedQuestion"
+		provides="nti.externalization.interfaces.IExternalObjectDecorator" />
 
 	<!--
 	File uploads, which are handled manually because
