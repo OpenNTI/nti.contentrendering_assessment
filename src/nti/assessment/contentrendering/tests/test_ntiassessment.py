@@ -3,7 +3,11 @@
 """ """
 from __future__ import print_function, unicode_literals
 import os
-from hamcrest import assert_that, is_, has_length, contains_string
+from hamcrest import assert_that
+from hamcrest import is_
+from hamcrest import has_length
+from hamcrest import contains_string
+from hamcrest import same_instance
 from hamcrest import has_property
 from hamcrest import contains, has_item
 from hamcrest import has_entry
@@ -11,6 +15,7 @@ from hamcrest import is_not as does_not
 import unittest
 
 import anyjson as json
+from datetime import datetime
 
 from ..ntiassessment import naquestion, naquestionset
 from ..interfaces import IAssessmentExtractor
@@ -19,6 +24,7 @@ from nti.contentrendering.tests import simpleLatexDocumentText
 from nti.contentrendering.tests import RenderContext
 
 import nti.testing.base
+from nti.testing.matchers import is_true
 from nti.externalization.tests import externalizes
 from nti.testing.matchers import verifiably_provides
 
@@ -143,6 +149,63 @@ def test_question_set_macros():
 	qset_object = dom.getElementsByTagName( 'naquestionset' )[0].assessment_object()
 	assert_that( qset_object.questions, has_length( 1 ) )
 	assert_that( qset_object.ntiid, contains_string( 'set' ) )
+
+def test_assignment_macros():
+	example = br"""
+	\begin{naquestion}[individual=true]
+		\label{question}
+		Arbitrary content goes here.
+		\begin{naqsymmathpart}
+		Arbitrary content goes here.
+		\begin{naqsolutions}
+			\naqsolution $420$
+			\naqsolution $\frac{5}{8}$
+			\naqsolution $\left(3x+2\right)\left(2x+3\right)$
+			\naqsolution $\surd2$
+			\naqsolution $\frac{\surd\left(8x+5\right)\left(12x+12\right)}{\approx152318}+1204$
+		\end{naqsolutions}
+		\begin{naqhints}
+			\naqhint Some hint
+		\end{naqhints}
+		\end{naqsymmathpart}
+	\end{naquestion}
+
+	\begin{naquestionset}
+		\label{set}
+		\naquestionref{question}
+	\end{naquestionset}
+
+	\begin{naassignment}[not_before_date=2014-01-13]
+		\label{assignment}
+		Assignment content.
+		\begin{naassignmentpart}[auto_grade=true]{set}
+			Some content.
+		\end{naassignmentpart}
+	\end{naassignment}
+
+	"""
+
+	dom = _buildDomFromString( _simpleLatexDocument( (example,) ) )
+	assert_that( dom.getElementsByTagName('naquestion'), has_length( 1 ) )
+	assert_that( dom.getElementsByTagName('naquestion')[0], is_( naquestion ) )
+
+	assert_that( dom.getElementsByTagName('naquestionset'), has_length( 1 ) )
+	assert_that( dom.getElementsByTagName('naquestionset')[0], is_( naquestionset ) )
+
+	qset_object = dom.getElementsByTagName( 'naquestionset' )[0].assessment_object()
+	assert_that( qset_object.questions, has_length( 1 ) )
+	assert_that( qset_object.ntiid, contains_string( 'set' ) )
+
+	asg_object = dom.getElementsByTagName( 'naassignment' )[0].assessment_object()
+	assert_that( asg_object, has_property( 'parts', has_length( 1 )))
+	assert_that( asg_object.parts[0], has_property( 'question_set', same_instance(qset_object)))
+	assert_that( asg_object.parts[0], has_property( 'auto_grade', is_true()))
+	assert_that( asg_object.parts[0], has_property( 'content', 'Some content.'))
+	assert_that( asg_object, has_property('content', "Assignment content."))
+	assert_that( asg_object.ntiid, contains_string('assignment'))
+
+	assert_that( asg_object, has_property( 'available_for_submission_beginning',
+										   datetime( 2014, 01, 13, 0, 0)))
 
 def test_content_adaptation():
 	doc = br"""

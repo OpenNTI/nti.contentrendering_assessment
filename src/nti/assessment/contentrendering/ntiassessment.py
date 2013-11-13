@@ -40,6 +40,12 @@ Example::
 		\end{naqsymmathpart}
 	\end{naquestion}
 
+The TeX macro objects that correspond to \"top-level\" assessment objects
+(those defined in :mod:`nti.assessment.interfaces`) will implement a method
+called ``assessment_object``. This method can be called *after* the rendering
+process is complete to gain the desired object. This object can then be
+externalized or otherwise processed; this object is not itself part of
+the TeX DOM.
 
 $Id$
 """
@@ -61,12 +67,18 @@ from zope import interface
 from zope import schema
 from zope.mimetype.interfaces import mimeTypeConstraint
 from zope.cachedescriptors.property import readproperty
+from zope.cachedescriptors.method import cachedIn
+
+from persistent.list import PersistentList
 
 from plasTeX import Base
 from plasTeX.interfaces import IOptionAwarePythonPackage
 from plasTeX.Base import Crossref
 
-from nti.assessment import interfaces as as_interfaces, parts, question
+from nti.assessment import interfaces as as_interfaces
+from nti.assessment import parts
+from nti.assessment import question
+from nti.assessment import assignment
 
 from nti.contentfragments import interfaces as cfg_interfaces
 
@@ -76,11 +88,7 @@ from nti.contentrendering.plastexpackages.ntilatexmacros import ntiincludevideo
 from nti.contentrendering.plastexpackages._util import LocalContentMixin as _BaseLocalContentMixin
 
 import os
-#: The directory in which to find our templates.
-#: Used by plastext because we implement IPythonPackage
-template_directory = os.path.abspath( os.path.dirname(__file__) )
-#: The directory containing our style files
-texinputs_directory = os.path.abspath( os.path.dirname(__file__) )
+import isodate
 
 
 class _LocalContentMixin(_BaseLocalContentMixin):
@@ -172,9 +180,11 @@ class naqsolution(Base.List.item):
 		if units:
 			return ','.join( units )
 _LocalContentMixin._asm_ignorable_renderables += (naqsolution,)
+
 class naqsolexplanation(_LocalContentMixin, Base.Environment):
 	pass
 _LocalContentMixin._asm_ignorable_renderables += (naqsolexplanation,)
+
 class _AbstractNAQPart(_LocalContentMixin,Base.Environment):
 
 	#: Defines the type of part this maps too
@@ -187,6 +197,12 @@ class _AbstractNAQPart(_LocalContentMixin,Base.Environment):
 	hint_interface = as_interfaces.IQHTMLHint
 
 	def _asm_solutions(self):
+		"""
+		Returns a list of solutions (of the type identified in ``soln_interface``).
+		This implementation investigates the child nodes of this object; subclasses
+		may do something different.
+
+		"""
 		solutions = []
 		solution_els = self.getElementsByTagName( 'naqsolution' )
 		for solution_el in solution_els:
@@ -227,6 +243,11 @@ class _AbstractNAQPart(_LocalContentMixin,Base.Environment):
 		return cfg_interfaces.ILatexContentFragment( '' )
 
 	def _asm_hints(self):
+		"""
+		Collects the ``naqhint`` tags found beneath this element,
+		converts them to the type of object identified by ``hint_interface``,
+		and returns them in a list. For use by :meth:`assessment_object`
+		"""
 		hints = []
 		hint_els = self.getElementsByTagName( 'naqhint' )
 		for hint_el in hint_els:
@@ -236,8 +257,14 @@ class _AbstractNAQPart(_LocalContentMixin,Base.Environment):
 		return hints
 
 	def _asm_object_kwargs(self):
+		"""
+		Subclasses may override this to return a dictionary of keyword
+		arguments to pass to ``part_factory`` when creating
+		the corresponding assessment object.
+		"""
 		return {}
 
+	@cachedIn('_v_assessment_object')
 	def assessment_object( self ):
 		# Be careful to turn textContent into plain unicode objects, not
 		# plastex Text subclasses, which are also expensive nodes.
@@ -266,6 +293,7 @@ class _AbstractNAQPart(_LocalContentMixin,Base.Environment):
 			unicode(x)
 
 _LocalContentMixin._asm_ignorable_renderables += (_AbstractNAQPart,)
+
 class naqnumericmathpart(_AbstractNAQPart):
 	"""
 	Solutions are treated as numbers for the purposes of grading.
@@ -338,7 +366,7 @@ class naqmultiplechoicepart(_AbstractNAQPart):
 
 		# Tranform the implicit solutions into explicit 0-based solutions
 		_naqsolns = self.ownerDocument.createElement( 'naqsolutions' )
-		_naqsolns.macroMode = _naqsolns.MODE_BEGIN
+		_naqsolns.macroMode = self.MODE_BEGIN
 		for i, _naqchoice in enumerate(_naqchoices):
 			if _naqchoice.attributes['weight']:
 				_naqsoln = self.ownerDocument.createElement( 'naqsolution' )
@@ -621,6 +649,7 @@ class naquestion(_LocalContentMixin,Base.Environment,plastexids.NTIIDMixin):
 	# id property, which in turn is used as part of the NTIID (when no NTIID is set explicitly)
 	counter = 'naquestion'
 	blockType = True
+
 	_ntiid_cache_map_name = '_naquestion_ntiid_map'
 	_ntiid_allow_missing_title = True
 	_ntiid_suffix = 'naq.'
@@ -651,6 +680,7 @@ class naquestion(_LocalContentMixin,Base.Environment,plastexids.NTIIDMixin):
 	def _asm_question_parts(self):
 		return [x.assessment_object() for x in self if hasattr(x,'assessment_object')]
 
+	@cachedIn('_v_assessment_object')
 	def assessment_object(self):
 		result = question.QQuestion( content=self._asm_local_content,
 									 parts=self._asm_question_parts())
@@ -663,9 +693,28 @@ class naquestion(_LocalContentMixin,Base.Environment,plastexids.NTIIDMixin):
 class naquestionref(Crossref.ref):
 	pass
 
-from persistent.list import PersistentList
+
 @interface.implementer(crd_interfaces.IEmbeddedContainer)
 class naquestionset(Base.List, plastexids.NTIIDMixin):
+	r"""
+	Question sets are a list of questions that should be submitted
+	together. For authoring, questions are included in a question
+	set by reference, and a question set can be composed of any
+	other labeled questions found within the same processing unit.
+
+	Example::
+
+		\begin{naquestion}[individual=true]
+			\label{question}
+			...
+		\end{question}
+
+		\begin{naquestionset}
+			\label{set}
+			\naquestionref{question}
+		\end{naquestionset}
+
+	"""
 
 	# Only classes with counters can be labeled, and \label sets the
 	# id property, which in turn is used as part of the NTIID (when no NTIID is set explicitly)
@@ -679,6 +728,7 @@ class naquestionset(Base.List, plastexids.NTIIDMixin):
 	#: From IEmbeddedContainer
 	mimeType = "application/vnd.nextthought.naquestionset"
 
+	@cachedIn('_v_assessment_object')
 	def assessment_object(self):
 		questions = [qref.idref['label'].assessment_object() for qref in self.getElementsByTagName( 'naquestionref' )]
 		questions = PersistentList( questions )
@@ -689,6 +739,100 @@ class naquestionset(Base.List, plastexids.NTIIDMixin):
 		result.ntiid = self.ntiid # copy the id
 		return result
 
+###
+# Assignments
+###
+
+class naquestionsetref(Crossref.ref):
+	"A reference to the label of a question set."
+
+class naassignmentpart(_LocalContentMixin,
+					   Base.Environment):
+	r"""
+	One part of an assignment. These are always nested inside
+	an :class:`naassignment` environment.
+
+	Example::
+		\begin{naquestionset}
+			\label{set}
+			\naquestionref{question}
+		\end{naquestionset}
+
+		\begin{naasignmentpart}[auto_grade=true]{set}
+			Local content
+		\end{naassignmentpart}
+
+	"""
+
+	args = "[options:dict:str] question_set:idref"
+
+
+	def assessment_object(self):
+		question_set = self.idref['question_set'].assessment_object()
+		return assignment.QAssignmentPart( content=self._asm_local_content,
+										   question_set=question_set,
+										   auto_grade=self.attributes.get('options',{}).get('auto_grade') == 'true' )
+
+class naassignment(_LocalContentMixin,
+				   Base.Environment,
+				   plastexids.NTIIDMixin):
+	r"""
+	Assignments specify some options such as availability dates,
+	some local content, and finish up nesting the parts
+	of the assignment as ``naassignmentpart`` elements.
+
+	Example::
+
+		\begin{naassignment}[not_before_date=2014-01-13]
+			\label{assignment}
+			Some introductory content.
+
+			\begin{naasignmentpart}[auto_grade=true]{set}
+				Local content
+			\end{naassignmentpart}
+		\end{naquestionset}
+
+	"""
+
+	args = "[options:dict:str]"
+
+	# Only classes with counters can be labeled, and \label sets the
+	# id property, which in turn is used as part of the NTIID (when no
+	# NTIID is set explicitly)
+	counter = 'naaassignment'
+	_ntiid_cache_map_name = '_naassignment_ntiid_map'
+	_ntiid_allow_missing_title = True
+	_ntiid_suffix = 'naq.asg.'
+	_ntiid_title_attr_name = 'ref' # Use our counter to generate IDs if no ID is given
+	_ntiid_type = as_interfaces.NTIID_TYPE
+
+	@cachedIn('_v_assessment_object')
+	def assessment_object(self):
+		# FIXME: We want these to be relative, not absolute, so they
+		# can be made absolute based on when the course begins.
+		# How to represent that? Probably need some schema transformation
+		# step in nti.externalization? Or some auixilliary data fields?
+		def _parse(key):
+			if key in self.attributes.get('options') or ():
+				val = self.attributes['options'][key]
+				if 'T' not in val:
+					# If they give no timestamp, make it midnight
+					val += 'T00:00'
+				return isodate.parse_datetime(val)
+
+		not_before = _parse('not_before_date')
+		not_after = _parse('not_after_date')
+
+		result = assignment.QAssignment( content=self._asm_local_content,
+										 available_for_submission_beginning=not_before,
+										 available_for_submission_ending=not_after,
+										 parts=[part.assessment_object() for part in self.getElementsByTagName('naassignmentpart')])
+		errors = schema.getValidationErrors( as_interfaces.IQAssignment, result )
+		if errors: # pragma: no cover
+			raise errors[0][1]
+		result.ntiid = self.ntiid
+		return result
+
 def ProcessOptions( options, document ):
 	# We are not setting up any global state here,
 	# only making changes to the document, so its
@@ -696,5 +840,13 @@ def ProcessOptions( options, document ):
 	document.context.newcounter( 'naqsolutionnum' )
 	document.context.newcounter( 'naquestion' )
 	document.context.newcounter( 'naquestionset' )
+	document.context.newcounter( 'naassignment' )
+
+#: The directory in which to find our templates.
+#: Used by plasTeX because we implement IPythonPackage
+template_directory = os.path.abspath( os.path.dirname(__file__) )
+
+#: The directory containing our style files
+texinputs_directory = os.path.abspath( os.path.dirname(__file__) )
 
 interface.moduleProvides(IOptionAwarePythonPackage)
