@@ -376,12 +376,13 @@ class IQAssignmentPart(interface.Interface):
 	One portion of an assignment.
 	"""
 
-	content = schema.Text( title="Additional content for the question set in the context of an assignment.")
+	content = schema.Text( title="Additional content for the question set in the context of an assignment.",
+						   default='')
 
 	question_set = schema.Object(IQuestionSet,
 								 title="The question set to submit with this part")
 	auto_grade = schema.Bool(title="Should this part be run through the grading machinery?",
-							 default=True)
+							 default=False)
 
 class IQAssignment(IAnnotatable):
 	"""

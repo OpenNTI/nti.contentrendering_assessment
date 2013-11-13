@@ -22,6 +22,7 @@ from persistent import Persistent # Why are these persistent exactly?
 from dm.zope.schema.schema import SchemaConfigured
 
 from nti.externalization.externalization import make_repr
+from nti.utils.schema import createDirectFieldProperties
 
 from . import interfaces
 from ._util import superhash
@@ -32,12 +33,8 @@ from ._util import superhash
 class QAssignmentPart(Persistent,
 					  SchemaConfigured,
 					  zope.container.contained.Contained):
-
+	createDirectFieldProperties(interfaces.IQAssignmentPart)
 	mime_type = 'application/vnd.nextthought.naassignmentpart'
-
-	auto_grade = True
-	question_set = None
-	content = ''
 
 	__repr__ = make_repr()
 
