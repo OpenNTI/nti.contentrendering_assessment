@@ -608,15 +608,18 @@ class IQAssignmentSubmission(interface.Interface):
 	# It's not always an `Assessed` object, because not all parts will have been
 	# assessed in all cases.
 
-# class IQuestionMap(interface.common.mapping.IReadMapping):
-# 	"""
-# 	Something to look questions/question sets up by their IDs.
+class IQAssignmentSubmissionPendingAssessment(interface.Interface):
+	"""
+	A submission for an assignment that cannot be completely assessed;
+	complete assessment is pending. This is typically the step after
+	submission and before completion.
+	"""
 
-# 	.. note:: This is deprecated. We will begin registering
-# 		questions and question sets as named utilities.
-# 		We will also begin annotating content units with
-# 		the questions and question sets they contain.
-# 	"""
+	assignmentId = schema.TextLine(title="Identifier of the assignment being responded to.")
+	parts = TypedIterable( title="Either an assessed question set, or the original submission",
+						   value_type=schema.Variant(
+							   (schema.Object(IQAssessedQuestionSet),
+								schema.Object(IQuestionSetSubmission))) )
 
 class IQAssessmentItemContainer(interface.common.sequence.IReadSequence):
 	"""

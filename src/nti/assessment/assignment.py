@@ -51,3 +51,16 @@ class QAssignment(Persistent,
 
 	content = ''
 	__repr__ = make_repr()
+
+@interface.implementer(interfaces.IQAssignmentSubmissionPendingAssessment,
+					   mime_interfaces.IContentTypeAware,
+					   IAttributeAnnotatable)
+class QAssignmentSubmissionPendingAssessment(Persistent,
+											 SchemaConfigured,
+											 zope.container.contained.Contained):
+	# TODO: This object may need to be  nti_interfaces.IContained, nti_interfaces.ICreated, nti_interfaces.ILastModified
+	mime_type = 'application/vnd.nextthought.naassignmentsubmissionpendingassessment'
+
+	assignmentId = None
+	parts = ()
+	__repr__ = make_repr()

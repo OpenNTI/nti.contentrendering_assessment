@@ -55,3 +55,8 @@ class TestAssignment(TestCase):
 
 		assert_that( assignment.QAssignment(parts=[part]),
 					 validly_provides(interfaces.IQAssignment) )
+
+		assert_that( assignment.QAssignmentSubmissionPendingAssessment(),
+					 verifiably_provides( interfaces.IQAssignmentSubmissionPendingAssessment ))
+		assert_that( assignment.QAssignmentSubmissionPendingAssessment(),
+					 externalizes( has_entry( 'Class', 'AssignmentSubmissionPendingAssessment' )))

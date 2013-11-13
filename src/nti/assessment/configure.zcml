@@ -111,7 +111,9 @@
 	<!-- Externalization -->
 	<include package="nti.externalization" file="meta.zcml" />
 	<ext:registerAutoPackageIO
-		root_interfaces=".interfaces.IQPart .interfaces.IQuestion .interfaces.IQSolution .interfaces.IQAssignment .interfaces.IQAssignmentPart
+		root_interfaces=".interfaces.IQPart .interfaces.IQuestion .interfaces.IQSolution
+						 .interfaces.IQAssignment
+						 .interfaces.IQAssignmentPart .interfaces.IQAssignmentSubmissionPendingAssessment
 						 .interfaces.IQuestionSubmission .interfaces.IQAssessedPart .interfaces.IQAssessedQuestion
 						 .interfaces.IQuestionSetSubmission .interfaces.IQAssessedQuestionSet
 						 .interfaces.IQAssignmentSubmission
