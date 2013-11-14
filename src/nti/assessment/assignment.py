@@ -19,10 +19,12 @@ from zope.annotation.interfaces import IAttributeAnnotatable
 
 from persistent import Persistent # Why are these persistent exactly?
 
-from dm.zope.schema.schema import SchemaConfigured
-
 from nti.externalization.externalization import make_repr
+
+from nti.dataserver.datastructures import PersistentCreatedModDateTrackingObject
+
 from nti.utils.schema import createDirectFieldProperties
+from nti.utils.schema import SchemaConfigured
 
 from . import interfaces
 from ._util import superhash
@@ -52,10 +54,10 @@ class QAssignment(Persistent,
 @interface.implementer(interfaces.IQAssignmentSubmissionPendingAssessment,
 					   mime_interfaces.IContentTypeAware,
 					   IAttributeAnnotatable)
-class QAssignmentSubmissionPendingAssessment(Persistent,
+class QAssignmentSubmissionPendingAssessment(PersistentCreatedModDateTrackingObject,
 											 SchemaConfigured,
 											 zope.container.contained.Contained):
-	# TODO: This object may need to be  nti_interfaces.IContained, nti_interfaces.ICreated, nti_interfaces.ILastModified
+	# TODO: This object may need to be  nti_interfaces.IContained
 	mime_type = 'application/vnd.nextthought.naassignmentsubmissionpendingassessment'
 
 	assignmentId = None

@@ -10,7 +10,8 @@ __docformat__ = "restructuredtext en"
 
 from zope import interface
 
-from dm.zope.schema.schema import SchemaConfigured
+from nti.utils.schema import SchemaConfigured
+from nti.dataserver.datastructures import CreatedModDateTrackingObject
 
 from nti.externalization.externalization import make_repr
 
@@ -31,7 +32,7 @@ class QuestionSetSubmission(SchemaConfigured):
 
 
 @interface.implementer(interfaces.IQAssignmentSubmission)
-class AssignmentSubmission(SchemaConfigured):
+class AssignmentSubmission(CreatedModDateTrackingObject,SchemaConfigured):
 
 	assignmentId = None
 	parts = ()
