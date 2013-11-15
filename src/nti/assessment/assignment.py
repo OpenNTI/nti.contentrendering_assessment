@@ -27,7 +27,6 @@ from nti.utils.schema import createDirectFieldProperties
 from nti.utils.schema import SchemaConfigured
 
 from . import interfaces
-from ._util import superhash
 
 @interface.implementer(interfaces.IQAssignmentPart,
 					   mime_interfaces.IContentTypeAware,

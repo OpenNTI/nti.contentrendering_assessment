@@ -3,8 +3,10 @@
 """
 $Id$
 """
-from __future__ import unicode_literals, print_function, absolute_import
+from __future__ import unicode_literals, print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
+
+logger = __import__('logging').getLogger(__name__)
 
 _marker = object()
 
@@ -12,8 +14,8 @@ class TrivialValuedMixin(object):
 	value = None
 
 	def __init__(self, *args, **kwargs):
-		# The contents of ``self.value`` come from either the first arg (if positional args are given) or the kwarg named
-		# such.
+		# The contents of ``self.value`` come from either the first arg
+		# (if positional args are given) or the kwarg name such.
 
 		if args:
 			value = args[0]

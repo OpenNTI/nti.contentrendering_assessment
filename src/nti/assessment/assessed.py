@@ -5,18 +5,21 @@ Having to do with submitting external data for grading.
 
 $Id$
 """
-from __future__ import unicode_literals, print_function, absolute_import
+from __future__ import unicode_literals, print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
 from zope import component
+
 import persistent
-import persistent.list
+from persistent.list import PersistentList
+
+from nti.externalization.externalization import make_repr
 
 from nti.utils.schema import PermissiveSchemaConfigured as SchemaConfigured
-from nti.externalization.externalization import make_repr
+
 # EWW...but we need to be IContained in order to be stored
 # in container data structures.
 # We also want to be ILastModified
@@ -169,7 +172,7 @@ def assess_question_submission(submission, registry=component):
 	if len(question.parts) != len(submission.parts):
 		raise ValueError("Question (%s) and submission (%s) have different numbers of parts." % (len(question.parts), len(submission.parts)))
 
-	assessed_parts = persistent.list.PersistentList()
+	assessed_parts = PersistentList()
 	for sub_part, q_part in zip(submission.parts, question.parts):
 		grade = q_part.grade(sub_part)
 		assessed_parts.append(QAssessedPart(submittedResponse=sub_part, assessedValue=grade))
@@ -194,7 +197,7 @@ def assess_question_set_submission(set_submission, registry=component):
 	# We are currently not really grading them at all, which is what we
 	# did for the old legacy quiz stuff
 
-	assessed = persistent.list.PersistentList()
+	assessed = PersistentList()
 	for sub_question in set_submission.questions:
 		question = registry.getUtility( interfaces.IQuestion,
 										name=sub_question.questionId )
