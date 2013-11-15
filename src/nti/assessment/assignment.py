@@ -25,6 +25,7 @@ from nti.dataserver.datastructures import PersistentCreatedModDateTrackingObject
 
 from nti.utils.schema import createDirectFieldProperties
 from nti.utils.schema import SchemaConfigured
+from nti.utils.schema import AdaptingFieldProperty
 
 from . import interfaces
 
@@ -34,7 +35,9 @@ from . import interfaces
 class QAssignmentPart(Persistent,
 					  SchemaConfigured,
 					  zope.container.contained.Contained):
+	title = AdaptingFieldProperty(interfaces.IQAssignmentPart['title'])
 	createDirectFieldProperties(interfaces.IQAssignmentPart)
+
 	mime_type = 'application/vnd.nextthought.naassignmentpart'
 
 	__repr__ = make_repr()
@@ -45,9 +48,12 @@ class QAssignmentPart(Persistent,
 class QAssignment(Persistent,
 				  SchemaConfigured,
 				  zope.container.contained.Contained):
+
+	title = AdaptingFieldProperty(interfaces.IQAssignment['title'])
+	createDirectFieldProperties(interfaces.IQAssignment)
+
 	mime_type = 'application/vnd.nextthought.naassignment'
 
-	content = ''
 	__repr__ = make_repr()
 
 @interface.implementer(interfaces.IQAssignmentSubmissionPendingAssessment,

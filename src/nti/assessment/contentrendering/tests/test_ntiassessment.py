@@ -175,10 +175,10 @@ def test_assignment_macros():
 		\naquestionref{question}
 	\end{naquestionset}
 
-	\begin{naassignment}[not_before_date=2014-01-13]
+	\begin{naassignment}[not_before_date=2014-01-13]<Main Title>
 		\label{assignment}
 		Assignment content.
-		\begin{naassignmentpart}[auto_grade=true]{set}
+		\begin{naassignmentpart}[auto_grade=true]<Part Title>{set}
 			Some content.
 		\end{naassignmentpart}
 	\end{naassignment}
@@ -201,9 +201,10 @@ def test_assignment_macros():
 	assert_that( asg_object.parts[0], has_property( 'question_set', same_instance(qset_object)))
 	assert_that( asg_object.parts[0], has_property( 'auto_grade', is_true()))
 	assert_that( asg_object.parts[0], has_property( 'content', 'Some content.'))
+	assert_that( asg_object.parts[0], has_property( 'title', 'Part Title'))
 	assert_that( asg_object, has_property('content', "Assignment content."))
 	assert_that( asg_object.ntiid, contains_string('assignment'))
-
+	assert_that( asg_object, has_property('title', 'Main Title'))
 	assert_that( asg_object, has_property( 'available_for_submission_beginning',
 										   datetime( 2014, 01, 13, 0, 0)))
 

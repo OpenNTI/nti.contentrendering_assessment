@@ -764,14 +764,15 @@ class naassignmentpart(_LocalContentMixin,
 
 	"""
 
-	args = "[options:dict:str] question_set:idref"
+	args = "[options:dict:str] <title:str> question_set:idref"
 
 
 	def assessment_object(self):
 		question_set = self.idref['question_set'].assessment_object()
 		return assignment.QAssignmentPart( content=self._asm_local_content,
 										   question_set=question_set,
-										   auto_grade=self.attributes.get('options',{}).get('auto_grade') == 'true' )
+										   auto_grade=self.attributes.get('options',{}).get('auto_grade') == 'true',
+										   title=self.attributes.get('title'))
 
 class naassignment(_LocalContentMixin,
 				   Base.Environment,
@@ -783,18 +784,18 @@ class naassignment(_LocalContentMixin,
 
 	Example::
 
-		\begin{naassignment}[not_before_date=2014-01-13]
+		\begin{naassignment}[not_before_date=2014-01-13]<Homework>
 			\label{assignment}
 			Some introductory content.
 
-			\begin{naasignmentpart}[auto_grade=true]{set}
+			\begin{naasignmentpart}[auto_grade=true]{set}<Easy Part>
 				Local content
 			\end{naassignmentpart}
 		\end{naquestionset}
 
 	"""
 
-	args = "[options:dict:str]"
+	args = "[options:dict:str] <title:str>"
 
 	# Only classes with counters can be labeled, and \label sets the
 	# id property, which in turn is used as part of the NTIID (when no
@@ -826,7 +827,8 @@ class naassignment(_LocalContentMixin,
 		result = assignment.QAssignment( content=self._asm_local_content,
 										 available_for_submission_beginning=not_before,
 										 available_for_submission_ending=not_after,
-										 parts=[part.assessment_object() for part in self.getElementsByTagName('naassignmentpart')])
+										 parts=[part.assessment_object() for part in self.getElementsByTagName('naassignmentpart')],
+										 title=self.attributes.get('title'))
 		errors = schema.getValidationErrors( as_interfaces.IQAssignment, result )
 		if errors: # pragma: no cover
 			raise errors[0][1]

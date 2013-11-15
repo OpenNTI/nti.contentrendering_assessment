@@ -11,15 +11,25 @@ from zope.mimetype.interfaces import mimeTypeConstraint
 
 from zope.annotation.interfaces import IAnnotatable
 
-from nti.utils import schema
+from nti.utils.schema import Bool
+from nti.utils.schema import Datetime
+from nti.utils.schema import Dict
+from nti.utils.schema import Float
+from nti.utils.schema import IndexedIterable
+from nti.utils.schema import Int
+from nti.utils.schema import List
+from nti.utils.schema import Object
+from nti.utils.schema import ValidText as Text
+from nti.utils.schema import ValidTextLine as TextLine
+from nti.utils.schema import Variant
 
 NTIID_TYPE = 'NAQ'
-
-TypedIterable = schema.IndexedIterable
 
 from nti.contentfragments.schema import LatexFragmentTextLine as _LatexTextLine
 from nti.contentfragments.schema import HTMLContentFragment as _HTMLContentFragment
 from nti.contentfragments.schema import TextUnicodeContentFragment as _ContentFragment
+
+from nti.dataserver.interfaces import ITitledContent
 
 from nti.monkey import plonefile_zopefile_patch_on_import
 plonefile_zopefile_patch_on_import.patch()
@@ -48,14 +58,14 @@ class IQHTMLHint(IQHint):
 
 class IQSolution(interface.Interface):
 
-	weight = schema.Float( title="The relative correctness of this solution, from 0 to 1",
-						   description="""If a question has multiple possible solutions, some may
-						   be more right than others. This is captured by the weight field. If there is only
-						   one right answer, then it has a weight of 1.0.
-						   """,
-						   min=0.0,
-						   max=1.0,
-						   default=1.0 )
+	weight = Float( title="The relative correctness of this solution, from 0 to 1",
+					description="""If a question has multiple possible solutions, some may
+					be more right than others. This is captured by the weight field. If there is only
+					one right answer, then it has a weight of 1.0.
+					""",
+					min=0.0,
+					max=1.0,
+					default=1.0 )
 
 # It seems like the concepts of domain and range may come into play here,
 # somewhere
@@ -67,11 +77,11 @@ class IQPart(interface.Interface):
 	"""
 
 	content = _ContentFragment( title="The content to present to the user for this portion, if any." )
-	hints = TypedIterable( title="Any hints that pertain to this part",
-						   value_type=schema.Object(IQHint, title="A hint for the part") )
-	solutions = TypedIterable( title="Acceptable solutions for this question part in no particular order.",
-								description="All solutions must be of the same type, and there must be at least one.",
-								value_type=schema.Object(IQSolution, title="A solution for this part")	)
+	hints = IndexedIterable( title="Any hints that pertain to this part",
+							 value_type=Object(IQHint, title="A hint for the part") )
+	solutions = IndexedIterable( title="Acceptable solutions for this question part in no particular order.",
+								 description="All solutions must be of the same type, and there must be at least one.",
+								 value_type=Object(IQSolution, title="A solution for this part")	)
 	explanation = _ContentFragment( title="An explanation of how the solution is arrived at.",
 									default='' )
 
@@ -114,10 +124,10 @@ class IQMultiValuedSolution(IQSolution):
 	"""
 	A solution consisting of a set of values.
 	"""
-	value = schema.List( title="The correct answer selections",
-						 description="The correct answer as a tuple of items which are a zero-based index into the choices list.",
-						 min_length=0,
-						 value_type=schema.TextLine( title="The value" ) )
+	value = List( title="The correct answer selections",
+				  description="The correct answer as a tuple of items which are a zero-based index into the choices list.",
+				  min_length=0,
+				  value_type=TextLine( title="The value" ) )
 
 class IQMathSolution(IQSolution):
 	"""
@@ -125,22 +135,22 @@ class IQMathSolution(IQSolution):
 	specialized.
 	"""
 
-	allowed_units = TypedIterable( title="Strings naming unit suffixes",
-								 description="""
-									Numbers or expressions may have units. Sometimes the correct
-									answer depends on the correct unit being applied; sometimes the unit is optional,
-									and sometimes there must not be a unit (it is a dimensionless quantity).
+	allowed_units = IndexedIterable( title="Strings naming unit suffixes",
+									 description="""
+									 Numbers or expressions may have units. Sometimes the correct
+									 answer depends on the correct unit being applied; sometimes the unit is optional,
+									 and sometimes there must not be a unit (it is a dimensionless quantity).
 
-									If this attribute is ``None`` (the default) no special handling of units
-									is attempted.
+									 If this attribute is ``None`` (the default) no special handling of units
+									 is attempted.
 
-									If this attribute is an empty sequence, no units are accepted.
+									 If this attribute is an empty sequence, no units are accepted.
 
-									If this attribute consists of one or more strings, those are units to accept.
-									Include the empty string (last) to make units optional.""",
-								min_length=0,
-								required=False,
-								value_type=schema.TextLine( title="The unit" ) )
+									 If this attribute consists of one or more strings, those are units to accept.
+									 Include the empty string (last) to make units optional.""",
+									 min_length=0,
+									 required=False,
+									 value_type=TextLine( title="The unit" ) )
 
 class IQNumericMathSolution(IQMathSolution,IQSingleValuedSolution):
 	"""
@@ -148,7 +158,7 @@ class IQNumericMathSolution(IQMathSolution,IQSingleValuedSolution):
 	should be graded according to numeric equivalence.
 	"""
 
-	value = schema.Float( title="The correct numeric answer; really an arbitrary number" )
+	value = Float( title="The correct numeric answer; really an arbitrary number" )
 
 class IQSymbolicMathSolution(IQMathSolution):
 	"""
@@ -211,14 +221,14 @@ class IQMultipleChoicePart(IQPart):
 	of alternatives.
 	"""
 
-	choices = schema.List( title="The choice strings to present to the user.",
-						   min_length=1,
-						   description="""Presentation order may matter, hence the list. But for grading purposes,
-						   the order does not matter and simple existence within the set is sufficient.""",
-						   value_type=_ContentFragment( title="A rendered value" ) )
-	solutions = TypedIterable( title="The multiple-choice solutions",
-							   min_length=1,
-							   value_type=schema.Object( IQMultipleChoiceSolution, title="Multiple choice solution" ) )
+	choices = List( title="The choice strings to present to the user.",
+					min_length=1,
+					description="""Presentation order may matter, hence the list. But for grading purposes,
+					the order does not matter and simple existence within the set is sufficient.""",
+					value_type=_ContentFragment( title="A rendered value" ) )
+	solutions = IndexedIterable( title="The multiple-choice solutions",
+								 min_length=1,
+								 value_type=Object( IQMultipleChoiceSolution, title="Multiple choice solution" ) )
 
 class IQMultipleChoicePartGrader(IQPartGrader):
 	"""
@@ -233,11 +243,11 @@ class IQMultipleChoiceMultipleAnswerSolution(IQSolution,IQMultiValuedSolution):
 	the options presented. These will typically be used in isolation as a single part.
 	"""
 
-	value = schema.List( title="The correct answer selections",
-			     description="The correct answer as a tuple of items which are a zero-based index into the choices list.",
-			     min_length=1,
-			     value_type=schema.Int( title="The value",
-						    min=0) )
+	value = List( title="The correct answer selections",
+				  description="The correct answer as a tuple of items which are a zero-based index into the choices list.",
+				  min_length=1,
+				  value_type=Int( title="The value",
+								  min=0) )
 
 
 class IQMultipleChoiceMultipleAnswerPart(IQMultipleChoicePart):
@@ -246,9 +256,9 @@ class IQMultipleChoiceMultipleAnswerPart(IQMultipleChoicePart):
 	of alternatives.
 	"""
 
-	solutions = TypedIterable( title="The multiple-choice solutions",
-				   min_length=1,
-				   value_type=schema.Object( IQMultipleChoiceMultipleAnswerSolution, title="Multiple choice / multiple answer solution" ) )
+	solutions = IndexedIterable( title="The multiple-choice solutions",
+								 min_length=1,
+								 value_type=Object( IQMultipleChoiceMultipleAnswerSolution, title="Multiple choice / multiple answer solution" ) )
 
 
 class IQMultipleChoiceMultipleAnswerPartGrader(IQPartGrader):
@@ -262,7 +272,7 @@ class IQFreeResponseSolution(IQSolution,IQSingleValuedSolution):
 	A solution whose correct answer is simple text.
 	"""
 
-	value = schema.Text( title="The correct text response", min_length=1 )
+	value = Text( title="The correct text response", min_length=1 )
 
 class IQFreeResponsePart(IQPart):
 	"""
@@ -276,7 +286,7 @@ class IQMatchingSolution(IQSolution):
 	a mapping of actual keys and values. The response is an IDictResponse of ints or key/values.
 	"""
 
-	value = schema.Dict( title="The correct mapping." )
+	value = Dict( title="The correct mapping." )
 
 class IQMatchingPart(IQPart):
 	"""
@@ -287,15 +297,15 @@ class IQMatchingPart(IQPart):
 	and to permit easy grading:	responses are submitted as mapping from label position to value position.
 	"""
 
-	labels = schema.List( title="The list of labels",
-						  min_length=2,
-						  value_type=_ContentFragment( title="A label-column value" ) )
-	values = schema.List( title="The list of values",
-						  min_length=2,
-						  value_type=_ContentFragment( title="A value-column value" ) )
-	solutions = TypedIterable( title="The matching solution",
-							   min_length=1,
-							   value_type=schema.Object( IQMatchingSolution, title="Matching solution" ) )
+	labels = List( title="The list of labels",
+				   min_length=2,
+				   value_type=_ContentFragment( title="A label-column value" ) )
+	values = List( title="The list of values",
+				   min_length=2,
+				   value_type=_ContentFragment( title="A value-column value" ) )
+	solutions = IndexedIterable( title="The matching solution",
+								 min_length=1,
+								 value_type=Object( IQMatchingSolution, title="Matching solution" ) )
 
 class IQMatchingPartGrader(IQPartGrader):
 	"""
@@ -316,17 +326,17 @@ class IQFilePart(IQPart):
 	or include "*" in the ``allowed_extensions``.
 	"""
 
-	allowed_mime_types = TypedIterable( title="Mime types that are accepted for upload",
-										min_length=1,
-										value_type=schema.Text(title="An allowed mimetype",
-															   constraint=mimeTypeConstraint) )
-	allowed_extensions = TypedIterable( title="Extensions like '.doc' that are accepted for upload",
-										min_length=0,
-										value_type=schema.Text(title="An allowed extension") )
+	allowed_mime_types = IndexedIterable( title="Mime types that are accepted for upload",
+										  min_length=1,
+										  value_type=Text(title="An allowed mimetype",
+														  constraint=mimeTypeConstraint) )
+	allowed_extensions = IndexedIterable( title="Extensions like '.doc' that are accepted for upload",
+										  min_length=0,
+										  value_type=Text(title="An allowed extension") )
 
-	max_file_size = schema.Int( title="Maximum size in bytes for the file",
-								min=1,
-								required=False )
+	max_file_size = Int( title="Maximum size in bytes for the file",
+						 min=1,
+						 required=False )
 
 	def is_mime_type_allowed( mime_type ):
 		"""
@@ -352,10 +362,10 @@ class IQuestion(IAnnotatable):
 	to where questions appear in question sets or other types of content.
 	"""
 
-	content = schema.Text( title="The content to present to the user, if any." )
-	parts = schema.List( title="The ordered parts of the question.",
-						 min_length=1,
-						 value_type=schema.Object( IQPart, title="A question part" ) )
+	content = Text( title="The content to present to the user, if any." )
+	parts = List( title="The ordered parts of the question.",
+				  min_length=1,
+				  value_type=Object( IQPart, title="A question part" ) )
 
 class IQuestionSet(IAnnotatable):
 	"""
@@ -367,24 +377,25 @@ class IQuestionSet(IAnnotatable):
 	which assignments reference them.
 	"""
 
-	questions = TypedIterable( title="The ordered questions in the set.",
-							   min_length=1,
-							   value_type=schema.Object( IQuestion, title="The questions" ) )
+	questions = IndexedIterable( title="The ordered questions in the set.",
+								 min_length=1,
+								 value_type=Object( IQuestion, title="The questions" ) )
 
-class IQAssignmentPart(interface.Interface):
+class IQAssignmentPart(ITitledContent):
 	"""
 	One portion of an assignment.
 	"""
 
-	content = schema.Text( title="Additional content for the question set in the context of an assignment.",
-						   default='')
+	content = Text( title="Additional content for the question set in the context of an assignment.",
+					default='')
 
-	question_set = schema.Object(IQuestionSet,
-								 title="The question set to submit with this part")
-	auto_grade = schema.Bool(title="Should this part be run through the grading machinery?",
-							 default=False)
+	question_set = Object(IQuestionSet,
+						  title="The question set to submit with this part")
+	auto_grade = Bool(title="Should this part be run through the grading machinery?",
+					  default=False)
 
-class IQAssignment(IAnnotatable):
+class IQAssignment(ITitledContent,
+				   IAnnotatable):
 	"""
 	An assignment differs from either plain questions or question sets
 	in that there is an expectation that it must be completed,
@@ -404,7 +415,9 @@ class IQAssignment(IAnnotatable):
 
 	Submitting an assignment will fail if: not all parts have
 	submissions (or the submitted part does not match the correct
-	question set); if the submission window is not open (too early or too late).
+	question set); if the submission window is not open (too early; too
+	late is left to the discretion of the professor); the assignment
+	has been submitted before.
 
 	When an assignment is submitted, each auto-gradeable part is
 	graded. Any remaining parts are left alone; events are emitted to
@@ -414,9 +427,10 @@ class IQAssignment(IAnnotatable):
 	where assignments are defined in content.
 	"""
 
-	content = schema.Text( title="The content to present to the user, if any." )
+	content = Text( title="The content to present to the user, if any.",
+					default='')
 
-	available_for_submission_beginning = schema.Datetime(
+	available_for_submission_beginning = Datetime(
 		title="Submissions are accepted no earlier than this.",
 		description="""When present, this specifies the time instant at which
 		submissions of this assignment may begin to be accepted. If this is absent,
@@ -425,16 +439,17 @@ class IQAssignment(IAnnotatable):
 		will be relative to something else (a ``timedelta``) and conversion to absolute
 		timestamp will be done as needed.""",
 		required=False)
-	available_for_submission_ending = schema.Datetime(
+	available_for_submission_ending = Datetime(
 		title="Submissions are accepted no later than this.",
 		description="""When present, this specifies the last instance at which
-		submissions will be accepted. As with ``available_for_submission_beginning``,
+		submissions will be accepted. It can be considered the assignment's "due date."
+		As with ``available_for_submission_beginning``,
 		this will typically be relative and converted.""",
 		required=False )
 
-	parts = schema.List( title="The ordered parts of the assignment.",
+	parts = List( title="The ordered parts of the assignment.",
 						 min_length=1,
-						 value_type=schema.Object( IQAssignmentPart,
+						 value_type=Object( IQAssignmentPart,
 												   title="An assignment part" ) )
 
 	# A note on handling assignments that have an associated time limit
@@ -458,24 +473,24 @@ class IQTextResponse(IQResponse):
 	A response submitted as text.
 	"""
 
-	value = schema.Text( title="The response text" )
+	value = Text( title="The response text" )
 
 class IQListResponse(IQResponse):
 	"""
 	A response submitted as a list.
 	"""
 
-	value = schema.List( title="The response list",
-			     min_length=1,
-			     value_type=schema.TextLine(title="The value") )
+	value = List( title="The response list",
+				  min_length=1,
+				  value_type=TextLine(title="The value") )
 
 class IQDictResponse(IQResponse):
 	"""
 	A response submitted as a mapping between keys and values.
 	"""
-	value = schema.Dict( title="The response dictionary",
-						 key_type=schema.TextLine( title="The key" ),
-						 value_type=schema.TextLine(title="The value") )
+	value = Dict( title="The response dictionary",
+				  key_type=TextLine( title="The key" ),
+				  value_type=TextLine(title="The value") )
 
 import plone.namedfile.interfaces
 class IQUploadedFile(plone.namedfile.interfaces.INamedFile):
@@ -490,8 +505,8 @@ class IQFileResponse(IQResponse):
 	two fields as
 	"""
 
-	value = schema.Object( IQUploadedFile,
-						   title="The uploaded file" )
+	value = Object( IQUploadedFile,
+					title="The uploaded file" )
 
 
 IQMathSolution.setTaggedValue( 'response_type', IQTextResponse )
@@ -535,10 +550,10 @@ class IQuestionSubmission(interface.Interface):
 	These will typically be transient objects.
 	"""
 
-	questionId = schema.TextLine( title="Identifier of the question being responded to." )
-	parts = TypedIterable( title="Ordered submissions, one for each part of the question.",
-						   description="""The length must match the length of the questions. Each object must be
-						   adaptable into the proper :class:`IQResponse` object (e.g., a string or dict).""" )
+	questionId = TextLine( title="Identifier of the question being responded to." )
+	parts = IndexedIterable( title="Ordered submissions, one for each part of the question.",
+							 description="""The length must match the length of the questions. Each object must be
+							 adaptable into the proper :class:`IQResponse` object (e.g., a string or dict).""" )
 
 
 class IQAssessedPart(interface.Interface):
@@ -549,12 +564,12 @@ class IQAssessedPart(interface.Interface):
 	"""
 	# TODO: Matching to question?
 
-	submittedResponse = schema.Object( IQResponse,
-									   title="The response as the student submitted it.")
-	assessedValue = schema.Float( title="The relative correctness of the submitted response, from 0.0 (entirely wrong) to 1.0 (perfectly correct)",
-								  min=0.0,
-								  max=1.0,
-								  default=0.0 )
+	submittedResponse = Object( IQResponse,
+								title="The response as the student submitted it.")
+	assessedValue = Float( title="The relative correctness of the submitted response, from 0.0 (entirely wrong) to 1.0 (perfectly correct)",
+						   min=0.0,
+						   max=1.0,
+						   default=0.0 )
 
 class IQAssessedQuestion(interface.Interface):
 	"""
@@ -563,9 +578,9 @@ class IQAssessedQuestion(interface.Interface):
 	These will typically be persistent values, echoed back to clients.
 	"""
 
-	questionId = schema.TextLine( title="Identifier of the question being responded to." )
-	parts = TypedIterable( title="Ordered assessed values, one for each part of the question.",
-						   value_type=schema.Object( IQAssessedPart, title="The assessment of a part." ) )
+	questionId = TextLine( title="Identifier of the question being responded to." )
+	parts = IndexedIterable( title="Ordered assessed values, one for each part of the question.",
+							 value_type=Object( IQAssessedPart, title="The assessment of a part." ) )
 
 
 class IQuestionSetSubmission(interface.Interface):
@@ -575,11 +590,11 @@ class IQuestionSetSubmission(interface.Interface):
 	These will generally be transient objects.
 	"""
 
-	questionSetId = schema.TextLine( title="Identifier of the question set being responded to." )
-	questions = TypedIterable( title="Submissions, one for each question in the set.",
-							   description="""Order is not important. Depending on the question set,
-							   missing answers may or may not be allowed; the set may refuse to grade, or simply consider them wrong.""",
-							   value_type=schema.Object( IQuestionSubmission, title="The submission for a particular question.") )
+	questionSetId = TextLine( title="Identifier of the question set being responded to." )
+	questions = IndexedIterable( title="Submissions, one for each question in the set.",
+								 description="""Order is not important. Depending on the question set,
+								 missing answers may or may not be allowed; the set may refuse to grade, or simply consider them wrong.""",
+								 value_type=Object( IQuestionSubmission, title="The submission for a particular question.") )
 
 class IQAssessedQuestionSet(interface.Interface):
 	"""
@@ -588,22 +603,22 @@ class IQAssessedQuestionSet(interface.Interface):
 	These will usually be persistent values that are also echoed back to clients.
 	"""
 
-	questionSetId = schema.TextLine( title="Identifier of the question set being responded to." )
-	questions = TypedIterable( title="Assessed questions, one for each question in the set.",
-							   value_type=schema.Object( IQAssessedQuestion, title="The assessed value for a particular question.") )
+	questionSetId = TextLine( title="Identifier of the question set being responded to." )
+	questions = IndexedIterable( title="Assessed questions, one for each question in the set.",
+								 value_type=Object( IQAssessedQuestion, title="The assessed value for a particular question.") )
 
 class IQAssignmentSubmission(interface.Interface):
 	"""
 	A student's submission in response to an assignment.
 	"""
 
-	assignmentId = schema.TextLine(title="Identifier of the assignment being responded to.")
-	parts = TypedIterable( title="Question set submissions, one for each part of the assignment.",
-						   description="""Order is not significant, each question set will be matched
-						   with the corresponding part by ID. However, each part *must* have a
-						   submission.""",
-						   value_type=schema.Object(IQuestionSetSubmission,
-													title="The submission for a particular part.") )
+	assignmentId = TextLine(title="Identifier of the assignment being responded to.")
+	parts = IndexedIterable( title="Question set submissions, one for each part of the assignment.",
+							 description="""Order is not significant, each question set will be matched
+							 with the corresponding part by ID. However, each part *must* have a
+							 submission.""",
+							 value_type=Object(IQuestionSetSubmission,
+											   title="The submission for a particular part.") )
 
 	# TODO: What does the result of submitting an assignment look like?
 	# It's not always an `Assessed` object, because not all parts will have been
@@ -616,11 +631,11 @@ class IQAssignmentSubmissionPendingAssessment(interface.Interface):
 	submission and before completion.
 	"""
 
-	assignmentId = schema.TextLine(title="Identifier of the assignment being responded to.")
-	parts = TypedIterable( title="Either an assessed question set, or the original submission",
-						   value_type=schema.Variant(
-							   (schema.Object(IQAssessedQuestionSet),
-								schema.Object(IQuestionSetSubmission))) )
+	assignmentId = TextLine(title="Identifier of the assignment being responded to.")
+	parts = IndexedIterable( title="Either an assessed question set, or the original submission",
+							 value_type=Variant(
+								 (Object(IQAssessedQuestionSet),
+								  Object(IQuestionSetSubmission))) )
 
 class IQAssessmentItemContainer(interface.common.sequence.IReadSequence):
 	"""
