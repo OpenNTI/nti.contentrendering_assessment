@@ -126,6 +126,21 @@
 		for=".interfaces.IQAssessedQuestion"
 		provides="nti.externalization.interfaces.IExternalObjectDecorator" />
 
+	<!-- Give assignments a containerId -->
+	<subscriber
+		factory=".externalization._QAssessmentObjectIContainedAdder"
+		for=".interfaces.IQAssignment"
+		provides="nti.externalization.interfaces.IExternalObjectDecorator" />
+	<!-- Also give questions and sets a containerId, mostly for symmetry -->
+	<subscriber
+		factory=".externalization._QAssessmentObjectIContainedAdder"
+		for=".interfaces.IQuestionSet"
+		provides="nti.externalization.interfaces.IExternalObjectDecorator" />
+	<subscriber
+		factory=".externalization._QAssessmentObjectIContainedAdder"
+		for=".interfaces.IQuestion"
+		provides="nti.externalization.interfaces.IExternalObjectDecorator" />
+
 	<!--
 	File uploads, which are handled manually because
 	they deviate from the pattern.

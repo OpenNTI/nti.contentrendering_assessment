@@ -75,6 +75,33 @@ class _QAssessedQuestionExplanationSolutionAdder(object):
 			external_part['solutions'] = to_external_object(question_part.solutions)
 			external_part['explanation'] = to_external_object(question_part.explanation)
 
+@interface.implementer(ext_interfaces.IExternalObjectDecorator)
+class _QAssessmentObjectIContainedAdder(object):
+	"""
+	When an assignment or question set comes from a content package
+	and thus has a __parent__ that has an NTIID, make that NTIID
+	available as the ``containerId``, just like an
+	:class:`nti.dataserver.interfaces.IContained` object. This is
+	meant to help provide contextual information for the UI because
+	sometimes these objects (assignments especially) are requested
+	in bulk without any other context.
+
+	Obviously this only works if assignments are written in the TeX
+	files at a relevant location (within the section aka lesson they
+	are about)---if they are lumped together at the end, this does no
+	good.
+
+	This is perhaps a temporary measure as assessments will be moving
+	into course definitions.
+	"""
+
+	__metaclass__ = SingletonDecorator
+
+	def decorateExternalObject( self, context, mapping ):
+		if 'containerId' not in mapping:
+			containerId = getattr( context.__parent__, 'ntiid', None )
+			mapping['containerId'] = containerId
+
 
 ##
 # File uploads
