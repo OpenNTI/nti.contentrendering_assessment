@@ -18,6 +18,7 @@ from nti.utils.schema import Float
 from nti.utils.schema import IndexedIterable
 from nti.utils.schema import Int
 from nti.utils.schema import List
+from nti.utils.schema import ListOrTuple
 from nti.utils.schema import Object
 from nti.utils.schema import ValidText as Text
 from nti.utils.schema import ValidTextLine as TextLine
@@ -447,10 +448,10 @@ class IQAssignment(ITitledContent,
 		this will typically be relative and converted.""",
 		required=False )
 
-	parts = List( title="The ordered parts of the assignment.",
+	parts = ListOrTuple( title="The ordered parts of the assignment.",
 						 min_length=1,
 						 value_type=Object( IQAssignmentPart,
-												   title="An assignment part" ) )
+											title="An assignment part" ) )
 
 	# A note on handling assignments that have an associated time limit
 	# (e.g., you have one hour to complete this assignment once you begin):

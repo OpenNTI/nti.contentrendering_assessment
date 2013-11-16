@@ -98,9 +98,14 @@ class _QAssessmentObjectIContainedAdder(object):
 	__metaclass__ = SingletonDecorator
 
 	def decorateExternalObject( self, context, mapping ):
-		if 'containerId' not in mapping:
+		if not mapping.get('containerId'):
+			# Be careful not to write this out at rendering time
+			# with a None value, but if it does happen overwrite
+			# it
+			containerId = None
 			containerId = getattr( context.__parent__, 'ntiid', None )
-			mapping['containerId'] = containerId
+			if containerId:
+				mapping['containerId'] = containerId
 
 
 ##
