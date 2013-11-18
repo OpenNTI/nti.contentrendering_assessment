@@ -553,6 +553,7 @@ class IQuestionSubmission(interface.Interface):
 
 	questionId = TextLine( title="Identifier of the question being responded to." )
 	parts = IndexedIterable( title="Ordered submissions, one for each part of the question.",
+							 default=(),
 							 description="""The length must match the length of the questions. Each object must be
 							 adaptable into the proper :class:`IQResponse` object (e.g., a string or dict).""" )
 
@@ -595,6 +596,7 @@ class IQuestionSetSubmission(interface.Interface):
 	questions = IndexedIterable( title="Submissions, one for each question in the set.",
 								 description="""Order is not important. Depending on the question set,
 								 missing answers may or may not be allowed; the set may refuse to grade, or simply consider them wrong.""",
+								 default=(),
 								 value_type=Object( IQuestionSubmission, title="The submission for a particular question.") )
 
 class IQAssessedQuestionSet(interface.Interface):
@@ -618,6 +620,7 @@ class IQAssignmentSubmission(interface.Interface):
 							 description="""Order is not significant, each question set will be matched
 							 with the corresponding part by ID. However, each part *must* have a
 							 submission.""",
+							 default=(),
 							 value_type=Object(IQuestionSetSubmission,
 											   title="The submission for a particular part.") )
 

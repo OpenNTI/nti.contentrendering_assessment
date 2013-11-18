@@ -103,7 +103,7 @@ class TestAssignmentSubmission(TestCase):
 
 
 		update_from_external_object( asub,
-									 {'parts': [submission.QuestionSetSubmission(questionSetId='foo')],
+									 {'parts': [submission.QuestionSetSubmission(questionSetId='foo', questions=())],
 									  'assignmentId': 'baz'},
 									 require_updater=True )
 
