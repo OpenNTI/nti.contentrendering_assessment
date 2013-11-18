@@ -22,10 +22,13 @@ from persistent import Persistent # Why are these persistent exactly?
 from nti.externalization.externalization import make_repr
 
 from nti.dataserver.datastructures import PersistentCreatedModDateTrackingObject
+from nti.dataserver.datastructures import ContainedMixin
 
 from nti.utils.schema import createDirectFieldProperties
 from nti.utils.schema import SchemaConfigured
 from nti.utils.schema import AdaptingFieldProperty
+
+from nti.utils.property import alias
 
 from . import interfaces
 
@@ -38,7 +41,7 @@ class QAssignmentPart(Persistent,
 	title = AdaptingFieldProperty(interfaces.IQAssignmentPart['title'])
 	createDirectFieldProperties(interfaces.IQAssignmentPart)
 
-	mime_type = 'application/vnd.nextthought.naassignmentpart'
+	mime_type = 'application/vnd.nextthought.assessment.assignmentpart'
 
 	__repr__ = make_repr()
 
@@ -52,7 +55,7 @@ class QAssignment(Persistent,
 	title = AdaptingFieldProperty(interfaces.IQAssignment['title'])
 	createDirectFieldProperties(interfaces.IQAssignment)
 
-	mime_type = 'application/vnd.nextthought.naassignment'
+	mime_type = 'application/vnd.nextthought.assessment.assignment'
 
 	__repr__ = make_repr()
 
@@ -61,12 +64,14 @@ class QAssignment(Persistent,
 					   IAttributeAnnotatable)
 class QAssignmentSubmissionPendingAssessment(PersistentCreatedModDateTrackingObject,
 											 SchemaConfigured,
-											 zope.container.contained.Contained):
-	# TODO: This object may need to be  nti_interfaces.IContained
-	mime_type = 'application/vnd.nextthought.naassignmentsubmissionpendingassessment'
+											 ContainedMixin):
+	createDirectFieldProperties(interfaces.IQAssignmentSubmissionPendingAssessment)
+	# We get nti.dataserver.interfaces.IContained from ContainedMixin (containerId, id)
+	# However, because these objects are new and not seen before, we can
+	# safely cause name and id to be aliases
+	__name__ = alias('id')
 
-	assignmentId = None
-	parts = ()
-	__repr__ = make_repr()
-
+	mime_type = 'application/vnd.nextthought.assessment.assignmentsubmissionpendingassessment'
 	__external_can_create__ = False
+
+	__repr__ = make_repr()
