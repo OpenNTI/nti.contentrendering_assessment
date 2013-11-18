@@ -26,6 +26,7 @@ class QResponse(Persistent):
 	"""
 	Base class for responses.
 	"""
+	__external_can_create__ = False
 
 @interface.implementer(interfaces.IQTextResponse)
 class QTextResponse(TrivialValuedMixin,QResponse):

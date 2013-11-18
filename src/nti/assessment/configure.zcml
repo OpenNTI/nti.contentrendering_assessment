@@ -117,6 +117,7 @@
 						 .interfaces.IQuestionSubmission .interfaces.IQAssessedPart .interfaces.IQAssessedQuestion
 						 .interfaces.IQuestionSetSubmission .interfaces.IQAssessedQuestionSet
 						 .interfaces.IQAssignmentSubmission
+						 .interfaces.IQResponse
 						 .interfaces.IQHint .interfaces.IQuestionSet"
 		modules=".hint .assessed .parts .question .response .solution .submission .assignment"
 		factory_modules=".submission .question"

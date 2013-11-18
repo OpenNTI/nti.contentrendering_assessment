@@ -19,6 +19,7 @@ from persistent.list import PersistentList
 from nti.externalization.externalization import make_repr
 
 from nti.utils.schema import PermissiveSchemaConfigured as SchemaConfigured
+from nti.utils.schema import createDirectFieldProperties
 
 # EWW...but we need to be IContained in order to be stored
 # in container data structures.
@@ -27,13 +28,13 @@ from nti.utils.schema import PermissiveSchemaConfigured as SchemaConfigured
 # without going through the expense of ZopeDublinCore (since we expect no other
 # annotations and no mutability)
 from nti.dataserver import interfaces as nti_interfaces
+from nti.dataserver.datastructures import ContainedMixin
 
 from . import interfaces
 
 @interface.implementer(interfaces.IQAssessedPart)
 class QAssessedPart(SchemaConfigured, persistent.Persistent):
-	submittedResponse = None
-	assessedValue = 0.0
+	createDirectFieldProperties(interfaces.IQAssessedPart)
 	__external_can_create__ = False
 
 	def __eq__(self, other):
@@ -81,17 +82,12 @@ def _dctimes_property_fallback(attrname, dcname):
 
 	return property(get, _set)
 
-@interface.implementer(interfaces.IQAssessedQuestion, nti_interfaces.IContained, nti_interfaces.IZContained, nti_interfaces.ICreated, nti_interfaces.ILastModified)
-class QAssessedQuestion(SchemaConfigured, persistent.Persistent):
-	questionId = None
-	parts = ()
-	creator = None
-	id = None
-	containerId = None
-	__name__ = None
-	__parent__ = None
+@interface.implementer(interfaces.IQAssessedQuestion, nti_interfaces.ICreated, nti_interfaces.ILastModified)
+class QAssessedQuestion(SchemaConfigured, ContainedMixin, persistent.Persistent):
+	createDirectFieldProperties(interfaces.IQAssessedQuestion)
 	__external_can_create__ = False
 
+	creator = None
 	createdTime = _dctimes_property_fallback('createdTime', 'Date.Modified')
 	lastModified = _dctimes_property_fallback('lastModified', 'Date.Created')
 	def updateLastMod(self, t=None):
@@ -118,17 +114,12 @@ class QAssessedQuestion(SchemaConfigured, persistent.Persistent):
 		return hash((self.questionId, tuple(self.parts)))
 
 
-@interface.implementer(interfaces.IQAssessedQuestionSet, nti_interfaces.IContained, nti_interfaces.IZContained, nti_interfaces.ICreated, nti_interfaces.ILastModified)
-class QAssessedQuestionSet(SchemaConfigured, persistent.Persistent):
-	questionSetId = None
-	questions = ()
-	creator = None
-	id = None
-	containerId = None
-	__name__ = None
-	__parent__ = None
+@interface.implementer(interfaces.IQAssessedQuestionSet, nti_interfaces.ICreated, nti_interfaces.ILastModified)
+class QAssessedQuestionSet(SchemaConfigured, ContainedMixin, persistent.Persistent):
+	createDirectFieldProperties(interfaces.IQAssessedQuestionSet)
 	__external_can_create__ = False
 
+	creator = None
 	createdTime = _dctimes_property_fallback('createdTime', 'Date.Modified')
 	lastModified = _dctimes_property_fallback('lastModified', 'Date.Created')
 	def updateLastMod(self, t=None):

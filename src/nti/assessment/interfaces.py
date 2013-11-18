@@ -11,18 +11,24 @@ from zope.mimetype.interfaces import mimeTypeConstraint
 
 from zope.annotation.interfaces import IAnnotatable
 
-from nti.utils.schema import Int
 from nti.utils.schema import Bool
-from nti.utils.schema import Dict
-from nti.utils.schema import List
-from nti.utils.schema import Float
-from nti.utils.schema import Object
-from nti.utils.schema import Variant
 from nti.utils.schema import Datetime
-from nti.utils.schema import ListOrTuple
+from nti.utils.schema import Dict
+from nti.utils.schema import Float
 from nti.utils.schema import IndexedIterable
+from nti.utils.schema import Int
+from nti.utils.schema import List
+from nti.utils.schema import ListOrTuple
+from nti.utils.schema import Object
 from nti.utils.schema import ValidText as Text
 from nti.utils.schema import ValidTextLine as TextLine
+from nti.utils.schema import Variant
+
+from dolmen.builtins.interfaces import IDict
+from dolmen.builtins.interfaces import IList
+from dolmen.builtins.interfaces import INumeric
+from dolmen.builtins.interfaces import IString
+from dolmen.builtins.interfaces import IUnicode
 
 NTIID_TYPE = 'NAQ'
 
@@ -566,8 +572,20 @@ class IQAssessedPart(interface.Interface):
 	"""
 	# TODO: Matching to question?
 
-	submittedResponse = Object( IQResponse,
-								title="The response as the student submitted it.")
+	# In the past, updating from external objects transformed the
+	# value into an IQResponse (because this was an Object field of
+	# that type)...but the actual assessment code itself assigned the
+	# raw string/int value. Responses would be ideal, but that could
+	# break existing client code. The two behaviours are now unified
+	# because of using a field property, so this Variant now documents
+	# the types that clients were actually seeing on the wire.
+	submittedResponse = Variant( (Object(IString),
+								  Object(INumeric),
+								  Object(IDict),
+								  Object(IList),
+								  Object(IUnicode),
+								  Object(IQResponse)),
+								 title="The response as the student submitted it.")
 	assessedValue = Float( title="The relative correctness of the submitted response, from 0.0 (entirely wrong) to 1.0 (perfectly correct)",
 						   min=0.0,
 						   max=1.0,

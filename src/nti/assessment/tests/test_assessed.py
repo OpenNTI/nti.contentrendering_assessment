@@ -81,12 +81,16 @@ class TestAssessedPart(TestCase):
 					 is_( none() ) )
 
 
-		# A text value is coerced to the required type
+		# These cannot be created externally, so we're not worried about
+		# what happens when they are updated...this test just serves to document
+		# the behaviour. In the past, updating from external objects transformed
+		# the value into an IQResponse...but the actual assessment code itself assigned
+		# the raw string/int value. Responses would be ideal, but that could break existing
+		# client code. The two behaviours are now unified
 		part = assessed.QAssessedPart()
 		update_from_external_object( part, {"submittedResponse": "The text response"}, require_updater=True )
 
-		assert_that( part.submittedResponse, is_( response.QTextResponse( "The text response" ) ) )
-		assert_that( part.submittedResponse, validly_provides( interfaces.IQTextResponse ) )
+		assert_that( part.submittedResponse, is_( "The text response" ) )
 
 class TestAssessedQuestion(TestCase):
 
