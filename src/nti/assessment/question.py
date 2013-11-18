@@ -1,16 +1,20 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 Code related to the question interfaces.
 
 $Id$
 """
-from __future__ import unicode_literals, print_function, absolute_import
+from __future__ import unicode_literals, print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
-import zope.container.contained
+logger = __import__('logging').getLogger(__name__)
+
 from zope import interface
+from zope.container import contained
 from zope.mimetype import interfaces as mime_interfaces
 from zope.annotation.interfaces import IAttributeAnnotatable
+
 from persistent import Persistent
 
 from . import interfaces
@@ -20,7 +24,7 @@ from ._util import superhash
 					   mime_interfaces.IContentTypeAware,
 					   IAttributeAnnotatable)
 class QQuestion(Persistent,
-				zope.container.contained.Contained):
+				contained.Contained):
 	mime_type = 'application/vnd.nextthought.naquestion'
 
 	content = ''
@@ -46,7 +50,7 @@ class QQuestion(Persistent,
 					   mime_interfaces.IContentTypeAware,
 					   IAttributeAnnotatable)
 class QQuestionSet(Persistent,
-				   zope.container.contained.Contained):
+				   contained.Contained):
 	mime_type = 'application/vnd.nextthought.naquestionset'
 
 	questions = ()

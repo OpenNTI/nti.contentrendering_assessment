@@ -19,10 +19,10 @@ from nti.dataserver import links
 from nti.dataserver import interfaces as nti_interfaces
 
 from nti.externalization import interfaces as ext_interfaces
+from nti.externalization.singleton import SingletonDecorator
 from nti.externalization.externalization import to_external_object
 from nti.externalization.externalization import to_external_ntiid_oid
 from nti.externalization.datastructures import AbstractDynamicObjectIO
-from nti.externalization.singleton import SingletonDecorator
 
 from nti.utils.schema import DataURI
 from nti.utils.dataurl import DataURL

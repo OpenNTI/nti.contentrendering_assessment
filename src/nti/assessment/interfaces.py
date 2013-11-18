@@ -3,7 +3,7 @@
 """
 $Id$
 """
-from __future__ import unicode_literals, print_function, absolute_import
+from __future__ import unicode_literals, print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 from zope import interface
@@ -11,18 +11,18 @@ from zope.mimetype.interfaces import mimeTypeConstraint
 
 from zope.annotation.interfaces import IAnnotatable
 
-from nti.utils.schema import Bool
-from nti.utils.schema import Datetime
-from nti.utils.schema import Dict
-from nti.utils.schema import Float
-from nti.utils.schema import IndexedIterable
 from nti.utils.schema import Int
+from nti.utils.schema import Bool
+from nti.utils.schema import Dict
 from nti.utils.schema import List
-from nti.utils.schema import ListOrTuple
+from nti.utils.schema import Float
 from nti.utils.schema import Object
+from nti.utils.schema import Variant
+from nti.utils.schema import Datetime
+from nti.utils.schema import ListOrTuple
+from nti.utils.schema import IndexedIterable
 from nti.utils.schema import ValidText as Text
 from nti.utils.schema import ValidTextLine as TextLine
-from nti.utils.schema import Variant
 
 NTIID_TYPE = 'NAQ'
 

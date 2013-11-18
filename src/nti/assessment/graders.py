@@ -5,8 +5,10 @@ Grading algorithm support.
 
 $Id$
 """
-from __future__ import unicode_literals, print_function, absolute_import
+from __future__ import unicode_literals, print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
+
+logger = __import__('logging').getLogger(__name__)
 
 import numbers
 
@@ -31,10 +33,10 @@ def __normalize_quotes(string):
 	"""
 	We want curly quotes to compare the same as straight quotes.
 	"""
-	replacements = (('“', '"'),  # left double
-					 ('”', '"'),  # right double
-					 ("‘", "'"),  # left single
-					 ("’", "'"))  # right single
+	replacements = (('“', '"'), # left double
+					 ('”', '"'), # right double
+					 ("‘", "'"), # left single
+					 ("’", "'")) # right single
 	for bad, good in replacements:
 		string = string.replace( bad, good )
 

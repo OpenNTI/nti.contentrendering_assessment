@@ -3,8 +3,10 @@
 """
 $Id$
 """
-from __future__ import unicode_literals, print_function, absolute_import
+from __future__ import unicode_literals, print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
+
+logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
 
@@ -13,8 +15,8 @@ from nti.externalization.externalization import make_repr
 
 from . import parts
 from . import interfaces
-from ._util import TrivialValuedMixin as _TrivialValuedMixin
 from ._util import superhash
+from ._util import TrivialValuedMixin as _TrivialValuedMixin
 
 @interface.implementer(interfaces.IQSolution)
 class QSolution(Persistent):

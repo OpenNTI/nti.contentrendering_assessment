@@ -1,27 +1,32 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
 Implementations and support for question parts.
 
 $Id$
 """
-from __future__ import unicode_literals, print_function, absolute_import
+from __future__ import unicode_literals, print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
-from zope import interface
-from zope import component
-from dm.zope.schema.schema import SchemaConfigured
-from zope.mimetype.interfaces import mimeTypeConstraint
+logger = __import__('logging').getLogger(__name__)
 
 import os.path
 
-from nti.externalization.externalization import make_repr
-from nti.contentfragments.interfaces import UnicodeContentFragment as _u
-
-from . import interfaces
-from .interfaces import convert_response_for_solution
-from ._util import superhash
+from zope import interface
+from zope import component
+from zope.mimetype.interfaces import mimeTypeConstraint
 
 from persistent import Persistent
+
+from dm.zope.schema.schema import SchemaConfigured
+
+from nti.contentfragments.interfaces import UnicodeContentFragment as _u
+
+from nti.externalization.externalization import make_repr
+
+from . import interfaces
+from ._util import superhash
+from .interfaces import convert_response_for_solution
 
 @interface.implementer(interfaces.IQPart)
 class QPart(SchemaConfigured,Persistent):
