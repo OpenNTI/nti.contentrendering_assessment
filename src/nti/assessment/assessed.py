@@ -31,6 +31,7 @@ from nti.dataserver import interfaces as nti_interfaces
 from nti.dataserver.datastructures import ContainedMixin
 
 from . import interfaces
+from ._util import superhash
 
 @interface.implementer(interfaces.IQAssessedPart)
 class QAssessedPart(SchemaConfigured, persistent.Persistent):
@@ -50,7 +51,7 @@ class QAssessedPart(SchemaConfigured, persistent.Persistent):
 	__repr__ = make_repr()
 
 	def __hash__(self):
-		return hash((self.submittedResponse, self.assessedValue))
+		return superhash((self.submittedResponse, self.assessedValue))
 
 from zope.datetime import parseDatetimetz
 import time
@@ -111,7 +112,7 @@ class QAssessedQuestion(SchemaConfigured, ContainedMixin, persistent.Persistent)
 	__repr__ = make_repr()
 
 	def __hash__(self):
-		return hash((self.questionId, tuple(self.parts)))
+		return superhash((self.questionId, tuple(self.parts)))
 
 
 @interface.implementer(interfaces.IQAssessedQuestionSet, nti_interfaces.ICreated, nti_interfaces.ILastModified)
@@ -144,7 +145,7 @@ class QAssessedQuestionSet(SchemaConfigured, ContainedMixin, persistent.Persiste
 	__repr__ = make_repr()
 
 	def __hash__(self):
-		return hash((self.questionSetId, tuple(self.questions)))
+		return superhash((self.questionSetId, tuple(self.questions)))
 
 
 def assess_question_submission(submission, registry=component):

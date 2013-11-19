@@ -92,6 +92,10 @@ class TestAssessedPart(TestCase):
 
 		assert_that( part.submittedResponse, is_( "The text response" ) )
 
+	def test_hash(self):
+		part = assessed.QAssessedPart(submittedResponse=[1,2,3])
+		hash(part)
+
 class TestAssessedQuestion(TestCase):
 
 
