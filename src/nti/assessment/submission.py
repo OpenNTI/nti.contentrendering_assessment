@@ -13,6 +13,7 @@ logger = __import__('logging').getLogger(__name__)
 from zope import interface
 
 from nti.dataserver.datastructures import PersistentCreatedModDateTrackingObject
+from nti.dataserver.datastructures import ContainedMixin
 
 from nti.externalization.externalization import make_repr
 
@@ -33,6 +34,10 @@ from . import interfaces
 # subclasses, which already were persistent, so there should be
 # negligible performance impact. Just remember they CANNOT
 # be mutated.
+# A side effect of the submission objects being persistent
+# is that they get added to the user's _p_jar *before* being
+# transformed; the transformed object may or may not
+# be directly added.
 
 
 @interface.implementer(interfaces.IQuestionSubmission)
@@ -50,6 +55,7 @@ class QuestionSetSubmission(SchemaConfigured):
 
 @interface.implementer(interfaces.IQAssignmentSubmission)
 class AssignmentSubmission(PersistentCreatedModDateTrackingObject,
+						   ContainedMixin,
 						   SchemaConfigured):
 	"""
 	We do expect assignment submissions to be stored in the database
