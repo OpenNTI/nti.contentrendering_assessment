@@ -193,6 +193,11 @@ class QFilePart(QPart):
 	allowed_extensions = ()
 	max_file_size = None
 
+	def _eq_instance(self,other):
+		return (self.allowed_mime_types == other.allowed_mime_types
+				and self.allowed_extensions == other.allowed_extensions
+				and self.max_file_size == other.max_file_size)
+
 	def grade(self, response):
 		response = self.response_interface(response)
 		# We first check our own constraints for submission
@@ -239,3 +244,11 @@ class QFilePart(QPart):
 		return (filename
 				 and (os.path.splitext(filename.lower())[1] in self.allowed_extensions
 					  or '*' in self.allowed_extensions))
+
+@interface.implementer(interfaces.IQModeledContentPart)
+class QModeledContentPart(QPart):
+
+	response_interface = interfaces.IQModeledContentResponse
+
+	def _eq_instance( self, other ):
+		return isinstance(other, QModeledContentPart)

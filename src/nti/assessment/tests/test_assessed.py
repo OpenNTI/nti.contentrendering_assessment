@@ -170,6 +170,29 @@ class TestAssessedQuestion(TestCase):
 		assert_that( calling( interfaces.IQAssessedQuestion ).with_args(sub),
 					 raises( interface.Invalid, 'max_file_size' ))
 
+	def test_assess_with_modeled_content_part(self):
+		part = parts.QModeledContentPart()
+		question = QQuestion( parts=(part,) )
+
+		component.provideUtility( question, provides=interfaces.IQuestion,  name="1")
+
+		sub = submission.QuestionSubmission( questionId="1", parts=('correct',) )
+		# Wrong submission type, cannot be assessed at all
+		assert_that( calling( interfaces.IQAssessedQuestion ).with_args(sub),
+					 raises( TypeError ))
+
+		# Right submission type, but not a valid submission
+		sub = submission.QuestionSubmission( questionId="1", parts=(response.QModeledContentResponse(),) )
+		assert_that( calling( interfaces.IQAssessedQuestion ).with_args(sub),
+					 raises( interface.Invalid ))
+
+		sub = submission.QuestionSubmission( questionId="1", parts=(response.QModeledContentResponse(value=['a part']),) )
+
+		result = interfaces.IQAssessedQuestion( sub )
+		assert_that( result, has_property( 'questionId', "1" ) )
+		assert_that( result, has_property( 'parts', contains( assessed.QAssessedPart( submittedResponse=sub.parts[0],
+																					  assessedValue=None ) ) ) )
+
 
 class TestAssessedQuestionSet(TestCase):
 

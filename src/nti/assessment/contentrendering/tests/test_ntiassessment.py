@@ -112,6 +112,31 @@ def test_file_macros():
 	#assert_that( part.hints, has_length( 1 ) )
 	#assert_that( part.hints, contains( verifiably_provides( asm_interfaces.IQHint ) ) )
 
+def test_essay_macros():
+	example = br"""
+	\begin{naquestion}[individual=true]
+		Arbitrary content goes here.
+		\begin{naqessaypart}
+		Arbitrary content goes here.
+		\begin{naqhints}
+			\naqhint Some hint
+		\end{naqhints}
+		\end{naqessaypart}
+	\end{naquestion}
+	"""
+
+	dom = _buildDomFromString( _simpleLatexDocument( (example,) ) )
+
+	naq = dom.getElementsByTagName('naquestion')[0]
+	part_el = naq.getElementsByTagName( 'naqessaypart' )[0]
+
+	part = part_el.assessment_object()
+	assert_that( part, verifiably_provides( part_el.part_interface ) )
+	assert_that( part.content, is_( "Arbitrary content goes here." ) )
+
+	assert_that( part.hints, has_length( 1 ) )
+	assert_that( part.hints, contains( verifiably_provides( asm_interfaces.IQHint ) ) )
+
 def test_question_set_macros():
 	example = br"""
 	\begin{naquestion}[individual=true]

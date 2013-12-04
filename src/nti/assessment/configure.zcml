@@ -124,7 +124,7 @@
 						 .interfaces.IQResponse
 						 .interfaces.IQHint .interfaces.IQuestionSet"
 		modules=".hint .assessed .parts .question .response .solution .submission .assignment"
-		factory_modules=".submission .question"
+		factory_modules=".submission .question .response"
 		iobase=".externalization._AssessmentInternalObjectIOBase"/>
 	<subscriber
 		factory=".externalization._QAssessedQuestionExplanationSolutionAdder"

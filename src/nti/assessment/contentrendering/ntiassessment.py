@@ -318,6 +318,13 @@ class naqfreeresponsepart(_AbstractNAQPart):
 	part_factory = parts.QFreeResponsePart
 	soln_interface = as_interfaces.IQFreeResponseSolution
 
+class naqmodeledcontentpart(_AbstractNAQPart):
+	part_interface = as_interfaces.IQModeledContentPart
+	part_factory = parts.QModeledContentPart
+	soln_interface = None
+
+class naqessaypart(naqmodeledcontentpart):
+	pass
 
 class naqmultiplechoicepart(_AbstractNAQPart):
 	r"""
@@ -479,6 +486,7 @@ class naqfilepart(_AbstractNAQPart):
 
 	part_interface = as_interfaces.IQFilePart
 	part_factory = parts.QFilePart
+	soln_interface = None
 
 	_max_file_size = None
 	_allowed_mime_types = ()

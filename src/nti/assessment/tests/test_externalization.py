@@ -69,3 +69,20 @@ def test_file_upload():
 												 has_key( 'filename' ),
 												 has_entry( 'url', none() )) ) )
 	# But we have no URL because we're not in a connection anywhere
+
+def test_modeled_response_uploade():
+
+	ext_obj = {
+		'MimeType': 'application/vnd.nextthought.assessment.modeledcontentresponse',
+		'value': ['a part'],
+	}
+
+	assert_that( internalization.find_factory_for( ext_obj ),
+				 is_( not_none() ) )
+
+	internal = internalization.find_factory_for( ext_obj )()
+	internalization.update_from_external_object( internal,
+												 ext_obj,
+												 require_updater=True )
+
+	assert_that( internal, has_property('value', is_(('a part',))))

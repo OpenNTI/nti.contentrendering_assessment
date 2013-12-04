@@ -12,6 +12,7 @@ from six import text_type
 from six import string_types
 
 from zope import interface
+from zope.container.contained import Contained
 
 from persistent import Persistent
 
@@ -22,9 +23,13 @@ from . import interfaces
 from ._util import TrivialValuedMixin
 
 @interface.implementer(interfaces.IQResponse)
-class QResponse(Persistent):
+class QResponse(Persistent,
+				Contained):
 	"""
 	Base class for responses.
+
+	In general, responses are not expected to be created
+	directly by clients. Subclasses may change this, however.
 	"""
 	__external_can_create__ = False
 
@@ -68,3 +73,19 @@ class QFileResponse(TrivialValuedMixin, QResponse):
 	"""
 	An uploaded file response.
 	"""
+
+from nti.dataserver.contenttypes.note import BodyFieldProperty
+from nti.utils.schema import AdaptingFieldProperty
+
+@interface.implementer(interfaces.IQModeledContentResponse)
+class QModeledContentResponse(TrivialValuedMixin,
+							  QResponse):
+	"""
+	A modeled content response, intended to be created
+	from external objects.
+	"""
+
+	__external_can_create__ = True
+
+	value = BodyFieldProperty(interfaces.IQModeledContentResponse['value'])
+	title = AdaptingFieldProperty(interfaces.IQModeledContentResponse['title'])

@@ -18,7 +18,7 @@ from persistent.list import PersistentList
 
 from nti.externalization.externalization import make_repr
 
-from nti.utils.schema import PermissiveSchemaConfigured as SchemaConfigured
+from nti.utils.schema import SchemaConfigured
 from nti.utils.schema import createDirectFieldProperties
 
 # EWW...but we need to be IContained in order to be stored

@@ -9,6 +9,7 @@ __docformat__ = "restructuredtext en"
 from zope import interface
 from zope.mimetype.interfaces import mimeTypeConstraint
 
+from zope.container.interfaces import IContained
 from zope.annotation.interfaces import IAnnotatable
 
 from nti.utils.schema import Bool
@@ -36,7 +37,11 @@ from nti.contentfragments.schema import LatexFragmentTextLine as _LatexTextLine
 from nti.contentfragments.schema import HTMLContentFragment as _HTMLContentFragment
 from nti.contentfragments.schema import TextUnicodeContentFragment as _ContentFragment
 
+
+from nti.dataserver.interfaces import CompoundModeledContentBody
+from nti.dataserver.interfaces import INeverStoredInSharedStream
 from nti.dataserver.interfaces import ITitledContent
+
 
 from nti.monkey import plonefile_zopefile_patch_on_import
 plonefile_zopefile_patch_on_import.patch()
@@ -286,24 +291,30 @@ class IQFreeResponseSolution(IQSolution,IQSingleValuedSolution):
 class IQFreeResponsePart(IQPart):
 	"""
 	A part whose correct answer is simple text.
+
+	These parts are intended for very short submissions.
 	"""
 
 class IQMatchingSolution(IQSolution):
 	"""
 	Matching solutions are the correct mapping from keys to values.
-	Generally this will be a mapping of integer locations, but it may also be
-	a mapping of actual keys and values. The response is an IDictResponse of ints or key/values.
+	Generally this will be a mapping of integer locations, but it may
+	also be a mapping of actual keys and values. The response is an
+	IDictResponse of ints or key/values.
 	"""
 
 	value = Dict( title="The correct mapping." )
 
 class IQMatchingPart(IQPart):
 	"""
-	A question part that asks the student to connect items from one column (labels) with
-	items in another column (values) forming a one-to-one and onto mapping.
+	A question part that asks the student to connect items from one
+	column (labels) with items in another column (values) forming a
+	one-to-one and onto mapping.
 
-	The possibilities are represented as two equal-length lists because order of presentation does matter,
-	and to permit easy grading:	responses are submitted as mapping from label position to value position.
+	The possibilities are represented as two equal-length lists
+	because order of presentation does matter, and to permit easy
+	grading: responses are submitted as mapping from label position to
+	value position.
 	"""
 
 	labels = List( title="The list of labels",
@@ -323,10 +334,10 @@ class IQMatchingPartGrader(IQPartGrader):
 
 class IQFilePart(IQPart):
 	"""
-	A part that requires the student to upload a file
-	from their own computer. Note that this part cannot be
-	automatically graded, it can merely be routed to a
-	responsible party for grading manually.
+	A part that requires the student to upload a file from their own
+	computer. Note that this part cannot be automatically graded
+	(hence there is no corresponding solution), it can merely be
+	routed to a responsible party for grading manually.
 
 	In this interface you specify MIME types and/or
 	filename extensions that can be used as input. If the incoming
@@ -359,6 +370,19 @@ class IQFilePart(IQPart):
 		Return whether the filename given is allowed according to
 		the allowed list of extensions.
 		"""
+
+class IQModeledContentPart(IQPart):
+	"""
+	A part intended for \"essay\" style submissions
+	of rich content authored on the platform. These
+	will typically be much longer than :class:`IQFreeResponsePart`.
+
+	Currently, there are no length minimum or maximums
+	defined or enforced. Likewise, there are no enforcements
+	of the type of body parts that should be allowed (e.g., don't
+	allow whiteboards, force a whiteboard). Those can be added
+	if needed.
+	"""
 
 class IQuestion(IAnnotatable):
 	"""
@@ -472,7 +496,8 @@ class IQAssignment(ITitledContent,
 
 
 
-class IQResponse(interface.Interface):
+class IQResponse(IContained,
+				 INeverStoredInSharedStream):
 	"""
 	A response submitted by the student.
 	"""
@@ -500,6 +525,23 @@ class IQDictResponse(IQResponse):
 	value = Dict( title="The response dictionary",
 				  key_type=TextLine( title="The key" ),
 				  value_type=TextLine(title="The value") )
+
+
+class IQModeledContentResponse(IQResponse,
+							   ITitledContent):
+	"""
+	A response with a value similar to that of a conventional
+	Note, consisting of multiple parts and allowing for things
+	like embedded whiteboards and the like.
+
+	Unlike other response types, this one must be submitted
+	in its proper external form as this type object, not a primitive.
+	"""
+
+	value = CompoundModeledContentBody()
+	value.required = True
+	value.__name__ = 'value'
+
 
 import plone.namedfile.interfaces
 class IQUploadedFile(plone.namedfile.interfaces.INamedFile):
@@ -587,6 +629,7 @@ class IQAssessedPart(interface.Interface):
 								  Object(IList),
 								  Object(IUnicode),
 								  Object(IQUploadedFile),
+								  Object(IQModeledContentResponse), # List this so we get specific validation for it
 								  Object(IQResponse)),
 								 variant_raise_when_schema_provided=True,
 								 title="The response as the student submitted it.")
