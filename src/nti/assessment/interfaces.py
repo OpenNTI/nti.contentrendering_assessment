@@ -98,9 +98,11 @@ class IQPart(interface.Interface):
 		by delegating to a registered :class:`IQPartGrader`.
 
 		:param response: An :class:`IResponse` object representing the student's input for this
-			part of the question.
+			part of the question. If the response is an inappropriate type for the part,
+			an exception may be raised.
 		:return: A value that can be interpreted as a boolean, indicating correct (``True``) or incorrect
-			(``False``) response. A return value of ``None`` indicates no opinion. If solution weights are
+			(``False``) response. A return value of ``None`` indicates no opinion, typically because
+			there are no provided solutions. If solution weights are
 			taken into account, this will be a floating point number between 0.0 (incorrect) and 1.0 (perfect).
 		"""
 
@@ -584,12 +586,16 @@ class IQAssessedPart(interface.Interface):
 								  Object(IDict),
 								  Object(IList),
 								  Object(IUnicode),
+								  Object(IQUploadedFile),
 								  Object(IQResponse)),
+								 variant_raise_when_schema_provided=True,
 								 title="The response as the student submitted it.")
 	assessedValue = Float( title="The relative correctness of the submitted response, from 0.0 (entirely wrong) to 1.0 (perfectly correct)",
+						   description="A value of None means that it was not possible to assess this part.",
 						   min=0.0,
 						   max=1.0,
-						   default=0.0 )
+						   default=0.0,
+						   required=False)
 
 class IQAssessedQuestion(interface.Interface):
 	"""

@@ -15,10 +15,11 @@ import os.path
 from zope import interface
 from zope import component
 from zope.mimetype.interfaces import mimeTypeConstraint
+from zope.schema.interfaces import ConstraintNotSatisfied
 
 from persistent import Persistent
 
-from dm.zope.schema.schema import SchemaConfigured
+from nti.utils.schema import SchemaConfigured
 
 from nti.contentfragments.interfaces import UnicodeContentFragment as _u
 
@@ -31,18 +32,27 @@ from .interfaces import convert_response_for_solution
 @interface.implementer(interfaces.IQPart)
 class QPart(SchemaConfigured,Persistent):
 	"""
-	Base class for parts. Its :meth:`grade` method
-	will attempt to transform the input based on the interfaces
-	this object implements and then call the :meth:`_grade` method.
+	Base class for parts. Its :meth:`grade` method will attempt to
+	transform the input based on the interfaces this object
+	implements, plus the interfaces of the solution, and then call the
+	:meth:`_grade` method.
 	"""
 
-
-	#: The interface to which we will attempt to adapt ourself, the solution and the response
-	#: when grading. Should be a :class:`.IQPartGrader`
+	#: The interface to which we will attempt to adapt ourself, the
+	#: solution and the response when grading. Should be a
+	#: class:`.IQPartGrader`. The response will have first been converted
+	#: for the solution.
 	grader_interface = interfaces.IQPartGrader
 	#: The name of the grader we will attempt to adapt to. Defaults to the default,
 	#: unnamed, adapter
 	grader_name = _u('')
+
+	#: If non-None, then we will always attempt to convert the
+	#: response to this interface before attempting to grade.
+	#: In this way parts that may not have a solution
+	#: can always be sure that the response is at least
+	#: of an appropriate type.
+	response_interface = None
 
 	content = _u('')
 	hints = ()
@@ -50,6 +60,13 @@ class QPart(SchemaConfigured,Persistent):
 	explanation = _u('')
 
 	def grade( self, response ):
+		if self.response_interface is not None:
+			response = self.response_interface(response)
+
+		if not self.solutions:
+			# No solutions, no opinion
+			return None
+
 		for solution in self.solutions:
 			# Graders return a true or false value. We are responsible
 			# for applying weights to that
@@ -170,9 +187,24 @@ class QFreeResponsePart(QPart):
 @interface.implementer(interfaces.IQFilePart)
 class QFilePart(QPart):
 
+	response_interface = interfaces.IQFileResponse
+
 	allowed_mime_types = ()
 	allowed_extensions = ()
 	max_file_size = None
+
+	def grade(self, response):
+		response = self.response_interface(response)
+		# We first check our own constraints for submission
+		# and refuse to even grade if they are not met
+		if not self.is_mime_type_allowed( response.value.contentType ):
+			raise ConstraintNotSatisfied(response.value.contentType, 'mimeType')
+		if not self.is_filename_allowed( response.value.filename ):
+			raise ConstraintNotSatisfied(response.value.filename, 'filename')
+		if (self.max_file_size is not None and response.value.getSize() > self.max_file_size ):
+			raise ConstraintNotSatisfied(response.value.getSize(), 'max_file_size')
+
+		super(QFilePart,self).grade(response)
 
 	def is_mime_type_allowed( self, mime_type ):
 		if mime_type:

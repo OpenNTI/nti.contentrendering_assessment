@@ -35,6 +35,10 @@
 			 provides=".interfaces.IQListResponse"
 			 for="list" />
 
+	<adapter factory=".response.QFileResponse"
+			 provides=".interfaces.IQFileResponse"
+			 for=".interfaces.IQUploadedFile" />
+
 	<!-- Solution types -->
 	<!-- TODO: This should really be on the ILatexContentFragment -->
 	<adapter factory=".solution.QLatexSymbolicMathSolution"

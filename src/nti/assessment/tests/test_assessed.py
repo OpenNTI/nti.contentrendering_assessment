@@ -13,6 +13,8 @@ from hamcrest import none
 from hamcrest import is_not
 from hamcrest import has_length
 from hamcrest import has_item
+from hamcrest import calling
+from hamcrest import raises
 from unittest import TestCase
 from nti.testing.matchers import is_false
 from nti.testing.matchers import validly_provides, verifiably_provides
@@ -125,6 +127,49 @@ class TestAssessedQuestion(TestCase):
 														  has_entry( 'solutions',
 																	 has_item( has_entry( 'value',
 																						  'correct' ))) ) ) ) )
+
+	def test_assess_with_file_part(self):
+		part = parts.QFilePart()
+		part.allowed_mime_types = ('*/*',)
+		part.allowed_extensions = '*'
+		question = QQuestion( parts=(part,) )
+
+		component.provideUtility( question, provides=interfaces.IQuestion,  name="1")
+
+		sub = submission.QuestionSubmission( questionId="1", parts=('correct',) )
+		# Wrong submission type, cannot be assessed at all
+		assert_that( calling( interfaces.IQAssessedQuestion ).with_args(sub),
+					 raises( TypeError ))
+
+		# Right submission type, but not a valid submission
+		sub = submission.QuestionSubmission( questionId="1", parts=(response.QUploadedFile(),) )
+		assert_that( calling( interfaces.IQAssessedQuestion ).with_args(sub),
+					 raises( interface.Invalid ))
+
+		sub = submission.QuestionSubmission( questionId="1", parts=(response.QUploadedFile(data=b'1234',
+																						   contentType=b'text/plain',
+																						   filename='foo.txt'),) )
+		result = interfaces.IQAssessedQuestion( sub )
+		assert_that( result, has_property( 'questionId', "1" ) )
+		assert_that( result, has_property( 'parts', contains( assessed.QAssessedPart( submittedResponse=sub.parts[0],
+																					  assessedValue=None ) ) ) )
+
+		# Now if the part gets constraints on filename or mimeType or size
+		# submission can fail
+		part.allowed_mime_types = ('application/octet-stream',)
+		assert_that( calling( interfaces.IQAssessedQuestion ).with_args(sub),
+					 raises( interface.Invalid, 'mimeType' ))
+
+		part.allowed_mime_types = ('*/*',)
+		part.allowed_extensions = ('.doc',)
+		assert_that( calling( interfaces.IQAssessedQuestion ).with_args(sub),
+					 raises( interface.Invalid, 'filename' ))
+
+		part.allowed_extensions = '*'
+		part.max_file_size = 0
+		assert_that( calling( interfaces.IQAssessedQuestion ).with_args(sub),
+					 raises( interface.Invalid, 'max_file_size' ))
+
 
 class TestAssessedQuestionSet(TestCase):
 

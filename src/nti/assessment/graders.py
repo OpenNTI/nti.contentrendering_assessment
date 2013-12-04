@@ -33,10 +33,10 @@ def __normalize_quotes(string):
 	"""
 	We want curly quotes to compare the same as straight quotes.
 	"""
-	replacements = (('“', '"'), # left double
-					 ('”', '"'), # right double
-					 ("‘", "'"), # left single
-					 ("’", "'")) # right single
+	replacements = ((u'\u201c', '"'), # Left double
+					(u'\u201d', '"'), # Right double
+					(u'\u2018', "'"), # Left single
+					(u'\u2019', "'")) # Right single
 	for bad, good in replacements:
 		string = string.replace( bad, good )
 

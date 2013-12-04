@@ -463,10 +463,16 @@ class naqfilepart(_AbstractNAQPart):
 		   \end{naqfilepart}
 		\end{naquestion}
 
-	An optional argument in parenthesis is a list of mimetypes and file
-	extensions to allow; to allow arbitrary types use "*/*". The optional
-	argument in square brackets is the max size of the file in kilobytes;
-	the example above thus specifies a 1MB cap.
+	An (effectively required) argument in parenthesis is a list of
+	mimetypes and file extensions to allow; to allow arbitrary types
+	use ``*/*,*`` (the former allows all mime types, the latter allows
+	all extensions). As another example, to allow PDF files with any
+	extension, use ``application/pdf,*`` or to allow anything that might
+	be a PDF, try ``*/*,.pdf``. A good list for documents might be
+	``*/*,.txt,.doc,.docx,.pdf``
+
+	The optional argument in square brackets is the max size of the
+	file in kilobytes; the example above thus specifies a 1MB cap.
 	"""
 
 	args = "(types:list:str)[size:int]"
@@ -490,7 +496,7 @@ class naqfilepart(_AbstractNAQPart):
 		kw = {}
 		for k in 'allowed_extensions', 'allowed_mime_types', 'max_file_size':
 			mine = getattr(self, '_' + k)
-			if min:
+			if mine:
 				kw[k] = mine
 		return kw
 
