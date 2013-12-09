@@ -692,3 +692,107 @@ class TestRenderableSymMathPart(unittest.TestCase):
 							'href': 'index.html'}
 
 			assert_that( obj, is_( exp_value ) )
+
+	def test_assessment_index_with_assignment(self):
+
+		example = br"""
+		\chapter{Chapter One}
+
+		We have a paragraph.
+
+		\section{Section One}
+
+		\begin{naquestion}[individual=true]\label{testquestion}
+			Arbitrary content goes here.
+			\begin{naqfilepart}(application/pdf)
+			Arbitrary content goes here.
+			\end{naqfilepart}
+		\end{naquestion}
+
+		\begin{naquestionset}
+		\label{set}
+		\naquestionref{testquestion}
+		\end{naquestionset}
+
+
+		\begin{naassignment}[not_before_date=2014-01-13]<Main Title>
+		\label{assignment}
+		Assignment content.
+		\begin{naassignmentpart}[auto_grade=true]<Part Title>{set}
+			Some content.
+		\end{naassignmentpart}
+		\end{naassignment}
+
+		"""
+
+		with RenderContext(_simpleLatexDocument( (example,) )) as ctx:
+			dom  = ctx.dom
+			dom.getElementsByTagName( 'document' )[0].filenameoverride = 'index'
+			render = ResourceRenderer.createResourceRenderer( 'XHTML', None )
+			render.importDirectory( os.path.join( os.path.dirname(__file__), '..' ) )
+			render.render( dom )
+
+			rendered_book = _MockRenderedBook()
+			rendered_book.document = dom
+			rendered_book.contentLocation = ctx.docdir
+
+			extractor = component.getAdapter(rendered_book, IAssessmentExtractor)
+			extractor.transform( rendered_book )
+
+			jsons = open(os.path.join( ctx.docdir, 'assessment_index.json' ), 'rU' ).read()
+			obj = json.loads( jsons )
+
+			question = {'Class': 'Question',
+						'MimeType': 'application/vnd.nextthought.naquestion',
+						'NTIID': 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.testquestion',
+						'content': '<a name="testquestion"></a> Arbitrary content goes here.',
+						'parts': [{'Class': 'FilePart',
+								   'MimeType': 'application/vnd.nextthought.assessment.filepart',
+								   'allowed_extensions': [],
+								   'allowed_mime_types': ['application/pdf'],
+								   'content': 'Arbitrary content goes here.',
+								   'explanation': u'',
+								   'hints': [],
+								   'max_file_size': None,
+								   'solutions': []}]}
+
+			exp_value = {'Items':
+						 {'tag:nextthought.com,2011-10:testing-HTML-temp.0':
+						  {'AssessmentItems': {},
+						   'Items': {'tag:nextthought.com,2011-10:testing-HTML-temp.chapter_one':
+									 {'AssessmentItems': {},
+									  'Items': {'tag:nextthought.com,2011-10:testing-HTML-temp.section_one':
+												{'AssessmentItems': {'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.asg.assignment':
+																	 {'Class': 'Assignment',
+																	  'MimeType': 'application/vnd.nextthought.assessment.assignment',
+																	  'NTIID': 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.asg.assignment',
+																	  'available_for_submission_beginning': '2014-01-13T00:00:00',
+																	  'available_for_submission_ending': None,
+																	  'content': 'Assignment content.',
+																	  'parts': [{'Class': 'AssignmentPart',
+																				 'MimeType': 'application/vnd.nextthought.assessment.assignmentpart',
+																				 'auto_grade': True,
+																				 'content': 'Some content.',
+																				 'question_set': {'Class': 'QuestionSet',
+																								  'MimeType': 'application/vnd.nextthought.naquestionset',
+																								  'NTIID': 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.set.set',
+																								  'questions': [question]},
+																				 'title': 'Part Title'}],
+																	  'title': 'Main Title'},
+																	 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.set.set': {'Class': 'QuestionSet',
+																																  'MimeType': 'application/vnd.nextthought.naquestionset',
+																																  'NTIID': 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.set.set',
+																																  'questions': [question]},
+																	 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.testquestion': question},
+												 'NTIID': 'tag:nextthought.com,2011-10:testing-HTML-temp.section_one',
+												 'filename': 'tag_nextthought_com_2011-10_testing-HTML-temp_section_one.html',
+												 'href': 'tag_nextthought_com_2011-10_testing-HTML-temp_section_one.html'}},
+									  'NTIID': 'tag:nextthought.com,2011-10:testing-HTML-temp.chapter_one',
+									  'filename': 'tag_nextthought_com_2011-10_testing-HTML-temp_chapter_one.html',
+									  'href': 'tag_nextthought_com_2011-10_testing-HTML-temp_chapter_one.html'}},
+						   'NTIID': 'tag:nextthought.com,2011-10:testing-HTML-temp.0',
+						   'filename': 'index.html',
+						   'href': 'index.html'}},
+						 'href': 'index.html'}
+
+			assert_that( obj, is_( exp_value ) )
