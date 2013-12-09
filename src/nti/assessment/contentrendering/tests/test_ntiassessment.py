@@ -32,6 +32,8 @@ import nti.contentrendering
 from ... import interfaces as asm_interfaces
 
 import nti.externalization
+from nti.externalization.externalization import to_external_object
+from nti.externalization.internalization import update_from_external_object
 
 def _simpleLatexDocument(maths):
 	return simpleLatexDocumentText( preludes=(br'\usepackage{nti.contentrendering.plastexpackages.ntiassessment}',),
@@ -232,6 +234,10 @@ def test_assignment_macros():
 	assert_that( asg_object, has_property('title', 'Main Title'))
 	assert_that( asg_object, has_property( 'available_for_submission_beginning',
 										   datetime( 2014, 01, 13, 0, 0)))
+
+	ext_obj = to_external_object(asg_object)
+	raw_int_obj = type(asg_object)()
+	update_from_external_object(raw_int_obj, ext_obj, require_updater=True)
 
 def test_content_adaptation():
 	doc = br"""

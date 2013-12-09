@@ -55,6 +55,9 @@ class QAssignment(Persistent,
 	title = AdaptingFieldProperty(interfaces.IQAssignment['title'])
 	createDirectFieldProperties(interfaces.IQAssignment)
 
+	available_for_submission_beginning = AdaptingFieldProperty(interfaces.IQAssignment['available_for_submission_beginning'])
+	available_for_submission_ending = AdaptingFieldProperty(interfaces.IQAssignment['available_for_submission_ending'])
+
 	mime_type = 'application/vnd.nextthought.assessment.assignment'
 
 	__repr__ = make_repr()

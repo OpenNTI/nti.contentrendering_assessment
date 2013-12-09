@@ -13,7 +13,7 @@ from zope.container.interfaces import IContained
 from zope.annotation.interfaces import IAnnotatable
 
 from nti.utils.schema import Bool
-from nti.utils.schema import Datetime
+from nti.utils.schema import ValidDatetime as Datetime
 from nti.utils.schema import Dict
 from nti.utils.schema import Float
 from nti.utils.schema import IndexedIterable
