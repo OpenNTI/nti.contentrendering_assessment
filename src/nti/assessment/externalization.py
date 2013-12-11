@@ -147,7 +147,9 @@ class _QUploadedFileObjectIO(AbstractDynamicObjectIO):
 			if name:
 				ext_self.filename = name
 			updated = True
-
+		if 'FileMimeType' in parsed:
+			ext_self.contentType = bytes(parsed['FileMimeType'])
+			updated = True
 		return updated
 
 	def toExternalObject( self, mergeFrom=None ):
@@ -161,12 +163,13 @@ class _QUploadedFileObjectIO(AbstractDynamicObjectIO):
 		the_file = self._ext_replacement()
 		ext_dict['FileMimeType'] = the_file.mimeType or None
 		ext_dict['filename'] = the_file.filename or None
+		ext_dict['MimeType'] = 'application/vnd.nextthought.assessment.uploadedfile'
 		# We should probably register an externalizer on
 		# i
 		target = to_external_ntiid_oid( the_file, add_to_connection=True )
 		if target:
 			link = links.Link( target=target,
-							   target_mime_type=the_file.mimeType,
+							   target_mime_type=the_file.contentType,
 							   elements=('@@download',),
 							   rel="data" )
 			interface.alsoProvides( link, nti_interfaces.ILinkExternalHrefOnly )
