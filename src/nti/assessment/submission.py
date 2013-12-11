@@ -68,4 +68,6 @@ class AssignmentSubmission(PersistentCreatedModDateTrackingObject,
 	"""
 	createDirectFieldProperties(interfaces.IQAssignmentSubmission)
 
+	mime_type = 'application/vnd.nextthought.assessment.assignmentsubmission'
+
 	__repr__ = make_repr()

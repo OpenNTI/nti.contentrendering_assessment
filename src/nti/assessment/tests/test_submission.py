@@ -4,10 +4,16 @@ $Id$
 """
 from __future__ import print_function, unicode_literals
 
-from hamcrest import assert_that, has_entry, is_, has_property, contains, same_instance
+from hamcrest import assert_that
+from hamcrest import has_entry
+from hamcrest import is_
+from hamcrest import has_property
+from hamcrest import contains
+from hamcrest import same_instance
 from hamcrest import has_key
 from hamcrest import not_none
 from unittest import TestCase
+from hamcrest import has_entries
 from nti.testing.matchers import verifiably_provides
 from nti.testing.matchers import validly_provides
 from nti.externalization.tests import externalizes
@@ -28,7 +34,7 @@ from .. import submission
 
 
 # nose module-level setup
-setUpModule = lambda: nti.testing.base.module_setup( set_up_packages=(__name__,) )
+setUpModule = lambda: nti.testing.base.module_setup( set_up_packages=(__name__,'nti.mimetype') )
 tearDownModule = nti.testing.base.module_teardown
 
 
@@ -38,12 +44,10 @@ class TestQuestionSubmission(TestCase):
 		assert_that( submission.QuestionSubmission(), verifiably_provides( interfaces.IQuestionSubmission ) )
 		assert_that( submission.QuestionSubmission(), externalizes( has_entry( 'Class', 'QuestionSubmission' ) ) )
 		assert_that( internalization.find_factory_for( toExternalObject( submission.QuestionSubmission() ) ),
-					 is_( same_instance( submission.QuestionSubmission ) ) )
+					 has_property( '_callable', is_( same_instance( submission.QuestionSubmission ) ) ) )
 
 
 		# Now verify the same for the mimetype-only version
-		mtd = dottedname.resolve( 'nti.mimetype.externalization.MimeTypeDecorator' )
-		component.provideSubscriptionAdapter( mtd, provides=ext_interfaces.IExternalMappingDecorator )
 		assert_that( submission.QuestionSubmission(), externalizes( has_key( 'MimeType' ) ) )
 		ext_obj_no_class = toExternalObject( submission.QuestionSubmission() )
 		ext_obj_no_class.pop( 'Class' )
@@ -91,7 +95,8 @@ class TestAssignmentSubmission(TestCase):
 
 	def test_externalizes(self):
 		assert_that( submission.AssignmentSubmission(), verifiably_provides( interfaces.IQAssignmentSubmission ) )
-		assert_that( submission.AssignmentSubmission(), externalizes( has_entry( 'Class', 'AssignmentSubmission' ) ) )
+		assert_that( submission.AssignmentSubmission(), externalizes( has_entries( 'Class', 'AssignmentSubmission',
+																				   'MimeType', 'application/vnd.nextthought.assessment.assignmentsubmission') ) )
 
 		asub = submission.AssignmentSubmission()
 		# Recursive validation
