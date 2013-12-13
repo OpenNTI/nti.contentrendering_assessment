@@ -134,7 +134,7 @@ class _QUploadedFileObjectIO(AbstractDynamicObjectIO):
 	def updateFromExternalObject( self, parsed, *args, **kwargs ):
 		updated = super(_QUploadedFileObjectIO,self).updateFromExternalObject( parsed, *args, **kwargs )
 		ext_self = self._ext_replacement()
-		url = parsed.get( 'url', parsed.get('value') )
+		url = parsed.get( 'url' ) or parsed.get('value')
 		if url:
 			data_url = DataURI(__name__='url').fromUnicode( url )
 			ext_self.contentType = data_url.mimeType
@@ -170,7 +170,7 @@ class _QUploadedFileObjectIO(AbstractDynamicObjectIO):
 		if target:
 			link = links.Link( target=target,
 							   target_mime_type=the_file.contentType,
-							   elements=('@@download',),
+							   elements=('view',),
 							   rel="data" )
 			interface.alsoProvides( link, nti_interfaces.ILinkExternalHrefOnly )
 			ext_dict['url'] = to_external_object( link )

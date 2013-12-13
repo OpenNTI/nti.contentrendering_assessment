@@ -12,6 +12,7 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
 from zope import component
+import zope.container.contained
 
 import persistent
 from persistent.list import PersistentList
@@ -34,7 +35,7 @@ from . import interfaces
 from ._util import superhash
 
 @interface.implementer(interfaces.IQAssessedPart)
-class QAssessedPart(SchemaConfigured, persistent.Persistent):
+class QAssessedPart(SchemaConfigured, zope.container.contained.Contained, persistent.Persistent):
 	createDirectFieldProperties(interfaces.IQAssessedPart)
 	__external_can_create__ = False
 

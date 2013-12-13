@@ -11,7 +11,7 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
-
+import zope.container.contained
 from nti.dataserver.datastructures import PersistentCreatedModDateTrackingObject
 from nti.dataserver.datastructures import ContainedMixin
 
@@ -41,13 +41,13 @@ from . import interfaces
 
 
 @interface.implementer(interfaces.IQuestionSubmission)
-class QuestionSubmission(SchemaConfigured):
+class QuestionSubmission(SchemaConfigured, zope.container.contained.Contained):
 	createDirectFieldProperties(interfaces.IQuestionSubmission)
 
 	__repr__ = make_repr()
 
 @interface.implementer(interfaces.IQuestionSetSubmission)
-class QuestionSetSubmission(SchemaConfigured):
+class QuestionSetSubmission(SchemaConfigured, zope.container.contained.Contained):
 	createDirectFieldProperties(interfaces.IQuestionSetSubmission)
 
 	__repr__ = make_repr()

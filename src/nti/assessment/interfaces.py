@@ -594,7 +594,7 @@ def convert_response_for_solution(solution, response):
 # parts have similar structure.
 ###
 
-class IQuestionSubmission(interface.Interface):
+class IQuestionSubmission(IContained):
 	"""
 	A student's submission in response to a question.
 
@@ -608,7 +608,7 @@ class IQuestionSubmission(interface.Interface):
 							 adaptable into the proper :class:`IQResponse` object (e.g., a string or dict).""" )
 
 
-class IQAssessedPart(interface.Interface):
+class IQAssessedPart(IContained):
 	"""
 	The assessed value of a single part.
 
@@ -640,7 +640,7 @@ class IQAssessedPart(interface.Interface):
 						   default=0.0,
 						   required=False)
 
-class IQAssessedQuestion(interface.Interface):
+class IQAssessedQuestion(IContained):
 	"""
 	The assessed value of a student's submission for a single question.
 
@@ -652,7 +652,7 @@ class IQAssessedQuestion(interface.Interface):
 							 value_type=Object( IQAssessedPart, title="The assessment of a part." ) )
 
 
-class IQuestionSetSubmission(interface.Interface):
+class IQuestionSetSubmission(IContained):
 	"""
 	A student's submission in response to an entire question set.
 
@@ -666,7 +666,7 @@ class IQuestionSetSubmission(interface.Interface):
 								 default=(),
 								 value_type=Object( IQuestionSubmission, title="The submission for a particular question.") )
 
-class IQAssessedQuestionSet(interface.Interface):
+class IQAssessedQuestionSet(IContained):
 	"""
 	The assessed value of a student's submission to an entire question set.
 
@@ -677,7 +677,7 @@ class IQAssessedQuestionSet(interface.Interface):
 	questions = IndexedIterable( title="Assessed questions, one for each question in the set.",
 								 value_type=Object( IQAssessedQuestion, title="The assessed value for a particular question.") )
 
-class IQAssignmentSubmission(interface.Interface):
+class IQAssignmentSubmission(IContained):
 	"""
 	A student's submission in response to an assignment.
 	"""
@@ -695,7 +695,7 @@ class IQAssignmentSubmission(interface.Interface):
 	# It's not always an `Assessed` object, because not all parts will have been
 	# assessed in all cases.
 
-class IQAssignmentSubmissionPendingAssessment(interface.Interface):
+class IQAssignmentSubmissionPendingAssessment(IContained):
 	"""
 	A submission for an assignment that cannot be completely assessed;
 	complete assessment is pending. This is typically the step after
