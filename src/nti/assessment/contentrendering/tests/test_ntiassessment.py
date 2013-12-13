@@ -9,7 +9,9 @@ from hamcrest import has_length
 from hamcrest import contains_string
 from hamcrest import same_instance
 from hamcrest import has_property
-from hamcrest import contains, has_item
+from hamcrest import contains
+from hamcrest import has_item
+from hamcrest import has_key
 from hamcrest import has_entry
 from hamcrest import is_not as does_not
 import unittest
@@ -36,7 +38,7 @@ from nti.externalization.externalization import to_external_object
 from nti.externalization.internalization import update_from_external_object
 
 def _simpleLatexDocument(maths):
-	return simpleLatexDocumentText( preludes=(br'\usepackage{nti.contentrendering.plastexpackages.ntiassessment}',),
+	return simpleLatexDocumentText( preludes=(br'\usepackage{ntiassessment}',),
 									bodies=maths )
 
 # Nose module-level setup and teardown
@@ -381,6 +383,9 @@ def test_multiple_choice_multiple_answer_macros():
 
 	assert_that( dom.getElementsByTagName('naqchoice'), has_length( 3 ) )
 	assert_that( dom.getElementsByTagName('naqsolution'), has_length( 1 ) )
+
+	for _naqchoice in dom.getElementsByTagName('naqchoice'):
+		assert_that( dict(_naqchoice.attributes), has_key('weight'))
 
 
 	naq = dom.getElementsByTagName('naquestion')[0]

@@ -780,7 +780,7 @@ class naassignmentpart(_LocalContentMixin,
 
 	args = "[options:dict:str] <title:str> question_set:idref"
 
-
+	@cachedIn('_v_assessment_object')
 	def assessment_object(self):
 		question_set = self.idref['question_set'].assessment_object()
 		return assignment.QAssignmentPart( content=self._asm_local_content,
