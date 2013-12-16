@@ -664,6 +664,16 @@ class naquestion(_LocalContentMixin,Base.Environment,plastexids.NTIIDMixin):
 	counter = 'naquestion'
 	blockType = True
 
+	# Depending on the presence or absence of newlines
+	# (and hence real paragraphs) within our top-level,
+	# we either get children elements that are <par>
+	# elements, or not. If they are <par> elements, the last
+	# one contains the actual naqXXXpart children we are interested in.
+	# If we set this to true, then we don't have that ambiguous
+	# case; however, we wind up collecting too much content
+	# into the `content` of the parts so we can't
+	forcePars = False
+
 	_ntiid_cache_map_name = '_naquestion_ntiid_map'
 	_ntiid_allow_missing_title = True
 	_ntiid_suffix = 'naq.'
@@ -692,7 +702,17 @@ class naquestion(_LocalContentMixin,Base.Environment,plastexids.NTIIDMixin):
 		return ''.join(videos)
 
 	def _asm_question_parts(self):
-		return [x.assessment_object() for x in self if hasattr(x,'assessment_object')]
+		# See forcePars.
+		# There may be a better way to make this determination.
+		# naqassignment and the naquestionset don't suffer from this
+		# issue because they can specifically ask for known child
+		# nodes by name.
+		if all( hasattr(x, 'tagName') and x.tagName == 'par' for x in self ):
+			to_iter = self.lastChild.childNodes
+		else:
+			to_iter = self
+
+		return [x.assessment_object() for x in to_iter if hasattr(x,'assessment_object')]
 
 	@cachedIn('_v_assessment_object')
 	def assessment_object(self):

@@ -141,6 +141,32 @@ def test_essay_macros():
 	assert_that( part.hints, has_length( 1 ) )
 	assert_that( part.hints, contains( verifiably_provides( asm_interfaces.IQHint ) ) )
 
+def test_essay_macro_with_blank_line():
+	example = br"""
+	\begin{naquestion}[individual=true]
+		\label{the.label}
+		Arbitrary content goes here,
+
+		and there's a blank line, and another before the part:
+		\begin{naqessaypart}
+		Arbitrary content goes here.
+		\begin{naqhints}
+			\naqhint Some hint
+		\end{naqhints}
+		\end{naqessaypart}
+	\end{naquestion}
+
+	"""
+
+	dom = _buildDomFromString( _simpleLatexDocument( (example,) ) )
+
+	naq = dom.getElementsByTagName('naquestion')[0]
+	naq = naq.assessment_object()
+
+	# TODO: Finish checking this
+#	assert_that( naq.content, is_('Arbitrary content goes here'))
+
+
 def test_question_set_macros():
 	example = br"""
 	\begin{naquestion}[individual=true]
