@@ -294,6 +294,8 @@ class _AbstractNAQPart(_LocalContentMixin,Base.Environment):
 
 _LocalContentMixin._asm_ignorable_renderables += (_AbstractNAQPart,)
 
+# NOTE: Part Node's MUST be named 'naq'XXX'part'
+
 class naqnumericmathpart(_AbstractNAQPart):
 	"""
 	Solutions are treated as numbers for the purposes of grading.
@@ -706,11 +708,9 @@ class naquestion(_LocalContentMixin,Base.Environment,plastexids.NTIIDMixin):
 		# There may be a better way to make this determination.
 		# naqassignment and the naquestionset don't suffer from this
 		# issue because they can specifically ask for known child
-		# nodes by name.
-		if all( hasattr(x, 'tagName') and x.tagName == 'par' for x in self ):
-			to_iter = self.lastChild.childNodes
-		else:
-			to_iter = self
+		# nodes by name...we rely on convention
+		to_iter = (x for x in self.allChildNodes
+				   if hasattr(x, 'tagName') and x.tagName.startswith('naq') and x.tagName.endswith('part'))
 
 		return [x.assessment_object() for x in to_iter if hasattr(x,'assessment_object')]
 
