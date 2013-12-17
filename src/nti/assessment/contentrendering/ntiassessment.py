@@ -818,7 +818,7 @@ class naassignment(_LocalContentMixin,
 
 	Example::
 
-		\begin{naassignment}[not_before_date=2014-01-13]<Homework>
+		\begin{naassignment}[not_before_date=2014-01-13,category=homework]<Homework>
 			\label{assignment}
 			Some introductory content.
 
@@ -847,9 +847,10 @@ class naassignment(_LocalContentMixin,
 		# can be made absolute based on when the course begins.
 		# How to represent that? Probably need some schema transformation
 		# step in nti.externalization? Or some auixilliary data fields?
+		options = self.attributes.get('options') or ()
 		def _parse(key):
-			if key in self.attributes.get('options') or ():
-				val = self.attributes['options'][key]
+			if key in options:
+				val = options[key]
 				if 'T' not in val:
 					# If they give no timestamp, make it midnight
 					val += 'T00:00'
@@ -863,6 +864,8 @@ class naassignment(_LocalContentMixin,
 										 available_for_submission_ending=not_after,
 										 parts=[part.assessment_object() for part in self.getElementsByTagName('naassignmentpart')],
 										 title=self.attributes.get('title'))
+		if 'category' in options:
+			result.category_name = as_interfaces.IQAssignment['category_name'].fromUnicode( options['category'] )
 		errors = schema.getValidationErrors( as_interfaces.IQAssignment, result )
 		if errors: # pragma: no cover
 			raise errors[0][1]

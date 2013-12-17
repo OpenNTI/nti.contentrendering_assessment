@@ -41,6 +41,7 @@ from nti.contentfragments.schema import TextUnicodeContentFragment as _ContentFr
 from nti.dataserver.interfaces import CompoundModeledContentBody
 from nti.dataserver.interfaces import INeverStoredInSharedStream
 from nti.dataserver.interfaces import ITitledContent
+from nti.dataserver.interfaces import Tag
 
 
 from nti.monkey import plonefile_zopefile_patch_on_import
@@ -479,6 +480,26 @@ class IQAssignment(ITitledContent,
 		As with ``available_for_submission_beginning``,
 		this will typically be relative and converted.""",
 		required=False )
+
+	category_name = Tag(title="Assignments can be grouped into categories.",
+						description="""By providing this information, assignments
+						can be grouped by an additional dimension. This grouping
+						might be used for display purposes (such as in a gradebook)
+						or even for calculation purposes (each different category contributes
+						differently to the final grade).
+
+						Currently this is limited to an arbitrary tag value;
+						in the future it might either become more constrained
+						to a set of supported choices or broaden to support an entire
+						line of text, depending on use.
+
+						A convention may evolve to allow UIs to recognize
+						and display particular categories specially (for example,
+						course-level assignments like participation or attendance
+						or final grade). That should be documented here.
+						""",
+						default='default',
+						required=True)
 
 	parts = ListOrTuple( title="The ordered parts of the assignment.",
 						 min_length=1,
