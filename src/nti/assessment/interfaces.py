@@ -502,7 +502,11 @@ class IQAssignment(ITitledContent,
 						required=True)
 
 	parts = ListOrTuple( title="The ordered parts of the assignment.",
-						 min_length=1,
+						 description="""Unlike questions, assignments with zero parts are allowed.
+						 Because they accept no input, such an assignment is very
+						 special and serves as a marker to higher levels of code.
+						 """,
+						 min_length=0,
 						 value_type=Object( IQAssignmentPart,
 											title="An assignment part" ) )
 
