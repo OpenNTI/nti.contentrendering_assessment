@@ -13,6 +13,7 @@ from hamcrest import none
 from hamcrest import is_not
 from hamcrest import has_length
 from hamcrest import has_item
+from hamcrest import greater_than
 from hamcrest import calling
 from hamcrest import raises
 from unittest import TestCase
@@ -153,6 +154,8 @@ class TestAssessedQuestion(TestCase):
 		assert_that( result, has_property( 'questionId', "1" ) )
 		assert_that( result, has_property( 'parts', contains( assessed.QAssessedPart( submittedResponse=sub.parts[0],
 																					  assessedValue=None ) ) ) )
+		assert_that( sub.parts[0], has_property( 'lastModified', greater_than(0) ) )
+		assert_that( sub.parts[0], has_property( 'createdTime', greater_than(0) ) )
 
 		# Now if the part gets constraints on filename or mimeType or size
 		# submission can fail

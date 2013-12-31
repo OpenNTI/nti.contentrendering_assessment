@@ -67,7 +67,9 @@ def test_file_upload():
 
 	assert_that( internal, externalizes( all_of( has_key( 'FileMimeType' ),
 												 has_key( 'filename' ),
-												 has_entry( 'url', none() )) ) )
+												 has_entry( 'url', none() ),
+												 has_key( 'CreatedTime'),
+												 has_key('Last Modified')) ) )
 	# But we have no URL because we're not in a connection anywhere
 
 def test_modeled_response_uploade():

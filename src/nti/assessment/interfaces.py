@@ -41,6 +41,7 @@ from nti.contentfragments.schema import TextUnicodeContentFragment as _ContentFr
 from nti.dataserver.interfaces import CompoundModeledContentBody
 from nti.dataserver.interfaces import INeverStoredInSharedStream
 from nti.dataserver.interfaces import ITitledContent
+from nti.dataserver.interfaces import ILastModified
 from nti.dataserver.interfaces import Tag
 
 
@@ -572,7 +573,7 @@ class IQModeledContentResponse(IQResponse,
 
 
 import plone.namedfile.interfaces
-class IQUploadedFile(plone.namedfile.interfaces.INamedFile):
+class IQUploadedFile(plone.namedfile.interfaces.INamedFile,ILastModified):
 	pass
 
 class IQFileResponse(IQResponse):

@@ -18,6 +18,7 @@ from persistent import Persistent
 
 from plone.namedfile.file import NamedBlobFile
 from plone.namedfile.file import NamedBlobImage
+from nti.dataserver.datastructures import PersistentCreatedModDateTrackingObject
 
 from . import interfaces
 from ._util import TrivialValuedMixin
@@ -61,11 +62,13 @@ class QDictResponse(TrivialValuedMixin,QResponse):
 	"""
 
 @interface.implementer(interfaces.IQUploadedFile)
-class QUploadedFile(NamedBlobFile):
+class QUploadedFile(PersistentCreatedModDateTrackingObject, # Order matters
+					NamedBlobFile):
 	pass
 
 @interface.implementer(interfaces.IQUploadedFile)
-class QUploadedImageFile(NamedBlobImage):
+class QUploadedImageFile(PersistentCreatedModDateTrackingObject, # Order matters
+						 NamedBlobImage):
 	pass
 
 @interface.implementer(interfaces.IQFileResponse)
