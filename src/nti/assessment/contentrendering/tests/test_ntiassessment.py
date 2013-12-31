@@ -639,7 +639,8 @@ class TestRenderableSymMathPart(unittest.TestCase):
 			exp_value = {'Items': {'tag:nextthought.com,2011-10:testing-HTML-temp.0': {'AssessmentItems': {},
 				   'Items': {'tag:nextthought.com,2011-10:testing-HTML-temp.chapter_one': {'AssessmentItems': {},
 					 'Items': {'tag:nextthought.com,2011-10:testing-HTML-temp.section_one': {'AssessmentItems': {'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.set.testset': {'Class': 'QuestionSet',
-						 'MimeType': 'application/vnd.nextthought.naquestionset',
+						'title': None,
+						'MimeType': 'application/vnd.nextthought.naquestionset',
 						 'NTIID': 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.set.testset',
 						 'questions': [{'Class': 'Question',
 						   'MimeType': 'application/vnd.nextthought.naquestion',
@@ -773,7 +774,7 @@ class TestRenderableSymMathPart(unittest.TestCase):
 			\end{naqfilepart}
 		\end{naquestion}
 
-		\begin{naquestionset}
+		\begin{naquestionset}<Set Title>
 		\label{set}
 		\naquestionref{testquestion}
 		\end{naquestionset}
@@ -804,6 +805,7 @@ class TestRenderableSymMathPart(unittest.TestCase):
 			extractor.transform( rendered_book )
 
 			jsons = open(os.path.join( ctx.docdir, 'assessment_index.json' ), 'rU' ).read()
+			jsons = jsons.decode('utf-8')
 			obj = json.loads( jsons )
 
 			question = {'Class': 'Question',
@@ -839,12 +841,14 @@ class TestRenderableSymMathPart(unittest.TestCase):
 																				 'auto_grade': True,
 																				 'content': 'Some content.',
 																				 'question_set': {'Class': 'QuestionSet',
+																								  'title': 'Set Title',
 																								  'MimeType': 'application/vnd.nextthought.naquestionset',
 																								  'NTIID': 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.set.set',
 																								  'questions': [question]},
 																				 'title': 'Part Title'}],
 																	  'title': 'Main Title'},
 																	 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.set.set': {'Class': 'QuestionSet',
+																																  'title': 'Set Title',
 																																  'MimeType': 'application/vnd.nextthought.naquestionset',
 																																  'NTIID': 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.set.set',
 																																  'questions': [question]},

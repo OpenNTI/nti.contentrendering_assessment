@@ -17,6 +17,11 @@ from zope.annotation.interfaces import IAttributeAnnotatable
 
 from persistent import Persistent
 
+from nti.utils.schema import createDirectFieldProperties
+from nti.utils.schema import SchemaConfigured
+from nti.utils.schema import AdaptingFieldProperty
+
+
 from . import interfaces
 from ._util import superhash
 
@@ -24,17 +29,11 @@ from ._util import superhash
 					   mime_interfaces.IContentTypeAware,
 					   IAttributeAnnotatable)
 class QQuestion(Persistent,
+				SchemaConfigured,
 				contained.Contained):
 	mime_type = 'application/vnd.nextthought.naquestion'
 
-	content = ''
-	parts = ()
-
-	def __init__(self, content=None, parts=None):
-		if content:
-			self.content = content
-		if parts:
-			self.parts = parts
+	createDirectFieldProperties(interfaces.IQuestion)
 
 	def __eq__(self, other):
 		return other is self or (isinstance(other, QQuestion)
@@ -50,18 +49,17 @@ class QQuestion(Persistent,
 					   mime_interfaces.IContentTypeAware,
 					   IAttributeAnnotatable)
 class QQuestionSet(Persistent,
+				   SchemaConfigured,
 				   contained.Contained):
 	mime_type = 'application/vnd.nextthought.naquestionset'
 
-	questions = ()
-
-	def __init__(self, questions=None):
-		if questions:
-			self.questions = questions
+	title = AdaptingFieldProperty(interfaces.IQuestionSet['title'])
+	createDirectFieldProperties(interfaces.IQuestionSet)
 
 	def __eq__(self, other):
 		return other is self or (isinstance(other, QQuestionSet)
-								 and self.questions == other.questions)
+								 and self.questions == other.questions
+								 and self.title == other.title)
 	def __ne__(self, other):
 		return not (self == other)
 

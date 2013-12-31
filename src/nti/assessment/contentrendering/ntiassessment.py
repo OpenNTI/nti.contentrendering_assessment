@@ -743,12 +743,14 @@ class naquestionset(Base.List, plastexids.NTIIDMixin):
 			...
 		\end{question}
 
-		\begin{naquestionset}
+		\begin{naquestionset}<My Title>
 			\label{set}
 			\naquestionref{question}
 		\end{naquestionset}
 
 	"""
+
+	args = "[options:dict:str] <title:str>"
 
 	# Only classes with counters can be labeled, and \label sets the
 	# id property, which in turn is used as part of the NTIID (when no NTIID is set explicitly)
@@ -766,7 +768,8 @@ class naquestionset(Base.List, plastexids.NTIIDMixin):
 	def assessment_object(self):
 		questions = [qref.idref['label'].assessment_object() for qref in self.getElementsByTagName( 'naquestionref' )]
 		questions = PersistentList( questions )
-		result = question.QQuestionSet( questions )
+		result = question.QQuestionSet( questions=questions,
+										title=self.attributes.get('title'))
 		errors = schema.getValidationErrors( as_interfaces.IQuestionSet, result )
 		if errors: # pragma: no cover
 			raise errors[0][1]

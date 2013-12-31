@@ -117,7 +117,7 @@ class _AssessmentExtractor(object):
 		ext_obj = toExternalObject(assm_obj)  # No need to go into its children, like parts.
 		__traceback_info__ = provenance, assm_obj, ext_obj
 		raw_int_obj = type(assm_obj)()  # Use the class of the object returned as a factory.
-		internalization.update_from_external_object(raw_int_obj, ext_obj, require_updater=True)
+		internalization.update_from_external_object(raw_int_obj, ext_obj, require_updater=True, notify=False)
 		factory = internalization.find_factory_for(toExternalObject(assm_obj))  # Also be sure factories can be found
 		assert factory is not None
 		# The ext_obj was mutated by the internalization process, so we need to externalize

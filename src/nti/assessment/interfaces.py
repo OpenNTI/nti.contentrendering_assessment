@@ -396,12 +396,14 @@ class IQuestion(IAnnotatable):
 	to where questions appear in question sets or other types of content.
 	"""
 
-	content = Text( title="The content to present to the user, if any." )
-	parts = List( title="The ordered parts of the question.",
-				  min_length=1,
-				  value_type=Object( IQPart, title="A question part" ) )
+	content = Text( title="The content to present to the user, if any.",
+					default='')
+	parts = IndexedIterable( title="The ordered parts of the question.",
+							 min_length=1,
+							 value_type=Object( IQPart, title="A question part" ),
+							 )
 
-class IQuestionSet(IAnnotatable):
+class IQuestionSet(ITitledContent,IAnnotatable):
 	"""
 	An ordered group of related questions generally intended to be
 	completed as a unit (aka, a Quiz or worksheet).
@@ -413,7 +415,8 @@ class IQuestionSet(IAnnotatable):
 
 	questions = IndexedIterable( title="The ordered questions in the set.",
 								 min_length=1,
-								 value_type=Object( IQuestion, title="The questions" ) )
+								 value_type=Object( IQuestion, title="The questions" ),
+								 )
 
 class IQAssignmentPart(ITitledContent):
 	"""
