@@ -168,14 +168,16 @@ class _QUploadedFileObjectIO(AbstractDynamicObjectIO):
 		# i
 		target = to_external_ntiid_oid( the_file, add_to_connection=True )
 		if target:
-			link = links.Link( target=target,
-							   target_mime_type=the_file.contentType,
-							   elements=('view',),
-							   rel="data" )
-			interface.alsoProvides( link, nti_interfaces.ILinkExternalHrefOnly )
-			ext_dict['url'] = to_external_object( link )
+			for element, key in ('view','url'), ('download','download_url'):
+				link = links.Link( target=target,
+								   target_mime_type=the_file.contentType,
+								   elements=(element,),
+								   rel="data" )
+				interface.alsoProvides( link, nti_interfaces.ILinkExternalHrefOnly )
+				ext_dict[key] = to_external_object( link )
 		else:
 			ext_dict['url'] = None
+			ext_dict['download_url'] = None
 
 		ext_dict['value'] = ext_dict['url']
 		return ext_dict
