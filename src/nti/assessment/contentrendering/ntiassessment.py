@@ -321,12 +321,34 @@ class naqfreeresponsepart(_AbstractNAQPart):
 	soln_interface = as_interfaces.IQFreeResponseSolution
 
 class naqmodeledcontentpart(_AbstractNAQPart):
+	"""
+	This is a base part, and while it matches our internal
+	implementation, it is not actually meant for authoring.
+	External intent is better expressed with :class:`naqessaypart`
+	"""
 	part_interface = as_interfaces.IQModeledContentPart
 	part_factory = parts.QModeledContentPart
 	soln_interface = None
 
 class naqessaypart(naqmodeledcontentpart):
-	pass
+	r"""
+	A part having a body that is intended to be large (multi-paragraphs)
+	potentially even containing whiteboards. This part CANNOT
+	be auto-graded and has no solution.
+
+	Example::
+
+		\begin{naquestion}[individual=true]
+			Arbitrary content goes here.
+			\begin{naqessaypart}
+			Arbitrary content goes here.
+			\begin{naqhints}
+				\naqhint Some hint
+			\end{naqhints}
+			\end{naqessaypart}
+		\end{naquestion}
+
+	"""
 
 class naqmultiplechoicepart(_AbstractNAQPart):
 	r"""
