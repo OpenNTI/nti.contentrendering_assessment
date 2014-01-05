@@ -30,6 +30,12 @@ name: naqfreeresponsepart
 	 <span tal:content="self"></span>
 </div>
 
+name: naqessaypart
+<div class="naquestionpart naqessaypart" tal:attributes="name self/id" >
+	 <a tal:attributes="name self/id"></a>
+	 <span tal:content="self"></span>
+</div>
+
 # These and the contained naqchoices should probably be radio buttuns
 name: naqmultiplechoicepart
 <div class="naquestionpart naqmultiplechoicepart" tal:attributes="name self/id" >
