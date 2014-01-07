@@ -34,7 +34,9 @@ from nti.dataserver.datastructures import ContainedMixin
 from . import interfaces
 from ._util import superhash
 
-@interface.implementer(interfaces.IQAssessedPart)
+from zope.location.interfaces import ISublocations
+
+@interface.implementer(interfaces.IQAssessedPart, ISublocations)
 class QAssessedPart(SchemaConfigured, zope.container.contained.Contained, persistent.Persistent):
 	createDirectFieldProperties(interfaces.IQAssessedPart)
 	__external_can_create__ = False
@@ -53,6 +55,18 @@ class QAssessedPart(SchemaConfigured, zope.container.contained.Contained, persis
 
 	def __hash__(self):
 		return superhash((self.submittedResponse, self.assessedValue))
+
+	def sublocations(self):
+		part = self.submittedResponse
+		if hasattr(part, '__parent__'):
+			if part.__parent__ is None:
+				# XXX: HACK: Taking ownership because
+				# of cross-database issues.
+				logger.warn("XXX: HACK: Taking ownership of a sub-part")
+				part.__parent__ = self
+			if part.__parent__ is self:
+				yield part
+
 
 from zope.datetime import parseDatetimetz
 import time
@@ -84,7 +98,22 @@ def _dctimes_property_fallback(attrname, dcname):
 
 	return property(get, _set)
 
-@interface.implementer(interfaces.IQAssessedQuestion, nti_interfaces.ICreated, nti_interfaces.ILastModified)
+
+def _make_sublocations(child_attr='parts'):
+	def sublocations(self):
+		for part in getattr(self,child_attr):
+			if hasattr(part, '__parent__'):
+				if part.__parent__ is None:
+					# XXX: HACK: Taking ownership because
+					# of cross-database issues.
+					logger.warn("XXX: HACK: Taking ownership of a sub-part")
+					part.__parent__ = self
+				if part.__parent__ is self:
+					yield part
+	return sublocations
+
+@interface.implementer(interfaces.IQAssessedQuestion, nti_interfaces.ICreated, nti_interfaces.ILastModified,
+					   ISublocations)
 class QAssessedQuestion(SchemaConfigured, ContainedMixin, persistent.Persistent):
 	createDirectFieldProperties(interfaces.IQAssessedQuestion)
 	__external_can_create__ = False
@@ -115,6 +144,7 @@ class QAssessedQuestion(SchemaConfigured, ContainedMixin, persistent.Persistent)
 	def __hash__(self):
 		return superhash((self.questionId, tuple(self.parts)))
 
+	sublocations = _make_sublocations()
 
 @interface.implementer(interfaces.IQAssessedQuestionSet, nti_interfaces.ICreated, nti_interfaces.ILastModified)
 class QAssessedQuestionSet(SchemaConfigured, ContainedMixin, persistent.Persistent):
@@ -148,6 +178,7 @@ class QAssessedQuestionSet(SchemaConfigured, ContainedMixin, persistent.Persiste
 	def __hash__(self):
 		return superhash((self.questionSetId, tuple(self.questions)))
 
+	sublocations = _make_sublocations('questions')
 
 def assess_question_submission(submission, registry=component):
 	"""

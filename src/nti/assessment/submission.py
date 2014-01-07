@@ -39,21 +39,39 @@ from . import interfaces
 # transformed; the transformed object may or may not
 # be directly added.
 
+from zope.location.interfaces import ISublocations
 
-@interface.implementer(interfaces.IQuestionSubmission)
+def _make_sublocations(child_attr='parts'):
+	def sublocations(self):
+		for part in getattr(self,child_attr):
+			if hasattr(part, '__parent__'):
+				if part.__parent__ is None:
+					# XXX: HACK: Taking ownership because
+					# of cross-database issues.
+					logger.warn("XXX: HACK: Taking ownership of a sub-part")
+					part.__parent__ = self
+				if part.__parent__ is self:
+					yield part
+	return sublocations
+
+@interface.implementer(interfaces.IQuestionSubmission,
+					   ISublocations)
 class QuestionSubmission(SchemaConfigured, zope.container.contained.Contained):
 	createDirectFieldProperties(interfaces.IQuestionSubmission)
 
 	__repr__ = make_repr()
 
-@interface.implementer(interfaces.IQuestionSetSubmission)
+	sublocations = _make_sublocations()
+
+@interface.implementer(interfaces.IQuestionSetSubmission,
+					   ISublocations)
 class QuestionSetSubmission(SchemaConfigured, zope.container.contained.Contained):
 	createDirectFieldProperties(interfaces.IQuestionSetSubmission)
 
 	__repr__ = make_repr()
 
+	sublocations = _make_sublocations('questions')
 
-from zope.location.interfaces import ISublocations
 
 @interface.implementer(interfaces.IQAssignmentSubmission,
 					   ISublocations)
@@ -75,13 +93,4 @@ class AssignmentSubmission(PersistentCreatedModDateTrackingObject,
 
 	__repr__ = make_repr()
 
-	def sublocations(self):
-		for part in self.parts:
-			if hasattr(part, '__parent__'):
-				if part.__parent__ is None:
-					# XXX: HACK: Taking ownership because
-					# of cross-database issues.
-					logger.warn("XXX: HACK: Taking ownership of a sub-part")
-					part.__parent__ = self
-				if part.__parent__ is self:
-					yield part
+	sublocations = _make_sublocations()
