@@ -53,7 +53,10 @@ class QuestionSetSubmission(SchemaConfigured, zope.container.contained.Contained
 	__repr__ = make_repr()
 
 
-@interface.implementer(interfaces.IQAssignmentSubmission)
+from zope.location.interfaces import ISublocations
+
+@interface.implementer(interfaces.IQAssignmentSubmission,
+					   ISublocations)
 class AssignmentSubmission(PersistentCreatedModDateTrackingObject,
 						   ContainedMixin,
 						   SchemaConfigured):
@@ -71,3 +74,14 @@ class AssignmentSubmission(PersistentCreatedModDateTrackingObject,
 	mime_type = 'application/vnd.nextthought.assessment.assignmentsubmission'
 
 	__repr__ = make_repr()
+
+	def sublocations(self):
+		for part in self.parts:
+			if hasattr(part, '__parent__'):
+				if part.__parent__ is None:
+					# XXX: HACK: Taking ownership because
+					# of cross-database issues.
+					logger.warn("XXX: HACK: Taking ownership of a sub-part")
+					part.__parent__ = self
+				if part.__parent__ is self:
+					yield part

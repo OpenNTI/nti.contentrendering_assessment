@@ -62,9 +62,12 @@ class QAssignment(Persistent,
 
 	__repr__ = make_repr()
 
+from zope.location.interfaces import ISublocations
+
 @interface.implementer(interfaces.IQAssignmentSubmissionPendingAssessment,
 					   mime_interfaces.IContentTypeAware,
-					   IAttributeAnnotatable)
+					   IAttributeAnnotatable,
+					   ISublocations)
 class QAssignmentSubmissionPendingAssessment(PersistentCreatedModDateTrackingObject,
 											 SchemaConfigured,
 											 ContainedMixin):
@@ -78,3 +81,14 @@ class QAssignmentSubmissionPendingAssessment(PersistentCreatedModDateTrackingObj
 	__external_can_create__ = False
 
 	__repr__ = make_repr()
+
+	def sublocations(self):
+		for part in self.parts:
+			if hasattr(part, '__parent__'):
+				if part.__parent__ is None:
+					# XXX: HACK: Taking ownership because
+					# of cross-database issues.
+					logger.warn("XXX: HACK: Taking ownership of a sub-part")
+					part.__parent__ = self
+				if part.__parent__ is self:
+					yield part
