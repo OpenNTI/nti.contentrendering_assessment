@@ -101,7 +101,7 @@ def _dctimes_property_fallback(attrname, dcname):
 
 def _make_sublocations(child_attr='parts'):
 	def sublocations(self):
-		for part in getattr(self,child_attr):
+		for part in getattr(self,child_attr) or ():
 			if hasattr(part, '__parent__'):
 				if part.__parent__ is None:
 					# XXX: HACK: Taking ownership because
