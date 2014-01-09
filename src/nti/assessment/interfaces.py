@@ -514,6 +514,13 @@ class IQAssignment(ITitledContent,
 						 value_type=Object( IQAssignmentPart,
 											title="An assignment part" ) )
 
+	is_non_public = Bool( title="Whether this assignment should be public or restricted",
+						  description="""An ill-defined semi-layer violation. Set it to true if
+						  this should somehow be non-public and not available to everyone. This
+						  is the default. Specific applications will determine what should and should
+						  not be public""",
+						  default=True)
+
 	# A note on handling assignments that have an associated time limit
 	# (e.g., you have one hour to complete this assignment once you begin):
 	# That information will be encoded as a timedelta on the assignment.
