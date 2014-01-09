@@ -262,7 +262,7 @@ def test_assignment_macros():
 		\naquestionref{question}
 	\end{naquestionset}
 
-	\begin{naassignment}[not_before_date=2014-01-13,category=Quizzes]<Main Title>
+	\begin{naassignment}[not_before_date=2014-01-13,category=Quizzes,public=1]<Main Title>
 		\label{assignment}
 		Assignment content.
 		\begin{naassignmentpart}[auto_grade=true]<Part Title>{set}
@@ -292,6 +292,7 @@ def test_assignment_macros():
 	assert_that( asg_object, has_property('content', "Assignment content."))
 	assert_that( asg_object.ntiid, contains_string('assignment'))
 	assert_that( asg_object, has_property('title', 'Main Title'))
+	assert_that( asg_object, has_property('is_non_public', False))
 	assert_that( asg_object, has_property('category_name', 'quizzes'))
 	assert_that( asg_object, has_property( 'available_for_submission_beginning',
 										   datetime( 2014, 01, 13, 0, 0)))
@@ -830,6 +831,7 @@ class TestRenderableSymMathPart(unittest.TestCase):
 									  'Items': {'tag:nextthought.com,2011-10:testing-HTML-temp.section_one':
 												{'AssessmentItems': {'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.asg.assignment':
 																	 {'Class': 'Assignment',
+																	  'is_non_public': True,
 																	  'category_name': 'default',
 																	  'MimeType': 'application/vnd.nextthought.assessment.assignment',
 																	  'NTIID': 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.asg.assignment',

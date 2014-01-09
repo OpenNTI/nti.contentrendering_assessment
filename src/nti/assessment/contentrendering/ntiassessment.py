@@ -89,7 +89,7 @@ from nti.contentrendering.plastexpackages._util import LocalContentMixin as _Bas
 
 import os
 import isodate
-
+from paste.deploy.converters import asbool
 
 class _LocalContentMixin(_BaseLocalContentMixin):
 	# SAJ: HACK. Something about naqvideo and _LocalContentMixin? ALl the parts
@@ -830,7 +830,7 @@ class naassignmentpart(_LocalContentMixin,
 		question_set = self.idref['question_set'].assessment_object()
 		return assignment.QAssignmentPart( content=self._asm_local_content,
 										   question_set=question_set,
-										   auto_grade=self.attributes.get('options',{}).get('auto_grade') == 'true',
+										   auto_grade=asbool(self.attributes.get('options',{}).get('auto_grade')),
 										   title=self.attributes.get('title'))
 
 class naassignment(_LocalContentMixin,
@@ -843,7 +843,7 @@ class naassignment(_LocalContentMixin,
 
 	Example::
 
-		\begin{naassignment}[not_before_date=2014-01-13,category=homework]<Homework>
+		\begin{naassignment}[not_before_date=2014-01-13,category=homework,public=true]<Homework>
 			\label{assignment}
 			Some introductory content.
 
@@ -884,11 +884,18 @@ class naassignment(_LocalContentMixin,
 		not_before = _parse('not_before_date')
 		not_after = _parse('not_after_date')
 
+		# Public/ForCredit.
+		# It's opt-in for authoring and opt-out for code
+		is_non_public = True
+		if 'public' in options and asbool(options['public']):
+			is_non_public = False
+
 		result = assignment.QAssignment( content=self._asm_local_content,
 										 available_for_submission_beginning=not_before,
 										 available_for_submission_ending=not_after,
 										 parts=[part.assessment_object() for part in self.getElementsByTagName('naassignmentpart')],
-										 title=self.attributes.get('title'))
+										 title=self.attributes.get('title'),
+										 is_non_public=is_non_public)
 		if 'category' in options:
 			result.category_name = as_interfaces.IQAssignment['category_name'].fromUnicode( options['category'] )
 		errors = schema.getValidationErrors( as_interfaces.IQAssignment, result )
