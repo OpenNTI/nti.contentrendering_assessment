@@ -75,6 +75,9 @@ from plasTeX import Base
 from plasTeX.interfaces import IOptionAwarePythonPackage
 from plasTeX.Base import Crossref
 
+import pytz
+import time
+
 from nti.assessment import interfaces as as_interfaces
 from nti.assessment import parts
 from nti.assessment import question
@@ -878,8 +881,21 @@ class naassignment(_LocalContentMixin,
 				val = options[key]
 				if 'T' not in val:
 					# If they give no timestamp, make it midnight
-					val += 'T00:00'
-				return isodate.parse_datetime(val)
+					# GMT.
+					val += 'T00:00Z'
+				dt = isodate.parse_datetime(val)
+				# Now convert to GMT, but as a 'naive' object.
+				if not dt.tzinfo:
+					# They did not specify a timezone, assume they authored
+					# in the native timezone, so make it reflect that
+					# First, get the timezone name
+					tzname = 'Etc/GMT' + str((time.timezone / 60 / 60))
+					dt.replace(tzinfo=pytz.timezone(tzname))
+					# TODO: We probably want this to come from userdata
+					# on the document
+				# Convert to UTC, then back to naive
+				dt = dt.astimezone(pytz.UTC).replace(tzinfo=None)
+				return dt
 
 		not_before = _parse('not_before_date')
 		not_after = _parse('not_after_date')

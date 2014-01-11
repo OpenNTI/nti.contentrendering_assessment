@@ -33,6 +33,7 @@ setup(
 	install_requires=[
 		'setuptools',
 		'persistent',
+		'pytz',
 		'dm.zope.schema',
 		'zope.interface',
 		'zope.datetime',
