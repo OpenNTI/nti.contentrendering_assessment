@@ -835,7 +835,7 @@ class TestRenderableSymMathPart(unittest.TestCase):
 																	  'category_name': 'default',
 																	  'MimeType': 'application/vnd.nextthought.assessment.assignment',
 																	  'NTIID': 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.asg.assignment',
-																	  'available_for_submission_beginning': '2014-01-13T00:00:00',
+																	  'available_for_submission_beginning': '2014-01-13T06:00:00',
 																	  'available_for_submission_ending': None,
 																	  'content': 'Assignment content.',
 																	  'parts': [{'Class': 'AssignmentPart',

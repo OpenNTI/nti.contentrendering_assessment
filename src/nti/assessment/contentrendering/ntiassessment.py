@@ -876,29 +876,32 @@ class naassignment(_LocalContentMixin,
 		# How to represent that? Probably need some schema transformation
 		# step in nti.externalization? Or some auixilliary data fields?
 		options = self.attributes.get('options') or ()
-		def _parse(key):
+		def _parse(key, default_time):
 			if key in options:
 				val = options[key]
 				if 'T' not in val:
-					# If they give no timestamp, make it midnight
-					# GMT.
-					val += 'T00:00Z'
+					val += default_time
 				dt = isodate.parse_datetime(val)
 				# Now convert to GMT, but as a 'naive' object.
 				if not dt.tzinfo:
 					# They did not specify a timezone, assume they authored
 					# in the native timezone, so make it reflect that
 					# First, get the timezone name
-					tzname = 'Etc/GMT' + str((time.timezone / 60 / 60))
-					dt.replace(tzinfo=pytz.timezone(tzname))
+					add = '+' if time.timezone > 0 else ''
+					tzname = 'Etc/GMT' + add + str((time.timezone / 60 / 60))
+					dt = dt.replace(tzinfo=pytz.timezone(tzname))
 					# TODO: We probably want this to come from userdata
 					# on the document
 				# Convert to UTC, then back to naive
 				dt = dt.astimezone(pytz.UTC).replace(tzinfo=None)
 				return dt
 
-		not_before = _parse('not_before_date')
-		not_after = _parse('not_after_date')
+		# If they give no timestamp, make it midnight
+		not_before = _parse('not_before_date', 'T00:00')
+		# For after, if they gave us no time, make it just before
+		# midnight. Together, this has the effect of intuitively defining
+		# the range of dates as "the first instant of before to the last minute of after"
+		not_after = _parse('not_after_date', 'T23:59')
 
 		# Public/ForCredit.
 		# It's opt-in for authoring and opt-out for code
