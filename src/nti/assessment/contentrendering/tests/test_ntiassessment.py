@@ -295,7 +295,7 @@ def test_assignment_macros():
 	assert_that( asg_object, has_property('is_non_public', False))
 	assert_that( asg_object, has_property('category_name', 'quizzes'))
 	assert_that( asg_object, has_property( 'available_for_submission_beginning',
-										   datetime( 2014, 01, 13, 0, 0)))
+										   datetime( 2014, 01, 13, 6, 0)))
 
 	ext_obj = to_external_object(asg_object)
 	raw_int_obj = type(asg_object)()
