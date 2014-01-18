@@ -157,11 +157,11 @@ class _LessonQuestionSetExtractor(object):
 		pass
 
 	def transform( self, book ):
-		lesson_els = book.document.getElementsByTagName( 'courselesson' )
+		questionset_els = book.document.getElementsByTagName( 'naquestionset' )
 		dom = book.toc.dom
-		if lesson_els:
+		if questionset_els:
 			topic_map = self._get_topic_map(dom)
-			self._process_lessons(dom, lesson_els, topic_map)
+			self._process_questionsets(dom, questionset_els, topic_map)
 			book.toc.save()
 
 	def _get_topic_map(self, dom):
@@ -172,31 +172,37 @@ class _LessonQuestionSetExtractor(object):
 				result[ntiid] = topic_el
 		return result
 
-	def _process_lessons(self, dom, els, topic_map):
+	def _process_questionsets(self, dom, els, topic_map):
 		for el in els:
-			questionset_els = el.getElementsByTagName('naquestionset')
-			if questionset_els:
-				for questionset_el in questionset_els:
-					lesson_el = topic_map.get(el.ntiid)
+			if el.parentNode:
+				# Discover the nearest topic in the toc that is a 'course' node
+				parent_el = el.parentNode
+				lesson_el = None
+				if hasattr(parent_el, 'ntiid') and parent_el.tagName.startswith('course'):
+					lesson_el = topic_map.get(parent_el.ntiid)
+				while lesson_el is None and parent_el.parentNode is not None:
+					parent_el = parent_el.parentNode
+					if hasattr(parent_el, 'ntiid') and parent_el.tagName.startswith('course'):
+						lesson_el = topic_map.get(parent_el.ntiid)
 
-					# SAJ: Hack to give question sets a title
-					title_el = questionset_el.parentNode
-					while (not hasattr(title_el, 'title')):
-						title_el = title_el.parentNode
-					label = render_children( title_el.renderer, title_el.title)[0]
+				# SAJ: Hack to give question sets a title
+				title_el = el.parentNode
+				while (not hasattr(title_el, 'title')):
+					title_el = title_el.parentNode
+				label = render_children( title_el.renderer, title_el.title)[0]
 
-					# If the title_el is a topic in the ToC, suppress it.
-					if title_el.ntiid in topic_map.keys():
-						topic_map[title_el.ntiid].setAttribute('suppressed', 'true')
+				# If the title_el is a topic in the ToC, suppress it.
+				if title_el.ntiid in topic_map.keys():
+					topic_map[title_el.ntiid].setAttribute('suppressed', 'true')
 
-					# Count how many questions are in a question set
-					count = unicode(len(questionset_el.getElementsByTagName('naquestionref')))
+				# Count how many questions are in a question set
+				count = unicode(len(el.getElementsByTagName('naquestionref')))
 
-					toc_el = dom.createElement('object')
-					toc_el.setAttribute('target-ntiid', questionset_el.ntiid)
-					toc_el.setAttribute('mimeType', questionset_el.mimeType)
-					toc_el.setAttribute('label', label)
-					toc_el.setAttribute('question-count', count)
-					if lesson_el:
-						lesson_el.appendChild(toc_el)
-						lesson_el.appendChild(dom.createTextNode(u'\n'))
+				toc_el = dom.createElement('object')
+				toc_el.setAttribute('target-ntiid', el.ntiid)
+				toc_el.setAttribute('mimeType', el.mimeType)
+				toc_el.setAttribute('label', label)
+				toc_el.setAttribute('question-count', count)
+				if lesson_el:
+					lesson_el.appendChild(toc_el)
+					lesson_el.appendChild(dom.createTextNode(u'\n'))
