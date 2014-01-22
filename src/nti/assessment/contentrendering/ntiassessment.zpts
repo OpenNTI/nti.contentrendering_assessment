@@ -50,9 +50,9 @@ name: naqmultiplechoicemultipleanswerpart
 </div>
 
 name: naqchoices
-<ol class="naqchoices">
-	<li tal:repeat="item self" class="naqchoice" tal:content="item" ></li>
-</ol>
+#<ol class="naqchoices">
+#	<li tal:repeat="item self" class="naqchoice" tal:content="item" ></li>
+#</ol>
 
 name: naqmatchingpart
 <div class="naquestionpart naqmatchingpart" tal:attributes="name self/id" >
