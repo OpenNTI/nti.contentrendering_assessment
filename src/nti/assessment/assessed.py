@@ -228,7 +228,7 @@ def assess_question_set_submission(set_submission, registry=component):
 		# FIXME: Checking an 'ntiid' property that is not defined here is a hack
 		# because we have an equality bug. It should go away as soon as equality is fixed
 		if question in question_set.questions or getattr(question, 'ntiid', None) in [getattr(q, 'ntiid', None) for q in question_set.questions]:
-			assessed.append(interfaces.IQAssessedQuestion(sub_question))
+			assessed.append(component.getAdapter(sub_question,interfaces.IQAssessedQuestion)) # Raises ComponentLookupError
 		else: # pragma: no cover
 			logger.debug("Bad input, question (%s) not in question set (%s) (kownn: %s)", question, question_set, question_set.questions)
 
