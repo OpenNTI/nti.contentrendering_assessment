@@ -15,6 +15,7 @@ import numbers
 from zope import interface
 
 from . import interfaces
+from nti.utils.schema import InvalidValue
 
 @staticmethod
 def _id(o):
@@ -162,7 +163,18 @@ class MultipleChoiceGrader(EqualityGrader):
 	convenient in some cases).
 	"""
 
+	_STRICT_GRADING = True
+
 	def __call__(self):
+		# An empty string is not a valid response; if we don't
+		# reject it here we would simply grade as incorrect when it's
+		# really just terrible input. Because the user input was wrong,
+		# we don't want to reveal the solutions so we must reject grading
+		# altogether. (Currently off for backwards compat.)
+		if self.response.value == '':
+			if self._STRICT_GRADING:
+				raise InvalidValue(value=self.response.value,field=interfaces.IQuestionSubmission['parts'])
+			logger.warn("INVALID MultipleChoiceInput; letting slide for now")
 		# Does it exactly match?
 		result = super(MultipleChoiceGrader,self).__call__()
 		if not result:
@@ -182,8 +194,6 @@ class MultipleChoiceGrader(EqualityGrader):
 				except ValueError:
 					# Nope, not an int. So this won't match
 					index = None
-
-
 
 			result = (index == self.solution.value)
 

@@ -20,6 +20,7 @@ from persistent.list import PersistentList
 from nti.externalization.externalization import make_repr
 
 from nti.utils.schema import SchemaConfigured
+from nti.utils.schema import InvalidValue
 from nti.utils.schema import createDirectFieldProperties
 
 # EWW...but we need to be IContained in order to be stored
@@ -186,11 +187,21 @@ def assess_question_submission(submission, registry=component):
 
 	:return: An :class:`.interfaces.IQAssessedQuestion`.
 	:param submission: An :class:`.interfaces.IQuestionSubmission`.
+		The ``parts`` of this submission must be the same length
+		as the parts of the question being submitted. If there is no
+		answer to a part, then the corresponding value in the submission
+		array should be ``None`` and the auto-assessment will be 0.0.
+		(In the future, if we have questions
+		with required and/or optional parts, we would implement that check
+		here).
 	:param registry: If given, an :class:`.IComponents`. If
 		not given, the current component registry will be used.
 		Used to look up the question set and question by id.
 	:raises LookupError: If no question can be found for the submission.
+	:raises Invalid: If a submitted part has the wrong kind of input
+		to be graded.
 	"""
+
 	question = registry.getUtility(interfaces.IQuestion, name=submission.questionId)
 	if len(question.parts) != len(submission.parts):
 		raise ValueError("Question (%s) and submission (%s) have different numbers of parts." %
@@ -198,8 +209,16 @@ def assess_question_submission(submission, registry=component):
 
 	assessed_parts = PersistentList()
 	for sub_part, q_part in zip(submission.parts, question.parts):
-		grade = q_part.grade(sub_part)
-		assessed_parts.append(QAssessedPart(submittedResponse=sub_part, assessedValue=grade))
+		# Grade what they submitted, if they submitted something. If they didn't
+		# submit anything, it's automatically "wrong."
+		try:
+			grade = q_part.grade(sub_part) if sub_part is not None else 0.0
+		except LookupError:
+			# We couldn't grade the part because the submission was in the wrong
+			# format. Translate this error to something more useful.
+			raise InvalidValue(value=sub_part, field=interfaces.IQuestionSubmission['parts'])
+		else:
+			assessed_parts.append(QAssessedPart(submittedResponse=sub_part, assessedValue=grade))
 
 	return QAssessedQuestion(questionId=submission.questionId, parts=assessed_parts)
 

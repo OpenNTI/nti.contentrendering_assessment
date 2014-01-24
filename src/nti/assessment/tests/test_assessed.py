@@ -30,6 +30,7 @@ from zope.dublincore.annotatableadapter import ZDCAnnotatableAdapter
 from nti.externalization.externalization import toExternalObject
 from nti.externalization import internalization
 from nti.externalization.internalization import update_from_external_object
+from nti.utils.schema import InvalidValue
 
 import datetime
 import time
@@ -38,6 +39,7 @@ from .. import interfaces
 from nti.dataserver import interfaces as nti_interfaces
 from .. import parts
 from .. import response
+from .. import graders
 from .. import submission
 from .. import assessed
 from .. import solution as solutions
@@ -123,11 +125,62 @@ class TestAssessedQuestion(TestCase):
 		_check_old_dublin_core( result )
 
 
-		assert_that( result, externalizes( has_entry( 'parts',
-													  has_item(
-														  has_entry( 'solutions',
-																	 has_item( has_entry( 'value',
-																						  'correct' ))) ) ) ) )
+		assert_that( result,
+					 externalizes( has_entry( 'parts',
+											  has_item(
+												  has_entry( 'solutions',
+															 has_item( has_entry( 'value',
+																				  'correct' ))) ) ) ) )
+
+	def test_assess_with_null_part( self ):
+		# A null part means no answer was provided
+		part = parts.QFreeResponsePart(solutions=(solutions.QFreeResponseSolution(value='correct'),))
+		question = QQuestion( parts=(part,) )
+		component.provideUtility( question, provides=interfaces.IQuestion,  name="1")
+
+		sub = submission.QuestionSubmission( )
+		internalization.update_from_external_object( sub, {'questionId':"1", 'parts': [None]},
+													 notify=False)
+
+		result = interfaces.IQAssessedQuestion( sub )
+		assert_that( result, has_property( 'questionId', "1" ) )
+		assert_that( result, has_property( 'parts',
+										   contains( assessed.QAssessedPart(
+											   submittedResponse=None,
+											   assessedValue=0.0 ) ) ) )
+
+		_check_old_dublin_core( result )
+
+	def test_assess_with_incorrect_part( self ):
+		# An incorrect part raises a useful validation error
+		part = parts.QFreeResponsePart(solutions=(solutions.QFreeResponseSolution(value='correct'),))
+		question = QQuestion( parts=(part,) )
+		component.provideUtility( question, provides=interfaces.IQuestion,  name="1")
+
+		sub = submission.QuestionSubmission( )
+		internalization.update_from_external_object( sub, {'questionId':"1", 'parts': [[]]},
+													 notify=False)
+
+		assert_that( calling( interfaces.IQAssessedQuestion ).with_args(sub),
+					 raises(InvalidValue))
+
+
+	def test_assess_with_incorrect_multichoice_part(self):
+		part = parts.QMultipleChoicePart(solutions=(solutions.QMultipleChoiceSolution(value=1),))
+		question = QQuestion( parts=(part,) )
+		component.provideUtility( question, provides=interfaces.IQuestion,  name="1")
+
+		sub = submission.QuestionSubmission( )
+		internalization.update_from_external_object( sub, {'questionId':"1", 'parts': ['']},
+													 notify=False)
+		assert_that( graders.MultipleChoiceGrader, has_property('_STRICT_GRADING', True))
+		graders.MultipleChoiceGrader._STRICT_GRADING = True
+		try:
+			assert_that( calling( interfaces.IQAssessedQuestion ).with_args(sub),
+						 raises(InvalidValue))
+		finally:
+			graders.MultipleChoiceGrader._STRICT_GRADING = False
+
 
 	def test_assess_with_file_part(self):
 		part = parts.QFilePart()

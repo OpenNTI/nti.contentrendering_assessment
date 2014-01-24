@@ -668,7 +668,9 @@ class IQAssessedPart(IContained):
 								  Object(IQModeledContentResponse), # List this so we get specific validation for it
 								  Object(IQResponse)),
 								 variant_raise_when_schema_provided=True,
-								 title="The response as the student submitted it.")
+								 title="The response as the student submitted it, or None if they skipped",
+								 required=False,
+								 default=None)
 	assessedValue = Float( title="The relative correctness of the submitted response, from 0.0 (entirely wrong) to 1.0 (perfectly correct)",
 						   description="A value of None means that it was not possible to assess this part.",
 						   min=0.0,
