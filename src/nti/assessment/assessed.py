@@ -216,7 +216,10 @@ def assess_question_set_submission(set_submission, registry=component):
 	"""
 
 	question_set = registry.getUtility(interfaces.IQuestionSet,
-										name=set_submission.questionSetId)
+									   name=set_submission.questionSetId)
+
+	questions_ntiids = {getattr(q, 'ntiid', None) for q in question_set.questions}
+
 	# NOTE: At this point we need to decide what to do for missing values
 	# We are currently not really grading them at all, which is what we
 	# did for the old legacy quiz stuff
@@ -227,10 +230,11 @@ def assess_question_set_submission(set_submission, registry=component):
 										name=sub_question.questionId )
 		# FIXME: Checking an 'ntiid' property that is not defined here is a hack
 		# because we have an equality bug. It should go away as soon as equality is fixed
-		if question in question_set.questions or getattr(question, 'ntiid', None) in [getattr(q, 'ntiid', None) for q in question_set.questions]:
+		if question in question_set.questions or getattr(question, 'ntiid', None) in questions_ntiids:
 			assessed.append(component.getAdapter(sub_question,interfaces.IQAssessedQuestion)) # Raises ComponentLookupError
 		else: # pragma: no cover
-			logger.debug("Bad input, question (%s) not in question set (%s) (kownn: %s)", question, question_set, question_set.questions)
+			logger.debug("Bad input, question (%s) not in question set (%s) (kownn: %s)",
+						 question, question_set, question_set.questions)
 
 	# NOTE: We're not really creating some sort of aggregate grade here
 	return QAssessedQuestionSet(questionSetId=set_submission.questionSetId, questions=assessed)
