@@ -10,7 +10,6 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-import six
 import os.path
 
 from zope import interface
@@ -72,9 +71,10 @@ class QPart(SchemaConfigured,Persistent):
 			# Attempt to get a proper solution
 			converted = convert_response_for_solution(solution, response)
 
-			# if we get an empty string then interpret that as no response
-			# TODO: is this proper place to validate
-			if isinstance(converted, six.string_types) and not converted.strip():
+			# sometimes clients send empty strings for responses to
+			# questions. They are interpreted as no response.
+			# TODO: is this proper place to validate?
+			if converted != 0 and not converted:  # handle None and emtpy string
 				continue
 
 			# Graders return a true or false value. We are responsible
