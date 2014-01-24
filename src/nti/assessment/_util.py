@@ -51,7 +51,9 @@ class TrivialValuedMixin(object):
 		return str(self.value)
 
 	def __repr__(self):
-		return "%s.%s(%r)" % (self.__class__.__module__, self.__class__.__name__, self.value)
+		return "%s.%s(%r)" % (self.__class__.__module__,
+							  self.__class__.__name__,
+							  self.value)
 
 def superhash(value):
 	try:

@@ -8,6 +8,8 @@ $Id$
 from __future__ import unicode_literals, print_function, absolute_import
 __docformat__ = "restructuredtext en"
 
+logger = __import__('logging').getLogger(__name__)
+
 import sys
 import tempfile
 from StringIO import StringIO
@@ -107,7 +109,6 @@ class EmptyResponseConverter(object):
 	@classmethod
 	def convert(cls, response):
 		return None
-
 
 def factory(solution, response):
 	return sys.modules[__name__] if response.value else EmptyResponseConverter

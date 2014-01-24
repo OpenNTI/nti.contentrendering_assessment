@@ -3,8 +3,10 @@
 """
 $Id$
 """
-from __future__ import unicode_literals, print_function, absolute_import
+from __future__ import unicode_literals, print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
+
+logger = __import__('logging').getLogger(__name__)
 
 from . import interfaces
 
@@ -30,5 +32,6 @@ def grade_one_response(questionResponse, possible_answers):
 def assess(quiz, responses):
 	result = {}
 	for questionId, questionResponse in responses.iteritems():
-		result[questionId] = grade_one_response(questionResponse, quiz[questionId].answers)
+		result[questionId] = \
+			grade_one_response(questionResponse, quiz[questionId].answers)
 	return result

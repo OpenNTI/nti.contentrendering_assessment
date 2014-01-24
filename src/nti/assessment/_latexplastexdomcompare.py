@@ -23,8 +23,9 @@ def _mathIsEqual( solution, response):
 		# We follow the rules for SQL NULL: it's not equal to anything,
 		# even itself
 		return False
-	return _mathChildrenAreEqual(solution.childNodes, response.childNodes) or \
-		(_all_text_children(solution) and _all_text_children(response) and _text_content_equal(solution, response))
+	return 	_mathChildrenAreEqual(solution.childNodes, response.childNodes) or \
+			(_all_text_children(solution) and _all_text_children(response) and \
+			 _text_content_equal(solution, response))
 
 def _mathChildrenAreEqual(solution, response):
 	math1children = _importantChildNodes(solution)
@@ -86,7 +87,8 @@ def _mathChildIsEqual(child1, child2):
 	if child1 == child2:
 		return True
 
-	if child1.nodeType != child2.nodeType or len(_importantChildNodes(child1.childNodes)) != len(_importantChildNodes(child2.childNodes)):
+	if 	child1.nodeType != child2.nodeType or \
+		len(_importantChildNodes(child1.childNodes)) != len(_importantChildNodes(child2.childNodes)):
 		return False
 
 	if child1.nodeType == child1.TEXT_NODE:
