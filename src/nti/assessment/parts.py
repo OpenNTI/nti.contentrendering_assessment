@@ -70,13 +70,6 @@ class QPart(SchemaConfigured,Persistent):
 		for solution in self.solutions:
 			# Attempt to get a proper solution
 			converted = convert_response_for_solution(solution, response)
-
-			# sometimes clients send empty strings for responses to
-			# questions. They are interpreted as no response.
-			# TODO: is this proper place to validate?
-			if converted != 0 and not converted:  # handle None and emtpy string
-				continue
-
 			# Graders return a true or false value. We are responsible
 			# for applying weights to that
 			result = self._grade(solution, converted)
