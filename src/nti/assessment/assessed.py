@@ -191,10 +191,10 @@ def assess_question_submission(submission, registry=component):
 		Used to look up the question set and question by id.
 	:raises LookupError: If no question can be found for the submission.
 	"""
-
 	question = registry.getUtility(interfaces.IQuestion, name=submission.questionId)
 	if len(question.parts) != len(submission.parts):
-		raise ValueError("Question (%s) and submission (%s) have different numbers of parts." % (len(question.parts), len(submission.parts)))
+		raise ValueError("Question (%s) and submission (%s) have different numbers of parts." %
+						 (len(question.parts), len(submission.parts)))
 
 	assessed_parts = PersistentList()
 	for sub_part, q_part in zip(submission.parts, question.parts):
@@ -231,7 +231,8 @@ def assess_question_set_submission(set_submission, registry=component):
 		# FIXME: Checking an 'ntiid' property that is not defined here is a hack
 		# because we have an equality bug. It should go away as soon as equality is fixed
 		if question in question_set.questions or getattr(question, 'ntiid', None) in questions_ntiids:
-			assessed.append(component.getAdapter(sub_question,interfaces.IQAssessedQuestion)) # Raises ComponentLookupError
+			sub_assessed = interfaces.IQAssessedQuestion(sub_question)  # Raises ComponentLookupError
+			assessed.append(sub_assessed)
 		else: # pragma: no cover
 			logger.debug("Bad input, question (%s) not in question set (%s) (kownn: %s)",
 						 question, question_set, question_set.questions)

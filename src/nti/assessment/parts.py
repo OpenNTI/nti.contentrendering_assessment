@@ -10,6 +10,7 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+import six
 import os.path
 
 from zope import interface
@@ -68,15 +69,23 @@ class QPart(SchemaConfigured,Persistent):
 			return None
 
 		for solution in self.solutions:
+			# Attempt to get a proper solution
+			converted = convert_response_for_solution(solution, response)
+
+			# if we get an empty string then interpret that as no response
+			# TODO: is this proper place to validate
+			if isinstance(converted, six.string_types) and not converted.strip():
+				continue
+
 			# Graders return a true or false value. We are responsible
 			# for applying weights to that
-			result = self._grade( solution,
-								  convert_response_for_solution( solution, response ))
+			result = self._grade(solution, converted)
 			if result:
 				return 1.0 * solution.weight
 		return 0.0
 
-	def _grade( self, solution, response ):
+	def _grade(self, solution, response):
+		__traceback_info__ = solution, response, self.grader_name
 		grader = component.getMultiAdapter((self, solution, response),
 											self.grader_interface,
 											name=self.grader_name)
