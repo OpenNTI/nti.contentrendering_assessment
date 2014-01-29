@@ -158,10 +158,12 @@ class _LessonQuestionSetExtractor(object):
 
 	def transform( self, book ):
 		questionset_els = book.document.getElementsByTagName( 'naquestionset' )
+		assignment_els = book.document.getElementsByTagName( 'naassignment' )
 		dom = book.toc.dom
 		if questionset_els:
 			topic_map = self._get_topic_map(dom)
 			self._process_questionsets(dom, questionset_els, topic_map)
+			self._process_assignments(dom, assignment_els, topic_map)
 			book.toc.save()
 
 	def _get_topic_map(self, dom):
@@ -206,3 +208,23 @@ class _LessonQuestionSetExtractor(object):
 				if lesson_el:
 					lesson_el.appendChild(toc_el)
 					lesson_el.appendChild(dom.createTextNode(u'\n'))
+
+	# SAJ: This method is a HACK to mark the parent topic of an assignment as 'suppressed'.
+	# In practice, this is only needed for 'no_submit' assignments since they have no
+	# associated question set to otherwise trigger the marking. This should move into its
+	# own extractor, but for now it is here.
+	def _process_assignments(self, dom, els, topic_map):
+		for el in els:
+			if el.parentNode:
+				# If the assignment el's parent topic is a topic in the ToC, suppress it.
+				# Discover the nearest topic in the toc that is a 'course' node
+				parent_el = el.parentNode
+				topic_el = None
+				if hasattr(parent_el, 'ntiid') and parent_el.ntiid in topic_map.keys():
+					topic_el = topic_map.get(parent_el.ntiid)
+				while topic_el is None and parent_el.parentNode is not None:
+					parent_el = parent_el.parentNode
+					if hasattr(parent_el, 'ntiid') and parent_el.ntiid in topic_map.keys():
+						topic_el = topic_map.get(parent_el.ntiid)
+
+				topic_el.setAttribute('suppressed', 'true')
