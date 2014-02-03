@@ -163,8 +163,6 @@ class MultipleChoiceGrader(EqualityGrader):
 	convenient in some cases).
 	"""
 
-	_STRICT_GRADING = True
-
 	def __call__(self):
 		# An empty string is not a valid response; if we don't
 		# reject it here we would simply grade as incorrect when it's
@@ -172,9 +170,8 @@ class MultipleChoiceGrader(EqualityGrader):
 		# we don't want to reveal the solutions so we must reject grading
 		# altogether. (Currently off for backwards compat.)
 		if self.response.value == '':
-			if self._STRICT_GRADING:
-				raise InvalidValue(value=self.response.value,field=interfaces.IQuestionSubmission['parts'])
-			logger.warn("INVALID MultipleChoiceInput; letting slide for now")
+			raise InvalidValue(value=self.response.value,field=interfaces.IQuestionSubmission['parts'])
+
 		# Does it exactly match?
 		result = super(MultipleChoiceGrader,self).__call__()
 		if not result:

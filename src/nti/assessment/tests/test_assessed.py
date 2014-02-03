@@ -173,13 +173,10 @@ class TestAssessedQuestion(TestCase):
 		sub = submission.QuestionSubmission( )
 		internalization.update_from_external_object( sub, {'questionId':"1", 'parts': ['']},
 													 notify=False)
-		assert_that( graders.MultipleChoiceGrader, has_property('_STRICT_GRADING', True))
-		graders.MultipleChoiceGrader._STRICT_GRADING = True
-		try:
-			assert_that( calling( interfaces.IQAssessedQuestion ).with_args(sub),
-						 raises(InvalidValue))
-		finally:
-			graders.MultipleChoiceGrader._STRICT_GRADING = False
+
+		assert_that( calling( interfaces.IQAssessedQuestion ).with_args(sub),
+					 raises(InvalidValue))
+
 
 
 	def test_assess_with_file_part(self):
