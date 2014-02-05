@@ -75,8 +75,7 @@ from plasTeX import Base
 from plasTeX.interfaces import IOptionAwarePythonPackage
 from plasTeX.Base import Crossref
 
-import pytz
-import time
+from nti.externalization.datetime import datetime_from_string
 
 from nti.assessment import interfaces as as_interfaces
 from nti.assessment import parts
@@ -91,7 +90,6 @@ from nti.contentrendering.plastexpackages.ntilatexmacros import ntiincludevideo
 from nti.contentrendering.plastexpackages._util import LocalContentMixin as _BaseLocalContentMixin
 
 import os
-import isodate
 from paste.deploy.converters import asbool
 
 class _LocalContentMixin(_BaseLocalContentMixin):
@@ -881,19 +879,12 @@ class naassignment(_LocalContentMixin,
 				val = options[key]
 				if 'T' not in val:
 					val += default_time
-				dt = isodate.parse_datetime(val)
-				# Now convert to GMT, but as a 'naive' object.
-				if not dt.tzinfo:
-					# They did not specify a timezone, assume they authored
-					# in the native timezone, so make it reflect that
-					# First, get the timezone name
-					add = '+' if time.timezone > 0 else ''
-					tzname = 'Etc/GMT' + add + str((time.timezone / 60 / 60))
-					dt = dt.replace(tzinfo=pytz.timezone(tzname))
-					# TODO: We probably want this to come from userdata
-					# on the document
-				# Convert to UTC, then back to naive
-				dt = dt.astimezone(pytz.UTC).replace(tzinfo=None)
+
+				# TODO: We probably want this (timezone) to come from userdata
+				# on the document
+				# Now parse it, assuming that any missing timezone should be treated
+				# as local timezone
+				dt = datetime_from_string(val, assume_local=True)
 				return dt
 
 		# If they give no timestamp, make it midnight
