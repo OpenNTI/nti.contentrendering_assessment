@@ -152,8 +152,8 @@ class _QUploadedFileObjectIO(AbstractDynamicObjectIO):
 			updated = True
 		return updated
 
-	def toExternalObject( self, mergeFrom=None ):
-		ext_dict = super(_QUploadedFileObjectIO,self).toExternalObject()
+	def toExternalObject( self, mergeFrom=None, **kwargs ):
+		ext_dict = super(_QUploadedFileObjectIO,self).toExternalObject(**kwargs)
 
 		# TODO: View name. Coupled to the app layer. And this is now in three
 		# places.

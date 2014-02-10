@@ -728,6 +728,7 @@ class IQAssignmentSubmission(IContained):
 							 default=(),
 							 value_type=Object(IQuestionSetSubmission,
 											   title="The submission for a particular part.") )
+	#parts.setTaggedValue( '_ext_excluded_out', True ) # Internal use only
 
 	# TODO: What does the result of submitting an assignment look like?
 	# It's not always an `Assessed` object, because not all parts will have been
@@ -745,6 +746,8 @@ class IQAssignmentSubmissionPendingAssessment(IContained):
 							 value_type=Variant(
 								 (Object(IQAssessedQuestionSet),
 								  Object(IQuestionSetSubmission))) )
+	#parts.setTaggedValue( '_ext_excluded_out', True ) # Internal use only
+
 
 class IQAssessmentItemContainer(interface.common.sequence.IReadSequence):
 	"""
