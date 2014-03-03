@@ -177,6 +177,18 @@ class TestAssessedQuestion(TestCase):
 		assert_that( calling( interfaces.IQAssessedQuestion ).with_args(sub),
 					 raises(InvalidValue))
 
+	def test_assess_with_incorrect_float_part(self):
+		part = parts.QNumericMathPart(solutions=(solutions.QNumericMathSolution(value=1),))
+		question = QQuestion( parts=(part,) )
+		component.provideUtility( question, provides=interfaces.IQuestion,  name="1")
+
+		sub = submission.QuestionSubmission( )
+		internalization.update_from_external_object( sub, {'questionId':"1", 'parts': ['']},
+													 notify=False)
+
+		assert_that( calling( interfaces.IQAssessedQuestion ).with_args(sub),
+					 raises(InvalidValue))
+
 
 
 	def test_assess_with_file_part(self):
