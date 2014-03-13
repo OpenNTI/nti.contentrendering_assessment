@@ -880,11 +880,11 @@ class naassignment(_LocalContentMixin,
 				if 'T' not in val:
 					val += default_time
 
-				# TODO: We probably want this (timezone) to come from userdata
-				# on the document
 				# Now parse it, assuming that any missing timezone should be treated
 				# as local timezone
-				dt = datetime_from_string(val, assume_local=True)
+				dt = datetime_from_string(val,
+										  assume_local=True,
+										  local_tzname=self.ownerDocument.userdata.get('document_timezone_name'))
 				return dt
 
 		# If they give no timestamp, make it midnight
