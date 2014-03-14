@@ -7,11 +7,13 @@ from __future__ import unicode_literals, print_function, absolute_import, divisi
 __docformat__ = "restructuredtext en"
 
 from zope import interface
+from zope.interface.common import sequence
 from zope.mimetype.interfaces import mimeTypeConstraint
 
 from zope.container.interfaces import IContained
 from zope.annotation.interfaces import IAnnotatable
 
+from nti.utils.schema import Set
 from nti.utils.schema import Bool
 from nti.utils.schema import ValidDatetime as Datetime
 from nti.utils.schema import Dict
@@ -30,6 +32,7 @@ from dolmen.builtins.interfaces import IList
 from dolmen.builtins.interfaces import INumeric
 from dolmen.builtins.interfaces import IString
 from dolmen.builtins.interfaces import IUnicode
+from dolmen.builtins.interfaces import IIterable
 
 NTIID_TYPE = 'NAQ'
 
@@ -749,7 +752,7 @@ class IQAssignmentSubmissionPendingAssessment(IContained):
 	#parts.setTaggedValue( '_ext_excluded_out', True ) # Internal use only
 
 
-class IQAssessmentItemContainer(interface.common.sequence.IReadSequence):
+class IQAssessmentItemContainer(sequence.IReadSequence):
 	"""
 	Something that is an unordered bag of assessment items (such as
 	questions, question sets, and assignments).
@@ -758,3 +761,41 @@ class IQAssessmentItemContainer(interface.common.sequence.IReadSequence):
 	something like the content library package may be adaptable to this,
 	typically with annotations).
 	"""
+
+# Alibra
+
+class IWordBankEntry(interface.Interface):
+	id = TextLine(title="word identifier")
+	word = TextLine(title="the word")
+	lang = TextLine(title="language identifier", default="en")
+
+class IWordBank(IIterable):
+	entries = Set(value_type=Object(IWordBankEntry), title="The words in the bank")
+	unique = Bool(title="A word can be used once in a question/part",
+				  default=True)
+
+class IQFillInTheBlankPart(IQPart):
+	"""
+	Marker interface for a Fill-in-the-blank question part.
+	"""
+
+class IQFillInTheBlankShortAnswerPart(IQPart):
+	"""
+	Marker interface for a Fill-in-the-blank short answer question part.
+	"""
+
+class IQFillInTheBlankPartWithWordBank(IQPart):
+	"""
+	Marker interface for a Fill-in-the-blank with word bank question part.
+	If the word bank is not specified it would the one from the parent question
+	"""
+	wordBank = Object(IWordBank, required=False)
+
+class IQFillInTheBlankWithWordBankQuestion(IQuestion):
+	"""
+	Marker interface for a Fill-in-the-blank with word bank question.
+
+	The word bank for the question may be used by any question parts
+	"""
+	wordBank = Object(IWordBank, required=False)
+
