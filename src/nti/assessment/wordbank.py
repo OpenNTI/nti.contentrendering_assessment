@@ -52,3 +52,9 @@ class WordBank(SchemaConfigured, contained.Contained, persistent.Persistent):
 		except AttributeError:
 			return NotImplemented
 
+	def sublocations(self):
+		for entry in self.entries or ():
+			if entry.__parent__ is None:
+				entry.__parent__ = self
+			if entry.__parent__ is self:
+				yield entry
