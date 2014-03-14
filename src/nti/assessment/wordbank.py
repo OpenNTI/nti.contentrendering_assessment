@@ -41,6 +41,12 @@ class WordBankEntry(SchemaConfigured, contained.Contained, persistent.Persistent
 class WordBank(SchemaConfigured, contained.Contained, persistent.Persistent):
 	createDirectFieldProperties(interfaces.IWordBank)
 
+	def __setattr__(self, name, value):
+		if name == "entries":
+			for x in value or ():
+				x.__parent__ = self
+		super(WordBank, self).__setattr__(name, value)
+
 	@property
 	def words(self):
 		return {x.word for x in self.entries}
