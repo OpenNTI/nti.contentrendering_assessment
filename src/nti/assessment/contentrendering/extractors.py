@@ -6,7 +6,7 @@ Book extractors
 
 $Id: slidedeckextractor.py 21266 2013-07-23 21:52:35Z sean.jones $
 """
-from __future__ import print_function, unicode_literals, absolute_import
+from __future__ import print_function, unicode_literals, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)

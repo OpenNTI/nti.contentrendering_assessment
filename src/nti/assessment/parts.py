@@ -258,18 +258,18 @@ class QModeledContentPart(QPart):
 
 
 @interface.implementer(interfaces.IQFillInTheBlankPart)
-class QFillInTheBlankPart(QPart):
+class QFillInTheBlankPart(QPart, contained.Contained):
 	"""
 	Marker class for fill in the blank parts
 	"""
 
 @interface.implementer(interfaces.IQFillInTheBlankWithWordBankPart)
-class QFillInTheBlankWithWordBankPart(QFillInTheBlankPart, contained.Contained):
+class QFillInTheBlankWithWordBankPart(QFillInTheBlankPart):
 
-	wordBank = None
+	wordbank = None
 
 	def __getattr__(self, name):
 		result = super(QFillInTheBlankWithWordBankPart, self).__getattr__(name)
-		if name == "wordBank" and result is None:
-			result = getattr(self.__parent__, 'wordBank', None)
+		if name == "wordbank" and result is None:
+			result = getattr(self.__parent__, 'wordbank', None)
 		return result

@@ -46,6 +46,19 @@ class WordBank(SchemaConfigured, contained.Contained, persistent.Persistent):
 	def words(self):
 		return {x.word for x in self.entries.values()}
 
+	def idOf(self, word):
+		lower = word.lower()
+		for _id, x in self.entries.items():
+			if x.word.lower() == lower:
+				return _id
+		return None
+	
+	def contains_word(self, word):
+		return self.indexOf(word) != None
+
+	def __contains__(self, wid):
+		return wid in self.entries
+
 	def __setattr__(self, name, value):
 		super(WordBank, self).__setattr__(name, value)
 		if name == "entries" and value is not None:

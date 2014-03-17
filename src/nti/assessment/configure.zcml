@@ -123,8 +123,8 @@
 						 .interfaces.IQAssignmentSubmission
 						 .interfaces.IQResponse
 						 .interfaces.IQHint .interfaces.IQuestionSet
-						 .interfaces.IWordBankEntry .interfaces.IWordBank"
-		modules=".hint .assessed .parts .question .response .solution .submission .assignment .wordbank .fillintheblank"
+						 .interfaces.IWordEntry .interfaces.IWordBank"
+		modules=".hint .assessed .parts .question .response .solution .submission .assignment .wordbank"
 		factory_modules=".submission .question .response"
 		iobase=".externalization._AssessmentInternalObjectIOBase"/>
 	<subscriber

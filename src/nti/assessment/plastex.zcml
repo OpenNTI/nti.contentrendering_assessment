@@ -1,7 +1,10 @@
 <!-- -*- mode: nxml -*- -->
-<configure xmlns="http://namespaces.zope.org/zope"
-		   xmlns:zcml="http://namespaces.zope.org/zcml"
-		   i18n_domain="zope">
+<configure	xmlns="http://namespaces.zope.org/zope"
+			xmlns:i18n="http://namespaces.zope.org/i18n"
+			xmlns:zcml="http://namespaces.zope.org/zcml"
+			i18n_domain="zope">
+			
+	<include package="zope.component" file="meta.zcml" />
 	<include package="zope.component" />
 	<include package="zope.traversing" /> <!-- For rendering -->
 
@@ -20,14 +23,6 @@
 			 provides=".contentrendering.interfaces.IAssessmentExtractor"
 			 name="001.AssessmentExtractor" />
 
-	<!-- FIXME: These do not belong here -->
-	<adapter factory=".contentrendering.extractors._LessonQuestionSetExtractor"
-			 for="nti.contentrendering.interfaces.IRenderedBook"
-			 provides=".contentrendering.interfaces.ILessonQuestionSetExtractor" />
-
-	<utility factory=".contentrendering.extractors._LessonQuestionSetExtractor"
-			 provides=".contentrendering.interfaces.ILessonQuestionSetExtractor"
-			 name="040.LessonQuestionSetExtractor" />
-
+	<include package=".contentrendering" file="plastex.zcml" />
 
 </configure>

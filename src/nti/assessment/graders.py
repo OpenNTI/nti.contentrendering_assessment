@@ -233,3 +233,19 @@ class MatchingPartGrader(EqualityGrader):
 
 	solution_converter = _to_int_dict
 	response_converter = _to_int_dict
+
+
+@interface.implementer(interfaces.IQFillInTheBlankWithWordBankGrader)
+class FillInTheBlankWithWordBankGraderGrader(EqualityGrader):
+
+	def _to_id_list(self, the_list):
+		result = []
+		wordbank = self.part.wordbank
+		for x in the_list:
+			if not x in wordbank:  # it's a word
+				x = wordbank.idOf(x)
+			result.append(x)
+		return result
+
+	solution_converter = _to_id_list
+	response_converter = _to_id_list
