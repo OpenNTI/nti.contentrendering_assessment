@@ -148,3 +148,12 @@ class QMultipleChoiceMultipleAnswerSolution(_TrivialValuedMixin,QSolution):
 	__eq__ = _eq_
 	__ne__ = _ne_
 	__hash__ = __hash__
+
+@interface.implementer(interfaces.IQFillInTheBlankWithWordBankSolution)
+class QFillInTheBlankWithWordBankSolution(_TrivialValuedMixin, QSolution):
+
+	_part_type = parts.QFillInTheBlankWithWordBankPart
+
+	__eq__ = _eq_
+	__ne__ = _ne_
+	__hash__ = __hash__

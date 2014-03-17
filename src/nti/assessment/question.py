@@ -68,6 +68,9 @@ class QQuestionSet(Persistent,
 
 @interface.implementer(interfaces.IQFillInTheBlankWithWordBankQuestion)
 class QFillInTheBlankWithWordBankQuestion(QQuestion):
+
+	mime_type = 'application/vnd.nextthought.naquestionfillintheblankwordbank'
+
 	createDirectFieldProperties(interfaces.IQFillInTheBlankWithWordBankQuestion)
 
 	def __setattr__(self, name, value):

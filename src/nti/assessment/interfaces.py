@@ -789,12 +789,24 @@ class IQFillInTheBlankShortAnswerPart(IQFillInTheBlankPart):
 	Marker interface for a Fill-in-the-blank short answer question part.
 	"""
 
-class IQFillInTheBlankPartWithWordBank(IQFillInTheBlankPart):
+class IQFillInTheBlankWithWordBankSolution(IQMultiValuedSolution):
+
+	value = List(title="The correct answer selections",
+				 description="The correct word id.",
+				 min_length=0,
+				 value_type=TextLine(title="The word id"))
+
+class IQFillInTheBlankWithWordBankPart(IQFillInTheBlankPart):
 	"""
 	Marker interface for a Fill-in-the-blank with word bank question part.
 	If the word bank is not specified it would the one from the parent question
 	"""
-	wordBank = Object(IWordBank, required=False)
+	wordBank = Object(IWordBank, required=False,
+					  title="The wordbank to present to the user.")
+
+	solutions = IndexedIterable(title="The solutions",
+								min_length=1,
+								value_type=Object(IQFillInTheBlankWithWordBankSolution, title="the solution"))
 
 class IQFillInTheBlankWithWordBankQuestion(IQuestion):
 	"""
