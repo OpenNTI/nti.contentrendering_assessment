@@ -2,10 +2,11 @@
 """
 $Id$
 """
-from __future__ import print_function, unicode_literals
+from __future__ import print_function, unicode_literals, absolute_import, division
 
 from hamcrest import assert_that
 from hamcrest import has_entry
+from hamcrest import has_entries
 from hamcrest import is_
 from hamcrest import has_property
 from hamcrest import contains
@@ -18,7 +19,7 @@ from hamcrest import calling
 from hamcrest import raises
 from unittest import TestCase
 from nti.testing.matchers import is_false
-from nti.testing.matchers import validly_provides, verifiably_provides
+from nti.testing.matchers import verifiably_provides
 import nti.testing.base
 from nti.externalization.tests import externalizes
 
@@ -50,7 +51,7 @@ from ..question import QQuestion, QQuestionSet
 
 
 # nose module-level setup
-setUpModule = lambda: nti.testing.base.module_setup( set_up_packages=(__name__,'zope.annotation') )
+setUpModule = lambda: nti.testing.base.module_setup( set_up_packages=(__name__,'zope.annotation','nti.mimetype') )
 tearDownModule = nti.testing.base.module_teardown
 
 def _check_old_dublin_core( qaq ):
@@ -264,7 +265,8 @@ class TestAssessedQuestionSet(TestCase):
 	def test_externalizes(self):
 		assert_that( assessed.QAssessedQuestionSet(), verifiably_provides( interfaces.IQAssessedQuestionSet ) )
 		assert_that( assessed.QAssessedQuestionSet(), verifiably_provides( nti_interfaces.ILastModified ) )
-		assert_that( assessed.QAssessedQuestionSet(), externalizes( has_entry( 'Class', 'AssessedQuestionSet' ) ) )
+		assert_that( assessed.QAssessedQuestionSet(), externalizes( has_entries( 'Class', 'AssessedQuestionSet',
+																				 'MimeType', 'application/vnd.nextthought.assessment.assessedquestionset') ) )
 		assert_that( internalization.find_factory_for( toExternalObject( assessed.QAssessedQuestionSet() ) ),
 					 is_( none() ) )
 

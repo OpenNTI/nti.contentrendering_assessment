@@ -6,7 +6,6 @@
 	<include package="zope.component" />
 	<include package="zope.location" />
 
-	<include package="nti.externalization" />
 	<include package="nti.contentfragments" />
 	<include package="plone.namedfile"
 			 file="z3c-blobfile.zcml" />
