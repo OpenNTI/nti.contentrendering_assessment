@@ -779,12 +779,12 @@ class IQFillInTheBlankPart(IQPart):
 	Marker interface for a Fill-in-the-blank question part.
 	"""
 
-class IQFillInTheBlankShortAnswerPart(IQPart):
+class IQFillInTheBlankShortAnswerPart(IQFillInTheBlankPart):
 	"""
 	Marker interface for a Fill-in-the-blank short answer question part.
 	"""
 
-class IQFillInTheBlankPartWithWordBank(IQPart):
+class IQFillInTheBlankPartWithWordBank(IQFillInTheBlankPart):
 	"""
 	Marker interface for a Fill-in-the-blank with word bank question part.
 	If the word bank is not specified it would the one from the parent question

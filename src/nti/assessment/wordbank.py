@@ -19,6 +19,7 @@ from nti.utils.schema import SchemaConfigured
 from nti.utils.schema import createDirectFieldProperties
 
 from . import interfaces
+from ._util import superhash
 
 @interface.implementer(interfaces.IWordBankEntry)
 class WordBankEntry(SchemaConfigured, contained.Contained, persistent.Persistent):
@@ -42,14 +43,16 @@ class WordBank(SchemaConfigured, contained.Contained, persistent.Persistent):
 	createDirectFieldProperties(interfaces.IWordBank)
 
 	def __setattr__(self, name, value):
-		if name == "entries":
-			for x in value or ():
-				x.__parent__ = self
 		super(WordBank, self).__setattr__(name, value)
+		if name == "entries":
+			for x in self.entries or ():
+				x.__parent__ = self  # take ownership
 
 	@property
 	def words(self):
 		return {x.word for x in self.entries}
+
+	__repr__ = make_repr()
 
 	def __eq__(self, other):
 		try:
@@ -58,9 +61,9 @@ class WordBank(SchemaConfigured, contained.Contained, persistent.Persistent):
 		except AttributeError:
 			return NotImplemented
 
+	def __hash__(self):
+		return 47 + (superhash(self.entries) << 2) ^ superhash(self.unique)
+
 	def sublocations(self):
 		for entry in self.entries or ():
-			if entry.__parent__ is None:
-				entry.__parent__ = self
-			if entry.__parent__ is self:
-				yield entry
+			yield entry

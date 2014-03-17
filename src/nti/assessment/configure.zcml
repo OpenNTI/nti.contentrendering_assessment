@@ -122,8 +122,9 @@
 						 .interfaces.IQuestionSetSubmission .interfaces.IQAssessedQuestionSet
 						 .interfaces.IQAssignmentSubmission
 						 .interfaces.IQResponse
-						 .interfaces.IQHint .interfaces.IQuestionSet"
-		modules=".hint .assessed .parts .question .response .solution .submission .assignment"
+						 .interfaces.IQHint .interfaces.IQuestionSet
+						 .interfaces.IWordBankEntry .interfaces.IWordBank"
+		modules=".hint .assessed .parts .question .response .solution .submission .assignment .wordbank .fillintheblank"
 		factory_modules=".submission .question .response"
 		iobase=".externalization._AssessmentInternalObjectIOBase"/>
 	<subscriber
