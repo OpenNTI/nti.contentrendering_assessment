@@ -21,9 +21,9 @@ from nti.utils.schema import createDirectFieldProperties
 from . import interfaces
 from ._util import superhash
 
-@interface.implementer(interfaces.IWordBankEntry)
-class WordBankEntry(SchemaConfigured, contained.Contained, persistent.Persistent):
-	createDirectFieldProperties(interfaces.IWordBankEntry)
+@interface.implementer(interfaces.IWordEntry)
+class WordEntry(SchemaConfigured, contained.Contained, persistent.Persistent):
+	createDirectFieldProperties(interfaces.IWordEntry)
 
 	def __eq__(self, other):
 		try:
@@ -42,17 +42,20 @@ class WordBankEntry(SchemaConfigured, contained.Contained, persistent.Persistent
 class WordBank(SchemaConfigured, contained.Contained, persistent.Persistent):
 	createDirectFieldProperties(interfaces.IWordBank)
 
-	def __setattr__(self, name, value):
-		super(WordBank, self).__setattr__(name, value)
-		if name == "entries":
-			for x in self.entries or ():
-				x.__parent__ = self  # take ownership
-
 	@property
 	def words(self):
-		return {x.word for x in self.entries}
+		return {x.word for x in self.entries.values()}
+
+	def __setattr__(self, name, value):
+		super(WordBank, self).__setattr__(name, value)
+		if name == "entries" and value is not None:
+			for x in self.entries.values():
+				x.__parent__ = self  # take ownership
 
 	__repr__ = make_repr()
+
+	def __iter__(self):
+		return iter(self.entries.values())
 
 	def __eq__(self, other):
 		try:
@@ -65,5 +68,5 @@ class WordBank(SchemaConfigured, contained.Contained, persistent.Persistent):
 		return 47 + (superhash(self.entries) << 2) ^ superhash(self.unique)
 
 	def sublocations(self):
-		for entry in self.entries or ():
+		for entry in self:
 			yield entry

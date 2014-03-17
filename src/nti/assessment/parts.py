@@ -14,6 +14,7 @@ import os.path
 
 from zope import interface
 from zope import component
+from zope.container import contained
 from zope.mimetype.interfaces import mimeTypeConstraint
 from zope.schema.interfaces import ConstraintNotSatisfied
 
@@ -254,3 +255,21 @@ class QModeledContentPart(QPart):
 
 	def _eq_instance( self, other ):
 		return isinstance(other, QModeledContentPart)
+
+
+@interface.implementer(interfaces.IQFillInTheBlankPart)
+class QFillInTheBlankPart(QPart):
+	"""
+	Marker class for fill in the blank parts
+	"""
+
+@interface.implementer(interfaces.IQFillInTheBlankPartWithWordBank)
+class QFillInTheBlankPartWithWordBank(QFillInTheBlankPart, contained.Contained):
+
+	wordBank = None
+
+	def __getattr__(self, name):
+		result = super(QFillInTheBlankPartWithWordBank, self).__getattr__(name)
+		if name == "wordBank" and result is None:
+			result = getattr(self.__parent__, 'wordBank', None)
+		return result

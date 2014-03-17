@@ -65,3 +65,21 @@ class QQuestionSet(Persistent,
 
 	def __hash__(self):
 		return 47 + (superhash(self.questions) << 2)
+
+@interface.implementer(interfaces.IQFillInTheBlankWithWordBankQuestion)
+class QFillInTheBlankWithWordBankQuestion(QQuestion):
+	createDirectFieldProperties(interfaces.IQFillInTheBlankWithWordBankQuestion)
+
+	def __setattr__(self, name, value):
+		super(QFillInTheBlankWithWordBankQuestion, self).__setattr__(name, value)
+		if name == "parts":
+			for x in self.parts or ():
+				x.__parent__ = self  # take ownership
+
+	def __eq__(self, other):
+		return	super(QFillInTheBlankWithWordBankQuestion, self).__eq__(other) and \
+				(self is other or self.wordBank == other.wordBank)
+
+	def sublocations(self):
+		for part in self.parts or ():
+			yield part

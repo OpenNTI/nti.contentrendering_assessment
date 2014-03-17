@@ -764,13 +764,18 @@ class IQAssessmentItemContainer(sequence.IReadSequence):
 
 # Alibra
 
-class IWordBankEntry(interface.Interface):
+class IWordEntry(interface.Interface):
 	id = TextLine(title="word identifier")
 	word = TextLine(title="the word")
-	lang = TextLine(title="language identifier", default="en")
+	lang = TextLine(title="language identifier", default="en", required=False)
 
 class IWordBank(IIterable):
-	entries = Set(value_type=Object(IWordBankEntry), title="The words in the bank")
+
+	entries = Dict(title="The response dictionary",
+				   key_type=TextLine(title="The word identifier"),
+				   value_type=Object(IWordEntry, title="The word"),
+				   min_length=1)
+
 	unique = Bool(title="A word can be used once in a question/part",
 				  default=True)
 
