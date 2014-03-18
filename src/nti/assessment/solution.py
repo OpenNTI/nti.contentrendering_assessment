@@ -11,7 +11,11 @@ logger = __import__('logging').getLogger(__name__)
 from zope import interface
 
 from persistent import Persistent
+
 from nti.externalization.externalization import make_repr
+
+from nti.utils.schema import SchemaConfigured
+from nti.utils.schema import createDirectFieldProperties
 
 from . import parts
 from . import interfaces
@@ -148,6 +152,20 @@ class QMultipleChoiceMultipleAnswerSolution(_TrivialValuedMixin,QSolution):
 	__eq__ = _eq_
 	__ne__ = _ne_
 	__hash__ = __hash__
+
+@interface.implementer(interfaces.IQFillInTheBlankShortAnswerSolution)
+class QFillInTheBlankShortAnswerSolution(_TrivialValuedMixin, QSolution):
+
+	_part_type = parts.QFillInTheBlankShortAnswerPart
+
+	__eq__ = _eq_
+	__ne__ = _ne_
+	__hash__ = __hash__
+
+@interface.implementer(interfaces.IRegularExpression)
+class RegularExpression(SchemaConfigured):
+	mimeType = mime_type = 'application/vnd.nextthought.naregex'
+	createDirectFieldProperties(interfaces.IRegularExpression)
 
 @interface.implementer(interfaces.IQFillInTheBlankWithWordBankSolution)
 class QFillInTheBlankWithWordBankSolution(_TrivialValuedMixin, QSolution):

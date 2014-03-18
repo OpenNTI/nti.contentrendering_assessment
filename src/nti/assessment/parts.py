@@ -256,10 +256,17 @@ class QModeledContentPart(QPart):
 	def _eq_instance( self, other ):
 		return isinstance(other, QModeledContentPart)
 
+@interface.implementer(interfaces.IQFillInTheBlankShortAnswerPart)
+class QFillInTheBlankShortAnswerPart(QPart):
+	response_interface = interfaces.IQListResponse
+	grader_interface = interfaces.IQFillInTheBlankShortAnswerGrader
+
 @interface.implementer(interfaces.IQFillInTheBlankWithWordBankPart)
 class QFillInTheBlankWithWordBankPart(QPart, contained.Contained):
 
 	wordbank = None
+	response_interface = interfaces.IQListResponse
+	grader_interface = interfaces.IQFillInTheBlankWithWordBankGrader
 
 	def __getattr__(self, name):
 		result = super(QFillInTheBlankWithWordBankPart, self).__getattr__(name)

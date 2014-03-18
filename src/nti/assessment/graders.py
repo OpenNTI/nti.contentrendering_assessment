@@ -10,12 +10,16 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+import re
 import numbers
 
 from zope import interface
 
-from . import interfaces
+import repoze.lru
+
 from nti.utils.schema import InvalidValue
+
+from . import interfaces
 
 @staticmethod
 def _id(o):
@@ -206,7 +210,6 @@ class MultipleChoiceMultipleAnswerGrader(EqualityGrader):
 	to be a key).
 	"""
 
-
 @interface.implementer(interfaces.IQMatchingPartGrader)
 class MatchingPartGrader(EqualityGrader):
 	"""
@@ -214,7 +217,7 @@ class MatchingPartGrader(EqualityGrader):
 	and int and key dicts.
 	"""
 
-	def _to_int_dict( self, the_dict ):
+	def _to_int_dict(self, the_dict):
 		result = the_dict
 		if not all( (isinstance(x,numbers.Integral) for x in the_dict.keys()) ):
 			# Then they must be actual key-value pairs
@@ -234,18 +237,42 @@ class MatchingPartGrader(EqualityGrader):
 	solution_converter = _to_int_dict
 	response_converter = _to_int_dict
 
+@repoze.lru.lru_cache(100)
+def _compile(pattern, flags):
+	return re.compile(pattern, flags)
+
+@interface.implementer(interfaces.IQFillInTheBlankShortAnswerGrader)
+class FillInTheBlankShortAnswerGrader(EqualityGrader):
+
+	def _compare(self, solution_value, response_value):
+		result = 0
+		solutions = self.solution_converter(solution_value)
+		responses = self.response_converter(response_value)
+		for idx, sol in enumerate(solutions):
+			pattern = _compile(sol.pattern, sol.flags)
+			if pattern.match(sol, responses[idx]):
+				result += 1
+		return result / float(len(solutions)) if solutions else 0
 
 @interface.implementer(interfaces.IQFillInTheBlankWithWordBankGrader)
-class FillInTheBlankWithWordBankGraderGrader(EqualityGrader):
+class FillInTheBlankWithWordBankGrader(EqualityGrader):
 
 	def _to_id_list(self, the_list):
 		result = []
 		wordbank = self.part.wordbank
 		for x in the_list:
-			if not x in wordbank:  # it's a word
+			if not wordbank.contains_id(x):
 				x = wordbank.idOf(x)
 			result.append(x)
 		return result
 
-	solution_converter = _to_id_list
 	response_converter = _to_id_list
+
+	def _compare(self, solution_value, response_value):
+		result = 0
+		solutions = self.solution_converter(solution_value)
+		responses = self.response_converter(response_value)
+		for idx, sol in enumerate(solutions):
+			if _lower_normalized(sol) == _lower_normalized(responses[idx]):
+				result += 1
+		return result / float(len(solutions)) if solutions else 0

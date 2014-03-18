@@ -6,6 +6,8 @@ $Id$
 from __future__ import unicode_literals, print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
+import re
+
 from zope import interface
 from zope.interface.common import sequence
 from zope.mimetype.interfaces import mimeTypeConstraint
@@ -13,7 +15,6 @@ from zope.mimetype.interfaces import mimeTypeConstraint
 from zope.container.interfaces import IContained
 from zope.annotation.interfaces import IAnnotatable
 
-from nti.utils.schema import Set
 from nti.utils.schema import Bool
 from nti.utils.schema import ValidDatetime as Datetime
 from nti.utils.schema import Dict
@@ -23,9 +24,10 @@ from nti.utils.schema import Int
 from nti.utils.schema import List
 from nti.utils.schema import ListOrTuple
 from nti.utils.schema import Object
-from nti.utils.schema import ValidText as Text
-from nti.utils.schema import ValidTextLine as TextLine
 from nti.utils.schema import Variant
+from nti.utils.schema import ValidText as Text
+from nti.utils.schema import ValidRegEx as RegEx
+from nti.utils.schema import ValidTextLine as TextLine
 
 from dolmen.builtins.interfaces import IDict
 from dolmen.builtins.interfaces import IList
@@ -784,10 +786,30 @@ class IQFillInTheBlankPart(IQPart):
 	Marker interface for a Fill-in-the-blank question part.
 	"""
 
+class IQFillInTheBlankShortAnswerGrader(IQPartGrader):
+	pass
+
+class IRegularExpression(interface.Interface):
+	pattern = TextLine(title='the pattern', default='*')
+	flags = Int(title='the regex flags', default=re.U | re.I | re.M, required=False)
+
+class IQFillInTheBlankShortAnswerSolution(IQMultiValuedSolution):
+
+	value = List(title="The correct answer regexes",
+				 description="The correct regex",
+				 min_length=0,
+				 value_type=Object(IRegularExpression, title="The regular expression"))
+
 class IQFillInTheBlankShortAnswerPart(IQFillInTheBlankPart):
 	"""
 	Marker interface for a Fill-in-the-blank short answer question part.
 	"""
+	solutions = IndexedIterable(title="The solutions",
+								min_length=1,
+								value_type=Object(IQFillInTheBlankShortAnswerSolution, title="the solution"))
+
+class IQFillInTheBlankShortAnswerQuestion(IQuestion):
+	pass
 
 class IQFillInTheBlankWithWordBankGrader(IQPartGrader):
 	pass

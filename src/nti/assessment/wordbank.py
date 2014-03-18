@@ -48,9 +48,9 @@ class WordBank(SchemaConfigured, contained.Contained, persistent.Persistent):
 
 	def idOf(self, word):
 		lower = word.lower()
-		for _id, x in self.entries.items():
+		for wid, x in self.entries.items():
 			if x.word.lower() == lower:
-				return _id
+				return wid
 		return None
 	
 	def contains_word(self, word):
@@ -58,6 +58,7 @@ class WordBank(SchemaConfigured, contained.Contained, persistent.Persistent):
 
 	def __contains__(self, wid):
 		return wid in self.entries
+	contains_id = __contains__
 
 	def __setattr__(self, name, value):
 		super(WordBank, self).__setattr__(name, value)
