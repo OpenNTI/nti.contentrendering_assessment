@@ -1,12 +1,18 @@
 #!/usr/bin/env python
-from __future__ import print_function, unicode_literals
+# -*- coding: utf-8 -*-
 
-#disable: accessing protected members, too many methods
-#pylint: disable=W0212,R0904
+from __future__ import print_function, unicode_literals, absolute_import, division
+__docformat__ = "restructuredtext en"
+
+# disable: accessing protected members, too many methods
+# pylint: disable=W0212,R0904
 
 from hamcrest import assert_that, has_entry
 from hamcrest import is_, is_not
+
 from unittest import TestCase
+
+import nti.testing.base
 from nti.testing.matchers import is_true, is_false
 from nti.testing.matchers import verifiably_provides
 from nti.testing.matchers import validly_provides
@@ -15,21 +21,16 @@ from nose.tools import assert_raises
 
 from zope import interface
 
-import nti.assessment
-
-from .. import interfaces
 from .. import parts
+from .. import interfaces
 from .. import solution as solutions
 
 from . import grades_right
 from . import grades_wrong
 
-
 # nose module-level setup
 setUpModule = lambda: nti.testing.base.module_setup( set_up_packages=(__name__,) )
 tearDownModule = nti.testing.base.module_teardown
-
-
 
 class TestQPart(TestCase):
 
@@ -44,7 +45,6 @@ class TestQPart(TestCase):
 	def test_part_badkw(self):
 		with assert_raises(TypeError):
 			parts.QPart( bad_kw=1 )
-
 
 class TestMultipleChoicePart(TestCase):
 
@@ -155,6 +155,9 @@ class TestMatchingPart(TestCase):
 		assert_that( part, is_not( qnp ) )
 
 		assert_that( hash(part), is_( hash( part2 ) ) )
+
+def TestFillInTheBlackWithWordBankPart(TestCase):
+	pass
 
 def test_free_response_part_eq():
 

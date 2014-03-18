@@ -1,8 +1,11 @@
 #!/usr/bin/env python
-"""
-$Id$
-"""
-from __future__ import print_function, unicode_literals
+# -*- coding: utf-8 -*-
+
+from __future__ import print_function, unicode_literals, absolute_import, division
+__docformat__ = "restructuredtext en"
+
+# disable: accessing protected members, too many methods
+# pylint: disable=W0212,R0904
 
 from hamcrest import assert_that
 from hamcrest import has_entry
@@ -12,26 +15,24 @@ from hamcrest import contains
 from hamcrest import same_instance
 from hamcrest import has_key
 from hamcrest import not_none
-from unittest import TestCase
 from hamcrest import has_entries
+
+from unittest import TestCase
+
+import nti.testing.base
 from nti.testing.matchers import verifiably_provides
 from nti.testing.matchers import validly_provides
 from nti.externalization.tests import externalizes
 from nose.tools import assert_raises
 
-from zope import component
 from zope.schema import interfaces as sch_interfaces
-from zope.dottedname import resolve as dottedname
 
-import nti.assessment
+from nti.externalization import internalization
 from nti.externalization.externalization import toExternalObject
 from nti.externalization.internalization import update_from_external_object
-from nti.externalization import internalization
-from nti.externalization import interfaces as ext_interfaces
 
 from .. import interfaces
 from .. import submission
-
 
 # nose module-level setup
 setUpModule = lambda: nti.testing.base.module_setup( set_up_packages=(__name__,'nti.mimetype') )

@@ -1,13 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function, unicode_literals
+from __future__ import print_function, unicode_literals, absolute_import, division
+__docformat__ = "restructuredtext en"
 
-#disable: accessing protected members, too many methods
-#pylint: disable=W0212,R0904
+# disable: accessing protected members, too many methods
+# pylint: disable=W0212,R0904
 
-from hamcrest import assert_that, is_, is_not
+from hamcrest import is_
+from hamcrest import is_not
 from hamcrest import has_entry
+from hamcrest import assert_that
+
 from unittest import TestCase
 
 import nti.testing.base
@@ -16,38 +20,32 @@ from nti.testing.matchers import verifiably_provides
 
 from zope import interface
 
-from .. import solution, response
-from .. import interfaces
-
+from nti.assessment import solution, response
+from nti.assessment import interfaces
 
 from nti.externalization.externalization import toExternalObject
-from . import grades_right
-from . import grades_wrong
+
+from nti.assessment.tests import grades_right
+from nti.assessment.tests import grades_wrong
 
 grades_correct = grades_right
-
 
 # nose module-level setup
 setUpModule = lambda: nti.testing.base.module_setup( set_up_packages=(__name__,) )
 tearDownModule = nti.testing.base.module_teardown
 
-
-
 class TestConvert(TestCase):
-
 
 	def test_not_isolution(self):
 		assert_that( interfaces.convert_response_for_solution( self, self ), is_( self ) )
 		# Because we have no interfaces, no conversion is attempted
 		assert_that( interfaces.convert_response_for_solution( self, 42 ), is_( 42 ) )
 
-
 	def test_convert_fails(self):
 		class Soln(object):
 			interface.implements(interfaces.IQMathSolution)
 
 		assert_that( interfaces.convert_response_for_solution( Soln(), self ), is_( self ) )
-
 
 	def test_convert_from_string(self):
 		class Soln(object):
@@ -129,9 +127,7 @@ class TestNumericMathSolution(TestCase):
 		assert_that( soln, is_not( soln4 ) )
 		assert soln != soln4 # hit the ne operator
 
-
 class TestFreeResponseSolution(TestCase):
-
 
 	def test_grade_simple_string(self):
 		assert_that( solution.QFreeResponseSolution( "text" ), grades_correct( "text" ) )
@@ -142,7 +138,7 @@ class TestFreeResponseSolution(TestCase):
 
 	def test_grade_string_quote_replacement(self):
 
-		solution_text =   "“Today” ‘what’" # Note both double and single curly quotes
+		solution_text = "“Today” ‘what’"  # Note both double and single curly quotes
 		response_text = "\"Today\" 'what'"
 
 		assert_that( solution.QFreeResponseSolution( solution_text ),
@@ -154,5 +150,10 @@ class TestMultipleChoiceMultipleAnswerSolution(TestCase):
 		assert_that( solution.QMultipleChoiceMultipleAnswerSolution( [ 1 ] ), grades_correct( [ 1 ] ) )
 		assert_that( solution.QMultipleChoiceMultipleAnswerSolution( [ 1, 2 ] ), grades_correct( [ 1, 2 ] ) )
 		assert_that( solution.QMultipleChoiceMultipleAnswerSolution( [ 1, 2, 3 ] ), grades_correct( [ 1, 2, 3 ] ) )
-
 		assert_that( solution.QMultipleChoiceMultipleAnswerSolution( [ 1, 2 ] ), grades_wrong( [2, 1] ) )
+
+class TestFillInTheBlankWithShortAnwwerSolution(TestCase):
+
+	def test_solution(self):
+		assert_that(solution.QFillInTheBlankWithWordBankSolution([ '1' ]), grades_correct([ 1 ]))
+
