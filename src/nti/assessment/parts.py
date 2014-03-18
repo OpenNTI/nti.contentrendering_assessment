@@ -256,15 +256,8 @@ class QModeledContentPart(QPart):
 	def _eq_instance( self, other ):
 		return isinstance(other, QModeledContentPart)
 
-
-@interface.implementer(interfaces.IQFillInTheBlankPart)
-class QFillInTheBlankPart(QPart, contained.Contained):
-	"""
-	Marker class for fill in the blank parts
-	"""
-
 @interface.implementer(interfaces.IQFillInTheBlankWithWordBankPart)
-class QFillInTheBlankWithWordBankPart(QFillInTheBlankPart):
+class QFillInTheBlankWithWordBankPart(QPart, contained.Contained):
 
 	wordbank = None
 
