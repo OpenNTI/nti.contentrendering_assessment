@@ -22,12 +22,16 @@ from . import interfaces
 from ._util import superhash
 
 @interface.implementer(interfaces.IWordEntry)
-class WordEntry(SchemaConfigured, contained.Contained, persistent.Persistent):
+class WordEntry(SchemaConfigured, persistent.Persistent, contained.Contained):
 	createDirectFieldProperties(interfaces.IWordEntry)
+
+	def __init__(self, *args, **kwargs):
+		persistent.Persistent.__init__(self)
+		SchemaConfigured.__init__(self, *args, **kwargs)
 
 	def __eq__(self, other):
 		try:
-			return self is other or (self.id == other.id)
+			return self is other or self.id == other.id
 		except AttributeError:
 			return NotImplemented
 
@@ -39,8 +43,12 @@ class WordEntry(SchemaConfigured, contained.Contained, persistent.Persistent):
 		return xhash
 
 @interface.implementer(interfaces.IWordBank)
-class WordBank(SchemaConfigured, contained.Contained, persistent.Persistent):
+class WordBank(SchemaConfigured, persistent.Persistent, contained.Contained):
 	createDirectFieldProperties(interfaces.IWordBank)
+
+	def __init__(self, *args, **kwargs):
+		persistent.Persistent.__init__(self)
+		SchemaConfigured.__init__(self, *args, **kwargs)
 
 	@property
 	def words(self):
@@ -53,8 +61,12 @@ class WordBank(SchemaConfigured, contained.Contained, persistent.Persistent):
 				return wid
 		return None
 	
+	def get(self, wid, default=None):
+		result = self.entries.get(wid, default)
+		return result
+
 	def contains_word(self, word):
-		return self.indexOf(word) != None
+		return self.idOf(word) != None
 
 	def __contains__(self, wid):
 		return wid in self.entries
@@ -68,6 +80,9 @@ class WordBank(SchemaConfigured, contained.Contained, persistent.Persistent):
 
 	__repr__ = make_repr()
 
+	def __len__(self):
+		return len(self.entries)
+	
 	def __iter__(self):
 		return iter(self.entries.values())
 

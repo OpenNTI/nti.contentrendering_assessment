@@ -152,7 +152,7 @@ class TestMultipleChoiceMultipleAnswerSolution(TestCase):
 		assert_that( solution.QMultipleChoiceMultipleAnswerSolution( [ 1, 2, 3 ] ), grades_correct( [ 1, 2, 3 ] ) )
 		assert_that( solution.QMultipleChoiceMultipleAnswerSolution( [ 1, 2 ] ), grades_wrong( [2, 1] ) )
 
-class TestFillInTheBlankWithShortAnwwerSolution(TestCase):
+class TestFillInTheBlankWithShortAnswerSolution(TestCase):
 
 	def test_solution(self):
 		assert_that(solution.QFillInTheBlankWithWordBankSolution([ '1' ]),
