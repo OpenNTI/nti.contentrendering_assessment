@@ -164,7 +164,7 @@ class QFillInTheBlankShortAnswerSolution(_TrivialValuedMixin, QSolution):
 
 @interface.implementer(interfaces.IRegularExpression)
 class RegularExpression(SchemaConfigured):
-	mimeType = mime_type = 'application/vnd.nextthought.naregex'
+	mimeType = mime_type = 'application/vnd.nextthought.naqregex'
 	createDirectFieldProperties(interfaces.IRegularExpression)
 
 @interface.implementer(interfaces.IQFillInTheBlankWithWordBankSolution)

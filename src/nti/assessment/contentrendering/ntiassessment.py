@@ -651,15 +651,14 @@ class naqfillintheblankshortanswerpart(_AbstractNAQPart):
 			Arbitrary prefix content goes here.
 			\begin{naqfillintheblankshortanswerpart}
 			        Arbitrary content for this part goes here.
-				\begin{naqchoices}
-			   		\naqchoice Arbitrary content for the choices.
-					\naqchoice[1] This is one part of a right choice.
-					\naqchoice[1] This is another part of a right choice.
-	                        \end{naqchoices}
+				\begin{naqregexes}
+					\naqregex .*
+					\naqregex[42] ^1$
+	            \end{naqregexes}
 				\begin{naqsolexplanation}
 					Arbitrary content explaining how the correct solution is arrived at.
 				\end{naqsolexplanation}
-			\end{naqmultiplechoicemultipleanswerpart}
+			\end{naqfillintheblankshortanswerpart}
 		\end{naquestion}
 	"""
 
@@ -668,23 +667,45 @@ class naqfillintheblankshortanswerpart(_AbstractNAQPart):
 	soln_interface = as_interfaces.IQFillInTheBlankShortAnswerSolution
 
 	def _asm_regexes(self):
-		return [x._asm_local_content for x in self.getElementsByTagName('naqchoice')]
+		return [x._asm_local_content for x in self.getElementsByTagName('naqregexes')]
 
 	def _asm_object_kwargs(self):
-		return { 'regexes': self._asm_regexes() }
+		return {'regexes': self._asm_regexes() }
 
 	def _asm_solutions(self):
 		solutions = []
-		solution_el = self.getElementsByTagName('naqsolution')[0]
-		solution = self.soln_interface(solution_el.answer)
-		weight = solution_el.attributes['weight']
-		if weight is not None:
-			solution.weight = weight
-		solutions.append(solution)
+		solution_els = self.getElementsByTagName('naqsolution')
+		for solution_el in solution_els:
+			solution = self.soln_interface(solution_el.answer)
+			weight = solution_el.attributes['weight']
+			if weight is not None:
+				solution.weight = weight
+			solutions.append(solution)
 		return solutions
 
 	def digest(self, tokens):
-		pass
+		res = super(naqfillintheblankshortanswerpart, self).digest(tokens)
+		_naqregexes = self.getElementsByTagName('naqregexes')
+		assert len(_naqregexes) == 1
+		_naqregexes = _naqregexes[0]
+		assert len(_naqregexes) > 1, "Must have more than one regex; instead got: " + str([x for x in _naqregexes])
+		
+		assert len(self.getElementsByTagName('naqsolutions')) == 0
+
+		# Tranform the implicit solutions into an array
+		_naqsolns = self.ownerDocument.createElement('naqsolutions')
+		_naqsolns.macroMode = _naqsolns.MODE_BEGIN
+# 		answer = {}
+# 		for i, _naqmregex in enumerate(_naqregexes):
+# 			answer[i] = _naqmregex.attributes['answer']
+# 		_naqsoln = self.ownerDocument.createElement('naqsolution')
+# 		_naqsoln.attributes['weight'] = 1.0
+# 		# Also put the attribute into the argument source, for presentation
+# 		_naqsoln.argSource = '[%s]' % _naqsoln.attributes['weight']
+# 		_naqsoln.answer = answer
+# 		_naqsolns.appendChild(_naqsoln)
+# 		self.insertAfter(_naqsolns, _naqmvalues)
+		return res
 
 class naqchoices(Base.List):
 	pass
@@ -695,7 +716,8 @@ class naqmlabels(Base.List):
 class naqmvalues(Base.List):
 	pass
 
-class naqvalue(_LocalContentMixin,Base.List.item):
+class naqvalue(_LocalContentMixin, Base.List.item):
+
 	@readproperty
 	def _asm_local_content(self):
 		return cfg_interfaces.ILatexContentFragment(unicode(self.textContent).strip())
@@ -707,6 +729,12 @@ class naqmlabel(naqvalue):
 	args = "[answer:int]"
 
 class naqmvalue(naqvalue):
+	pass
+
+class naqregex(naqvalue):
+	args = '[flags:int]'
+
+class naqregexes(Base.List):
 	pass
 
 class naqhints(Base.List):
