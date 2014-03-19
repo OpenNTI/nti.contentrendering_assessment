@@ -12,15 +12,16 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
 from zope import component
-import zope.container.contained
+from zope.container import contained
+from zope.location.interfaces import ISublocations
 
-import persistent
+from persistent import Persistent
 from persistent.list import PersistentList
 
 from nti.externalization.externalization import make_repr
 
-from nti.utils.schema import SchemaConfigured
 from nti.utils.schema import InvalidValue
+from nti.utils.schema import SchemaConfigured
 from nti.utils.schema import createDirectFieldProperties
 
 # EWW...but we need to be IContained in order to be stored
@@ -36,10 +37,8 @@ from . import interfaces
 from ._util import superhash
 from ._util import make_sublocations as _make_sublocations
 
-from zope.location.interfaces import ISublocations
-
 @interface.implementer(interfaces.IQAssessedPart, ISublocations)
-class QAssessedPart(SchemaConfigured, zope.container.contained.Contained, persistent.Persistent):
+class QAssessedPart(SchemaConfigured, contained.Contained, Persistent):
 	createDirectFieldProperties(interfaces.IQAssessedPart)
 	__external_can_create__ = False
 
@@ -69,9 +68,9 @@ class QAssessedPart(SchemaConfigured, zope.container.contained.Contained, persis
 			if part.__parent__ is self:
 				yield part
 
-
-from zope.datetime import parseDatetimetz
 import time
+from zope.datetime import parseDatetimetz
+
 def _dctimes_property_fallback(attrname, dcname):
 	# For BWC, if we happen to have annotations that happens to include
 	# zope dublincore data, we will use it
@@ -100,10 +99,13 @@ def _dctimes_property_fallback(attrname, dcname):
 
 	return property(get, _set)
 
-@interface.implementer(interfaces.IQAssessedQuestion, nti_interfaces.ICreated, nti_interfaces.ILastModified,
+@interface.implementer(interfaces.IQAssessedQuestion,
+					   nti_interfaces.ICreated,
+					   nti_interfaces.ILastModified,
 					   ISublocations)
-class QAssessedQuestion(SchemaConfigured, ContainedMixin, persistent.Persistent):
+class QAssessedQuestion(SchemaConfigured, ContainedMixin, Persistent):
 	createDirectFieldProperties(interfaces.IQAssessedQuestion)
+
 	__external_can_create__ = False
 
 	creator = None
@@ -134,8 +136,10 @@ class QAssessedQuestion(SchemaConfigured, ContainedMixin, persistent.Persistent)
 
 	sublocations = _make_sublocations()
 
-@interface.implementer(interfaces.IQAssessedQuestionSet, nti_interfaces.ICreated, nti_interfaces.ILastModified)
-class QAssessedQuestionSet(SchemaConfigured, ContainedMixin, persistent.Persistent):
+@interface.implementer(interfaces.IQAssessedQuestionSet,
+					   nti_interfaces.ICreated,
+					   nti_interfaces.ILastModified)
+class QAssessedQuestionSet(SchemaConfigured, ContainedMixin, Persistent):
 	createDirectFieldProperties(interfaces.IQAssessedQuestionSet)
 	__external_can_create__ = False
 

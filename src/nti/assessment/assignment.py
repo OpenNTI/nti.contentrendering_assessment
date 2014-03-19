@@ -5,15 +5,13 @@ The assignment related objects.
 
 $Id$
 """
-
 from __future__ import print_function, unicode_literals, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-
-import zope.container.contained
 from zope import interface
+from zope.container import contained
 from zope.mimetype import interfaces as mime_interfaces
 from zope.annotation.interfaces import IAttributeAnnotatable
 
@@ -38,7 +36,8 @@ from ._util import make_sublocations as _make_sublocations
 					   IAttributeAnnotatable)
 class QAssignmentPart(Persistent,
 					  SchemaConfigured,
-					  zope.container.contained.Contained):
+					  contained.Contained):
+
 	title = AdaptingFieldProperty(interfaces.IQAssignmentPart['title'])
 	createDirectFieldProperties(interfaces.IQAssignmentPart)
 
@@ -51,7 +50,7 @@ class QAssignmentPart(Persistent,
 					   IAttributeAnnotatable)
 class QAssignment(Persistent,
 				  SchemaConfigured,
-				  zope.container.contained.Contained):
+				  contained.Contained):
 
 	title = AdaptingFieldProperty(interfaces.IQAssignment['title'])
 	createDirectFieldProperties(interfaces.IQAssignment)
