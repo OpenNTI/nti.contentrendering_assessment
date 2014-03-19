@@ -153,24 +153,24 @@
 		iobase=".externalization._AssessmentInternalObjectIOBase"/>
 		
 	<subscriber
-		factory=".externalization._QAssessedQuestionExplanationSolutionAdder"
+		factory=".decorators._QAssessedQuestionExplanationSolutionAdder"
 		for=".interfaces.IQAssessedQuestion"
 		provides="nti.externalization.interfaces.IExternalObjectDecorator" />
 
 	<!-- Give assignments a containerId -->
 	<subscriber
-		factory=".externalization._QAssessmentObjectIContainedAdder"
+		factory=".decorators._QAssessmentObjectIContainedAdder"
 		for=".interfaces.IQAssignment"
 		provides="nti.externalization.interfaces.IExternalObjectDecorator" />
 		
 	<!-- Also give questions and sets a containerId, mostly for symmetry -->
 	<subscriber
-		factory=".externalization._QAssessmentObjectIContainedAdder"
+		factory=".decorators._QAssessmentObjectIContainedAdder"
 		for=".interfaces.IQuestionSet"
 		provides="nti.externalization.interfaces.IExternalObjectDecorator" />
 		
 	<subscriber
-		factory=".externalization._QAssessmentObjectIContainedAdder"
+		factory=".decorators._QAssessmentObjectIContainedAdder"
 		for=".interfaces.IQuestion"
 		provides="nti.externalization.interfaces.IExternalObjectDecorator" />
 
