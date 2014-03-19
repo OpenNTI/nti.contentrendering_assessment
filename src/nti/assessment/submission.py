@@ -11,9 +11,11 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
-import zope.container.contained
-from nti.dataserver.datastructures import PersistentCreatedModDateTrackingObject
+from zope.container import contained
+from zope.location.interfaces import ISublocations
+
 from nti.dataserver.datastructures import ContainedMixin
+from nti.dataserver.datastructures import PersistentCreatedModDateTrackingObject
 
 from nti.externalization.externalization import make_repr
 
@@ -21,6 +23,7 @@ from nti.utils.schema import SchemaConfigured
 from nti.utils.schema import createDirectFieldProperties
 
 from . import interfaces
+from ._util import make_sublocations as _make_sublocations
 
 # NOTE that these objects are not Persistent. Originally this is
 # because they were never intended for storage in the database; only
@@ -39,24 +42,9 @@ from . import interfaces
 # transformed; the transformed object may or may not
 # be directly added.
 
-from zope.location.interfaces import ISublocations
-
-def _make_sublocations(child_attr='parts'):
-	def sublocations(self):
-		for part in getattr(self,child_attr):
-			if hasattr(part, '__parent__'):
-				if part.__parent__ is None:
-					# XXX: HACK: Taking ownership because
-					# of cross-database issues.
-					logger.warn("XXX: HACK: Taking ownership of a sub-part")
-					part.__parent__ = self
-				if part.__parent__ is self:
-					yield part
-	return sublocations
-
 @interface.implementer(interfaces.IQuestionSubmission,
 					   ISublocations)
-class QuestionSubmission(SchemaConfigured, zope.container.contained.Contained):
+class QuestionSubmission(SchemaConfigured, contained.Contained):
 	createDirectFieldProperties(interfaces.IQuestionSubmission)
 
 	__repr__ = make_repr()
@@ -65,13 +53,12 @@ class QuestionSubmission(SchemaConfigured, zope.container.contained.Contained):
 
 @interface.implementer(interfaces.IQuestionSetSubmission,
 					   ISublocations)
-class QuestionSetSubmission(SchemaConfigured, zope.container.contained.Contained):
+class QuestionSetSubmission(SchemaConfigured, contained.Contained):
 	createDirectFieldProperties(interfaces.IQuestionSetSubmission)
 
 	__repr__ = make_repr()
 
 	sublocations = _make_sublocations('questions')
-
 
 @interface.implementer(interfaces.IQAssignmentSubmission,
 					   ISublocations)
