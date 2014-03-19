@@ -7,32 +7,26 @@ __docformat__ = "restructuredtext en"
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
 
-from hamcrest import is_
-from hamcrest import has_key
-from hamcrest import has_entry
-from hamcrest import assert_that
 from hamcrest.core.base_matcher import BaseMatcher
 
-import nti.testing.base
-
 class GradeMatcher(BaseMatcher):
-	def __init__( self, value, response ):
+	def __init__(self, value, response):
 		super(GradeMatcher,self).__init__()
 		self.value = value
 		self.response = response
 
-	def _matches( self, solution ):
-		return solution.grade( self.response ) == self.value
+	def _matches(self, solution):
+		return solution.grade(self.response) == self.value
 
-	def describe_to( self, description ):
-		description.append_text( 'solution that grades ').append_text( str(self.response) ).append_text( ' as ' ).append_text( str(self.value) )
+	def describe_to(self, description):
+		description.append_text('solution that grades ').append_text(str(self.response)).append_text(' as ').append_text(str(self.value))
 
-	def describe_mismatch( self, item, mismatch_description ):
-		mismatch_description.append_text( 'solution ' ).append_text( str(type(item) ) ).append_text( ' ' ).append_text( str(item) )
-		if getattr( item, 'allowed_units', () ):
-			mismatch_description.append_text( " units " + str( item.allowed_units ) )
+	def describe_mismatch(self, item, mismatch_description):
+		mismatch_description.append_text('solution ').append_text(str(type(item))).append_text(' ').append_text(str(item))
+		if getattr(item, 'allowed_units', ()):
+			mismatch_description.append_text(" units " + str(item.allowed_units))
 
-		mismatch_description.append_text( ' graded ' + str(self.response) + ' as ' + str( not self.value ) )
+		mismatch_description.append_text(' graded ' + str(self.response) + ' as ' + str(not self.value))
 
 	def __repr__( self ):
 		return 'solution that grades as ' + str(self.value)

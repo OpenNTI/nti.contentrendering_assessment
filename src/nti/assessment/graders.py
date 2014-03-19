@@ -250,7 +250,7 @@ class FillInTheBlankShortAnswerGrader(EqualityGrader):
 		responses = self.response_converter(response_value)
 		for idx, sol in enumerate(solutions):
 			pattern = _compile(sol.pattern, sol.flags)
-			if pattern.match(sol, responses[idx]):
+			if pattern.match(responses[idx]):
 				result += 1
 		return result / float(len(solutions)) if solutions else 0
 

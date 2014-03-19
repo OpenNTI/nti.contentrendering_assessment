@@ -1,24 +1,34 @@
 #!/usr/bin/env python
-from __future__ import print_function, unicode_literals
+# -*- coding: utf-8 -*-
+
+from __future__ import print_function, unicode_literals, absolute_import, division
+__docformat__ = "restructuredtext en"
+
+# disable: accessing protected members, too many methods
+# pylint: disable=W0212,R0904
 
 from hamcrest import assert_that
-from nti.testing.base import SharedConfiguringTestBase
-from nti.testing.matchers import is_true
-from nti.testing.matchers import is_false
-from nti.testing.matchers import verifiably_provides
+
+from unittest import TestCase
+
 from zope import component
 
-import nti.assessment
-from .. import response, solution
-from .. import grade_one_response
-from .. import interfaces
-from .._latexplastexdomcompare import _mathChildIsEqual as mce
+from nti.assessment import response, solution
+from nti.assessment import grade_one_response
+from nti.assessment import interfaces
+from nti.assessment._latexplastexdomcompare import _mathChildIsEqual as mce
 
-from .test_solution import grades_right, grades_wrong
+from nti.assessment.tests.test_solution import grades_right, grades_wrong
 
-class TestLatex(SharedConfiguringTestBase):
+import nti.testing.base
+from nti.testing.matchers import is_true, is_false
+from nti.testing.matchers import verifiably_provides
 
-	set_up_packages = (__name__,)
+# nose module-level setup
+setUpModule = lambda: nti.testing.base.module_setup(set_up_packages=(__name__,))
+tearDownModule = nti.testing.base.module_teardown
+
+class TestLatex(TestCase):
 
 	def test_simple_grade(self):
 
@@ -135,12 +145,13 @@ class TestLatex(SharedConfiguringTestBase):
 		soln = solution.QLatexSymbolicMathSolution(u'16')
 		# Seen in real life. The browser's GUI editor makes this relatively
 		# easy to construct. Hopefully it can redisplay it, too
-		rsp = nti.assessment.response.QTextResponse('\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{1}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}')
+		rsp = response.QTextResponse('\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{1}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}')
 
 		grader = component.getMultiAdapter( (None, soln, rsp), interfaces.IQSymbolicMathGrader )
 		assert_that( grader(), is_false() )
 
 	def test_math_child_is_equal_cases(self):
+
 		class MathChild(object):
 			OTHER_NODE = 0
 			TEXT_NODE = 1

@@ -14,10 +14,6 @@ from hamcrest import assert_that
 
 from unittest import TestCase
 
-import nti.testing.base
-from nti.testing.matchers import is_true, is_false
-from nti.testing.matchers import verifiably_provides
-
 from zope import interface
 
 from nti.assessment import solution, response
@@ -27,8 +23,11 @@ from nti.externalization.externalization import toExternalObject
 
 from nti.assessment.tests import grades_right
 from nti.assessment.tests import grades_wrong
-
 grades_correct = grades_right
+
+import nti.testing.base
+from nti.testing.matchers import is_true, is_false
+from nti.testing.matchers import verifiably_provides
 
 # nose module-level setup
 setUpModule = lambda: nti.testing.base.module_setup( set_up_packages=(__name__,) )
@@ -152,10 +151,20 @@ class TestMultipleChoiceMultipleAnswerSolution(TestCase):
 		assert_that( solution.QMultipleChoiceMultipleAnswerSolution( [ 1, 2, 3 ] ), grades_correct( [ 1, 2, 3 ] ) )
 		assert_that( solution.QMultipleChoiceMultipleAnswerSolution( [ 1, 2 ] ), grades_wrong( [2, 1] ) )
 
-class TestFillInTheBlankWithShortAnswerSolution(TestCase):
+class TestFillInTheBlankWithWordBankSolution(TestCase):
 
 	def test_solution(self):
 		assert_that(solution.QFillInTheBlankWithWordBankSolution([ '1' ]),
 					verifiably_provides(interfaces.IQFillInTheBlankWithWordBankSolution))
-		assert_that(solution.QFillInTheBlankWithWordBankSolution([ '1' ]), grades_correct([ '1' ]))
+		assert_that(solution.QFillInTheBlankWithWordBankSolution([ '1' ]).grade([ '1' ]), is_(1.0))
 
+class TestFillInTheBlankWithShortAnswerSolution(TestCase):
+
+	def test_solution(self):
+		regex = solution.RegularExpression(pattern="^1$")
+		assert_that(solution.QFillInTheBlankShortAnswerSolution([regex]),
+					verifiably_provides(interfaces.IQFillInTheBlankShortAnswerSolution))
+		assert_that(solution.QFillInTheBlankShortAnswerSolution([regex]).grade(['1']), is_(1.0))
+		assert_that(solution.QFillInTheBlankShortAnswerSolution([regex]).grade(['2']), is_(0))
+		assert_that(solution.QFillInTheBlankShortAnswerSolution([regex]).grade(['11']), is_(0))
+		assert_that(solution.QFillInTheBlankShortAnswerSolution([regex]).grade(['121']), is_(0))

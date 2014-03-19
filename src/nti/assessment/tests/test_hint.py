@@ -1,27 +1,34 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
-$Id$
-"""
-from __future__ import print_function, unicode_literals
 
-from hamcrest import assert_that, has_entry, is_
-from hamcrest import not_none, is_not
-from nti.testing.base import SharedConfiguringTestBase
-from nti.testing.matchers import verifiably_provides
+from __future__ import print_function, unicode_literals, absolute_import, division
+__docformat__ = "restructuredtext en"
+
+# disable: accessing protected members, too many methods
+# pylint: disable=W0212,R0904
+
+from hamcrest import is_
+from hamcrest import is_not
+from hamcrest import not_none
+from hamcrest import has_entry
+from hamcrest import assert_that
+
+from unittest import TestCase
+
+from nti.externalization import internalization
+from nti.externalization.externalization import toExternalObject
+
+from nti.assessment import interfaces
+
 from nti.externalization.tests import externalizes
 
-from nti.externalization.externalization import toExternalObject
-from nti.externalization import internalization
+from nti.testing import base
+from nti.testing.matchers import verifiably_provides
 
+setUpModule = lambda: base.module_setup(set_up_packages=(__name__,))
+tearDownModule = base.module_teardown
 
-from .. import interfaces
-
-
-#pylint: disable=R0904
-
-class TestTextHint(SharedConfiguringTestBase):
-	set_up_packages = (__name__,)
+class TestTextHint(TestCase):
 
 	def test_externalizes(self):
 		hint = interfaces.IQTextHint( "The hint" )
