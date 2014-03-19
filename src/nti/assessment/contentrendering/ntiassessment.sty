@@ -4,7 +4,6 @@
 \RequirePackage{comment}% Used to prevent solutions, hints, and solution explanations from being typeset.
 % Since this package uses the comment package, the [fragile] option is required for use in beamer frames.
 
-
 %% Define the counters
 \newcounter{naquestion}% Define naquestion counter
 \newcounter{naquestionpart}[naquestion]% Define naquestionpart counter. This counter is reset to 0 when counter naquestion is incremented.
@@ -13,6 +12,11 @@
 %% Define the environments
 % Define the naquestion environment
 \newenvironment{naquestion}[1][true]
+{\stepcounter{naquestion}\@@par\noindent\textbf{\arabic{naquestion}. }}
+{\vspace{8pt}}
+
+% Define the naquestionfillintheblankwordbank environment
+\newenvironment{naquestionfillintheblankwordbank}[1][true]
 {\stepcounter{naquestion}\@@par\noindent\textbf{\arabic{naquestion}. }}
 {\vspace{8pt}}
 

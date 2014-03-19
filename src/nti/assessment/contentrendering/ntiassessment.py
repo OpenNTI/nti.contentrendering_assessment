@@ -58,29 +58,32 @@ $Id$
 # "Method __delitem__ is abstract in Node and not overridden"
 #pylint: disable=W0223
 
-from __future__ import print_function, unicode_literals, absolute_import
+from __future__ import print_function, unicode_literals, absolute_import, division
 __docformat__ = "restructuredtext en"
 
+logger = __import__('logging').getLogger(__name__)
+
+import os
 import itertools
 
-from zope import interface
 from zope import schema
+from zope import interface
+from zope.cachedescriptors.method import cachedIn
 from zope.mimetype.interfaces import mimeTypeConstraint
 from zope.cachedescriptors.property import readproperty
-from zope.cachedescriptors.method import cachedIn
 
 from persistent.list import PersistentList
 
 from plasTeX import Base
-from plasTeX.interfaces import IOptionAwarePythonPackage
 from plasTeX.Base import Crossref
+from plasTeX.interfaces import IOptionAwarePythonPackage
 
 from nti.externalization.datetime import datetime_from_string
 
-from nti.assessment import interfaces as as_interfaces
 from nti.assessment import parts
 from nti.assessment import question
 from nti.assessment import assignment
+from nti.assessment import interfaces as as_interfaces
 
 from nti.contentfragments import interfaces as cfg_interfaces
 
@@ -89,7 +92,6 @@ from nti.contentrendering import interfaces as crd_interfaces
 from nti.contentrendering.plastexpackages.ntilatexmacros import ntiincludevideo
 from nti.contentrendering.plastexpackages._util import LocalContentMixin as _BaseLocalContentMixin
 
-import os
 from paste.deploy.converters import asbool
 
 class _LocalContentMixin(_BaseLocalContentMixin):
@@ -638,6 +640,52 @@ class naqmatchingpart(_AbstractNAQPart):
 			self.insertAfter( _naqsolns, _naqmvalues)
 		return res
 
+class naqfillintheblankshortanswerpart(_AbstractNAQPart):
+	r"""
+	A fill in the blank short answer part (usually used as the sole part to a question).
+	It must have a child listing the regex solutions.  Further the all
+	solutions with a weight of 1:: are required to be submitted to receive credit for the
+	question
+
+		\begin{naquestion}
+			Arbitrary prefix content goes here.
+			\begin{naqfillintheblankshortanswerpart}
+			        Arbitrary content for this part goes here.
+				\begin{naqchoices}
+			   		\naqchoice Arbitrary content for the choices.
+					\naqchoice[1] This is one part of a right choice.
+					\naqchoice[1] This is another part of a right choice.
+	                        \end{naqchoices}
+				\begin{naqsolexplanation}
+					Arbitrary content explaining how the correct solution is arrived at.
+				\end{naqsolexplanation}
+			\end{naqmultiplechoicemultipleanswerpart}
+		\end{naquestion}
+	"""
+
+	part_factory = parts.QFillInTheBlankShortAnswerPart
+	part_interface = as_interfaces.IQFillInTheBlankShortAnswerPart
+	soln_interface = as_interfaces.IQFillInTheBlankShortAnswerSolution
+
+	def _asm_regexes(self):
+		return [x._asm_local_content for x in self.getElementsByTagName('naqchoice')]
+
+	def _asm_object_kwargs(self):
+		return { 'regexes': self._asm_regexes() }
+
+	def _asm_solutions(self):
+		solutions = []
+		solution_el = self.getElementsByTagName('naqsolution')[0]
+		solution = self.soln_interface(solution_el.answer)
+		weight = solution_el.attributes['weight']
+		if weight is not None:
+			solution.weight = weight
+		solutions.append(solution)
+		return solutions
+
+	def digest(self, tokens):
+		pass
+
 class naqchoices(Base.List):
 	pass
 
@@ -750,6 +798,8 @@ class naquestion(_LocalContentMixin,Base.Environment,plastexids.NTIIDMixin):
 class naquestionref(Crossref.ref):
 	pass
 
+class naquestionfillintheblankwordbank(naquestion):
+	pass
 
 @interface.implementer(crd_interfaces.IEmbeddedContainer)
 class naquestionset(Base.List, plastexids.NTIIDMixin):
