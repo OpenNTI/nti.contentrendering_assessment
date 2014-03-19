@@ -9,6 +9,7 @@ __docformat__ = "restructuredtext en"
 import re
 
 from zope import interface
+from zope.interface.common import mapping
 from zope.interface.common import sequence
 from zope.mimetype.interfaces import mimeTypeConstraint
 
@@ -26,7 +27,6 @@ from nti.utils.schema import ListOrTuple
 from nti.utils.schema import Object
 from nti.utils.schema import Variant
 from nti.utils.schema import ValidText as Text
-from nti.utils.schema import ValidRegEx as RegEx
 from nti.utils.schema import ValidTextLine as TextLine
 
 from dolmen.builtins.interfaces import IDict
@@ -771,7 +771,7 @@ class IWordEntry(interface.Interface):
 	word = TextLine(title="the word")
 	lang = TextLine(title="language identifier", default="en", required=False)
 
-class IWordBank(IIterable):
+class IWordBank(IIterable, mapping.IReadMapping):
 
 	entries = Dict(title="The response dictionary",
 				   key_type=TextLine(title="The word identifier"),

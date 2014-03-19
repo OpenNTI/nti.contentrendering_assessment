@@ -61,16 +61,12 @@ class WordBank(SchemaConfigured, persistent.Persistent, contained.Contained):
 				return wid
 		return None
 	
-	def get(self, wid, default=None):
-		result = self.entries.get(wid, default)
-		return result
-
 	def contains_word(self, word):
 		return self.idOf(word) != None
 
-	def __contains__(self, wid):
-		return wid in self.entries
-	contains_id = __contains__
+	def get(self, wid, default=None):
+		result = self.entries.get(wid, default)
+		return result
 
 	def __setattr__(self, name, value):
 		super(WordBank, self).__setattr__(name, value)
@@ -78,7 +74,12 @@ class WordBank(SchemaConfigured, persistent.Persistent, contained.Contained):
 			for x in self.entries.values():
 				x.__parent__ = self  # take ownership
 
-	__repr__ = make_repr()
+	def __contains__(self, wid):
+		return wid in self.entries
+	contains_id = __contains__
+
+	def __getitem__(self, wid):
+		return self.entries[wid]
 
 	def __len__(self):
 		return len(self.entries)
@@ -95,6 +96,8 @@ class WordBank(SchemaConfigured, persistent.Persistent, contained.Contained):
 
 	def __hash__(self):
 		return 47 + (superhash(self.entries) << 2) ^ superhash(self.unique)
+
+	__repr__ = make_repr()
 
 	def sublocations(self):
 		for entry in self:
