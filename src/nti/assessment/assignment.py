@@ -31,6 +31,7 @@ from nti.utils.schema import AdaptingFieldProperty
 from nti.utils.property import alias
 
 from . import interfaces
+from ._util import make_sublocations as _make_sublocations
 
 @interface.implementer(interfaces.IQAssignmentPart,
 					   mime_interfaces.IContentTypeAware,
@@ -82,13 +83,4 @@ class QAssignmentSubmissionPendingAssessment(PersistentCreatedModDateTrackingObj
 
 	__repr__ = make_repr()
 
-	def sublocations(self):
-		for part in self.parts:
-			if hasattr(part, '__parent__'):
-				if part.__parent__ is None:
-					# XXX: HACK: Taking ownership because
-					# of cross-database issues.
-					logger.warn("XXX: HACK: Taking ownership of a sub-part")
-					part.__parent__ = self
-				if part.__parent__ is self:
-					yield part
+	sublocations = _make_sublocations()

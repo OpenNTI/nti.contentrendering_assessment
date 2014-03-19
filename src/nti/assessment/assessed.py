@@ -34,6 +34,7 @@ from nti.dataserver.datastructures import ContainedMixin
 
 from . import interfaces
 from ._util import superhash
+from ._util import make_sublocations as _make_sublocations
 
 from zope.location.interfaces import ISublocations
 
@@ -98,20 +99,6 @@ def _dctimes_property_fallback(attrname, dcname):
 		self.__dict__[attrname] = value
 
 	return property(get, _set)
-
-
-def _make_sublocations(child_attr='parts'):
-	def sublocations(self):
-		for part in getattr(self,child_attr) or ():
-			if hasattr(part, '__parent__'):
-				if part.__parent__ is None:
-					# XXX: HACK: Taking ownership because
-					# of cross-database issues.
-					logger.warn("XXX: HACK: Taking ownership of a sub-part")
-					part.__parent__ = self
-				if part.__parent__ is self:
-					yield part
-	return sublocations
 
 @interface.implementer(interfaces.IQAssessedQuestion, nti_interfaces.ICreated, nti_interfaces.ILastModified,
 					   ISublocations)
