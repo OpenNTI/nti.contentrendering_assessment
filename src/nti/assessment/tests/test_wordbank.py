@@ -49,15 +49,12 @@ class TestWordBank(unittest.TestCase):
 		bank = WordBank(entries=entries, unique=True)
 		assert_that(bank, verifiably_provides(asm_interfaces.IWordBank))
 		assert_that(bank, has_length(2))
-		assert_that(bank.contains_id('1'), is_(True))
+		assert_that('1' in bank, is_(True))
+		assert_that('2x' in bank, is_(False))
 		assert_that(bank.contains_id('2'), is_(True))
-		assert_that(bank.contains_id('2x'), is_(False))
 		assert_that(bank.contains_word('shikai'), is_(True))
 		assert_that(bank.contains_word('BANKAI'), is_(True))
 		assert_that(bank.contains_word('foo'), is_(False))
-
-		for x in bank:
-			assert_that(x, has_property('__parent__', is_(bank)))
 
 		assert_that(bank.words, has_length(2))
 		assert_that(bank.words, contains('bankai', 'shikai'))
@@ -71,3 +68,6 @@ class TestWordBank(unittest.TestCase):
 		assert_that(bank, externalizes(has_entries('Class', 'WordBank',
 												   'unique', True,
 												   'entries', has_length(2))))
+
+		bank.append(WordEntry(wid='3', word='zaraki'))
+		assert_that(bank.words, has_length(3))

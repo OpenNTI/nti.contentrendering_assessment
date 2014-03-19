@@ -71,15 +71,12 @@ class WordBank(SchemaConfigured, persistent.Persistent, contained.Contained):
 	def contains_word(self, word):
 		return self.idOf(word) != None
 
+	def append(self, entry):
+		self.entries[entry.wid] = entry
+	
 	def get(self, wid, default=None):
 		result = self.entries.get(wid, default)
 		return result
-
-	def __setattr__(self, name, value):
-		super(WordBank, self).__setattr__(name, value)
-		if name == "entries" and value is not None:
-			for x in self.entries.values():
-				x.__parent__ = self  # take ownership
 
 	def __contains__(self, wid):
 		return wid in self.entries
