@@ -60,11 +60,32 @@ name: naqmatchingpart
 	 <span tal:content="self"></span>
 </div>
 
+name: naqfillintheblankshortanswerpart
+<div class="naquestionpart naqfillintheblankshortanswerpart" tal:attributes="name self/id" >
+	 <a tal:attributes="name self/id"></a>
+	 <span tal:content="self"></span>
+</div>
+
+name: naqfillintheblankwithwordbankpart
+<div class="naquestionpart naqfillintheblankwithwordbankpart" tal:attributes="name self/id" >
+	 <a tal:attributes="name self/id"></a>
+	 <span tal:content="self"></span>
+</div>
+
 # No-Op template for the parts of matching questions
 name: naqmlabels naqmlabel naqmvalues naqmvalue
 
 name: naquestion
 <object type="application/vnd.nextthought.naquestion" data-ntiid="the-ntiid" data="the-ntiid" data-canindividual="false" tal:attributes="data-ntiid self/ntiid; data self/ntiid; data-canindividual self/attributes/individual | default">
+<param name="ntiid" value="the-ntiid" tal:attributes="value self/ntiid" />
+<param name="canindividual" value="false" tal:attributes="value self/attributes/individual | default" />
+<div class="naquestion">
+	 <span tal:replace="self"></span>
+</div>
+</object>
+
+name: naquestionfillintheblankwordbank
+<object type="application/vnd.nextthought.naquestionfillintheblankwordbank" data-ntiid="the-ntiid" data="the-ntiid" data-canindividual="false" tal:attributes="data-ntiid self/ntiid; data self/ntiid; data-canindividual self/attributes/individual | default">
 <param name="ntiid" value="the-ntiid" tal:attributes="value self/ntiid" />
 <param name="canindividual" value="false" tal:attributes="value self/attributes/individual | default" />
 <div class="naquestion">
