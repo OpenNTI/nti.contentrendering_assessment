@@ -7,10 +7,23 @@ __docformat__ = "restructuredtext en"
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
 
-from hamcrest import assert_that, has_entry
-from hamcrest import is_, is_not
+from hamcrest import is_
+from hamcrest import is_not
+from hamcrest import has_entry
+from hamcrest import assert_that
+from hamcrest import has_entries
 
 from unittest import TestCase
+
+from zope import interface
+
+from nti.assessment import parts
+from nti.assessment import wordbank
+from nti.assessment import interfaces
+from nti.assessment import solution as solutions
+
+from nti.assessment.tests import grades_right
+from nti.assessment.tests import grades_wrong
 
 import nti.testing.base
 from nti.testing.matchers import is_true, is_false
@@ -18,16 +31,6 @@ from nti.testing.matchers import verifiably_provides
 from nti.testing.matchers import validly_provides
 from nti.externalization.tests import externalizes
 from nose.tools import assert_raises
-
-from zope import interface
-
-from .. import parts
-from .. import wordbank
-from .. import interfaces
-from .. import solution as solutions
-
-from . import grades_right
-from . import grades_wrong
 
 # nose module-level setup
 setUpModule = lambda: nti.testing.base.module_setup( set_up_packages=(__name__,) )
@@ -171,6 +174,18 @@ class TestFillInTheBlackWithWordBankPart(TestCase):
 		assert_that(solution.grade(["1", "4"]), is_(0.5))
 		assert_that(solution.grade(["2", "1"]), is_(0.0))
 
+class TestFillInTheBlackShortAnswerPart(TestCase):
+
+	def test_external(self):
+		regex = solutions.RegularExpression(pattern="^1$")
+		solution = solutions.QFillInTheBlankShortAnswerSolution([regex])
+		part = parts.QFillInTheBlankShortAnswerPart(solutions=(solution,))
+		assert_that(part, verifiably_provides(interfaces.IQFillInTheBlankShortAnswerPart))
+		assert_that(part, externalizes(has_entry('Class', 'FillInTheBlankShortAnswerPart')))
+		assert_that(solution, externalizes(has_entry('Class', 'FillInTheBlankShortAnswerSolution')))
+		assert_that(regex, externalizes(has_entries('Class', 'RegularExpression',
+													'flags', 42,
+													'pattern', '^1$')))
 class TestFreeResponsePart(TestCase):
 
 	def test_eq(self):
