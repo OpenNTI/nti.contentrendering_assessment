@@ -12,6 +12,7 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
 from zope.container import contained
+from zope.location.interfaces import ISublocations
 from zope.mimetype import interfaces as mime_interfaces
 from zope.annotation.interfaces import IAttributeAnnotatable
 
@@ -20,7 +21,6 @@ from persistent import Persistent
 from nti.utils.schema import createDirectFieldProperties
 from nti.utils.schema import SchemaConfigured
 from nti.utils.schema import AdaptingFieldProperty
-
 
 from . import interfaces
 from ._util import superhash
@@ -66,10 +66,11 @@ class QQuestionSet(Persistent,
 	def __hash__(self):
 		return 47 + (superhash(self.questions) << 2)
 
-@interface.implementer(interfaces.IQFillInTheBlankWithWordBankQuestion)
+@interface.implementer(interfaces.IQFillInTheBlankWithWordBankQuestion, ISublocations)
 class QFillInTheBlankWithWordBankQuestion(QQuestion):
 
-	mime_type = 'application/vnd.nextthought.naquestionfillintheblankwordbank'
+	__external_class_name__ = "Question"
+	mime_type = mimeType = 'application/vnd.nextthought.naquestionfillintheblankwordbank'
 
 	createDirectFieldProperties(interfaces.IQFillInTheBlankWithWordBankQuestion)
 

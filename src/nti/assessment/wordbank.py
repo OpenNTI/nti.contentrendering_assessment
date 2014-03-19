@@ -10,6 +10,7 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
 from zope.container import contained
+from zope.location.interfaces import ISublocations
 
 import persistent
 
@@ -42,7 +43,7 @@ class WordEntry(SchemaConfigured, persistent.Persistent, contained.Contained):
 		xhash ^= hash(self.id)
 		return xhash
 
-@interface.implementer(interfaces.IWordBank)
+@interface.implementer(interfaces.IWordBank, ISublocations)
 class WordBank(SchemaConfigured, persistent.Persistent, contained.Contained):
 	createDirectFieldProperties(interfaces.IWordBank)
 
