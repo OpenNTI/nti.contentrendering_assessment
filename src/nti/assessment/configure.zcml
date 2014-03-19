@@ -134,7 +134,6 @@
 			 for=".interfaces.IQuestionSetSubmission"
 			 provides=".interfaces.IQAssessedQuestionSet" />
 
-
 	<!-- Externalization -->
 	<include package="nti.externalization" file="meta.zcml" />
 	<include package="nti.externalization" />
@@ -146,12 +145,16 @@
 						 .interfaces.IQuestionSetSubmission .interfaces.IQAssessedQuestionSet
 						 .interfaces.IQAssignmentSubmission
 						 .interfaces.IQResponse
-						 .interfaces.IQHint .interfaces.IQuestionSet
-						 .interfaces.IWordEntry .interfaces.IWordBank"
-		modules=".hint .assessed .parts .question .response .solution .submission .assignment .wordbank"
+						 .interfaces.IQHint .interfaces.IQuestionSet"
+		modules=".hint .assessed .parts .question .response .solution .submission .assignment"
 		factory_modules=".submission .question .response"
 		iobase=".externalization._AssessmentInternalObjectIOBase"/>
 		
+	<ext:registerAutoPackageIO
+		root_interfaces=".interfaces.IWordEntry
+						 .interfaces.IWordBank"
+		modules=".wordbank" />
+		 		 
 	<subscriber
 		factory=".decorators._QAssessedQuestionExplanationSolutionAdder"
 		for=".interfaces.IQAssessedQuestion"
@@ -190,5 +193,5 @@
 
 	<!-- Authoring -->
 	<include package="." file="plastex.zcml" />
-
+	
 </configure>

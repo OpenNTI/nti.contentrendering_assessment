@@ -1,8 +1,11 @@
 #!/usr/bin/env python
-"""
-$Id$
-"""
-from __future__ import print_function, unicode_literals
+# -*- coding: utf-8 -*-
+
+from __future__ import print_function, unicode_literals, absolute_import, division
+__docformat__ = "restructuredtext en"
+
+# disable: accessing protected members, too many methods
+# pylint: disable=W0212,R0904
 
 from hamcrest import assert_that
 from hamcrest import has_entry
@@ -11,21 +14,18 @@ from hamcrest import is_not
 does_not = is_not
 
 from unittest import TestCase
-from nti.testing.matchers import verifiably_provides
+
 from nti.testing.matchers import validly_provides
+from nti.testing.matchers import verifiably_provides
+
 from nti.externalization.tests import externalizes
 
-
-
-import nti.assessment
-
-
+import nti.testing.base
 
 from .. import interfaces
 from .. import assignment
 from .. import question
 from .. import parts
-
 
 # nose module-level setup
 setUpModule = lambda: nti.testing.base.module_setup( set_up_packages=(__name__,) )

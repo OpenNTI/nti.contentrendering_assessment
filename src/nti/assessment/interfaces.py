@@ -767,7 +767,7 @@ class IQAssessmentItemContainer(sequence.IReadSequence):
 # Alibra
 
 class IWordEntry(interface.Interface):
-	id = TextLine(title="word identifier")
+	wid = TextLine(title="word identifier")
 	word = TextLine(title="the word")
 	lang = TextLine(title="language identifier", default="en", required=False)
 

@@ -25,6 +25,9 @@ from ._util import superhash
 @interface.implementer(interfaces.IWordEntry)
 class WordEntry(SchemaConfigured, persistent.Persistent, contained.Contained):
 	createDirectFieldProperties(interfaces.IWordEntry)
+	
+	__external_can_create__ = True
+	mime_type = mimeType = 'application/vnd.nextthought.nawordentry'
 
 	def __init__(self, *args, **kwargs):
 		persistent.Persistent.__init__(self)
@@ -32,7 +35,7 @@ class WordEntry(SchemaConfigured, persistent.Persistent, contained.Contained):
 
 	def __eq__(self, other):
 		try:
-			return self is other or self.id == other.id
+			return self is other or self.wid == other.wid
 		except AttributeError:
 			return NotImplemented
 
@@ -40,12 +43,15 @@ class WordEntry(SchemaConfigured, persistent.Persistent, contained.Contained):
 
 	def __hash__(self):
 		xhash = 47
-		xhash ^= hash(self.id)
+		xhash ^= hash(self.wid)
 		return xhash
 
 @interface.implementer(interfaces.IWordBank, ISublocations)
 class WordBank(SchemaConfigured, persistent.Persistent, contained.Contained):
 	createDirectFieldProperties(interfaces.IWordBank)
+
+	__external_can_create__ = True
+	mime_type = mimeType = 'application/vnd.nextthought.nawordbank'
 
 	def __init__(self, *args, **kwargs):
 		persistent.Persistent.__init__(self)
