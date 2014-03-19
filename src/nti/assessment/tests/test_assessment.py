@@ -1,18 +1,26 @@
 #!/usr/bin/env python
-from __future__ import print_function, unicode_literals
+# -*- coding: utf-8 -*-
 
-from hamcrest import assert_that, is_
+from __future__ import print_function, unicode_literals, absolute_import, division
+__docformat__ = "restructuredtext en"
+
+# disable: accessing protected members, too many methods
+# pylint: disable=W0212,R0904
+
+from hamcrest import is_
+from hamcrest import assert_that
+
+import plasTeX.Base
+
+from nti.assessment import grade_one_response, assess
+from nti.assessment.interfaces import IResponseToSymbolicMathConverter
+
+from nti.assessment._latexplastexconverter import factory
+from nti.assessment._latexplastexdomcompare import _mathIsEqual as mathIsEqual
+from nti.assessment._latexplastexconverter import _mathTexToDOMNodes as mathTexToDOMNodes
+
 import nti.testing.base
-
 from nti.testing.matchers import validly_provides
-
-from .. import grade_one_response, assess
-from ..interfaces import IResponseToSymbolicMathConverter
-from .._latexplastexconverter import _mathTexToDOMNodes as mathTexToDOMNodes
-from .._latexplastexdomcompare import _mathIsEqual as mathIsEqual
-from .._latexplastexconverter import factory
-
-import plasTeX
 
 class TestAssessment(nti.testing.base.SharedConfiguringTestBase):
 	set_up_packages = (__name__,)
@@ -90,7 +98,6 @@ class TestAssessment(nti.testing.base.SharedConfiguringTestBase):
 
 	def test_exprinfractions(self):
 		math1, math2 = mathTexToDOMNodes(['$\\frac{1+x}{2}$','$\\frac{1 + x}{2}$'])
-
 		self.assertMathNodesEqual(math1,math2)
 
 	def test_expr(self):
@@ -151,7 +158,7 @@ class TestAssessment(nti.testing.base.SharedConfiguringTestBase):
 		self.assertMathNodesNotEqual(math3, math4)
 
 	def test_an_unparseable(self):
-		math1, math2 = mathTexToDOMNodes( ('$4\\surd$3', "$4\\surd 3$") )
+		_, math2 = mathTexToDOMNodes(('$4\\surd$3', "$4\\surd 3$"))
 		self.assertMathNodesNotEqual( None, math2, message="None should not raise error" )
 
 	def test_output_from_mathquill(self):
@@ -172,7 +179,6 @@ class TestAssessment(nti.testing.base.SharedConfiguringTestBase):
 
 		response = r"\surd\;97\;\approx\;9.8"
 		assert_that( grade_one_response( response, answers ), "Correct explicit spacing spacing" )
-
 
 	def assertMathNodesEqual(self, math1, math2, message=None):
 		if not message:
@@ -201,12 +207,10 @@ class TestAssessment(nti.testing.base.SharedConfiguringTestBase):
 		responses = {1: '5', 2: '12', 3: '15.37', 4: '1 + x', 5:'\\frac{2}{3}', 6: '10', \
 					 7 : '42', 8: '210', 9: '6', 10: '0'}
 
-
-		expectedResults = {1: True, 2: True, 3: True, 4:True, 5: True, 6:True, \
-							 7:True, 8:True, 9:True, 10:True}
+		expectedResults = {	1: True, 2: True, 3: True, 4:True, 5: True, 6:True, \
+							7:True, 8:True, 9:True, 10:True}
 		results = assess(quiz, responses)
 		self.assertEqual(expectedResults, results)
-
 
 		responses[3] = '15'
 		responses[10] = '$1$'
@@ -215,7 +219,6 @@ class TestAssessment(nti.testing.base.SharedConfiguringTestBase):
 		expectedResults[10] = False
 		results = assess(quiz, responses)
 		self.assertEqual(expectedResults, results)
-
 
 		responses[4] = '<OMOBJ xmlns="http://www.openmath.org/OpenMath" '+ \
 					   'version="2.0" cdbase="http://www.openmath.org/cd"> '+\
@@ -230,7 +233,6 @@ class TestAssessment(nti.testing.base.SharedConfiguringTestBase):
 		expectedResults[5] = False
 		results = assess(quiz, responses)
 		self.assertEqual(expectedResults, results)
-
 
 	def test_assess_two(self):
 		quiz = {1 : MockQuiz(['$(0.4, 0.3)$']) }

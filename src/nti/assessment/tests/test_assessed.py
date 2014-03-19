@@ -1,8 +1,11 @@
 #!/usr/bin/env python
-"""
-$Id$
-"""
+# -*- coding: utf-8 -*-
+
 from __future__ import print_function, unicode_literals, absolute_import, division
+__docformat__ = "restructuredtext en"
+
+# disable: accessing protected members, too many methods
+# pylint: disable=W0212,R0904
 
 from hamcrest import assert_that
 from hamcrest import has_entry
@@ -17,38 +20,37 @@ from hamcrest import has_item
 from hamcrest import greater_than
 from hamcrest import calling
 from hamcrest import raises
+
+import time
+import datetime
 from unittest import TestCase
-from nti.testing.matchers import is_false
-from nti.testing.matchers import verifiably_provides
-import nti.testing.base
-from nti.externalization.tests import externalizes
 
 from zope import interface
 from zope import component
 from zope.annotation.interfaces import IAttributeAnnotatable
 from zope.dublincore.annotatableadapter import ZDCAnnotatableAdapter
 
-from nti.externalization.externalization import toExternalObject
+from nti.dataserver import interfaces as nti_interfaces
+
 from nti.externalization import internalization
+from nti.externalization.externalization import toExternalObject
 from nti.externalization.internalization import update_from_external_object
+
 from nti.utils.schema import InvalidValue
 
-import datetime
-import time
+from nti.assessment import parts
+from nti.assessment import assessed
+from nti.assessment import response
+from nti.assessment import submission
+from nti.assessment import interfaces
+from nti.assessment import solution as solutions
+from nti.assessment.question import QQuestion, QQuestionSet
 
-from .. import interfaces
-from nti.dataserver import interfaces as nti_interfaces
-from .. import parts
-from .. import response
-from .. import graders
-from .. import submission
-from .. import assessed
-from .. import solution as solutions
-from ..question import QQuestion, QQuestionSet
+from nti.externalization.tests import externalizes
 
-
-#pylint: disable=R0904
-
+import nti.testing.base
+from nti.testing.matchers import is_false
+from nti.testing.matchers import verifiably_provides
 
 # nose module-level setup
 setUpModule = lambda: nti.testing.base.module_setup( set_up_packages=(__name__,'zope.annotation','nti.mimetype') )
