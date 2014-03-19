@@ -75,8 +75,11 @@ class QPart(SchemaConfigured,Persistent):
 			# for applying weights to that
 			result = self._grade(solution, converted)
 			if result:
-				return 1.0 * solution.weight
+				return self._weight(result, solution)
 		return 0.0
+
+	def _weight(self, result, solution):
+		return 1.0 * solution.weight
 
 	def _grade(self, solution, response):
 		__traceback_info__ = solution, response, self.grader_name
@@ -267,6 +270,9 @@ class QFillInTheBlankWithWordBankPart(QPart, contained.Contained):
 	wordbank = None
 	response_interface = interfaces.IQListResponse
 	grader_interface = interfaces.IQFillInTheBlankWithWordBankGrader
+
+	def _weight(self, result, solution):
+		return result * solution.weight
 
 	def __getattr__(self, name):
 		result = super(QFillInTheBlankWithWordBankPart, self).__getattr__(name)

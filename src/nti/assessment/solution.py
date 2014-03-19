@@ -42,7 +42,7 @@ class QSolution(Persistent):
 		Convenience method for grading solutions that can be graded independent
 		of their question parts.
 		"""
-		return self._part_type( solutions=(self,) ).grade( response )
+		return self._part_type(solutions=(self,)).grade(response)
 
 QSolution.__repr__ = make_repr()
 

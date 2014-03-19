@@ -262,7 +262,7 @@ class FillInTheBlankWithWordBankGrader(EqualityGrader):
 		wordbank = self.part.wordbank
 		for x in the_list:
 			if wordbank and not wordbank.contains_id(x):
-				x = wordbank.idOf(x)
+				x = wordbank.idOf(x) or x
 			result.append(x)
 		return result
 
@@ -277,4 +277,5 @@ class FillInTheBlankWithWordBankGrader(EqualityGrader):
 		for idx, sol in enumerate(solutions):
 			if self._lower_normalized(sol) == self._lower_normalized(responses[idx]):
 				result += 1
-		return result / float(len(solutions)) if solutions else 0
+		result = result / float(len(solutions)) if solutions else 0
+		return result

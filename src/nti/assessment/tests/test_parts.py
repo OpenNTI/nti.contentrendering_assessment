@@ -22,6 +22,7 @@ from nose.tools import assert_raises
 from zope import interface
 
 from .. import parts
+from .. import wordbank
 from .. import interfaces
 from .. import solution as solutions
 
@@ -156,101 +157,117 @@ class TestMatchingPart(TestCase):
 
 		assert_that( hash(part), is_( hash( part2 ) ) )
 
-def TestFillInTheBlackWithWordBankPart(TestCase):
-	pass
+class TestFillInTheBlackWithWordBankPart(TestCase):
 
-def test_free_response_part_eq():
+	def test_grade(self):
+		entries = {'1': wordbank.WordEntry(wid='1', word='bankai'),
+				   '2': wordbank.WordEntry(wid='2', word='shikai')}
+		bank = wordbank.WordBank(entries=entries, unique=True)
+		solution = solutions.QFillInTheBlankWithWordBankSolution(("1", "2"))
+		part = parts.QFillInTheBlankWithWordBankPart(wordbank=bank, solutions=(solution,))
+		assert_that(part, verifiably_provides(interfaces.IQFillInTheBlankWithWordBankPart))
+		assert_that(part, externalizes(has_entry('Class', 'FillInTheBlankWithWordBankPart')))
+		assert_that(solution.grade(["1", "2"]), is_(1.0))
+		assert_that(solution.grade(["1", "4"]), is_(0.5))
+		assert_that(solution.grade(["2", "1"]), is_(0.0))
 
-	part = parts.QFreeResponsePart()
-	part2 = parts.QFreeResponsePart()
+class TestFreeResponsePart(TestCase):
 
-	assert_that( part, is_( part ) )
-	assert_that( part, is_( part2 ) )
+	def test_eq(self):
+		part = parts.QFreeResponsePart()
+		part2 = parts.QFreeResponsePart()
 
-	solution = solutions.QFreeResponseSolution( value="the value" )
+		assert_that(part, is_(part))
+		assert_that(part, is_(part2))
 
-	part = parts.QFreeResponsePart( solutions=(solution,) )
-	assert_that( part, is_not( part2 ) )
+		solution = solutions.QFreeResponseSolution(value="the value")
 
-	part2 = parts.QFreeResponsePart( solutions=(solution,) )
-	assert_that( part, is_( part2 ) )
+		part = parts.QFreeResponsePart(solutions=(solution,))
+		assert_that(part, is_not(part2))
 
-	solution2 = solutions.QFreeResponseSolution( value="the value" )
-	part2 = parts.QFreeResponsePart( solutions=(solution2,) )
-	assert_that( part, is_( part2 ) )
+		part2 = parts.QFreeResponsePart(solutions=(solution,))
+		assert_that(part, is_(part2))
 
-	solution2 = solutions.QFreeResponseSolution( value="not the value" )
-	part2 = parts.QFreeResponsePart( solutions=(solution2,) )
-	assert_that( part, is_not( part2 ) )
+		solution2 = solutions.QFreeResponseSolution(value="the value")
+		part2 = parts.QFreeResponsePart(solutions=(solution2,))
+		assert_that(part, is_(part2))
 
-def test_math_part_eq():
-	part = parts.QMathPart()
-	part2 = parts.QSymbolicMathPart()
+		solution2 = solutions.QFreeResponseSolution(value="not the value")
+		part2 = parts.QFreeResponsePart(solutions=(solution2,))
+		assert_that(part, is_not(part2))
 
-	assert_that( part, is_( part ) )
-	assert_that( part2, is_( part2 ) )
+class TestMathPart(TestCase):
 
-	assert_that( part, is_not( part2 ) ) # subclasses would be equal to superclass, except for grader_interface
-	part2.grader_interface = part.grader_interface
-	assert_that( part, is_not( part2 ) ) # Except that the subclass implementation is always called??
-	del part2.grader_interface
-	assert_that( part2, is_not( part ) )
+	def test_eq(self):
+		part = parts.QMathPart()
+		part2 = parts.QSymbolicMathPart()
+
+		assert_that(part, is_(part))
+		assert_that(part2, is_(part2))
+
+		assert_that(part, is_not(part2))  # subclasses would be equal to superclass, except for grader_interface
+		part2.grader_interface = part.grader_interface
+		assert_that(part, is_not(part2))  # Except that the subclass implementation is always called??
+		del part2.grader_interface
+		assert_that(part2, is_not(part))
 
 from .._util import superhash
-def test_superhash_iterable():
 
-	assert_that( superhash( [1, 3, 5] ), is_( superhash( [x for x in [1,3,5]] ) ) )
+class TestSuperHash(TestCase):
 
-	# TODO: The hash algorithm fails badly with integers
-	assert_that( superhash( [1,2] ), is_( superhash( [2, 1] ) ) )
+	def test_iterable(self):
+		assert_that(superhash([1, 3, 5]), is_(superhash([x for x in [1, 3, 5]])))
+		# TODO: The hash algorithm fails badly with integers
+		assert_that(superhash([1, 2]), is_(superhash([2, 1])))
 
-def test_file_part_allowed_mime():
-	part = parts.QFilePart()
+class TestFilePart(TestCase):
 
-	def af(mt):
-		assert_that( part.is_mime_type_allowed(mt), is_false() )
-	def at(mt):
-		assert_that( part.is_mime_type_allowed(mt), is_true() )
+	def test_allowed_mime(self):
+		part = parts.QFilePart()
 
-	# Bad input
-	af( None )
-	af( 'foobar' )
-	# no types
-	af( 'text/plain' )
+		def af(mt):
+			assert_that(part.is_mime_type_allowed(mt), is_false())
+		def at(mt):
+			assert_that(part.is_mime_type_allowed(mt), is_true())
 
-	part.allowed_mime_types = ('application/*', 'text/plain')
-	assert_that( part, validly_provides(interfaces.IQFilePart) )
+		# Bad input
+		af(None)
+		af('foobar')
+		# no types
+		af('text/plain')
 
-	# exact match
-	at( 'text/plain' )
-	# incomplete type
-	af( 'text/*' )
-	# partial
-	at( 'application/pdf' )
+		part.allowed_mime_types = ('application/*', 'text/plain')
+		assert_that(part, validly_provides(interfaces.IQFilePart))
 
-	# wildcard
-	part.allowed_mime_types = ('*/*',)
-	at( 'audio/video' )
+		# exact match
+		at('text/plain')
+		# incomplete type
+		af('text/*')
+		# partial
+		at('application/pdf')
 
-def test_file_part_allowed_extension():
-	part = parts.QFilePart()
+		# wildcard
+		part.allowed_mime_types = ('*/*',)
+		at('audio/video')
 
-	def af(mt):
-		assert_that( part.is_filename_allowed(mt), is_false() )
-	def at(mt):
-		assert_that( part.is_filename_allowed(mt), is_true() )
+	def test_allowed_extension(self):
+		part = parts.QFilePart()
+		def af(mt):
+			assert_that(part.is_filename_allowed(mt), is_false())
+		def at(mt):
+			assert_that(part.is_filename_allowed(mt), is_true())
 
-	# Bad input
-	af( None )
-	af( 'noext' )
+		# Bad input
+		af(None)
+		af('noext')
 
-	# empty list
-	af( 'file.doc' )
+		# empty list
+		af('file.doc')
 
-	part.allowed_extensions = ('.doc',)
-	at( 'file.DOC' )
+		part.allowed_extensions = ('.doc',)
+		at('file.DOC')
 
-	part.allowed_extensions = ('*',)
-	at( 'file.doc' )
-	at( 'file.mp3' )
-	af( None )
+		part.allowed_extensions = ('*',)
+		at('file.doc')
+		at('file.mp3')
+		af(None)
