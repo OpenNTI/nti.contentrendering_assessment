@@ -5,7 +5,7 @@ Convenient functions for creating simple math doms from latex expressions.
 
 $Id$
 """
-from __future__ import unicode_literals, print_function, absolute_import
+from __future__ import unicode_literals, print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -16,11 +16,13 @@ from StringIO import StringIO
 
 from zope import interface
 
-from . import interfaces
-import nti.openmath as openmath
-
 import plasTeX
 from plasTeX.TeX import TeX
+
+import nti.openmath as openmath
+
+from . import interfaces
+
 _counter = 0
 
 def _buildDomFromString(docString):
