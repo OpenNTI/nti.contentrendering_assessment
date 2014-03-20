@@ -152,9 +152,8 @@
 		
 	<ext:registerAutoPackageIO
 		root_interfaces=".interfaces.IWordEntry
-						 .interfaces.IWordBank
-						 .interfaces.IRegularExpression"
-		modules=".wordbank .solution" />
+						 .interfaces.IWordBank"
+		modules=".wordbank" />
 		 		 
 	<subscriber
 		factory=".decorators._QAssessedQuestionExplanationSolutionAdder"

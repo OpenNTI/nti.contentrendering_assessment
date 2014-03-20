@@ -170,22 +170,20 @@ class TestFillInTheBlackWithWordBankPart(TestCase):
 		part = parts.QFillInTheBlankWithWordBankPart(wordbank=bank, solutions=(solution,))
 		assert_that(part, verifiably_provides(interfaces.IQFillInTheBlankWithWordBankPart))
 		assert_that(part, externalizes(has_entry('Class', 'FillInTheBlankWithWordBankPart')))
-		assert_that(solution.grade(["1", "2"]), is_(1.0))
-		assert_that(solution.grade(["1", "4"]), is_(0.5))
-		assert_that(solution.grade(["2", "1"]), is_(0.0))
+		assert_that(solution.grade(["1", "2"]), is_(True))
+		assert_that(solution.grade(["1", "4"]), is_(False))
+		assert_that(solution.grade(["2", "1"]), is_(False))
 
 class TestFillInTheBlackShortAnswerPart(TestCase):
 
 	def test_external(self):
-		regex = solutions.RegularExpression(pattern="^1$")
-		solution = solutions.QFillInTheBlankShortAnswerSolution([regex])
+		solution = solutions.QFillInTheBlankShortAnswerSolution(["^1$"])
 		part = parts.QFillInTheBlankShortAnswerPart(solutions=(solution,))
 		assert_that(part, verifiably_provides(interfaces.IQFillInTheBlankShortAnswerPart))
 		assert_that(part, externalizes(has_entry('Class', 'FillInTheBlankShortAnswerPart')))
-		assert_that(solution, externalizes(has_entry('Class', 'FillInTheBlankShortAnswerSolution')))
-		assert_that(regex, externalizes(has_entries('Class', 'RegularExpression',
-													'flags', 42,
-													'pattern', '^1$')))
+		assert_that(solution, externalizes(has_entries('Class', 'FillInTheBlankShortAnswerSolution',
+													   'value', [u'^1$'])))
+
 class TestFreeResponsePart(TestCase):
 
 	def test_eq(self):

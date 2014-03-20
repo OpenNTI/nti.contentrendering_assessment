@@ -450,13 +450,11 @@ class naqmultiplechoicemultipleanswerpart(_AbstractNAQPart):
 		solutions = []
 		# By definition, there can only be one solution element.
 		solution_el = self.getElementsByTagName( 'naqsolution' )[0]
-
 		solution = self.soln_interface( solution_el.answer )
 		weight = solution_el.attributes['weight']
 		if weight is not None:
 			solution.weight = weight
-		solutions.append( solution )
-
+		solutions.append(solution)
 		return solutions
 
 	def digest( self, tokens ):
@@ -652,7 +650,7 @@ class naqfillintheblankshortanswerpart(_AbstractNAQPart):
 			        Arbitrary content for this part goes here.
 				\begin{naqregexes}
 					\naqregex{.*}
-					\naqregex{^1$}{42}
+					\naqregex{^1$}
 	            \end{naqregexes}
 				\begin{naqsolexplanation}
 					Arbitrary content explaining how the correct solution is arrived at.
@@ -693,13 +691,15 @@ class naqfillintheblankshortanswerpart(_AbstractNAQPart):
 
 		_naqsolns = self.ownerDocument.createElement('naqsolutions')
 		_naqsolns.macroMode = _naqsolns.MODE_BEGIN
-# 		answer = {}
-# 		for i, _naqmregex in enumerate(_naqregexes):
-# 			answer[i] = _naqmregex.attributes['answer']
+		answer = []
+		for _naqmregex in _naqregexes:
+			pattern = _naqmregex.attributes['pattern']
+			assert pattern
+			answer.append(pattern)
 		_naqsoln = self.ownerDocument.createElement('naqsolution')
 		_naqsoln.attributes['weight'] = 1.0
 		_naqsoln.argSource = '[%s]' % _naqsoln.attributes['weight']
-# 		_naqsoln.answer = answer
+		_naqsoln.answer = answer
 		_naqsolns.appendChild(_naqsoln)
 		self.insertAfter(_naqsolns, _naqregexes)
 		return res
@@ -729,7 +729,7 @@ class naqmvalue(naqvalue):
 	pass
 
 class naqregex(naqvalue):
-	args = 'pattern:str [flags:int]'
+	args = 'pattern:str'
 
 class naqregexes(Base.List):
 	pass

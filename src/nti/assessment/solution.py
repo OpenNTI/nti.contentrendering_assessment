@@ -14,9 +14,6 @@ from persistent import Persistent
 
 from nti.externalization.externalization import make_repr
 
-from nti.utils.schema import SchemaConfigured
-from nti.utils.schema import createDirectFieldProperties
-
 from . import parts
 from . import interfaces
 from ._util import superhash
@@ -161,11 +158,6 @@ class QFillInTheBlankShortAnswerSolution(_TrivialValuedMixin, QSolution):
 	__eq__ = _eq_
 	__ne__ = _ne_
 	__hash__ = __hash__
-
-@interface.implementer(interfaces.IRegularExpression)
-class RegularExpression(SchemaConfigured):
-	mimeType = mime_type = 'application/vnd.nextthought.naqregex'
-	createDirectFieldProperties(interfaces.IRegularExpression)
 
 @interface.implementer(interfaces.IQFillInTheBlankWithWordBankSolution)
 class QFillInTheBlankWithWordBankSolution(_TrivialValuedMixin, QSolution):

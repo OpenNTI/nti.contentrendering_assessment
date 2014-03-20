@@ -27,7 +27,7 @@ class WordEntry(SchemaConfigured, persistent.Persistent, contained.Contained):
 	createDirectFieldProperties(interfaces.IWordEntry)
 	
 	__external_can_create__ = True
-	mime_type = mimeType = 'application/vnd.nextthought.nawordentry'
+	mime_type = mimeType = 'application/vnd.nextthought.naqwordentry'
 
 	def __init__(self, *args, **kwargs):
 		persistent.Persistent.__init__(self)
@@ -51,7 +51,7 @@ class WordBank(SchemaConfigured, persistent.Persistent, contained.Contained):
 	createDirectFieldProperties(interfaces.IWordBank)
 
 	__external_can_create__ = True
-	mime_type = mimeType = 'application/vnd.nextthought.nawordbank'
+	mime_type = mimeType = 'application/vnd.nextthought.naqwordbank'
 
 	def __init__(self, *args, **kwargs):
 		persistent.Persistent.__init__(self)

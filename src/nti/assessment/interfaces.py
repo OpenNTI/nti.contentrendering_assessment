@@ -6,8 +6,6 @@ $Id$
 from __future__ import unicode_literals, print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
-import re
-
 from zope import interface
 from zope.interface.common import mapping
 from zope.interface.common import sequence
@@ -42,13 +40,11 @@ from nti.contentfragments.schema import LatexFragmentTextLine as _LatexTextLine
 from nti.contentfragments.schema import HTMLContentFragment as _HTMLContentFragment
 from nti.contentfragments.schema import TextUnicodeContentFragment as _ContentFragment
 
-
 from nti.dataserver.interfaces import CompoundModeledContentBody
 from nti.dataserver.interfaces import INeverStoredInSharedStream
 from nti.dataserver.interfaces import ITitledContent
 from nti.dataserver.interfaces import ILastModified
 from nti.dataserver.interfaces import Tag
-
 
 from nti.monkey import plonefile_zopefile_patch_on_import
 plonefile_zopefile_patch_on_import.patch()
@@ -789,16 +785,12 @@ class IQFillInTheBlankPart(IQPart):
 class IQFillInTheBlankShortAnswerGrader(IQPartGrader):
 	pass
 
-class IRegularExpression(interface.Interface):
-	pattern = TextLine(title='the pattern', default='*')
-	flags = Int(title='the regex flags', default=re.U | re.I | re.M, required=False)
-
 class IQFillInTheBlankShortAnswerSolution(IQMultiValuedSolution):
 
 	value = List(title="The correct answer regexes",
 				 description="The correct regex",
 				 min_length=0,
-				 value_type=Object(IRegularExpression, title="The regular expression"))
+				 value_type=TextLine(title="The regular expression"))
 
 class IQFillInTheBlankShortAnswerPart(IQFillInTheBlankPart):
 	"""
@@ -807,9 +799,6 @@ class IQFillInTheBlankShortAnswerPart(IQFillInTheBlankPart):
 	solutions = IndexedIterable(title="The solutions",
 								min_length=1,
 								value_type=Object(IQFillInTheBlankShortAnswerSolution, title="the solution"))
-
-class IQFillInTheBlankShortAnswerQuestion(IQuestion):
-	pass
 
 class IQFillInTheBlankWithWordBankGrader(IQPartGrader):
 	pass
@@ -840,4 +829,6 @@ class IQFillInTheBlankWithWordBankQuestion(IQuestion):
 	The word bank for the question may be used by any question parts
 	"""
 	wordbank = Object(IWordBank, required=False)
-
+	parts = IndexedIterable(title="The ordered parts of the question.",
+							min_length=1,
+							value_type=Object(IQFillInTheBlankWithWordBankPart, title="A question part"))

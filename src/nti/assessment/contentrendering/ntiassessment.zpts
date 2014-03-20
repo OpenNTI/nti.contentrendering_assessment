@@ -10,7 +10,6 @@ name: naqfilepart
 	 <input type="file" name="content" tal:attributes="accept self/allowed_mime_types"></input>
 </div>
 
-
 name: naqsymmathpart
 <div class="naquestionpart naqsymmathpart" tal:attributes="id self/id" >
 	 <a tal:attributes="name self/id"></a>
@@ -22,7 +21,6 @@ name: naqnumericmathpart
 	 <a tal:attributes="name self/id"></a>
 	 <span tal:content="self"></span>
 </div>
-
 
 name: naqfreeresponsepart
 <div class="naquestionpart naqfreeresponsepart" tal:attributes="name self/id" >

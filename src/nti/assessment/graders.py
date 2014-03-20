@@ -237,22 +237,20 @@ class MatchingPartGrader(EqualityGrader):
 	solution_converter = _to_int_dict
 	response_converter = _to_int_dict
 
-@repoze.lru.lru_cache(100)
-def _compile(pattern, flags):
+@repoze.lru.lru_cache(200)
+def _compile(pattern, flags=re.I | re.U | re.M):
 	return re.compile(pattern, flags)
 
 @interface.implementer(interfaces.IQFillInTheBlankShortAnswerGrader)
 class FillInTheBlankShortAnswerGrader(EqualityGrader):
 
 	def _compare(self, solution_value, response_value):
-		result = 0
 		solutions = self.solution_converter(solution_value)
 		responses = self.response_converter(response_value)
-		for idx, sol in enumerate(solutions):
-			pattern = _compile(sol.pattern, sol.flags)
-			if pattern.match(responses[idx]):
-				result += 1
-		return result / float(len(solutions)) if solutions else 0
+		for idx, pattern in enumerate(solutions):
+			if not _compile(pattern).match(responses[idx]):
+				return False
+		return True
 
 @interface.implementer(interfaces.IQFillInTheBlankWithWordBankGrader)
 class FillInTheBlankWithWordBankGrader(EqualityGrader):
@@ -266,16 +264,6 @@ class FillInTheBlankWithWordBankGrader(EqualityGrader):
 			result.append(x)
 		return result
 
+	solution_converter = _to_id_list
 	response_converter = _to_id_list
 
-	_lower_normalized = _lower_normalized
-
-	def _compare(self, solution_value, response_value):
-		result = 0
-		solutions = self.solution_converter(solution_value)
-		responses = self.response_converter(response_value)
-		for idx, sol in enumerate(solutions):
-			if self._lower_normalized(sol) == self._lower_normalized(responses[idx]):
-				result += 1
-		result = result / float(len(solutions)) if solutions else 0
-		return result
