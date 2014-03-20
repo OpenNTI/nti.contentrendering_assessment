@@ -8,9 +8,14 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+import functools
+
+from zope import component
 from zope import interface
 from zope.container import contained
 from zope.location.interfaces import ISublocations
+
+import dolmen.builtins.interfaces
 
 import persistent
 
@@ -22,6 +27,7 @@ from nti.utils.schema import createDirectFieldProperties
 from . import interfaces
 from ._util import superhash
 
+@functools.total_ordering
 @interface.implementer(interfaces.IWordEntry)
 class WordEntry(SchemaConfigured, persistent.Persistent, contained.Contained):
 	createDirectFieldProperties(interfaces.IWordEntry)
@@ -46,6 +52,18 @@ class WordEntry(SchemaConfigured, persistent.Persistent, contained.Contained):
 		xhash ^= hash(self.wid)
 		return xhash
 
+	def __lt__(self, other):
+		try:
+			return (self.word.lower(), self.lang.lower()) < (other.word.lower(), other.self.lang.lower())
+		except AttributeError:
+			return NotImplemented
+
+	def __gt__(self, other):
+		try:
+			return  (self.word.lower(), self.lang.lower()) > (other.word.lower(), other.self.lang.lower())
+		except AttributeError:
+			return NotImplemented
+
 @interface.implementer(interfaces.IWordBank, ISublocations)
 class WordBank(SchemaConfigured, persistent.Persistent, contained.Contained):
 	createDirectFieldProperties(interfaces.IWordBank)
@@ -60,6 +78,9 @@ class WordBank(SchemaConfigured, persistent.Persistent, contained.Contained):
 	@property
 	def words(self):
 		return {x.word for x in self.entries.values()}
+
+	def sorted(self):
+		return sorted(self.entries.values())
 
 	def idOf(self, word):
 		lower = word.lower()
@@ -106,3 +127,17 @@ class WordBank(SchemaConfigured, persistent.Persistent, contained.Contained):
 	def sublocations(self):
 		for entry in self:
 			yield entry
+
+@component.adapter(dolmen.builtins.interfaces.IList)
+@interface.implementer(interfaces.IWordEntry)
+def _wordentry_adapter(lst):
+	result = WordEntry(wid=unicode(lst[0]), word=unicode(lst[1]))
+	result.lang = unicode(lst[2]) if len(lst) > 2 and lst[2] else u'en'
+	return result
+
+@component.adapter(dolmen.builtins.interfaces.IList)
+@interface.implementer(interfaces.IWordBank)
+def _wordbank_adapter(entries, unique=True):
+	entries = {x.wid:x for x in entries}
+	result = WordBank(entries=entries, unique=unique)
+	return result

@@ -150,11 +150,21 @@
 		factory_modules=".submission .question .response"
 		iobase=".externalization._AssessmentInternalObjectIOBase"/>
 		
+	<!-- WordBank -->
+	
 	<ext:registerAutoPackageIO
 		root_interfaces=".interfaces.IWordEntry
 						 .interfaces.IWordBank"
 		modules=".wordbank" />
-		 		 
+	
+	<adapter factory="list .wordbank._wordentry_adapter"
+			 provides=".interfaces.IWordEntry"
+			 for="list"/> 		 
+	
+	<adapter factory="list .wordbank._wordbank_adapter"
+			 provides=".interfaces.IWordBank"
+			 for="list"/> 		 
+				
 	<subscriber
 		factory=".decorators._QAssessedQuestionExplanationSolutionAdder"
 		for=".interfaces.IQAssessedQuestion"

@@ -43,6 +43,16 @@ class TestWordBank(unittest.TestCase):
 												 'wid', '1',
 												 'lang', 'en')))
 
+		lst = ['1', 'bankai']
+		awe = asm_interfaces.IWordEntry(lst)
+		assert_that(we, is_(equal_to(awe)))
+		
+		lst = ['2', 'shikai', 'ja']
+		awe = asm_interfaces.IWordEntry(lst)
+		assert_that(awe, has_property('wid', is_('2')))
+		assert_that(awe, has_property('word', is_('shikai')))
+		assert_that(awe, has_property('lang', is_('ja')))
+
 	def test_bank(self):
 		entries = {'1': WordEntry(wid='1', word='bankai'),
 				   '2': WordEntry(wid='2', word='shikai')}
@@ -69,5 +79,11 @@ class TestWordBank(unittest.TestCase):
 												   'unique', True,
 												   'entries', has_length(2))))
 
-		bank.append(WordEntry(wid='3', word='zaraki'))
+		bank.append(WordEntry(wid='3', word='zaraki', lang='ja'))
 		assert_that(bank.words, has_length(3))
+
+		ab = asm_interfaces.IWordBank(list(entries.values()))
+		assert_that(ab, has_length(3))
+		assert_that(ab.sorted(), has_length(3))
+
+		assert_that(bank, is_(equal_to(ab)))

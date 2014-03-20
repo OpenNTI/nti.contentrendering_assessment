@@ -680,7 +680,6 @@ class naqfillintheblankshortanswerpart(_AbstractNAQPart):
 
 	def digest(self, tokens):
 		res = super(naqfillintheblankshortanswerpart, self).digest(tokens)
-
 		_naqregexes = self.getElementsByTagName('naqregexes')
 		assert len(_naqregexes) == 1
 		_naqregexes = _naqregexes[0]
@@ -700,6 +699,101 @@ class naqfillintheblankshortanswerpart(_AbstractNAQPart):
 		_naqsoln.answer = answer
 		_naqsolns.appendChild(_naqsoln)
 		self.insertAfter(_naqsolns, _naqregexes)
+		return res
+
+class naqfillintheblankwithwordbankpart(_AbstractNAQPart):
+	r"""
+	A fill in the blank with word bank part.
+
+		\begin{naquestion}
+			Arbitrary prefix content goes here.
+			\begin{naqfillintheblankwithwordbankpart}
+			        Arbitrary content for this part goes here.
+				\begin{naqwordbank}{unique=False}
+					\naqwordentry{0}{montuno}{es}
+					\naqwordentry{1}{tiene}{es}
+					\naqwordentry{2}{borinquen}
+					\naqwordentry{3}{tierra}{es}
+					\naqwordentry{4}{alma}{es}
+	            \end{naqwordbank}
+	            \begin{naqordereditems}
+					\naqordereditem{2}
+					\naqordereditem{1}
+					\naqordereditem{0}
+				\end{naqordereditems}
+				\begin{naqsolexplanation}
+					Arbitrary content explaining how the correct solution is arrived at.
+				\end{naqsolexplanation}
+			\end{naqfillintheblankwithwordbankpart}
+		\end{naquestion}
+	"""
+
+	part_factory = parts.QFillInTheBlankWithWordBankPart
+	part_interface = as_interfaces.IQFillInTheBlankWithWordBankPart
+	soln_interface = as_interfaces.IQFillInTheBlankWithWordBankSolution
+
+	def _asm_entries(self):
+		result = []
+		for x in self.getElementsByTagName('naqwordentry'):
+			data = [x.attributes['wid'], x.attributes['word'], x.attributes.get('lang')]
+			we = as_interfaces.IWordEntry(data)
+			result.append(we)
+		return result
+
+	def _asm_wordbank(self):
+		result = None
+		entries = self._asm_entries()
+		if entries:
+			result = as_interfaces.IWordBank(entries)
+			_naqwordbank = self.getElementsByTagName('naqwordbank')[0]
+			result.unique = _naqwordbank.attributes.get('unique', True)
+		return result
+
+	def _asm_object_kwargs(self):
+		return { 'wordbank': self._asm_wordbank() }
+
+	def _asm_solutions(self):
+		solutions = []
+		solution_els = self.getElementsByTagName('naqsolution')
+		for solution_el in solution_els:
+			solution = self.soln_interface(solution_el.answer)
+			weight = solution_el.attributes['weight']
+			if weight is not None:
+				solution.weight = weight
+			solutions.append(solution)
+		return solutions
+
+	def digest(self, tokens):
+		res = super(naqfillintheblankshortanswerpart, self).digest(tokens)
+
+		_naqwordbank = self.getElementsByTagName('naqwordbank')
+		assert len(_naqwordbank) <= 1
+		if _naqwordbank:
+			_naqwordbank = _naqwordbank[0]
+			assert len(_naqwordbank) > 0, "Must specified at least one word entry"
+			for x in _naqwordbank:
+				assert x.attributes['wid'] and x.attributes['word']
+
+		assert len(self.getElementsByTagName('naqsolutions')) == 0
+
+		_naqordereditems = self.getElementsByTagName('naqordereditems')
+		assert len(_naqordereditems) == 1
+		_naqordereditems = _naqordereditems[0]
+
+		answer = []
+		_naqsolns = self.ownerDocument.createElement('naqsolutions')
+		_naqsolns.macroMode = _naqsolns.MODE_BEGIN
+		for _item in _naqordereditems:
+			wid = _item.attributes['id']
+			assert wid and isinstance(wid, six.string_types)
+			answer.append(wid)
+		_naqsoln = self.ownerDocument.createElement('naqsolution')
+		_naqsoln.attributes['weight'] = 1.0
+		_naqsoln.argSource = '[%s]' % _naqsoln.attributes['weight']
+		_naqsoln.answer = answer
+		_naqsolns.appendChild(_naqsoln)
+
+		self.insertAfter(_naqsolns, _naqordereditems)
 		return res
 
 class naqchoices(Base.List):
@@ -727,9 +821,21 @@ class naqmvalue(naqvalue):
 	pass
 
 class naqregex(naqvalue):
-	args = '{pattern:str}'
+	args = 'pattern:str'
 
 class naqregexes(Base.List):
+	pass
+
+class naqwordentry(naqvalue):
+	args = 'wid:str word:str [lang:str]'
+
+class naqwordbank(Base.List):
+	args = '[unique:bool]'
+
+class naqordereditem(naqvalue):
+	args = 'id:str'
+
+class naqordereditems(Base.List):
 	pass
 
 class naqhints(Base.List):
@@ -748,7 +854,13 @@ _LocalContentMixin._asm_ignorable_renderables += (naqchoices,
 												  naqmlabel,
 												  naqmvalue,
 												  naqhints,
-												  naqhint)
+												  naqhint,
+												  naqregex,
+												  naqregexes,
+												  naqwordentry,
+												  naqwordbank,
+												  naqordereditems,
+												  naqordereditem)
 
 class naqvideo(ntiincludevideo):
 	blockType = True
