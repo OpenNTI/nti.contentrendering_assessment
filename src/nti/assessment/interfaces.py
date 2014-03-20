@@ -775,7 +775,7 @@ class IWordBank(IIterable, mapping.IReadMapping):
 				   min_length=1)
 
 	unique = Bool(title="A word can be used once in a question/part",
-				  default=True)
+				  default=True, required=False)
 
 class IQFillInTheBlankPart(IQPart):
 	"""

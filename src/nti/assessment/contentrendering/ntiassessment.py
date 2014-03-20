@@ -682,14 +682,17 @@ class naqfillintheblankshortanswerpart(_AbstractNAQPart):
 		res = super(naqfillintheblankshortanswerpart, self).digest(tokens)
 		_naqregexes = self.getElementsByTagName('naqregexes')
 		assert len(_naqregexes) == 1
+
 		_naqregexes = _naqregexes[0]
-		assert len(_naqregexes) > 0, "Must specified at least one regex; instead got: " + str([x for x in _naqregexes])
+		_regentries = _naqregexes.getElementsByTagName('naqregex')
+		assert len(_regentries) > 0, "Must specified at least one regex"
+
 		assert len(self.getElementsByTagName('naqsolutions')) == 0
 
 		_naqsolns = self.ownerDocument.createElement('naqsolutions')
 		_naqsolns.macroMode = _naqsolns.MODE_BEGIN
 		answer = []
-		for _naqmregex in _naqregexes:
+		for _naqmregex in _regentries:
 			pattern = _naqmregex.attributes['pattern']
 			assert pattern and isinstance(pattern, six.string_types)
 			answer.append(pattern)
@@ -709,7 +712,7 @@ class naqfillintheblankwithwordbankpart(_AbstractNAQPart):
 			Arbitrary prefix content goes here.
 			\begin{naqfillintheblankwithwordbankpart}
 			        Arbitrary content for this part goes here.
-				\begin{naqwordbank}{unique=False}
+				\begin{naqwordbank}
 					\naqwordentry{0}{montuno}{es}
 					\naqwordentry{1}{tiene}{es}
 					\naqwordentry{2}{borinquen}
@@ -746,7 +749,7 @@ class naqfillintheblankwithwordbankpart(_AbstractNAQPart):
 		if entries:
 			result = as_interfaces.IWordBank(entries)
 			_naqwordbank = self.getElementsByTagName('naqwordbank')[0]
-			result.unique = _naqwordbank.attributes.get('unique', True)
+			result.unique = _naqwordbank.attributes.get('unique', 'true') == 'true'
 		return result
 
 	def _asm_object_kwargs(self):
@@ -764,14 +767,14 @@ class naqfillintheblankwithwordbankpart(_AbstractNAQPart):
 		return solutions
 
 	def digest(self, tokens):
-		res = super(naqfillintheblankshortanswerpart, self).digest(tokens)
-
+		res = super(naqfillintheblankwithwordbankpart, self).digest(tokens)
 		_naqwordbank = self.getElementsByTagName('naqwordbank')
 		assert len(_naqwordbank) <= 1
 		if _naqwordbank:
 			_naqwordbank = _naqwordbank[0]
-			assert len(_naqwordbank) > 0, "Must specified at least one word entry"
-			for x in _naqwordbank:
+			_naqwordentries = _naqwordbank.getElementsByTagName('naqwordentry')
+			assert len(_naqwordentries) > 0, "Must specified at least one word entry"
+			for x in _naqwordentries:
 				assert x.attributes['wid'] and x.attributes['word']
 
 		assert len(self.getElementsByTagName('naqsolutions')) == 0
@@ -779,11 +782,12 @@ class naqfillintheblankwithwordbankpart(_AbstractNAQPart):
 		_naqordereditems = self.getElementsByTagName('naqordereditems')
 		assert len(_naqordereditems) == 1
 		_naqordereditems = _naqordereditems[0]
+		_ordereditems = _naqordereditems.getElementsByTagName('naqordereditem')
 
 		answer = []
 		_naqsolns = self.ownerDocument.createElement('naqsolutions')
 		_naqsolns.macroMode = _naqsolns.MODE_BEGIN
-		for _item in _naqordereditems:
+		for _item in _ordereditems:
 			wid = _item.attributes['id']
 			assert wid and isinstance(wid, six.string_types)
 			answer.append(wid)
@@ -830,7 +834,15 @@ class naqwordentry(naqvalue):
 	args = 'wid:str word:str [lang:str]'
 
 class naqwordbank(Base.List):
-	args = '[unique:bool]'
+	args = '[unique:str]'
+
+	def invoke(self, tex):
+		_t = super(naqwordbank, self).invoke(tex)
+		if 'unique' in self.attributes and self.attributes['unique'].lower() == 'unique=false':
+			self.attributes['unique'] = 'false'
+		else:
+			self.attributes['unique'] = 'true'
+		return _t
 
 class naqordereditem(naqvalue):
 	args = 'id:str'
