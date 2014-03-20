@@ -50,13 +50,13 @@ the TeX DOM.
 $Id$
 """
 # All of these have too many public methods
-#pylint: disable=R0904
+# pylint: disable=R0904
 # "not callable" for the default values of None
-#pylint: disable=E1102
+# pylint: disable=E1102
 # access to protected members -> _asm_local_content defined in this module
-#pylint: disable=W0212
+# pylint: disable=W0212
 # "Method __delitem__ is abstract in Node and not overridden"
-#pylint: disable=W0223
+# pylint: disable=W0223
 
 from __future__ import print_function, unicode_literals, absolute_import, division
 __docformat__ = "restructuredtext en"
@@ -596,14 +596,13 @@ class naqmatchingpart(_AbstractNAQPart):
 
 	def _asm_solutions(self):
 		solutions = []
-		solution_els = self.getElementsByTagName( 'naqsolution' )
+		solution_els = self.getElementsByTagName('naqsolution')
 		for solution_el in solution_els:
 			solution = self.soln_interface( solution_el.answer )
 			weight = solution_el.attributes['weight']
 			if weight is not None:
 				solution.weight = weight
 			solutions.append( solution )
-
 		return solutions
 
 	def digest( self, tokens ):
@@ -652,8 +651,8 @@ class naqfillintheblankshortanswerpart(_AbstractNAQPart):
 			\begin{naqfillintheblankshortanswerpart}
 			        Arbitrary content for this part goes here.
 				\begin{naqregexes}
-					\naqregex .*
-					\naqregex[42] ^1$
+					\naqregex{.*}
+					\naqregex{^1$}{42}
 	            \end{naqregexes}
 				\begin{naqsolexplanation}
 					Arbitrary content explaining how the correct solution is arrived at.
@@ -685,26 +684,24 @@ class naqfillintheblankshortanswerpart(_AbstractNAQPart):
 
 	def digest(self, tokens):
 		res = super(naqfillintheblankshortanswerpart, self).digest(tokens)
+
 		_naqregexes = self.getElementsByTagName('naqregexes')
 		assert len(_naqregexes) == 1
 		_naqregexes = _naqregexes[0]
 		assert len(_naqregexes) > 1, "Must have more than one regex; instead got: " + str([x for x in _naqregexes])
-		
 		assert len(self.getElementsByTagName('naqsolutions')) == 0
 
-		# Tranform the implicit solutions into an array
 		_naqsolns = self.ownerDocument.createElement('naqsolutions')
 		_naqsolns.macroMode = _naqsolns.MODE_BEGIN
 # 		answer = {}
 # 		for i, _naqmregex in enumerate(_naqregexes):
 # 			answer[i] = _naqmregex.attributes['answer']
-# 		_naqsoln = self.ownerDocument.createElement('naqsolution')
-# 		_naqsoln.attributes['weight'] = 1.0
-# 		# Also put the attribute into the argument source, for presentation
-# 		_naqsoln.argSource = '[%s]' % _naqsoln.attributes['weight']
+		_naqsoln = self.ownerDocument.createElement('naqsolution')
+		_naqsoln.attributes['weight'] = 1.0
+		_naqsoln.argSource = '[%s]' % _naqsoln.attributes['weight']
 # 		_naqsoln.answer = answer
-# 		_naqsolns.appendChild(_naqsoln)
-# 		self.insertAfter(_naqsolns, _naqmvalues)
+		_naqsolns.appendChild(_naqsoln)
+		self.insertAfter(_naqsolns, _naqregexes)
 		return res
 
 class naqchoices(Base.List):
@@ -732,7 +729,7 @@ class naqmvalue(naqvalue):
 	pass
 
 class naqregex(naqvalue):
-	args = '[flags:int]'
+	args = 'pattern:str [flags:int]'
 
 class naqregexes(Base.List):
 	pass
