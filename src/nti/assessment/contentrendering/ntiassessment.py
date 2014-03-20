@@ -64,6 +64,7 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 import os
+import six
 import itertools
 
 from zope import schema
@@ -649,8 +650,8 @@ class naqfillintheblankshortanswerpart(_AbstractNAQPart):
 			\begin{naqfillintheblankshortanswerpart}
 			        Arbitrary content for this part goes here.
 				\begin{naqregexes}
-					\naqregex{.*}
-					\naqregex{^1$}
+					\naqregex{.*}  Everything.
+					\naqregex{^1\$} Only 1.
 	            \end{naqregexes}
 				\begin{naqsolexplanation}
 					Arbitrary content explaining how the correct solution is arrived at.
@@ -663,11 +664,8 @@ class naqfillintheblankshortanswerpart(_AbstractNAQPart):
 	part_interface = as_interfaces.IQFillInTheBlankShortAnswerPart
 	soln_interface = as_interfaces.IQFillInTheBlankShortAnswerSolution
 
-	def _asm_regexes(self):
-		return [x._asm_local_content for x in self.getElementsByTagName('naqregexes')]
-
 	def _asm_object_kwargs(self):
-		return {'regexes': self._asm_regexes() }
+		return {}
 
 	def _asm_solutions(self):
 		solutions = []
@@ -686,7 +684,7 @@ class naqfillintheblankshortanswerpart(_AbstractNAQPart):
 		_naqregexes = self.getElementsByTagName('naqregexes')
 		assert len(_naqregexes) == 1
 		_naqregexes = _naqregexes[0]
-		assert len(_naqregexes) > 1, "Must have more than one regex; instead got: " + str([x for x in _naqregexes])
+		assert len(_naqregexes) > 0, "Must specified at least one regex; instead got: " + str([x for x in _naqregexes])
 		assert len(self.getElementsByTagName('naqsolutions')) == 0
 
 		_naqsolns = self.ownerDocument.createElement('naqsolutions')
@@ -694,7 +692,7 @@ class naqfillintheblankshortanswerpart(_AbstractNAQPart):
 		answer = []
 		for _naqmregex in _naqregexes:
 			pattern = _naqmregex.attributes['pattern']
-			assert pattern
+			assert pattern and isinstance(pattern, six.string_types)
 			answer.append(pattern)
 		_naqsoln = self.ownerDocument.createElement('naqsolution')
 		_naqsoln.attributes['weight'] = 1.0
@@ -729,7 +727,7 @@ class naqmvalue(naqvalue):
 	pass
 
 class naqregex(naqvalue):
-	args = 'pattern:str'
+	args = '{pattern:str}'
 
 class naqregexes(Base.List):
 	pass

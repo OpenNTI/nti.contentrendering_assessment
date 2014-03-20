@@ -361,10 +361,6 @@ def test_free_response_macros():
 	assert_that( part.solutions[0], has_property( "value", "This is a solution. It may require multiple lines. It may span paragraphs." ) )
 
 
-
-
-
-
 def test_multiple_choice_macros():
 	example = br"""
 			\begin{naquestion}
@@ -383,33 +379,79 @@ def test_multiple_choice_macros():
 		\end{naquestion}
 		"""
 
-	dom = _buildDomFromString( _simpleLatexDocument( (example,) ) )
-	assert_that( dom.getElementsByTagName('naquestion'), has_length( 1 ) )
-	assert_that( dom.getElementsByTagName('naquestion')[0], is_( naquestion ) )
+	dom = _buildDomFromString(_simpleLatexDocument((example,)))
+	assert_that(dom.getElementsByTagName('naquestion'), has_length(1))
+	assert_that(dom.getElementsByTagName('naquestion')[0], is_(naquestion))
 
-	assert_that( dom.getElementsByTagName('naqchoice'), has_length( 3 ) )
-	assert_that( dom.getElementsByTagName('naqsolution'), has_length( 2 ) )
+	assert_that(dom.getElementsByTagName('naqchoice'), has_length(3))
+	assert_that(dom.getElementsByTagName('naqsolution'), has_length(2))
 
 
 	naq = dom.getElementsByTagName('naquestion')[0]
-	part_el = naq.getElementsByTagName( 'naqmultiplechoicepart' )[0]
-	solns = getattr( part_el, '_asm_solutions' )()
+	part_el = naq.getElementsByTagName('naqmultiplechoicepart')[0]
+	solns = getattr(part_el, '_asm_solutions')()
 
+
+	assert_that(solns[0], verifiably_provides(part_el.soln_interface))
+	assert_that(solns[0], has_property('weight', 1.0))
+
+	assert_that(solns[1], verifiably_provides(part_el.soln_interface))
+	assert_that(solns[1], has_property('weight', 0.5))
+
+	part = part_el.assessment_object()
+	assert_that(part.solutions, is_(solns))
+	assert_that(part, verifiably_provides(part_el.part_interface))
+	assert_that(part.content, is_("Arbitrary content for this part goes here."))
+	assert_that(part.explanation, is_("Arbitrary content explaining how the correct solution is arrived at."))
+	assert_that(part, has_property('choices', has_length(3)))
+	assert_that(part.choices, has_item('Arbitrary content for the choice.'))
+
+
+	quest_el = dom.getElementsByTagName('naquestion')[0]
+	question = quest_el.assessment_object()
+	assert_that(question.content, is_('Arbitrary prefix content goes here.'))
+	assert_that(question.parts, contains(part))
+	assert_that(question, has_property('ntiid', 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.1'))
+
+	assert_that(question, externalizes(has_entry('NTIID', question.ntiid)))
+
+def test_fill_in_the_blank_short_answer():
+	example = br"""
+			\begin{naquestion}
+			Arbitrary prefix content goes here.
+			\begin{naqfillintheblankshortanswerpart}
+			        Arbitrary content for this part goes here.
+				\begin{naqregexes}
+					\naqregex{.*}  Everything.
+					\naqregex{^1\$} Only 1.
+	            \end{naqregexes}
+				\begin{naqsolexplanation}
+					Arbitrary content explaining how the correct solution is arrived at.
+				\end{naqsolexplanation}
+			\end{naqfillintheblankshortanswerpart}
+		\end{naquestion}
+		"""
+
+	dom = _buildDomFromString( _simpleLatexDocument( (example,) ) )
+	assert_that( dom.getElementsByTagName('naquestion'), has_length( 1 ) )
+	assert_that(dom.getElementsByTagName('naquestion')[0], is_(naquestion))
+
+	assert_that(dom.getElementsByTagName('naqregexes'), has_length(1))
+	assert_that(dom.getElementsByTagName('naqregex'), has_length(2))
+	assert_that(dom.getElementsByTagName('naqsolution'), has_length(1))
+
+	naq = dom.getElementsByTagName('naquestion')[0]
+	part_el = naq.getElementsByTagName('naqfillintheblankshortanswerpart')[0]
+	solns = getattr(part_el, '_asm_solutions')()
 
 	assert_that( solns[0], verifiably_provides( part_el.soln_interface ) )
 	assert_that( solns[0], has_property( 'weight', 1.0 ) )
-
-	assert_that( solns[1], verifiably_provides( part_el.soln_interface ) )
-	assert_that( solns[1], has_property( 'weight', 0.5 ) )
 
 	part = part_el.assessment_object()
 	assert_that( part.solutions, is_( solns ) )
 	assert_that( part, verifiably_provides( part_el.part_interface ) )
 	assert_that( part.content, is_( "Arbitrary content for this part goes here." ) )
 	assert_that( part.explanation, is_( "Arbitrary content explaining how the correct solution is arrived at." ) )
-	assert_that( part, has_property( 'choices', has_length( 3 ) ) )
-	assert_that( part.choices, has_item( 'Arbitrary content for the choice.' ) )
-
 
 	quest_el = dom.getElementsByTagName('naquestion')[0]
 	question = quest_el.assessment_object()
@@ -452,10 +494,8 @@ def test_multiple_choice_multiple_answer_macros():
 	part_el = naq.getElementsByTagName( 'naqmultiplechoicemultipleanswerpart' )[0]
 	solns = getattr( part_el, '_asm_solutions' )()
 
-
 	assert_that( solns[0], verifiably_provides( part_el.soln_interface ) )
 	assert_that( solns[0], has_property( 'weight', 1.0 ) )
-
 
 	part = part_el.assessment_object()
 	assert_that( part.solutions, is_( solns ) )
