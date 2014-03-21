@@ -19,7 +19,7 @@ import unittest
 import anyjson as json
 from datetime import datetime
 
-from ..ntiassessment import naquestion, naquestionset
+from ..ntiassessment import naquestion, naquestionset, naquestionfillintheblankwordbank
 from ..interfaces import IAssessmentExtractor
 from nti.contentrendering.tests import buildDomFromString as _buildDomFromString
 from nti.contentrendering.tests import simpleLatexDocumentText
@@ -515,6 +515,51 @@ def test_fill_in_the_blank_word_bank_part():
 
 	assert_that(question, externalizes(has_entry('NTIID', question.ntiid)))
 
+def test_fill_in_the_blank_word_bank_question():
+	example = br"""
+		\begin{naquestionfillintheblankwordbank}
+			Salsa and Bleach goes here.
+			\begin{naqwordbank}
+			 	\naqwordentry{100}{shikai}
+				\naqwordentry{200}{bankai}
+				\naqwordentry{300}{captain}
+	        \end{naqwordbank}
+			\begin{naqfillintheblankwithwordbankpart}
+			        Arbitrary content for this part goes here.
+				\begin{naqwordbank}[unique=false]
+					\naqwordentry{0}{montuno}{es}
+					\naqwordentry{1}{tiene}{es}
+					\naqwordentry{2}{borinquen}
+					\naqwordentry{3}{tierra}{es}
+					\naqwordentry{4}{alma}{es}
+	            \end{naqwordbank}
+	            \begin{naqordereditems}
+					\naqordereditem{2}
+					\naqordereditem{1}
+					\naqordereditem{0}
+				\end{naqordereditems}
+				\begin{naqsolexplanation}
+					Arbitrary content explaining how the correct solution is arrived at.
+				\end{naqsolexplanation}
+			\end{naqfillintheblankwithwordbankpart}
+		\end{naquestionfillintheblankwordbank}
+		"""
+
+	dom = _buildDomFromString(_simpleLatexDocument((example,)))
+	assert_that(dom.getElementsByTagName('naquestionfillintheblankwordbank'), has_length(1))
+	assert_that(dom.getElementsByTagName('naquestionfillintheblankwordbank')[0], is_(naquestionfillintheblankwordbank))
+
+	assert_that(dom.getElementsByTagName('naqwordbank'), has_length(2))
+	assert_that(dom.getElementsByTagName('naqwordentry'), has_length(8))
+
+	quest_el = dom.getElementsByTagName('naquestionfillintheblankwordbank')[0]
+	assessment = quest_el.assessment_object()
+	assert_that(assessment.content, is_('Salsa and Bleach goes here.'))
+	assert_that(assessment.parts, has_length(1))
+	assert_that(assessment.wordbank, has_length(3))
+	assert_that(assessment, has_property('ntiid', 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.1'))
+	assert_that(assessment, externalizes(has_entry('NTIID', assessment.ntiid)))
+
 def test_multiple_choice_multiple_answer_macros():
 	example = br"""
 			\begin{naquestion}
@@ -559,7 +604,6 @@ def test_multiple_choice_multiple_answer_macros():
 	assert_that( part, has_property( 'choices', has_length( 3 ) ) )
 	assert_that( part.choices, has_item( 'Arbitrary content for the choice.' ) )
 
-
 	quest_el = dom.getElementsByTagName('naquestion')[0]
 	question = quest_el.assessment_object()
 	assert_that( question.content, is_( 'Arbitrary prefix content goes here.' ) )
@@ -599,11 +643,9 @@ def test_matching_macros():
 	assert_that( dom.getElementsByTagName('naqmlabel'), has_length( 3 ) )
 	assert_that( dom.getElementsByTagName('naqmvalue'), has_length( 3 ) )
 
-
 	naq = dom.getElementsByTagName('naquestion')[0]
 	part_el = naq.getElementsByTagName( 'naqmatchingpart' )[0]
 	soln = getattr( part_el, '_asm_solutions' )()[0]
-
 
 	assert_that( soln, verifiably_provides( part_el.soln_interface ) )
 	assert_that( soln, has_property( 'value', {0: 2, 1: 0, 2: 1} ) )

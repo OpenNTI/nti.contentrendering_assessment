@@ -288,12 +288,12 @@ class _AbstractNAQPart(_LocalContentMixin,Base.Environment):
 		super(_AbstractNAQPart,self)._after_render( rendered )
 		# The hints and explanations don't normally get rendered
 		# by the templates, so make sure they do
-		for x in itertools.chain( self.getElementsByTagName( 'naqsolexplanation' ),
-								  self.getElementsByTagName( 'naqsolution' ),
-								  self.getElementsByTagName( 'naqhint' ),
-								  self.getElementsByTagName( 'naqchoice' ),
-								  self.getElementsByTagName( 'naqmlabel' ),
-								  self.getElementsByTagName( 'naqmvalue' ) ):
+		for x in itertools.chain(self.getElementsByTagName('naqsolexplanation'),
+								 self.getElementsByTagName('naqsolution'),
+								 self.getElementsByTagName('naqhint'),
+								 self.getElementsByTagName('naqchoice'),
+								 self.getElementsByTagName('naqmlabel'),
+								 self.getElementsByTagName('naqmvalue')):
 			unicode(x)
 
 _LocalContentMixin._asm_ignorable_renderables += (_AbstractNAQPart,)
@@ -704,7 +704,28 @@ class naqfillintheblankshortanswerpart(_AbstractNAQPart):
 		self.insertAfter(_naqsolns, _naqregexes)
 		return res
 
-class naqfillintheblankwithwordbankpart(_AbstractNAQPart):
+class _WordBankMixIn(object):
+	
+	def _asm_entries(self):
+		result = []
+		_naqwordbank = self.getElementsByTagName('naqwordbank')
+		if _naqwordbank:
+			_naqwordbank = _naqwordbank[0]
+			for x in _naqwordbank.getElementsByTagName('naqwordentry'):
+				data = [x.attributes['wid'], x.attributes['word'], x.attributes.get('lang')]
+				we = as_interfaces.IWordEntry(data)
+				result.append(we)
+		return _naqwordbank, result
+
+	def _asm_wordbank(self):
+		result = None
+		_naqwordbank, entries = self._asm_entries()
+		if entries:
+			result = as_interfaces.IWordBank(entries)
+			result.unique = _naqwordbank.attributes.get('unique', 'true') == 'true'
+		return result
+
+class naqfillintheblankwithwordbankpart(_AbstractNAQPart, _WordBankMixIn):
 	r"""
 	A fill in the blank with word bank part.
 
@@ -734,23 +755,6 @@ class naqfillintheblankwithwordbankpart(_AbstractNAQPart):
 	part_factory = parts.QFillInTheBlankWithWordBankPart
 	part_interface = as_interfaces.IQFillInTheBlankWithWordBankPart
 	soln_interface = as_interfaces.IQFillInTheBlankWithWordBankSolution
-
-	def _asm_entries(self):
-		result = []
-		for x in self.getElementsByTagName('naqwordentry'):
-			data = [x.attributes['wid'], x.attributes['word'], x.attributes.get('lang')]
-			we = as_interfaces.IWordEntry(data)
-			result.append(we)
-		return result
-
-	def _asm_wordbank(self):
-		result = None
-		entries = self._asm_entries()
-		if entries:
-			result = as_interfaces.IWordBank(entries)
-			_naqwordbank = self.getElementsByTagName('naqwordbank')[0]
-			result.unique = _naqwordbank.attributes.get('unique', 'true') == 'true'
-		return result
 
 	def _asm_object_kwargs(self):
 		return { 'wordbank': self._asm_wordbank() }
@@ -838,7 +842,7 @@ class naqwordbank(Base.List):
 
 	def invoke(self, tex):
 		_t = super(naqwordbank, self).invoke(tex)
-		if 'unique' in self.attributes and self.attributes['unique'].lower() == 'unique=false':
+		if 'unique' in self.attributes and (self.attributes['unique'] or '').lower() == 'unique=false':
 			self.attributes['unique'] = 'false'
 		else:
 			self.attributes['unique'] = 'true'
@@ -932,10 +936,14 @@ class naquestion(_LocalContentMixin,Base.Environment,plastexids.NTIIDMixin):
 
 		return [x.assessment_object() for x in to_iter if hasattr(x,'assessment_object')]
 
+	def _createQuestion(self):
+		result = question.QQuestion(content=self._asm_local_content,
+									parts=self._asm_question_parts())
+		return result
+
 	@cachedIn('_v_assessment_object')
 	def assessment_object(self):
-		result = question.QQuestion( content=self._asm_local_content,
-									 parts=self._asm_question_parts())
+		result = self._createQuestion()
 		errors = schema.getValidationErrors( as_interfaces.IQuestion, result )
 		if errors: # pragma: no cover
 			raise errors[0][1]
@@ -945,8 +953,14 @@ class naquestion(_LocalContentMixin,Base.Environment,plastexids.NTIIDMixin):
 class naquestionref(Crossref.ref):
 	pass
 
-class naquestionfillintheblankwordbank(naquestion):
-	pass
+class naquestionfillintheblankwordbank(naquestion, _WordBankMixIn):
+
+	def _createQuestion(self):
+		wordbank = self._asm_wordbank()
+		result = question.QFillInTheBlankWithWordBankQuestion(content=self._asm_local_content,
+															  parts=self._asm_question_parts(),
+															  wordbank=wordbank)
+		return result
 
 @interface.implementer(crd_interfaces.IEmbeddedContainer)
 class naquestionset(Base.List, plastexids.NTIIDMixin):
@@ -1115,10 +1129,11 @@ def ProcessOptions( options, document ):
 	# We are not setting up any global state here,
 	# only making changes to the document, so its
 	# fine that this runs each time we are imported
-	document.context.newcounter( 'naqsolutionnum' )
-	document.context.newcounter( 'naquestion' )
-	document.context.newcounter( 'naquestionset' )
-	document.context.newcounter( 'naassignment' )
+	document.context.newcounter('naqsolutionnum')
+	document.context.newcounter('naquestion')
+	document.context.newcounter('naquestionfillintheblankwordbank')
+	document.context.newcounter('naquestionset')
+	document.context.newcounter('naassignment')
 
 #: The directory in which to find our templates.
 #: Used by plasTeX because we implement IPythonPackage
