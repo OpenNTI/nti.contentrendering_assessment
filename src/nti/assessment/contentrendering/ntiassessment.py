@@ -838,15 +838,28 @@ class naqwordentry(naqvalue):
 	args = 'wid:str word:str [lang:str]'
 
 class naqwordbank(Base.List):
-	args = '[unique:str]'
+	args = '[unique:str] [label:idref]'
 
 	def invoke(self, tex):
-		_t = super(naqwordbank, self).invoke(tex)
+		token = super(naqwordbank, self).invoke(tex)
 		if 'unique' in self.attributes and (self.attributes['unique'] or '').lower() == 'unique=false':
 			self.attributes['unique'] = 'false'
 		else:
 			self.attributes['unique'] = 'true'
-		return _t
+
+		_naqwordentries = self.getElementsByTagName('naqwordentry')
+		assert len(_naqwordentries) > 0, "Must specified at least one word entry"
+		for x in _naqwordentries:
+			assert x.attributes['wid'] and x.attributes['word']
+
+		return token
+
+class naqwordbankref(Base.Crossref.ref):
+	args = '[options:dict] label:idref'
+
+	def digest(self, tokens):
+		tok = super(naqwordbankref, self).digest(tokens)
+		return tok
 
 class naqordereditem(naqvalue):
 	args = 'id:str'
