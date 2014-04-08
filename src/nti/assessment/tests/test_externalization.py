@@ -112,7 +112,8 @@ class TestExternalization(TestCase):
 								 u'lang': u'en',
 								 u'wid': u'14',
 								 u'word': u'at'}
-						}
+						},
+			u'unique':False
 			}
 
 		assert_that(internalization.find_factory_for(ext_obj),
