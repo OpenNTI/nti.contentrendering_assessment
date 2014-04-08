@@ -24,7 +24,7 @@ from nti.externalization import internalization
 from nti.testing import base
 from nti.externalization.tests import externalizes
 
-setUpModule = lambda: base.module_setup( set_up_packages=(__name__,) )
+setUpModule = lambda: base.module_setup(set_up_packages=(__name__,))
 tearDownModule = base.module_teardown
 
 GIF_DATAURL = b'data:image/gif;base64,R0lGODlhCwALAIAAAAAA3pn/ZiH5BAEAAAEALAAAAAALAAsAAAIUhA+hkcuO4lmNVindo7qyrIXiGBYAOw=='
@@ -63,7 +63,7 @@ class TestExternalization(TestCase):
 													 has_key('Last Modified'))))
 		# But we have no URL because we're not in a connection anywhere
 
-	def test_modeled_response_uploade(self):
+	def test_modeled_response_uploaded(self):
 		ext_obj = {
 			'MimeType': 'application/vnd.nextthought.assessment.modeledcontentresponse',
 			'value': ['a part'],
@@ -78,3 +78,52 @@ class TestExternalization(TestCase):
 													 require_updater=True)
 
 		assert_that(internal, has_property('value', is_(('a part',))))
+
+
+	def test_wordbankentry(self):
+		ext_obj = {
+			u'Class': 'WordEntry',
+			u'MimeType': u'application/vnd.nextthought.naqwordentry',
+			u'lang': u'en',
+			u'wid': u'14',
+			u'word': u'at',
+		}
+
+		assert_that(internalization.find_factory_for(ext_obj),
+					is_(not_none()))
+
+		internal = internalization.find_factory_for(ext_obj)()
+		internalization.update_from_external_object(internal,
+													 ext_obj,
+													 require_updater=True)
+
+		assert_that(internal, has_property('word', is_('at')))
+		assert_that(internal, has_property('wid', is_('14')))
+		assert_that(internal, has_property('lang', is_('en')))
+
+	def test_wordbank(self):
+
+		ext_obj = {
+			u'Class': 'WordBank',
+			u'MimeType': u'application/vnd.nextthought.naqwordbank',
+			u'entries': {u'10': {u'Class': 'WordEntry',
+								 u'MimeType': u'application/vnd.nextthought.naqwordentry',
+								 u'lang': u'en',
+								 u'wid': u'14',
+								 u'word': u'at'}
+						}
+			}
+
+
+		assert_that(internalization.find_factory_for(ext_obj),
+					is_(not_none()))
+
+		internal = internalization.find_factory_for(ext_obj)()
+		internalization.update_from_external_object(internal,
+													 ext_obj,
+													 require_updater=False)
+
+		# assert_that(internal, has_property('word', is_('at')))
+		# assert_that(internal, has_property('wid', is_('14')))
+		# assert_that(internal, has_property('lang', is_('en')))
+
