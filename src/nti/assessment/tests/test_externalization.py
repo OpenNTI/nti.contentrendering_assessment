@@ -13,6 +13,7 @@ from hamcrest import is_not as does_not
 from hamcrest import not_none
 from hamcrest import none
 from hamcrest import has_entry
+from hamcrest import has_length
 from hamcrest import has_property
 from hamcrest import has_key
 from hamcrest import all_of
@@ -114,16 +115,14 @@ class TestExternalization(TestCase):
 						}
 			}
 
-
 		assert_that(internalization.find_factory_for(ext_obj),
 					is_(not_none()))
 
 		internal = internalization.find_factory_for(ext_obj)()
 		internalization.update_from_external_object(internal,
 													 ext_obj,
-													 require_updater=False)
+													 require_updater=True)
 
-		# assert_that(internal, has_property('word', is_('at')))
-		# assert_that(internal, has_property('wid', is_('14')))
-		# assert_that(internal, has_property('lang', is_('en')))
+		assert_that(internal, has_length(1))
+		assert_that(internal, has_property('unique', is_(False)))
 
