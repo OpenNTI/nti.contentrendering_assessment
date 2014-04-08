@@ -847,12 +847,6 @@ class naqwordbank(Base.List):
 			self.attributes['unique'] = 'false'
 		else:
 			self.attributes['unique'] = 'true'
-
-		_naqwordentries = self.getElementsByTagName('naqwordentry')
-		assert len(_naqwordentries) > 0, "Must specified at least one word entry"
-		for x in _naqwordentries:
-			assert x.attributes['wid'] and x.attributes['word']
-
 		return token
 
 class naqwordbankref(Base.Crossref.ref):
