@@ -47,14 +47,17 @@ process is complete to gain the desired object. This object can then be
 externalized or otherwise processed; this object is not itself part of
 the TeX DOM.
 
-$Id$
+.. $Id$
 """
 # All of these have too many public methods
 # pylint: disable=R0904
+
 # "not callable" for the default values of None
 # pylint: disable=E1102
+
 # access to protected members -> _asm_local_content defined in this module
 # pylint: disable=W0212
+
 # "Method __delitem__ is abstract in Node and not overridden"
 # pylint: disable=W0223
 
@@ -127,8 +130,8 @@ class naqsolutions(Base.List):
 		return res
 
 	def digest( self, tokens ):
-		#After digesting loop back over the children moving nodes before
-		#the first item into the first item
+		# After digesting loop back over the children moving nodes before
+		# the first item into the first item
 		# TODO: Why is this being done?
 		res = super(naqsolutions, self).digest(tokens)
 		if self.macroMode != Base.Environment.MODE_END:
@@ -318,7 +321,6 @@ class naqsymmathpart(_AbstractNAQPart):
 	part_factory = parts.QSymbolicMathPart
 	soln_interface = as_interfaces.IQLatexSymbolicMathSolution
 
-
 class naqfreeresponsepart(_AbstractNAQPart):
 	part_interface = as_interfaces.IQFreeResponsePart
 	part_factory = parts.QFreeResponsePart
@@ -351,7 +353,6 @@ class naqessaypart(naqmodeledcontentpart):
 			\end{naqhints}
 			\end{naqessaypart}
 		\end{naquestion}
-
 	"""
 
 class naqmultiplechoicepart(_AbstractNAQPart):
@@ -829,7 +830,7 @@ class naqmvalue(naqvalue):
 	pass
 
 class naqregex(naqvalue):
-	args = 'pattern:str'
+	args = 'pattern:str [label:idref]'
 
 class naqregexes(Base.List):
 	pass
@@ -859,6 +860,13 @@ class naqwordbankref(Base.Crossref.ref):
 
 	def digest(self, tokens):
 		tok = super(naqwordbankref, self).digest(tokens)
+		return tok
+
+class naqregexref(Base.Crossref.ref):
+	args = '[options:dict] label:idref'
+
+	def digest(self, tokens):
+		tok = super(naqregexref, self).digest(tokens)
 		return tok
 
 class naqordereditem(naqvalue):
