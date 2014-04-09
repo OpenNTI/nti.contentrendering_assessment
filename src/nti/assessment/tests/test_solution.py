@@ -136,11 +136,10 @@ class TestFreeResponseSolution(TestCase):
 		assert_that( solution.QFreeResponseSolution( "text" ), grades_correct( "Text" ) )
 
 	def test_grade_string_quote_replacement(self):
-
-		solution_text = "���Today��� ���what���"  # Note both double and single curly quotes
+		solution_text = "“Today” ‘what’"  # Note both double and single curly quotes
 		response_text = "\"Today\" 'what'"
 
-		assert_that( solution.QFreeResponseSolution( solution_text ),
+		assert_that(solution.QFreeResponseSolution(solution_text),
 					grades_correct( response_text ) )
 
 class TestMultipleChoiceMultipleAnswerSolution(TestCase):
