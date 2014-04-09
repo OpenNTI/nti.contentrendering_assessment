@@ -790,6 +790,7 @@ class IQFillInTheBlankShortAnswerSolution(IQMultiValuedSolution):
 				 description="The correct regex",
 				 min_length=0,
 				 value_type=TextLine(title="The regular expression"))
+IQFillInTheBlankShortAnswerSolution.setTaggedValue('response_type', IQTextResponse)
 
 class IQFillInTheBlankShortAnswerPart(IQFillInTheBlankPart):
 	"""

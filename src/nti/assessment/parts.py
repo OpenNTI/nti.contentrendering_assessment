@@ -189,7 +189,6 @@ class QFreeResponsePart(QPart):
 	def _eq_instance( self, other ):
 		return isinstance(other, QFreeResponsePart)
 
-
 @interface.implementer(interfaces.IQFilePart)
 class QFilePart(QPart):
 
@@ -261,8 +260,11 @@ class QModeledContentPart(QPart):
 
 @interface.implementer(interfaces.IQFillInTheBlankShortAnswerPart)
 class QFillInTheBlankShortAnswerPart(QPart):
-	response_interface = interfaces.IQListResponse
-	grader_interface = interfaces.IQFillInTheBlankShortAnswerGrader
+
+	grader_name = 'FillInTheBlankShortAnswerGrader'
+
+	def _eq_instance(self, other):
+		return isinstance(other, QFillInTheBlankShortAnswerPart)
 
 @interface.implementer(interfaces.IQFillInTheBlankWithWordBankPart)
 class QFillInTheBlankWithWordBankPart(QPart, contained.Contained):

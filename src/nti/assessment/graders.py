@@ -246,9 +246,9 @@ class FillInTheBlankShortAnswerGrader(EqualityGrader):
 
 	def _compare(self, solution_value, response_value):
 		solutions = self.solution_converter(solution_value)
-		responses = self.response_converter(response_value)
-		for idx, pattern in enumerate(solutions):
-			if not _compile(pattern).match(responses[idx]):
+		response = self.response_converter(response_value)
+		for pattern in solutions:
+			if not _compile(pattern).match(response):
 				return False
 		return True
 
