@@ -71,16 +71,16 @@ name: naqfillintheblankwithwordbankpart
 </div>
 
 name: naqwordbank
-<object type="application/vnd.nextthought.naqwordbank" data-unique="true" tal:attributes="data-unique self/attributes/unique | default">
-	<param name="unique" value="true" tal:attributes="value self/attributes/unique | default" />
+<object type="application/vnd.nextthought.naqwordbank" data-unique="true" tal:attributes="data-unique self/attributes/unique">
+	<param name="unique" value="true" tal:attributes="value self/attributes/unique" />
 	<span tal:content="self"></span>
 </object>
 
 name: naqwordentry
-<object class="application/vnd.nextthought.naqwordentry" data-wid="the-id" data-word="the-word" data-lang="en" tal:attributes="data-wid self/attributes/wid; data-word self/attributes/word; data-lang self/attributes/lang | default" >
+<object class="application/vnd.nextthought.naqwordentry" data-wid="the-id" data-word="the-word" data-lang="en" tal:attributes="data-wid self/attributes/wid; data-word self/attributes/word; data-lang self/attributes/lang" >
 	<param name="wid" value="the-id" tal:attributes="value self/attributes/wid" />
 	<param name="word" value="the-word" tal:attributes="value self/attributes/word" />
-	<param name="lang" value="en" tal:attributes="value self/attributes/lang | default" />
+	<param name="lang" value="the-lang" tal:attributes="value self/attributes/lang" />
 </object>
 
 # No-Op template for the parts of matching questions

@@ -840,7 +840,7 @@ class naqwordentry(naqvalue):
 
 	def invoke(self, tex):
 		token = super(naqwordentry, self).invoke(tex)
-		if 'lang' not in self.attributes:
+		if 'lang' not in self.attributes or not self.attributes['lang']:
 			self.attributes['lang'] = 'en'
 		return token
 
