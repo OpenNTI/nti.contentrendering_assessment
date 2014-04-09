@@ -118,8 +118,7 @@
 			 provides=".interfaces.IQMatchingPartGrader" />
 
 	<adapter factory=".graders.FillInTheBlankShortAnswerGrader"
-			 name = "FillInTheBlankShortAnswerGrader"
-			 for="* .interfaces.IQFillInTheBlankShortAnswerSolution .interfaces.IQTextResponse"
+			 for=".interfaces.IQFillInTheBlankShortAnswerPart .interfaces.IQMultiValuedSolution .interfaces.IQListResponse"
 			 provides=".interfaces.IQFillInTheBlankShortAnswerGrader" />
 			 
 	<adapter factory=".graders.FillInTheBlankWithWordBankGrader"

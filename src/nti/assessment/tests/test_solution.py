@@ -137,7 +137,7 @@ class TestFreeResponseSolution(TestCase):
 
 	def test_grade_string_quote_replacement(self):
 
-		solution_text = "“Today” ‘what’"  # Note both double and single curly quotes
+		solution_text = "���Today��� ���what���"  # Note both double and single curly quotes
 		response_text = "\"Today\" 'what'"
 
 		assert_that( solution.QFreeResponseSolution( solution_text ),
@@ -164,7 +164,7 @@ class TestFillInTheBlankWithShortAnswerSolution(TestCase):
 		regex = "^1$"
 		assert_that(solution.QFillInTheBlankShortAnswerSolution([regex]),
 					verifiably_provides(interfaces.IQFillInTheBlankShortAnswerSolution))
-		assert_that(solution.QFillInTheBlankShortAnswerSolution([regex]).grade('1'), is_(True))
-		assert_that(solution.QFillInTheBlankShortAnswerSolution([regex]).grade('2'), is_(False))
-		assert_that(solution.QFillInTheBlankShortAnswerSolution([regex]).grade('11'), is_(False))
-		assert_that(solution.QFillInTheBlankShortAnswerSolution([regex]).grade('121'), is_(False))
+		assert_that(solution.QFillInTheBlankShortAnswerSolution([regex]).grade(['1']), is_(True))
+		assert_that(solution.QFillInTheBlankShortAnswerSolution([regex]).grade(['2']), is_(False))
+		assert_that(solution.QFillInTheBlankShortAnswerSolution([regex]).grade(['11']), is_(False))
+		assert_that(solution.QFillInTheBlankShortAnswerSolution([regex]).grade(['121']), is_(False))

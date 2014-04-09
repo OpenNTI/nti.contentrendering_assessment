@@ -3,7 +3,7 @@
 """
 Grading algorithm support.
 
-$Id$
+.. $Id$
 """
 from __future__ import unicode_literals, print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
@@ -246,9 +246,9 @@ class FillInTheBlankShortAnswerGrader(EqualityGrader):
 
 	def _compare(self, solution_value, response_value):
 		solutions = self.solution_converter(solution_value)
-		response = self.response_converter(response_value)
-		for pattern in solutions:
-			if not _compile(pattern).match(response):
+		responses = self.response_converter(response_value)
+		for idx, pattern in enumerate(solutions):
+			if not _compile(pattern).match(responses[idx]):
 				return False
 		return True
 
@@ -266,4 +266,3 @@ class FillInTheBlankWithWordBankGrader(EqualityGrader):
 
 	solution_converter = _to_id_list
 	response_converter = _to_id_list
-

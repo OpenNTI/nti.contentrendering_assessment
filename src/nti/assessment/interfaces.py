@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-$Id$
+.. $Id$
 """
 from __future__ import unicode_literals, print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
@@ -180,7 +180,7 @@ class IQNumericMathSolution(IQMathSolution,IQSingleValuedSolution):
 class IQSymbolicMathSolution(IQMathSolution):
 	"""
 	A solution whose correct answer should be interpreted symbolically.
-	For example, "12π" (twelve pi, not 37.6...) or "√2" (the square root of two, not
+	For example, "12��" (twelve pi, not 37.6...) or "���2" (the square root of two, not
 	1.4...).
 
 	This is intended to be further subclassed to support specific types of
@@ -790,7 +790,6 @@ class IQFillInTheBlankShortAnswerSolution(IQMultiValuedSolution):
 				 description="The correct regex",
 				 min_length=0,
 				 value_type=TextLine(title="The regular expression"))
-IQFillInTheBlankShortAnswerSolution.setTaggedValue('response_type', IQTextResponse)
 
 class IQFillInTheBlankShortAnswerPart(IQFillInTheBlankPart):
 	"""

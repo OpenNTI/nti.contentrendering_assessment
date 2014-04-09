@@ -3,7 +3,7 @@
 """
 Implementations and support for question parts.
 
-$Id$
+.. $Id$
 """
 from __future__ import unicode_literals, print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
@@ -189,6 +189,7 @@ class QFreeResponsePart(QPart):
 	def _eq_instance( self, other ):
 		return isinstance(other, QFreeResponsePart)
 
+
 @interface.implementer(interfaces.IQFilePart)
 class QFilePart(QPart):
 
@@ -260,11 +261,8 @@ class QModeledContentPart(QPart):
 
 @interface.implementer(interfaces.IQFillInTheBlankShortAnswerPart)
 class QFillInTheBlankShortAnswerPart(QPart):
-
-	grader_name = 'FillInTheBlankShortAnswerGrader'
-
-	def _eq_instance(self, other):
-		return isinstance(other, QFillInTheBlankShortAnswerPart)
+	response_interface = interfaces.IQListResponse
+	grader_interface = interfaces.IQFillInTheBlankShortAnswerGrader
 
 @interface.implementer(interfaces.IQFillInTheBlankWithWordBankPart)
 class QFillInTheBlankWithWordBankPart(QPart, contained.Contained):
