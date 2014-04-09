@@ -107,12 +107,12 @@ class TestExternalization(TestCase):
 		ext_obj = {
 			u'Class': 'WordBank',
 			u'MimeType': u'application/vnd.nextthought.naqwordbank',
-			u'entries': {u'10': {u'Class': 'WordEntry',
-								 u'MimeType': u'application/vnd.nextthought.naqwordentry',
-								 u'lang': u'en',
-								 u'wid': u'14',
-								 u'word': u'at'}
-						},
+			u'entries':[ {u'Class': 'WordEntry',
+						  u'MimeType': u'application/vnd.nextthought.naqwordentry',
+						  u'lang': u'en',
+						  u'wid': u'14',
+						  u'word': u'at'}
+						],
 			u'unique':False
 			}
 

@@ -21,6 +21,9 @@ import persistent
 
 from nti.externalization.externalization import make_repr
 
+from nti.utils.property import Lazy
+from nti.utils.maps import CaseInsensitiveDict
+
 from nti.utils.schema import SchemaConfigured
 from nti.utils.schema import createDirectFieldProperties
 
@@ -77,44 +80,41 @@ class WordBank(SchemaConfigured, persistent.Persistent, contained.Contained):
 
 	@property
 	def words(self):
-		return {x.word for x in self.entries.values()}
+		return {x.word for x in self.entries}
+
+	@property
+	def ids(self):
+		return {x.wid for x in self.entries}
 
 	def sorted(self):
-		return sorted(self.entries.values())
+		return sorted(self.entries)
 
 	def idOf(self, word):
-		lower = word.lower()
-		for wid, x in self.entries.items():
-			if x.word.lower() == lower:
-				return wid
-		return None
+		return self._word_map.get(word, None)
 	
 	def contains_word(self, word):
 		return self.idOf(word) != None
-
-	def append(self, entry):
-		self.entries[entry.wid] = entry
 	
 	def get(self, wid, default=None):
-		result = self.entries.get(wid, default)
+		result = self._id_map.get(wid, default)
 		return result
 
 	def __contains__(self, wid):
-		return wid in self.entries
+		return wid in self._id_map
 	contains_id = __contains__
 
 	def __getitem__(self, wid):
-		return self.entries[wid]
+		return self._id_map[wid]
 
 	def __len__(self):
 		return len(self.entries)
 	
 	def __iter__(self):
-		return iter(self.entries.values())
+		return iter(self.entries)
 
 	def __eq__(self, other):
 		try:
-			return self is other or (self.entries == other.entries
+			return self is other or (self.ids == other.ids
 									 and self.unique == other.unique)
 		except AttributeError:
 			return NotImplemented
@@ -128,6 +128,17 @@ class WordBank(SchemaConfigured, persistent.Persistent, contained.Contained):
 		for entry in self:
 			yield entry
 
+	@Lazy
+	def _id_map(self):
+		result = {x.wid:x for x in self.entries}
+		return result
+
+	@Lazy
+	def _word_map(self):
+		result = CaseInsensitiveDict()
+		result.update({x.word:x.wid for x in self.entries})
+		return result
+					
 @component.adapter(dolmen.builtins.interfaces.IList)
 @interface.implementer(interfaces.IWordEntry)
 def _wordentry_adapter(lst):
@@ -138,6 +149,6 @@ def _wordentry_adapter(lst):
 @component.adapter(dolmen.builtins.interfaces.IList)
 @interface.implementer(interfaces.IWordBank)
 def _wordbank_adapter(entries, unique=True):
-	entries = {x.wid:x for x in entries}
-	result = WordBank(entries=entries, unique=unique)
+	entries = {e.wid:e for e in entries}
+	result = WordBank(entries=list(entries.values()), unique=unique)
 	return result

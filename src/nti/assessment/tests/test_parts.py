@@ -163,8 +163,8 @@ class TestMatchingPart(TestCase):
 class TestFillInTheBlackWithWordBankPart(TestCase):
 
 	def test_grade(self):
-		entries = {'1': wordbank.WordEntry(wid='1', word='bankai'),
-				   '2': wordbank.WordEntry(wid='2', word='shikai')}
+		entries = [wordbank.WordEntry(wid='1', word='bankai'),
+				   wordbank.WordEntry(wid='2', word='shikai')]
 		bank = wordbank.WordBank(entries=entries, unique=True)
 		solution = solutions.QFillInTheBlankWithWordBankSolution(("1", "2"))
 		part = parts.QFillInTheBlankWithWordBankPart(wordbank=bank, solutions=(solution,))

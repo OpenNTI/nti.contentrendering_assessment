@@ -156,18 +156,14 @@
 						 .interfaces.IWordBank"
 		modules=".wordbank" />
 	
+	<adapter factory="list .wordbank._wordbank_adapter"
+			 provides=".interfaces.IWordBank"
+			 for="list"/> 	
+			 
 	<adapter factory="list .wordbank._wordentry_adapter"
 			 provides=".interfaces.IWordEntry"
 			 for="list"/> 		 
-	
-	<adapter factory="list .wordbank._wordbank_adapter"
-			 provides=".interfaces.IWordBank"
-			 for="list"/> 		 
-				
-	<adapter factory=".internalization._WordBankUpdater"
-			 for=".interfaces.IWordBank"
-			 provides="nti.externalization.interfaces.IInternalObjectUpdater" />
-			 
+
 	<!-- Decorators -->
 	<subscriber
 		factory=".decorators._QAssessedQuestionExplanationSolutionAdder"

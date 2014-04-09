@@ -769,8 +769,7 @@ class IWordEntry(interface.Interface):
 
 class IWordBank(IIterable, mapping.IReadMapping):
 
-	entries = Dict(title="The response dictionary",
-				   key_type=TextLine(title="The word identifier"),
+	entries = List(title="The word entries",
 				   value_type=Object(IWordEntry, title="The word"),
 				   min_length=1)
 

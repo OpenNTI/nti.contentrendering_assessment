@@ -54,8 +54,8 @@ class TestWordBank(unittest.TestCase):
 		assert_that(awe, has_property('lang', is_('ja')))
 
 	def test_bank(self):
-		entries = {'1': WordEntry(wid='1', word='bankai'),
-				   '2': WordEntry(wid='2', word='shikai')}
+		entries = [WordEntry(wid='1', word='bankai'),
+				   WordEntry(wid='2', word='shikai')]
 		bank = WordBank(entries=entries, unique=True)
 		assert_that(bank, verifiably_provides(asm_interfaces.IWordBank))
 		assert_that(bank, has_length(2))
@@ -79,11 +79,8 @@ class TestWordBank(unittest.TestCase):
 												   'unique', True,
 												   'entries', has_length(2))))
 
-		bank.append(WordEntry(wid='3', word='zaraki', lang='ja'))
-		assert_that(bank.words, has_length(3))
+		assert_that(bank.sorted(), has_length(2))
 
-		ab = asm_interfaces.IWordBank(list(entries.values()))
-		assert_that(ab, has_length(3))
-		assert_that(ab.sorted(), has_length(3))
-
+		new_entries = [WordEntry(wid='2', word='shikai'), WordEntry(wid='1', word='bankai')]
+		ab = WordBank(entries=new_entries, unique=True)
 		assert_that(bank, is_(equal_to(ab)))
