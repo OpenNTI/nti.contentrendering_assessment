@@ -838,6 +838,12 @@ class naqregexes(Base.List):
 class naqwordentry(naqvalue):
 	args = 'wid:str word:str [lang:str]'
 
+	def invoke(self, tex):
+		token = super(naqwordentry, self).invoke(tex)
+		if 'lang' not in self.attributes:
+			self.attributes['lang'] = 'en'
+		return token
+
 class naqwordbank(Base.List):
 	args = '[unique:str] [label:idref]'
 

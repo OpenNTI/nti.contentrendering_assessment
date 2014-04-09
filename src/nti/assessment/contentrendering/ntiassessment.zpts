@@ -70,6 +70,17 @@ name: naqfillintheblankwithwordbankpart
 	 <span tal:content="self"></span>
 </div>
 
+name: naqwordbank
+<div class="naqwordbank" tal:attributes="unique self/attributes/unique" >
+	 <a tal:attributes="unique self/attributes/unique"></a>
+	 <span tal:content="self"></span>
+</div>
+
+name: naqwordentry
+<div class="naqwordentry" tal:attributes="word self/attributes/word; wid self/attributes/wid; lang self/attributes/lang" >
+	 <a tal:attributes="word self/attributes/word; wid self/attributes/wid; lang self/attributes/lang"></a>
+</div>
+
 # No-Op template for the parts of matching questions
 name: naqmlabels naqmlabel naqmvalues naqmvalue
 
