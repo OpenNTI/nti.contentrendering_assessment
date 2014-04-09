@@ -180,7 +180,7 @@ class IQNumericMathSolution(IQMathSolution,IQSingleValuedSolution):
 class IQSymbolicMathSolution(IQMathSolution):
 	"""
 	A solution whose correct answer should be interpreted symbolically.
-	For example, "12��" (twelve pi, not 37.6...) or "���2" (the square root of two, not
+	For example, "12π" (twelve pi, not 37.6...) or "√2" (the square root of two, not
 	1.4...).
 
 	This is intended to be further subclassed to support specific types of
