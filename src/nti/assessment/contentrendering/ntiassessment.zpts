@@ -83,6 +83,9 @@ name: naqwordentry
 	<param name="lang" value="the-lang" tal:attributes="value self/attributes/lang" />
 </object>
 
+name: naqregex
+# stub for the time being
+
 # No-Op template for the parts of matching questions
 name: naqmlabels naqmlabel naqmvalues naqmvalue
 

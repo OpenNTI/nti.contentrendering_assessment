@@ -830,7 +830,7 @@ class naqmvalue(naqvalue):
 	pass
 
 class naqregex(naqvalue):
-	args = 'pattern:str [label:idref]'
+	args = 'pattern:str [label:idref] [maxchars:int]'
 
 class naqregexes(Base.List):
 	pass
