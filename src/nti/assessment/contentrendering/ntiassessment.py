@@ -850,6 +850,9 @@ class naqwordentry(naqvalue):
 			self.attributes['lang'] = 'en'
 		return token
 
+class nqablankfield(naqvalue):
+	pass
+
 class naqwordbank(Base.List):
 	args = '[unique:str] [label:idref]'
 
