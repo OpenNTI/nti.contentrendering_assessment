@@ -110,6 +110,12 @@ name: naqvideo
 <param name="thumbnail" tal:attributes="value self/attributes/thumbnail" />
 </object>
 
+name: naqaudio
+<object class="naqaudio" style="display: none" data-ntiid="none">
+<param name="url" tal:attributes="value self/attributes/audio_url" />
+<param name="thumbnail" tal:attributes="value self/attributes/thumbnail" />
+</object>
+
 # Things that shouldn't render, just be placeholders
 name: naqsolexplanation naqhints naqhint  naquestionset naassignment
 <span tal:attributes="class string:${self/__class__/__name__} hidden" ></span>
