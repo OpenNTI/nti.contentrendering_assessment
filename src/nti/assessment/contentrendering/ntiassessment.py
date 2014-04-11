@@ -830,13 +830,7 @@ class naqmvalue(naqvalue):
 	pass
 
 class naqregex(naqvalue):
-	args = 'pattern:str maxchars:int [label:idref]'
-
-	def invoke(self, tex):
-		token = super(naqregex, self).invoke(tex)
-		if not 'maxchars' in self.attributes or not self.attributes['maxchars']:
-			self.attributes['maxchars'] = '10'
-		return token
+	args = 'pattern:str [label:idref]'
 
 class naqregexes(Base.List):
 	pass
@@ -850,8 +844,8 @@ class naqwordentry(naqvalue):
 			self.attributes['lang'] = 'en'
 		return token
 
-class nqablankfield(_LocalContentMixin, Base.Command):
-	pass
+class nqablankfield(Base.Command):
+	args = '[maxlength:int]'
 
 class naqwordbank(Base.List):
 	args = '[unique:str] [label:idref]'

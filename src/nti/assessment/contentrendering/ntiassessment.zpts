@@ -71,7 +71,7 @@ name: naqfillintheblankwithwordbankpart
 </div>
 
 name: nqablankfield
-<input class="nqablankfield" tal:attributes="name self/id" />
+<input class="nqablankfield" tal:attributes="name self/id; maxlength self/attributes/maxlength | default" />
 
 name: naqwordbank
 <object type="application/vnd.nextthought.naqwordbank" data-unique="true" tal:attributes="data-unique self/attributes/unique">
@@ -86,15 +86,10 @@ name: naqwordentry
 	<param name="lang" value="the-lang" tal:attributes="value self/attributes/lang" />
 </object>
 
-name: naqregex
-<object class="application/vnd.nextthought.naqregex" data-maxchars="10" tal:attributes="data-maxchars self/attributes/maxchars" >
-	<param name="maxchars" value="10" tal:attributes="value self/attributes/maxchars" />
-</object>
-
 # stub for the time being
 
 # No-Op template for the parts of matching questions
-name: naqmlabels naqmlabel naqmvalues naqmvalue
+name: naqmlabels naqmlabel naqmvalues naqmvalue naqregex
 
 name: naquestion
 <object type="application/vnd.nextthought.naquestion" data-ntiid="the-ntiid" data="the-ntiid" data-canindividual="false" tal:attributes="data-ntiid self/ntiid; data self/ntiid; data-canindividual self/attributes/individual | default">
