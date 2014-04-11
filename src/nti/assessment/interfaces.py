@@ -762,10 +762,6 @@ class IQAssessmentItemContainer(sequence.IReadSequence):
 
 # Alibra
 
-class IRegEx(interface.Interface):
-	pattern = TextLine(title="regex pattern")
-	maxchars = Int(title="maxchars in regex", default=10, required=False)
-
 class IWordEntry(interface.Interface):
 	wid = TextLine(title="word identifier")
 	word = TextLine(title="the word")
