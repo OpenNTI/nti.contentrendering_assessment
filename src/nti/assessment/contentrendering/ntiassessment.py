@@ -850,7 +850,7 @@ class naqwordentry(naqvalue):
 			self.attributes['lang'] = 'en'
 		return token
 
-class nqablankfield(naqvalue):
+class nqablankfield(_LocalContentMixin, Base.Command):
 	pass
 
 class naqwordbank(Base.List):
