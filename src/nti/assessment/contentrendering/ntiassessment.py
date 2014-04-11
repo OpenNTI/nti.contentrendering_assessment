@@ -830,7 +830,13 @@ class naqmvalue(naqvalue):
 	pass
 
 class naqregex(naqvalue):
-	args = 'pattern:str [label:idref] [maxchars:int]'
+	args = 'pattern:str maxchars:int [label:idref]'
+
+	def invoke(self, tex):
+		token = super(naqregex, self).invoke(tex)
+		if not 'maxchars' in self.attributes or not self.attributes['maxchars']:
+			self.attributes['maxchars'] = '10'
+		return token
 
 class naqregexes(Base.List):
 	pass

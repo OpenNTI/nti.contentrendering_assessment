@@ -84,6 +84,10 @@ name: naqwordentry
 </object>
 
 name: naqregex
+<object class="application/vnd.nextthought.naqregex" data-maxchars="10" tal:attributes="data-maxchars self/attributes/maxchars" >
+	<param name="maxchars" value="10" tal:attributes="value self/attributes/maxchars" />
+</object>
+
 # stub for the time being
 
 # No-Op template for the parts of matching questions
