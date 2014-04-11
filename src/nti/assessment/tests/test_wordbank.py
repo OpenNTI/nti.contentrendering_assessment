@@ -84,3 +84,21 @@ class TestWordBank(unittest.TestCase):
 		new_entries = [WordEntry(wid='2', word='shikai'), WordEntry(wid='1', word='bankai')]
 		ab = WordBank(entries=new_entries, unique=True)
 		assert_that(bank, is_(equal_to(ab)))
+
+	def test_bank_add(self):
+		entries = [WordEntry(wid='1', word='bankai')]
+		bank1 = WordBank(entries=entries, unique=True)
+
+		entries = [WordEntry(wid='2', word='shikai')]
+		bank2 = WordBank(entries=entries, unique=False)
+
+		bank = bank1 + bank2
+		assert_that(bank, has_length(2))
+		assert_that('1' in bank, is_(True))
+		assert_that('2' in bank, is_(True))
+		assert_that(has_property('unique', is_(False)))
+
+		bank = bank1 + None
+		assert_that(bank, has_length(1))
+		assert_that('1' in bank, is_(True))
+		assert_that('2' in bank, is_(False))

@@ -276,6 +276,7 @@ class QFillInTheBlankWithWordBankPart(QPart, contained.Contained):
 
 	def __getattr__(self, name):
 		result = super(QFillInTheBlankWithWordBankPart, self).__getattr__(name)
-		if name == "wordbank" and result is None:
-			result = getattr(self.__parent__, 'wordbank', None)
+		if name == "wordbank":
+			parent_bank = getattr(self.__parent__, 'wordbank', None)
+			result = result + parent_bank if result is not None else parent_bank
 		return result

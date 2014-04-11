@@ -124,6 +124,15 @@ class WordBank(SchemaConfigured, persistent.Persistent, contained.Contained):
 
 	__repr__ = make_repr()
 
+	def __add__(self, other):
+		unique = self.unique
+		entries = set(self.entries)
+		if other is not None:
+			entries.update(other.entries)
+			unique = unique and other.unique
+		result = WordBank(entries=list(entries), unique=unique)
+		return result
+
 	def sublocations(self):
 		for entry in self:
 			yield entry
