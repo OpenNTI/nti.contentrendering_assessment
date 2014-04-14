@@ -681,28 +681,29 @@ class naqfillintheblankshortanswerpart(_AbstractNAQPart):
 
 	def digest(self, tokens):
 		res = super(naqfillintheblankshortanswerpart, self).digest(tokens)
-		_naqregexes = self.getElementsByTagName('naqregexes')
-		assert len(_naqregexes) == 1
+		if self.macroMode != Base.Environment.MODE_END:
+			_naqregexes = self.getElementsByTagName('naqregexes')
+			assert len(_naqregexes) == 1
 
-		_naqregexes = _naqregexes[0]
-		_regentries = _naqregexes.getElementsByTagName('naqregex')
-		assert len(_regentries) > 0, "Must specified at least one regex"
+			_naqregexes = _naqregexes[0]
+			_regentries = _naqregexes.getElementsByTagName('naqregex')
+			assert len(_regentries) > 0, "Must specified at least one regex"
 
-		assert len(self.getElementsByTagName('naqsolutions')) == 0
+			assert len(self.getElementsByTagName('naqsolutions')) == 0
 
-		_naqsolns = self.ownerDocument.createElement('naqsolutions')
-		_naqsolns.macroMode = _naqsolns.MODE_BEGIN
-		answer = []
-		for _naqmregex in _regentries:
-			pattern = _naqmregex.attributes['pattern']
-			assert pattern and isinstance(pattern, six.string_types)
-			answer.append(pattern)
-		_naqsoln = self.ownerDocument.createElement('naqsolution')
-		_naqsoln.attributes['weight'] = 1.0
-		_naqsoln.argSource = '[%s]' % _naqsoln.attributes['weight']
-		_naqsoln.answer = answer
-		_naqsolns.appendChild(_naqsoln)
-		self.insertAfter(_naqsolns, _naqregexes)
+			_naqsolns = self.ownerDocument.createElement('naqsolutions')
+			_naqsolns.macroMode = _naqsolns.MODE_BEGIN
+			answer = []
+			for _naqmregex in _regentries:
+				pattern = _naqmregex.attributes['pattern']
+				assert pattern and isinstance(pattern, six.string_types)
+				answer.append(pattern)
+			_naqsoln = self.ownerDocument.createElement('naqsolution')
+			_naqsoln.attributes['weight'] = 1.0
+			_naqsoln.argSource = '[%s]' % _naqsoln.attributes['weight']
+			_naqsoln.answer = answer
+			_naqsolns.appendChild(_naqsoln)
+			self.insertAfter(_naqsolns, _naqregexes)
 		return res
 
 class _WordBankMixIn(object):
@@ -773,36 +774,36 @@ class naqfillintheblankwithwordbankpart(_AbstractNAQPart, _WordBankMixIn):
 
 	def digest(self, tokens):
 		res = super(naqfillintheblankwithwordbankpart, self).digest(tokens)
-		_naqwordbank = self.getElementsByTagName('naqwordbank')
-		assert len(_naqwordbank) <= 1
-		if _naqwordbank:
-			_naqwordbank = _naqwordbank[0]
-			_naqwordentries = _naqwordbank.getElementsByTagName('naqwordentry')
-			assert len(_naqwordentries) > 0, "Must specified at least one word entry"
-			for x in _naqwordentries:
-				assert x.attributes['wid'] and x.attributes['word']
+		if self.macroMode != Base.Environment.MODE_END:
+			_naqwordbank = self.getElementsByTagName('naqwordbank')
+			assert len(_naqwordbank) <= 1
+			if _naqwordbank:
+				_naqwordbank = _naqwordbank[0]
+				_naqwordentries = _naqwordbank.getElementsByTagName('naqwordentry')
+				assert len(_naqwordentries) > 0, "Must specified at least one word entry"
+				for x in _naqwordentries:
+					assert x.attributes['wid'] and x.attributes['word']
 
-		assert len(self.getElementsByTagName('naqsolutions')) == 0
+			assert len(self.getElementsByTagName('naqsolutions')) == 0
 
-		_naqordereditems = self.getElementsByTagName('naqordereditems')
-		assert len(_naqordereditems) == 1
-		_naqordereditems = _naqordereditems[0]
-		_ordereditems = _naqordereditems.getElementsByTagName('naqordereditem')
+			_naqordereditems = self.getElementsByTagName('naqordereditems')
+			assert len(_naqordereditems) == 1
+			_naqordereditems = _naqordereditems[0]
+			_ordereditems = _naqordereditems.getElementsByTagName('naqordereditem')
 
-		answer = []
-		_naqsolns = self.ownerDocument.createElement('naqsolutions')
-		_naqsolns.macroMode = _naqsolns.MODE_BEGIN
-		for _item in _ordereditems:
-			wid = _item.attributes['id']
-			assert wid and isinstance(wid, six.string_types)
-			answer.append(wid)
-		_naqsoln = self.ownerDocument.createElement('naqsolution')
-		_naqsoln.attributes['weight'] = 1.0
-		_naqsoln.argSource = '[%s]' % _naqsoln.attributes['weight']
-		_naqsoln.answer = answer
-		_naqsolns.appendChild(_naqsoln)
-
-		self.insertAfter(_naqsolns, _naqordereditems)
+			answer = []
+			_naqsolns = self.ownerDocument.createElement('naqsolutions')
+			_naqsolns.macroMode = _naqsolns.MODE_BEGIN
+			for _item in _ordereditems:
+				wid = _item.attributes['id']
+				assert wid and isinstance(wid, six.string_types)
+				answer.append(wid)
+			_naqsoln = self.ownerDocument.createElement('naqsolution')
+			_naqsoln.attributes['weight'] = 1.0
+			_naqsoln.argSource = '[%s]' % _naqsoln.attributes['weight']
+			_naqsoln.answer = answer
+			_naqsolns.appendChild(_naqsoln)
+			self.insertAfter(_naqsolns, _naqordereditems)
 		return res
 
 class naqchoices(Base.List):
