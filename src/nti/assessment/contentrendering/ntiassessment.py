@@ -989,15 +989,15 @@ from plasTeX.Renderers import render_children
 class naquestionfillintheblankwordbank(naquestion, _WordBankMixIn):
 
 	def _after_render(self, rendered):
-		# CS: Make sure we only render the children that do not contain any part, since
-		# those will be render when the part is.
+		# CS: Make sure we only render the children that do not contain any 'question' part,
+		# since those will be rendereds when the part is so.
 		def _check(node):
 			f = lambda x :isinstance(x, _AbstractNAQPart)
 			found = any(map(f, node.childNodes))
 			return not found
 
 		# each node in self.childNodes is a plasTeX.Base.TeX.Primitives.par
-		# check its children to see if they contain any 'part' objects.
+		# check its children to see if they contain any question 'part' objects.
 		# do not include them in the asm_local_content
 		selected = [n for n in self.childNodes if _check(n)]
 		output = render_children(self.renderer, selected)
