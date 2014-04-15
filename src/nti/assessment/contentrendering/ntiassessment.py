@@ -729,6 +729,8 @@ class _WordBankMixIn(object):
 			result.unique = _naqwordbank.attributes.get('unique', 'true') == 'true'
 		return result
 
+_LocalContentMixin._asm_ignorable_renderables += (_WordBankMixIn,)
+
 class naqfillintheblankwithwordbankpart(_AbstractNAQPart, _WordBankMixIn):
 	r"""
 	A fill in the blank with word bank part.
