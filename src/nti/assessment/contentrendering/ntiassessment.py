@@ -80,6 +80,7 @@ from persistent.list import PersistentList
 
 from plasTeX import Base
 from plasTeX.Base import Crossref
+from plasTeX.Renderers import render_children
 from plasTeX.interfaces import IOptionAwarePythonPackage
 
 from nti.externalization.datetime import datetime_from_string
@@ -912,6 +913,22 @@ _LocalContentMixin._asm_ignorable_renderables += (naqchoices,
 class naqvideo(ntiincludevideo):
 	blockType = True
 
+def _remove_parts_after_render(self, rendered):
+	# CS: Make sure we only render the children that do not contain any 'question' part,
+	# since those will be rendereds when the part is so.
+	def _check(node):
+		f = lambda x :isinstance(x, _AbstractNAQPart)
+		found = any(map(f, node.childNodes))
+		return not found
+
+	# each node in self.childNodes is a plasTeX.Base.TeX.Primitives.par
+	# check its children to see if they contain any question 'part' objects.
+	# do not include them in the asm_local_content
+	selected = [n for n in self.childNodes if _check(n)]
+	output = render_children(self.renderer, selected)
+	output = cfg_interfaces.HTMLContentFragment(''.join(output).strip())
+	return output
+
 class naquestion(_LocalContentMixin,Base.Environment,plastexids.NTIIDMixin):
 	args = '[individual:str]'
 	# Only classes with counters can be labeled, and \label sets the
@@ -984,25 +1001,10 @@ class naquestion(_LocalContentMixin,Base.Environment,plastexids.NTIIDMixin):
 class naquestionref(Crossref.ref):
 	pass
 
-from plasTeX.Renderers import render_children
-
 class naquestionfillintheblankwordbank(naquestion, _WordBankMixIn):
 
 	def _after_render(self, rendered):
-		# CS: Make sure we only render the children that do not contain any 'question' part,
-		# since those will be rendereds when the part is so.
-		def _check(node):
-			f = lambda x :isinstance(x, _AbstractNAQPart)
-			found = any(map(f, node.childNodes))
-			return not found
-
-		# each node in self.childNodes is a plasTeX.Base.TeX.Primitives.par
-		# check its children to see if they contain any question 'part' objects.
-		# do not include them in the asm_local_content
-		selected = [n for n in self.childNodes if _check(n)]
-		output = render_children(self.renderer, selected)
-		output = cfg_interfaces.HTMLContentFragment(''.join(output).strip())
-		self._asm_local_content = output
+		self._asm_local_content = _remove_parts_after_render(self, rendered)
 
 	def _createQuestion(self):
 		wordbank = self._asm_wordbank()
