@@ -706,6 +706,8 @@ class naqfillintheblankshortanswerpart(_AbstractNAQPart):
 			self.insertAfter(_naqsolns, _naqregexes)
 		return res
 
+_LocalContentMixin._asm_ignorable_renderables += (naqfillintheblankshortanswerpart,)
+
 class _WordBankMixIn(object):
 	
 	def _asm_entries(self):
@@ -805,6 +807,8 @@ class naqfillintheblankwithwordbankpart(_AbstractNAQPart, _WordBankMixIn):
 			_naqsolns.appendChild(_naqsoln)
 			self.insertAfter(_naqsolns, _naqordereditems)
 		return res
+
+_LocalContentMixin._asm_ignorable_renderables += (naqfillintheblankwithwordbankpart,)
 
 class naqchoices(Base.List):
 	pass
