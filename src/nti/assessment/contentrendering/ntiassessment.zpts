@@ -73,6 +73,11 @@ name: naqfillintheblankwithwordbankpart
 name: nqablankfield
 <input class="nqablankfield" tal:attributes="name self/id; maxlength self/attributes/maxlength | default" />
 
+name: naqinput
+<div class="naqinput" tal:attributes="name self/id" >
+	<span tal:content="self" />
+</div>
+
 name: naqwordbank
 <object type="application/vnd.nextthought.naqwordbank" data-unique="true" tal:attributes="data-unique self/attributes/unique">
 	<param name="unique" value="true" tal:attributes="value self/attributes/unique" />

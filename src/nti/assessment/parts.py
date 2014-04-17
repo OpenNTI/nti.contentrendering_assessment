@@ -268,6 +268,7 @@ class QFillInTheBlankShortAnswerPart(QPart):
 class QFillInTheBlankWithWordBankPart(QPart, contained.Contained):
 
 	wordbank = None
+
 	response_interface = interfaces.IQListResponse
 	grader_interface = interfaces.IQFillInTheBlankWithWordBankGrader
 

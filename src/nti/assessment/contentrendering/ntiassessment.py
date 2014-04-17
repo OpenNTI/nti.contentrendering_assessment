@@ -739,7 +739,10 @@ class naqfillintheblankwithwordbankpart(_AbstractNAQPart, _WordBankMixIn):
 		\begin{naquestion}
 			Arbitrary prefix content goes here.
 			\begin{naqfillintheblankwithwordbankpart}
-			        Arbitrary content for this part goes here.
+				Arbitrary content for this part goes here.
+				\begin{naqinput}
+			       	empty fields \nqablankfield{} \nqablankfield{} \nqablankfield{} go here
+				\end{naqinput}
 				\begin{naqwordbank}
 					\naqwordentry{0}{montuno}{es}
 					\naqwordentry{1}{tiene}{es}
@@ -764,7 +767,12 @@ class naqfillintheblankwithwordbankpart(_AbstractNAQPart, _WordBankMixIn):
 	soln_interface = as_interfaces.IQFillInTheBlankWithWordBankSolution
 
 	def _asm_object_kwargs(self):
-		return { 'wordbank': self._asm_wordbank() }
+		return { 'wordbank': self._asm_wordbank(),
+				 'input': self._asm_input() }
+
+	def _asm_input(self):
+		input_el = self.getElementsByTagName('naqinput')[0]
+		return cfg_interfaces.HTMLContentFragment(input_el._asm_local_content.strip())
 
 	def _asm_solutions(self):
 		solutions = []
@@ -780,6 +788,9 @@ class naqfillintheblankwithwordbankpart(_AbstractNAQPart, _WordBankMixIn):
 	def digest(self, tokens):
 		res = super(naqfillintheblankwithwordbankpart, self).digest(tokens)
 		if self.macroMode != Base.Environment.MODE_END:
+			input_els = self.getElementsByTagName('naqinput')
+			assert len(input_els) == 1
+
 			_naqwordbank = self.getElementsByTagName('naqwordbank')
 			assert len(_naqwordbank) <= 1
 			if _naqwordbank:
@@ -879,6 +890,13 @@ class naqregexref(Base.Crossref.ref):
 	def digest(self, tokens):
 		tok = super(naqregexref, self).digest(tokens)
 		return tok
+
+class naqinput(_LocalContentMixin, Base.Environment):
+
+	def _after_render(self, rendered):
+		self._asm_local_content = rendered
+		
+_LocalContentMixin._asm_ignorable_renderables += (naqinput,)
 
 class naqordereditem(naqvalue):
 	args = 'id:str'

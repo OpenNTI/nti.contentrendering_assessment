@@ -466,7 +466,10 @@ def test_fill_in_the_blank_word_bank_part():
 		\begin{naquestion}
 			Arbitrary prefix content goes here.
 			\begin{naqfillintheblankwithwordbankpart}
-			        Arbitrary content for this part goes here.
+				Arbitrary content for this part goes here.
+				\begin{naqinput}
+					empty fields \nqablankfield{} \nqablankfield{} \nqablankfield{} go here
+				\end{naqinput}
 				\begin{naqwordbank}[unique=false]
 					\naqwordentry{0}{montuno}{es}
 					\naqwordentry{1}{tiene}{es}
@@ -525,7 +528,10 @@ def test_fill_in_the_blank_word_bank_question():
 				\naqwordentry{300}{captain}
 	        \end{naqwordbank}
 			\begin{naqfillintheblankwithwordbankpart}
-			        Arbitrary content for this part goes here.
+			    Arbitrary content for this part goes here.
+				\begin{naqinput}
+					empty fields \nqablankfield{} \nqablankfield{} \nqablankfield{} go here
+				\end{naqinput}
 				\begin{naqwordbank}[unique=false]
 					\naqwordentry{0}{montuno}{es}
 					\naqwordentry{1}{tiene}{es}

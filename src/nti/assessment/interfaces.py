@@ -821,6 +821,8 @@ class IQFillInTheBlankWithWordBankPart(IQFillInTheBlankPart):
 								min_length=1,
 								value_type=Object(IQFillInTheBlankWithWordBankSolution, title="the solution"))
 
+	input = _ContentFragment(title="The input to present to the user.")
+
 class IQFillInTheBlankWithWordBankQuestion(IQuestion):
 	"""
 	Marker interface for a Fill-in-the-blank with word bank question.
