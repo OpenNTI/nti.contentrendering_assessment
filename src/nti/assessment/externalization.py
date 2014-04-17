@@ -3,7 +3,7 @@
 """
 Externalization for assessment objects.
 
-$Id$
+.. $Id$
 """
 from __future__ import unicode_literals, print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
@@ -32,13 +32,18 @@ from .response import QUploadedImageFile
 
 @interface.implementer(ext_interfaces.IInternalObjectIO)
 class _AssessmentInternalObjectIOBase(object):
-	"Base class to customize object IO. See zcml."
+	"""
+	Base class to customize object IO. See zcml.
+	"""
 
 	@classmethod
 	def _ap_compute_external_class_name_from_interface_and_instance(cls, iface, impl):
-		# Strip off 'IQ' if it's not 'IQuestionXYZ'
-		return iface.__name__[2:] if not iface.__name__.startswith('IQuestion') else iface.__name__[1:]
-
+		result = getattr(impl, '__external_class_name__', None)
+		if not result:
+			# Strip off 'IQ' if it's not 'IQuestionXYZ'
+			result = iface.__name__[2:] if not iface.__name__.startswith('IQuestion')\
+					 else iface.__name__[1:]
+		return result
 
 	@classmethod
 	def _ap_compute_external_class_name_from_concrete_class(cls, a_type):

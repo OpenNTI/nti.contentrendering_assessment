@@ -22,6 +22,8 @@ from unittest import TestCase
 
 from nti.externalization import internalization
 
+from nti.assessment.question import QFillInTheBlankWithWordBankQuestion
+
 from nti.testing import base
 from nti.externalization.tests import externalizes
 
@@ -127,3 +129,6 @@ class TestExternalization(TestCase):
 		assert_that(internal, has_length(1))
 		assert_that(internal, has_property('unique', is_(False)))
 
+	def test_question(self):
+		internal = QFillInTheBlankWithWordBankQuestion()
+		assert_that(internal, externalizes(all_of(has_entry('Class', 'Question')))),

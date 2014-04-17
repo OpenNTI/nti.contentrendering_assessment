@@ -3,7 +3,7 @@
 """
 Code related to the question interfaces.
 
-$Id$
+.. $Id$
 """
 from __future__ import unicode_literals, print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
@@ -18,9 +18,9 @@ from zope.annotation.interfaces import IAttributeAnnotatable
 
 from persistent import Persistent
 
-from nti.utils.schema import createDirectFieldProperties
 from nti.utils.schema import SchemaConfigured
 from nti.utils.schema import AdaptingFieldProperty
+from nti.utils.schema import createDirectFieldProperties
 
 from . import interfaces
 from ._util import superhash

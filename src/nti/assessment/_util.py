@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-$Id$
+.. $Id$
 """
 from __future__ import unicode_literals, print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
@@ -11,6 +11,7 @@ logger = __import__('logging').getLogger(__name__)
 _marker = object()
 
 class TrivialValuedMixin(object):
+
 	value = None
 
 	def __init__(self, *args, **kwargs):
