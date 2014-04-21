@@ -71,7 +71,7 @@ name: naqfillintheblankwithwordbankpart
 </div>
 
 name: nqablankfield
-<input class="nqablankfield" tal:attributes="name self/id; maxlength self/attributes/maxlength | default" />
+<input type="nqablankfield" tal:attributes="name self/id; maxlength self/attributes/maxlength | default" />
 
 name: naqinput
 <div class="naqinput" tal:attributes="name self/id" >
