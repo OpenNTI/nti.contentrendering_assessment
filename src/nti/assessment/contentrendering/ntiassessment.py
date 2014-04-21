@@ -791,6 +791,13 @@ class naqfillintheblankwithwordbankpart(_AbstractNAQPart, _WordBankMixIn):
 			input_els = self.getElementsByTagName('naqinput')
 			assert len(input_els) == 1
 
+			_naqblanks = input_els[0].getElementsByTagName('naqblankfield')
+			assert len(input_els) >= 1
+
+			_blankids = {x.attributes.get('id') for x in _naqblanks}
+			_blankids.discard(None)
+			assert len(_blankids) == len(_naqblanks)
+
 			_naqwordbank = self.getElementsByTagName('naqwordbank')
 			assert len(_naqwordbank) <= 1
 			if _naqwordbank:
@@ -806,6 +813,7 @@ class naqfillintheblankwithwordbankpart(_AbstractNAQPart, _WordBankMixIn):
 			assert len(naqpaireditems) == 1
 			_naqpaireditems = naqpaireditems[0]
 			_paireditems = _naqpaireditems.getElementsByTagName('naqpaireditem')
+			assert len(_paireditems) == len(_blankids)
 
 			answer = {}
 			_naqsolns = self.ownerDocument.createElement('naqsolutions')
@@ -813,7 +821,7 @@ class naqfillintheblankwithwordbankpart(_AbstractNAQPart, _WordBankMixIn):
 			for _item in _paireditems:
 				bid = _item.attributes['x']
 				wid = _item.attributes['y']
-				assert bid and isinstance(bid, six.string_types)
+				assert bid and isinstance(bid, six.string_types) and bid in _blankids
 				assert wid and isinstance(wid, six.string_types)
 				answer[bid] = wid
 			_naqsoln = self.ownerDocument.createElement('naqsolution')
@@ -873,6 +881,11 @@ class naqwordentry(naqvalue):
 
 class naqblankfield(Base.Command):
 	args = 'id:str [maxlength:int]'
+
+	def digest(self, tokens):
+		res = super(naqblankfield, self).digest(tokens)
+		# assert self.attributes.get(id)
+		return res
 
 class naqwordbank(Base.List):
 	args = '[unique:str] [label:idref]'
