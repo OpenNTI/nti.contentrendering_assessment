@@ -70,8 +70,8 @@ name: naqfillintheblankwithwordbankpart
 	 <span tal:content="self"></span>
 </div>
 
-name: nqablankfield
-<input type="nqablankfield" tal:attributes="name self/id; maxlength self/attributes/maxlength | default" />
+name: naqblankfield
+<input type="blankfield" tal:attributes="name self/attributes/id; maxlength self/attributes/maxlength | default" />
 
 name: naqinput
 <div class="naqinput" tal:attributes="name self/id" >
@@ -93,8 +93,8 @@ name: naqwordentry
 
 # stub for the time being
 
-# No-Op template for the parts of matching questions
-name: naqmlabels naqmlabel naqmvalues naqmvalue naqregex
+# No-Op template for the part questions
+name: naqmlabels naqmlabel naqmvalues naqmvalue naqregexes naqregex naqpaireditems naqpaireditem
 
 name: naquestion
 <object type="application/vnd.nextthought.naquestion" data-ntiid="the-ntiid" data="the-ntiid" data-canindividual="false" tal:attributes="data-ntiid self/ntiid; data self/ntiid; data-canindividual self/attributes/individual | default">

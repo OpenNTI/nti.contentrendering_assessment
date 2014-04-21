@@ -741,7 +741,7 @@ class naqfillintheblankwithwordbankpart(_AbstractNAQPart, _WordBankMixIn):
 			\begin{naqfillintheblankwithwordbankpart}
 				Arbitrary content for this part goes here.
 				\begin{naqinput}
-			       	empty fields \nqablankfield{} \nqablankfield{} \nqablankfield{} go here
+			       	empty fields \naqblankfield{1} \naqblankfield{2} \naqblankfield{3} go here
 				\end{naqinput}
 				\begin{naqwordbank}
 					\naqwordentry{0}{montuno}{es}
@@ -750,11 +750,11 @@ class naqfillintheblankwithwordbankpart(_AbstractNAQPart, _WordBankMixIn):
 					\naqwordentry{3}{tierra}{es}
 					\naqwordentry{4}{alma}{es}
 	            \end{naqwordbank}
-	            \begin{naqordereditems}
-					\naqordereditem{2}
-					\naqordereditem{1}
-					\naqordereditem{0}
-				\end{naqordereditems}
+	            \begin{naqpaireditems}
+					\naqpaireditem{1}{2}
+					\naqpaireditem{2}{1}
+					\naqpaireditem{3}{0}
+				\end{naqpaireditems}
 				\begin{naqsolexplanation}
 					Arbitrary content explaining how the correct solution is arrived at.
 				\end{naqsolexplanation}
@@ -802,24 +802,26 @@ class naqfillintheblankwithwordbankpart(_AbstractNAQPart, _WordBankMixIn):
 
 			assert len(self.getElementsByTagName('naqsolutions')) == 0
 
-			_naqordereditems = self.getElementsByTagName('naqordereditems')
-			assert len(_naqordereditems) == 1
-			_naqordereditems = _naqordereditems[0]
-			_ordereditems = _naqordereditems.getElementsByTagName('naqordereditem')
+			naqpaireditems = self.getElementsByTagName('naqpaireditems')
+			assert len(naqpaireditems) == 1
+			_naqpaireditems = naqpaireditems[0]
+			_paireditems = _naqpaireditems.getElementsByTagName('naqpaireditem')
 
-			answer = []
+			answer = {}
 			_naqsolns = self.ownerDocument.createElement('naqsolutions')
 			_naqsolns.macroMode = _naqsolns.MODE_BEGIN
-			for _item in _ordereditems:
-				wid = _item.attributes['id']
+			for _item in _paireditems:
+				bid = _item.attributes['x']
+				wid = _item.attributes['y']
+				assert bid and isinstance(bid, six.string_types)
 				assert wid and isinstance(wid, six.string_types)
-				answer.append(wid)
+				answer[bid] = wid
 			_naqsoln = self.ownerDocument.createElement('naqsolution')
 			_naqsoln.attributes['weight'] = 1.0
 			_naqsoln.argSource = '[%s]' % _naqsoln.attributes['weight']
 			_naqsoln.answer = answer
 			_naqsolns.appendChild(_naqsoln)
-			self.insertAfter(_naqsolns, _naqordereditems)
+			self.insertAfter(_naqsolns, _naqpaireditems)
 		return res
 
 _LocalContentMixin._asm_ignorable_renderables += (naqfillintheblankwithwordbankpart,)
@@ -854,6 +856,12 @@ class naqregex(naqvalue):
 class naqregexes(Base.List):
 	pass
 
+class naqpaireditem(naqvalue):
+	args = 'x:str y:str'
+
+class naqpaireditems(Base.List):
+	args = '[label:idref]'
+
 class naqwordentry(naqvalue):
 	args = 'wid:str word:str [lang:str]'
 
@@ -863,8 +871,8 @@ class naqwordentry(naqvalue):
 			self.attributes['lang'] = 'en'
 		return token
 
-class nqablankfield(Base.Command):
-	args = '[maxlength:int]'
+class naqblankfield(Base.Command):
+	args = 'id:str [maxlength:int]'
 
 class naqwordbank(Base.List):
 	args = '[unique:str] [label:idref]'

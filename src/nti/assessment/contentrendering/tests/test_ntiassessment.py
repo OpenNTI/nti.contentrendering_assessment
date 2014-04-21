@@ -468,7 +468,7 @@ def test_fill_in_the_blank_word_bank_part():
 			\begin{naqfillintheblankwithwordbankpart}
 				Arbitrary content for this part goes here.
 				\begin{naqinput}
-					empty fields \nqablankfield{} \nqablankfield{} \nqablankfield{} go here
+					empty fields \naqblankfield{1} \naqblankfield{2} \naqblankfield{3} go here
 				\end{naqinput}
 				\begin{naqwordbank}[unique=false]
 					\naqwordentry{0}{montuno}{es}
@@ -477,11 +477,11 @@ def test_fill_in_the_blank_word_bank_part():
 					\naqwordentry{3}{tierra}{es}
 					\naqwordentry{4}{alma}{es}
 	            \end{naqwordbank}
-	            \begin{naqordereditems}
-					\naqordereditem{2}
-					\naqordereditem{1}
-					\naqordereditem{0}
-				\end{naqordereditems}
+	            \begin{naqpaireditems}
+					\naqpaireditem{1}{2}
+					\naqpaireditem{2}{1}
+					\naqpaireditem{3}{0}
+				\end{naqpaireditems}
 				\begin{naqsolexplanation}
 					Arbitrary content explaining how the correct solution is arrived at.
 				\end{naqsolexplanation}
@@ -530,7 +530,7 @@ def test_fill_in_the_blank_word_bank_question():
 			\begin{naqfillintheblankwithwordbankpart}
 			    Arbitrary content for this part goes here.
 				\begin{naqinput}
-					empty fields \nqablankfield{} \nqablankfield{} \nqablankfield{} go here
+					empty fields \naqblankfield{1} \naqblankfield{2} \naqblankfield{3} go here
 				\end{naqinput}
 				\begin{naqwordbank}[unique=false]
 					\naqwordentry{0}{montuno}{es}
@@ -539,11 +539,11 @@ def test_fill_in_the_blank_word_bank_question():
 					\naqwordentry{3}{tierra}{es}
 					\naqwordentry{4}{alma}{es}
 	            \end{naqwordbank}
-	            \begin{naqordereditems}
-					\naqordereditem{2}
-					\naqordereditem{1}
-					\naqordereditem{0}
-				\end{naqordereditems}
+	            \begin{naqpaireditems}
+					\naqpaireditem{1}{2}
+					\naqpaireditem{2}{1}
+					\naqpaireditem{3}{0}
+				\end{naqpaireditems}
 				\begin{naqsolexplanation}
 					Arbitrary content explaining how the correct solution is arrived at.
 				\end{naqsolexplanation}

@@ -153,9 +153,9 @@ class TestMultipleChoiceMultipleAnswerSolution(TestCase):
 class TestFillInTheBlankWithWordBankSolution(TestCase):
 
 	def test_solution(self):
-		assert_that(solution.QFillInTheBlankWithWordBankSolution([ '1' ]),
+		assert_that(solution.QFillInTheBlankWithWordBankSolution({'x':'1'}),
 					verifiably_provides(interfaces.IQFillInTheBlankWithWordBankSolution))
-		assert_that(solution.QFillInTheBlankWithWordBankSolution([ '1' ]).grade([ '1' ]), is_(1.0))
+		assert_that(solution.QFillInTheBlankWithWordBankSolution({'x':'1'}).grade({'x':'1'}), is_(1.0))
 
 class TestFillInTheBlankWithShortAnswerSolution(TestCase):
 

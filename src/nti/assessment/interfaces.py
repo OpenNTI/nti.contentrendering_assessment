@@ -802,12 +802,13 @@ class IQFillInTheBlankShortAnswerPart(IQFillInTheBlankPart):
 class IQFillInTheBlankWithWordBankGrader(IQPartGrader):
 	pass
 
-class IQFillInTheBlankWithWordBankSolution(IQMultiValuedSolution):
+class IQFillInTheBlankWithWordBankSolution(IQSolution):
 
-	value = List(title="The correct answer selections",
-				 description="The correct word id.",
-				 min_length=0,
-				 value_type=TextLine(title="The word id"))
+	value = Dict(key_type=TextLine(title="input name/id"),
+				 value_type=TextLine(title="word id answer"),
+				 title="The correct answer selections",
+				 description="The correct word id map.",
+				 min_length=1)
 
 class IQFillInTheBlankWithWordBankPart(IQFillInTheBlankPart):
 	"""

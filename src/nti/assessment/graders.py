@@ -255,14 +255,14 @@ class FillInTheBlankShortAnswerGrader(EqualityGrader):
 @interface.implementer(interfaces.IQFillInTheBlankWithWordBankGrader)
 class FillInTheBlankWithWordBankGrader(EqualityGrader):
 
-	def _to_id_list(self, the_list):
-		result = []
+	def _to_id_dict(self, the_dict):
+		result = {}
 		wordbank = self.part.wordbank
-		for x in the_list:
-			if wordbank and not wordbank.contains_id(x):
-				x = wordbank.idOf(x) or x
-			result.append(x)
+		for x, y in the_dict.items():
+			if wordbank and not wordbank.contains_id(y):
+				y = wordbank.idOf(y) or y
+			result[x] = y
 		return result
 
-	solution_converter = _to_id_list
-	response_converter = _to_id_list
+	solution_converter = _to_id_dict
+	response_converter = _to_id_dict

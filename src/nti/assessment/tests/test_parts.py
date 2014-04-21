@@ -166,13 +166,12 @@ class TestFillInTheBlackWithWordBankPart(TestCase):
 		entries = [wordbank.WordEntry(wid='1', word='bankai'),
 				   wordbank.WordEntry(wid='2', word='shikai')]
 		bank = wordbank.WordBank(entries=entries, unique=True)
-		solution = solutions.QFillInTheBlankWithWordBankSolution(("1", "2"))
+		solution = solutions.QFillInTheBlankWithWordBankSolution({"x":"1", "y":"2"})
 		part = parts.QFillInTheBlankWithWordBankPart(wordbank=bank, solutions=(solution,))
 		assert_that(part, verifiably_provides(interfaces.IQFillInTheBlankWithWordBankPart))
 		assert_that(part, externalizes(has_entry('Class', 'FillInTheBlankWithWordBankPart')))
-		assert_that(solution.grade(["1", "2"]), is_(True))
-		assert_that(solution.grade(["1", "4"]), is_(False))
-		assert_that(solution.grade(["2", "1"]), is_(False))
+		assert_that(solution.grade({"x":"1", "y":"2"}), is_(True))
+		assert_that(solution.grade({"x":"1", "y":"4"}), is_(False))
 
 class TestFillInTheBlackShortAnswerPart(TestCase):
 

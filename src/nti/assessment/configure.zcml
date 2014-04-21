@@ -60,9 +60,9 @@
 			 provides=".interfaces.IQFillInTheBlankShortAnswerSolution"
 			 for="list"/>
 			 
-	<adapter factory="list .solution.QFillInTheBlankWithWordBankSolution"
+	<adapter factory="dict .solution.QFillInTheBlankWithWordBankSolution"
 			 provides=".interfaces.IQFillInTheBlankWithWordBankSolution"
-			 for="list"/>
+			 for="dict"/>
 			 
 	<adapter factory="float .solution.QNumericMathSolution"
 			 provides=".interfaces.IQNumericMathSolution"
@@ -122,7 +122,7 @@
 			 provides=".interfaces.IQFillInTheBlankShortAnswerGrader" />
 			 
 	<adapter factory=".graders.FillInTheBlankWithWordBankGrader"
-			 for=".interfaces.IQFillInTheBlankWithWordBankPart .interfaces.IQMultiValuedSolution .interfaces.IQListResponse"
+			 for=".interfaces.IQFillInTheBlankWithWordBankPart .interfaces.IQFillInTheBlankWithWordBankSolution .interfaces.IQDictResponse"
 			 provides=".interfaces.IQFillInTheBlankWithWordBankGrader" />
 			 
 	<!-- Incoming submissions can be adapted to finalized assessments -->

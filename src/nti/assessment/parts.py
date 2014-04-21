@@ -269,7 +269,7 @@ class QFillInTheBlankWithWordBankPart(QPart, contained.Contained):
 
 	wordbank = None
 
-	response_interface = interfaces.IQListResponse
+	response_interface = interfaces.IQDictResponse
 	grader_interface = interfaces.IQFillInTheBlankWithWordBankGrader
 
 	def _weight(self, result, solution):
