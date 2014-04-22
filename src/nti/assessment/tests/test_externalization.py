@@ -130,6 +130,9 @@ class TestExternalization(TestCase):
 		assert_that(internal, has_length(1))
 		assert_that(internal, has_property('unique', is_(False)))
 
+		word = internal.get('14')
+		assert_that(word, has_property('content', 'at'))
+
 	def test_question(self):
 		internal = QFillInTheBlankWithWordBankQuestion()
 		assert_that(internal, externalizes(all_of(has_entry('Class', 'Question')))),
