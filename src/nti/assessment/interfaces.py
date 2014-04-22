@@ -766,6 +766,7 @@ class IWordEntry(interface.Interface):
 	wid = TextLine(title="word identifier")
 	word = TextLine(title="the word")
 	lang = TextLine(title="language identifier", default="en", required=False)
+	content = _ContentFragment(title="The input to present to the user.", required=False)
 
 class IWordBank(IIterable, mapping.IReadMapping):
 

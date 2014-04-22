@@ -164,6 +164,10 @@
 			 provides=".interfaces.IWordEntry"
 			 for="list"/> 		 
 
+	<adapter factory=".internalization._WordEntryUpdater"
+			 for=".interfaces.IWordEntry"
+			 provides="nti.externalization.interfaces.IInternalObjectUpdater" />
+			 
 	<!-- Decorators -->
 	<subscriber
 		factory=".decorators._QAssessedQuestionExplanationSolutionAdder"

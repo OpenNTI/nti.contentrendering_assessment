@@ -103,6 +103,7 @@ class TestExternalization(TestCase):
 		assert_that(internal, has_property('word', is_('at')))
 		assert_that(internal, has_property('wid', is_('14')))
 		assert_that(internal, has_property('lang', is_('en')))
+		assert_that(internal, has_property('content', is_('at')))
 
 	def test_wordbank(self):
 
