@@ -871,13 +871,20 @@ class naqpaireditems(Base.List):
 	args = '[label:idref]'
 
 class naqwordentry(naqvalue):
-	args = 'wid:str word:str [lang:str]'
+	args = 'wid:str word:str [lang:str] [content:str]'
 
 	def invoke(self, tex):
 		token = super(naqwordentry, self).invoke(tex)
 		if 'lang' not in self.attributes or not self.attributes['lang']:
 			self.attributes['lang'] = 'en'
+		if 'content' not in self.attributes or not self.attributes['content']:
+			self.attributes['content'] = self.attributes['word']
 		return token
+
+	@readproperty
+	def _asm_local_content(self):
+		text = unicode(self.textContent.strip()) or unicode(self.attributes.get('content', u''))
+		return cfg_interfaces.HTMLContentFragment(text)
 
 class naqblankfield(Base.Command):
 	args = 'id:str [maxlength:int]'
