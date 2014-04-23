@@ -473,7 +473,7 @@ def test_fill_in_the_blank_word_bank_part():
 				\begin{naqwordbank}[unique=false]
 					\naqwordentry{0}{montuno}{es}
 					\naqwordentry{1}{tiene}{es}
-					\naqwordentry{2}{borinquen}
+					\naqwordentry{2}{borinquen}{es}
 					\naqwordentry{3}{tierra}{es}
 					\naqwordentry{4}{alma}{es}
 	            \end{naqwordbank}
@@ -535,7 +535,7 @@ def test_fill_in_the_blank_word_bank_question():
 				\begin{naqwordbank}[unique=false]
 					\naqwordentry{0}{montuno}{es}
 					\naqwordentry{1}{tiene}{es}
-					\naqwordentry{2}{borinquen}
+					\naqwordentry{2}{borinquen}{es}
 					\naqwordentry{3}{tierra}{es}
 					\naqwordentry{4}{alma}{es}
 	            \end{naqwordbank}
