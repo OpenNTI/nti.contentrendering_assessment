@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-$Id$
+.. $Id$
 """
 from __future__ import unicode_literals, print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
@@ -18,6 +18,8 @@ from zope.location.interfaces import ISublocations
 import dolmen.builtins.interfaces
 
 import persistent
+
+from nti.contentfragments import interfaces as cfg_interfaces
 
 from nti.externalization.externalization import make_repr
 
@@ -153,6 +155,8 @@ class WordBank(SchemaConfigured, persistent.Persistent, contained.Contained):
 def _wordentry_adapter(lst):
 	result = WordEntry(wid=unicode(lst[0]), word=unicode(lst[1]))
 	result.lang = unicode(lst[2]) if len(lst) > 2 and lst[2] else u'en'
+	content = unicode(lst[3]) if len(lst) > 3 and lst[3] else result.word
+	result.content = cfg_interfaces.IContentFragment(content)
 	return result
 
 @component.adapter(dolmen.builtins.interfaces.IList)
