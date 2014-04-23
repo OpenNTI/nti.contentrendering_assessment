@@ -957,7 +957,7 @@ def _remove_parts_after_render(self, rendered):
 	# CS: Make sure we only render the children that do not contain any 'question' part,
 	# since those will be rendereds when the part is so.
 	def _check(node):
-		f = lambda x :isinstance(x, _AbstractNAQPart)
+		f = lambda x :isinstance(x, (_AbstractNAQPart,))
 		found = any(map(f, node.childNodes))
 		return not found
 
@@ -969,12 +969,15 @@ def _remove_parts_after_render(self, rendered):
 	output = cfg_interfaces.HTMLContentFragment(''.join(output).strip())
 	return output
 
-class naquestion(_LocalContentMixin,Base.Environment,plastexids.NTIIDMixin):
+class naquestion(_LocalContentMixin, Base.Environment, plastexids.NTIIDMixin):
 	args = '[individual:str]'
-	# Only classes with counters can be labeled, and \label sets the
-	# id property, which in turn is used as part of the NTIID (when no NTIID is set explicitly)
-	counter = 'naquestion'
+
 	blockType = True
+
+	# Only classes with counters can be labeled, and \label sets the
+	# id property, which in turn is used as part of the NTIID
+	# (when no NTIID is set explicitly)
+	counter = 'naquestion'
 
 	# Depending on the presence or absence of newlines
 	# (and hence real paragraphs) within our top-level,
@@ -986,15 +989,16 @@ class naquestion(_LocalContentMixin,Base.Environment,plastexids.NTIIDMixin):
 	# into the `content` of the parts so we can't
 	forcePars = False
 
-	_ntiid_cache_map_name = '_naquestion_ntiid_map'
-	_ntiid_allow_missing_title = True
 	_ntiid_suffix = 'naq.'
-	_ntiid_title_attr_name = 'ref' # Use our counter to generate IDs if no ID is given
+	_ntiid_title_attr_name = 'ref'  # Use our counter to generate IDs if no ID is given
+	_ntiid_allow_missing_title = True
 	_ntiid_type = as_interfaces.NTIID_TYPE
+	_ntiid_cache_map_name = '_naquestion_ntiid_map'
 
 	def invoke( self, tex ):
 		_t = super(naquestion,self).invoke(tex)
-		if 'individual' in self.attributes and self.attributes['individual'] == 'individual=true':
+		if 'individual' in self.attributes and \
+			self.attributes['individual'] == 'individual=true':
 			self.attributes['individual'] = 'true'
 		return _t
 
@@ -1080,18 +1084,20 @@ class naquestionset(Base.List, plastexids.NTIIDMixin):
 	# Only classes with counters can be labeled, and \label sets the
 	# id property, which in turn is used as part of the NTIID (when no NTIID is set explicitly)
 	counter = 'naquestionset'
-	_ntiid_cache_map_name = '_naquestionset_ntiid_map'
-	_ntiid_allow_missing_title = True
+
 	_ntiid_suffix = 'naq.set.'
-	_ntiid_title_attr_name = 'ref' # Use our counter to generate IDs if no ID is given
+	_ntiid_title_attr_name = 'ref'  # Use our counter to generate IDs if no ID is given
+	_ntiid_allow_missing_title = True
 	_ntiid_type = as_interfaces.NTIID_TYPE
+	_ntiid_cache_map_name = '_naquestionset_ntiid_map'
 
 	#: From IEmbeddedContainer
 	mimeType = "application/vnd.nextthought.naquestionset"
 
 	@cachedIn('_v_assessment_object')
 	def assessment_object(self):
-		questions = [qref.idref['label'].assessment_object() for qref in self.getElementsByTagName( 'naquestionref' )]
+		questions = [qref.idref['label'].assessment_object()
+					 for qref in self.getElementsByTagName('naquestionref')]
 		questions = PersistentList( questions )
 		result = question.QQuestionSet( questions=questions,
 										title=self.attributes.get('title'))
