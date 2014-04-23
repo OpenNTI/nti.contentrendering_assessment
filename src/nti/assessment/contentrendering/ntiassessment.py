@@ -877,25 +877,14 @@ class naqpaireditems(Base.List):
 class naqwordentry(_LocalContentMixin, Base.List.item):
 	args = 'wid:str word:str lang:str'
 
-	def invoke(self, tex):
-		token = super(naqwordentry, self).invoke(tex)
-		if 'lang' not in self.attributes or not self.attributes['lang']:
-			self.attributes['lang'] = 'en'
-		return token
-
 	def _after_render(self, rendered):
-		if not rendered:
-			word = self.attributes.get('word', u'')
-			self._asm_local_content = cfg_interfaces.HTMLContentFragment(word)
-		else:
-			self._asm_local_content = rendered
+		self._asm_local_content = rendered
 
 class naqblankfield(Base.Command):
 	args = 'id:str [maxlength:int]'
 
 	def digest(self, tokens):
 		res = super(naqblankfield, self).digest(tokens)
-		# assert self.attributes.get(id)
 		return res
 
 class naqwordbank(Base.List):
@@ -903,7 +892,8 @@ class naqwordbank(Base.List):
 
 	def invoke(self, tex):
 		token = super(naqwordbank, self).invoke(tex)
-		if 'unique' in self.attributes and (self.attributes['unique'] or '').lower() == 'unique=false':
+		if	'unique' in self.attributes and \
+			(self.attributes['unique'] or '').lower() == 'unique=false':
 			self.attributes['unique'] = 'false'
 		else:
 			self.attributes['unique'] = 'true'

@@ -156,7 +156,7 @@ def _wordentry_adapter(lst):
 	result = WordEntry(wid=unicode(lst[0]), word=unicode(lst[1]))
 	result.lang = unicode(lst[2]) if len(lst) > 2 and lst[2] else u'en'
 	content = unicode(lst[3]) if len(lst) > 3 and lst[3] else result.word
-	result.content = cfg_interfaces.IContentFragment(content)
+	result.content = cfg_interfaces.HTMLContentFragment(content)
 	return result
 
 @component.adapter(dolmen.builtins.interfaces.IList)
