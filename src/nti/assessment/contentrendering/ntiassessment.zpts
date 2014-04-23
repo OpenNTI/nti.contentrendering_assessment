@@ -89,8 +89,6 @@ name: naqwordentry
 	<span tal:content="self" />
 </div>
 
-# stub for the time being
-
 # No-Op template for the part questions
 name: naqmlabels naqmlabel naqmvalues naqmvalue naqregexes naqregex naqpaireditems naqpaireditem
 
@@ -108,7 +106,7 @@ name: naquestionfillintheblankwordbank
 <param name="ntiid" value="the-ntiid" tal:attributes="value self/ntiid" />
 <param name="canindividual" value="false" tal:attributes="value self/attributes/individual | default" />
 <div class="naquestion naquestionfillintheblankwordbank">
-	 <span tal:replace="self"></span>
+	 <span tal:replace="self" />
 </div>
 </object>
 
