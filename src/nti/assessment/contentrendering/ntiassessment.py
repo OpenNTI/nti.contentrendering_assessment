@@ -958,7 +958,7 @@ def _remove_parts_after_render(self, rendered):
 	# since those will be rendereds when the part is so.
 	def _check(node):
 		f = lambda x :isinstance(x, (_AbstractNAQPart,))
-		found = any(map(f, node.childNodes))
+		found = any(map(f, node.childNodes)) or f(node)
 		return not found
 
 	# each node in self.childNodes is a plasTeX.Base.TeX.Primitives.par
