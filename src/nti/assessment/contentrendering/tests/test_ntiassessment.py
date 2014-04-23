@@ -523,9 +523,9 @@ def test_fill_in_the_blank_word_bank_question():
 		\begin{naquestionfillintheblankwordbank}
 			Salsa and Bleach goes here.
 			\begin{naqwordbank}
-			 	\naqwordentry{100}{shikai}
-				\naqwordentry{200}{bankai}
-				\naqwordentry{300}{captain}
+			 	\naqwordentry{100}{shikai}{es}
+				\naqwordentry{200}{bankai}{es}
+				\naqwordentry{300}{captain}{es}
 	        \end{naqwordbank}
 			\begin{naqfillintheblankwithwordbankpart}
 			    Arbitrary content for this part goes here.

@@ -85,11 +85,9 @@ name: naqwordbank
 </object>
 
 name: naqwordentry
-<object class="application/vnd.nextthought.naqwordentry" data-wid="the-id" data-word="the-word" data-lang="en" tal:attributes="data-wid self/attributes/wid; data-word self/attributes/word; data-lang self/attributes/lang" >
-	<param name="wid" value="the-id" tal:attributes="value self/attributes/wid" />
-	<param name="word" value="the-word" tal:attributes="value self/attributes/word" />
-	<param name="lang" value="the-lang" tal:attributes="value self/attributes/lang" />
-</object>
+<div class="naqwordentry" tal:attributes="name self/id" >
+	<span tal:content="self" />
+</div>
 
 # stub for the time being
 

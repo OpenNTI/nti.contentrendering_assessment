@@ -717,9 +717,13 @@ class _WordBankMixIn(object):
 		if _naqwordbank:
 			_naqwordbank = _naqwordbank[0]
 			for x in _naqwordbank.getElementsByTagName('naqwordentry'):
-				data = [x.attributes['wid'], x.attributes['word'], x.attributes.get('lang')]
-				we = as_interfaces.IWordEntry(data)
-				result.append(we)
+				if 'wid' in x.attributes:
+					data = [x.attributes['wid'],
+							x.attributes['word'],
+							x.attributes.get('lang'),
+							x._asm_local_content]
+					we = as_interfaces.IWordEntry(data)
+					result.append(we)
 		return _naqwordbank, result
 
 	def _asm_wordbank(self):
@@ -746,7 +750,7 @@ class naqfillintheblankwithwordbankpart(_AbstractNAQPart, _WordBankMixIn):
 				\begin{naqwordbank}
 					\naqwordentry{0}{montuno}{es}
 					\naqwordentry{1}{tiene}{es}
-					\naqwordentry{2}{borinquen}
+					\naqwordentry{2}{borinquen}{es}
 					\naqwordentry{3}{tierra}{es}
 					\naqwordentry{4}{alma}{es}
 	            \end{naqwordbank}
@@ -870,21 +874,21 @@ class naqpaireditem(naqvalue):
 class naqpaireditems(Base.List):
 	args = '[label:idref]'
 
-class naqwordentry(naqvalue):
-	args = 'wid:str word:str [lang:str] [content:str]'
+class naqwordentry(_LocalContentMixin, Base.List.item):
+	args = 'wid:str word:str lang:str'
 
 	def invoke(self, tex):
 		token = super(naqwordentry, self).invoke(tex)
 		if 'lang' not in self.attributes or not self.attributes['lang']:
 			self.attributes['lang'] = 'en'
-		if 'content' not in self.attributes or not self.attributes['content']:
-			self.attributes['content'] = self.attributes['word']
 		return token
 
-	@readproperty
-	def _asm_local_content(self):
-		text = unicode(self.textContent.strip()) or unicode(self.attributes.get('content', u''))
-		return cfg_interfaces.HTMLContentFragment(text)
+	def _after_render(self, rendered):
+		if not rendered:
+			word = self.attributes.get('word', u'')
+			self._asm_local_content = cfg_interfaces.HTMLContentFragment(word)
+		else:
+			self._asm_local_content = rendered
 
 class naqblankfield(Base.Command):
 	args = 'id:str [maxlength:int]'
