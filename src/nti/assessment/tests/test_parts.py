@@ -176,12 +176,15 @@ class TestFillInTheBlackWithWordBankPart(TestCase):
 class TestFillInTheBlackShortAnswerPart(TestCase):
 
 	def test_external(self):
-		solution = solutions.QFillInTheBlankShortAnswerSolution(["^1$"])
+		solution = solutions.QFillInTheBlankShortAnswerSolution({'x':"^1$"})
 		part = parts.QFillInTheBlankShortAnswerPart(solutions=(solution,))
 		assert_that(part, verifiably_provides(interfaces.IQFillInTheBlankShortAnswerPart))
 		assert_that(part, externalizes(has_entry('Class', 'FillInTheBlankShortAnswerPart')))
 		assert_that(solution, externalizes(has_entries('Class', 'FillInTheBlankShortAnswerSolution',
-													   'value', [u'^1$'])))
+													   'value', {'x':'^1$'})))
+		assert_that(solution.grade({"x":"1"}), is_(True))
+		assert_that(solution.grade({"x":"2"}), is_(False))
+		assert_that(solution.grade({"y":"1"}), is_(False))
 
 class TestFreeResponsePart(TestCase):
 

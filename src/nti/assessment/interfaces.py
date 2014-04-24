@@ -581,6 +581,7 @@ class IQModeledContentResponse(IQResponse,
 
 
 import plone.namedfile.interfaces
+
 class IQUploadedFile(plone.namedfile.interfaces.INamedFile,ILastModified):
 	pass
 
@@ -785,12 +786,13 @@ class IQFillInTheBlankPart(IQPart):
 class IQFillInTheBlankShortAnswerGrader(IQPartGrader):
 	pass
 
-class IQFillInTheBlankShortAnswerSolution(IQMultiValuedSolution):
+class IQFillInTheBlankShortAnswerSolution(IQSolution):
 
-	value = List(title="The correct answer regexes",
-				 description="The correct regex",
-				 min_length=0,
-				 value_type=TextLine(title="The regular expression"))
+	value = Dict(key_type=TextLine(title="input name/id"),
+				 value_type=TextLine(title="The correct regex"),
+				 title="The correct answer regexes",
+				 description="The correct word id map.",
+				 min_length=1)
 
 class IQFillInTheBlankShortAnswerPart(IQFillInTheBlankPart):
 	"""

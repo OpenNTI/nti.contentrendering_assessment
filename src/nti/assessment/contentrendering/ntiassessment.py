@@ -650,10 +650,10 @@ class naqfillintheblankshortanswerpart(_AbstractNAQPart):
 		\begin{naquestion}
 			Arbitrary prefix content goes here.
 			\begin{naqfillintheblankshortanswerpart}
-			        Arbitrary content for this part goes here.
+			    Arbitrary content for this part goes here \naqblankfield{001}[2] \naqblankfield{002}[2]
 				\begin{naqregexes}
-					\naqregex{.*}  Everything.
-					\naqregex{^1\$} Only 1.
+					\naqregex{001}{.*}  Everything.
+					\naqregex{002}{^1\$} Only 1.
 	            \end{naqregexes}
 				\begin{naqsolexplanation}
 					Arbitrary content explaining how the correct solution is arrived at.
@@ -683,6 +683,14 @@ class naqfillintheblankshortanswerpart(_AbstractNAQPart):
 	def digest(self, tokens):
 		res = super(naqfillintheblankshortanswerpart, self).digest(tokens)
 		if self.macroMode != Base.Environment.MODE_END:
+
+			_naqblanks = self.getElementsByTagName('naqblankfield')
+			assert len(_naqblanks) >= 1
+
+			_blankids = {x.attributes.get('id') for x in _naqblanks}
+			_blankids.discard(None)
+			assert len(_blankids) == len(_naqblanks)
+
 			_naqregexes = self.getElementsByTagName('naqregexes')
 			assert len(_naqregexes) == 1
 
@@ -690,15 +698,17 @@ class naqfillintheblankshortanswerpart(_AbstractNAQPart):
 			_regentries = _naqregexes.getElementsByTagName('naqregex')
 			assert len(_regentries) > 0, "Must specified at least one regex"
 
+			assert len(_blankids) <= len(_regentries)
+
 			assert len(self.getElementsByTagName('naqsolutions')) == 0
 
 			_naqsolns = self.ownerDocument.createElement('naqsolutions')
 			_naqsolns.macroMode = _naqsolns.MODE_BEGIN
-			answer = []
+			answer = {}
 			for _naqmregex in _regentries:
-				pattern = _naqmregex.attributes['pattern']
-				assert pattern and isinstance(pattern, six.string_types)
-				answer.append(pattern)
+				pid, pattern = _naqmregex.attributes['pid'], _naqmregex.attributes['pattern']
+				assert pattern and pid
+				answer[pid] = pattern
 			_naqsoln = self.ownerDocument.createElement('naqsolution')
 			_naqsoln.attributes['weight'] = 1.0
 			_naqsoln.argSource = '[%s]' % _naqsoln.attributes['weight']
@@ -863,7 +873,7 @@ class naqmvalue(naqvalue):
 	pass
 
 class naqregex(naqvalue):
-	args = 'pattern:str [label:idref]'
+	args = 'pid:str pattern:str'
 
 class naqregexes(Base.List):
 	pass

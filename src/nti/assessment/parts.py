@@ -261,7 +261,7 @@ class QModeledContentPart(QPart):
 
 @interface.implementer(interfaces.IQFillInTheBlankShortAnswerPart)
 class QFillInTheBlankShortAnswerPart(QPart):
-	response_interface = interfaces.IQListResponse
+	response_interface = interfaces.IQDictResponse
 	grader_interface = interfaces.IQFillInTheBlankShortAnswerGrader
 
 @interface.implementer(interfaces.IQFillInTheBlankWithWordBankPart)

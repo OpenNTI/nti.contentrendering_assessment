@@ -56,9 +56,9 @@
 			 provides=".interfaces.IQMultipleChoiceMultipleAnswerSolution"
 			 for="list"/>
 
-	<adapter factory="list .solution.QFillInTheBlankShortAnswerSolution"
+	<adapter factory="dict .solution.QFillInTheBlankShortAnswerSolution"
 			 provides=".interfaces.IQFillInTheBlankShortAnswerSolution"
-			 for="list"/>
+			 for="dict"/>
 			 
 	<adapter factory="dict .solution.QFillInTheBlankWithWordBankSolution"
 			 provides=".interfaces.IQFillInTheBlankWithWordBankSolution"
@@ -118,7 +118,7 @@
 			 provides=".interfaces.IQMatchingPartGrader" />
 
 	<adapter factory=".graders.FillInTheBlankShortAnswerGrader"
-			 for=".interfaces.IQFillInTheBlankShortAnswerPart .interfaces.IQMultiValuedSolution .interfaces.IQListResponse"
+			 for=".interfaces.IQFillInTheBlankShortAnswerPart .interfaces.IQFillInTheBlankShortAnswerSolution .interfaces.IQDictResponse"
 			 provides=".interfaces.IQFillInTheBlankShortAnswerGrader" />
 			 
 	<adapter factory=".graders.FillInTheBlankWithWordBankGrader"

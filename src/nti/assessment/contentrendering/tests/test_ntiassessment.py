@@ -420,10 +420,11 @@ def test_fill_in_the_blank_short_answer_part():
 			\begin{naquestion}
 			Arbitrary prefix content goes here.
 			\begin{naqfillintheblankshortanswerpart}
-			        Arbitrary content for this part goes here.
+			    Arbitrary content for this part goes here.
+			    \naqblankfield{001}[2] \naqblankfield{002}[2]
 				\begin{naqregexes}
-					\naqregex{.*}  Everything.
-					\naqregex{^1\$} Only 1.
+					\naqregex{001}{.*}  Everything.
+					\naqregex{002}{^1\$} Only 1.
 	            \end{naqregexes}
 				\begin{naqsolexplanation}
 					Arbitrary content explaining how the correct solution is arrived at.
