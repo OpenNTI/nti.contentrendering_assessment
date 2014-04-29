@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-$Id$
+.. $Id$
 """
 from __future__ import unicode_literals, print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
@@ -77,8 +77,8 @@ class QFileResponse(TrivialValuedMixin, QResponse):
 	An uploaded file response.
 	"""
 
-from nti.dataserver.contenttypes.note import BodyFieldProperty
 from nti.utils.schema import AdaptingFieldProperty
+from nti.dataserver.contenttypes.note import BodyFieldProperty
 
 @interface.implementer(interfaces.IQModeledContentResponse)
 class QModeledContentResponse(TrivialValuedMixin,

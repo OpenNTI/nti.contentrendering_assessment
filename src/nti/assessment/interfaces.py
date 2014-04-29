@@ -794,6 +794,8 @@ class IQFillInTheBlankShortAnswerSolution(IQSolution):
 				 description="The correct word id map.",
 				 min_length=1)
 
+IQFillInTheBlankShortAnswerSolution.setTaggedValue('response_type', IQDictResponse)
+
 class IQFillInTheBlankShortAnswerPart(IQFillInTheBlankPart):
 	"""
 	Marker interface for a Fill-in-the-blank short answer question part.
@@ -812,6 +814,8 @@ class IQFillInTheBlankWithWordBankSolution(IQSolution):
 				 title="The correct answer selections",
 				 description="The correct word id map.",
 				 min_length=1)
+
+IQFillInTheBlankWithWordBankSolution.setTaggedValue('response_type', IQDictResponse)
 
 class IQFillInTheBlankWithWordBankPart(IQFillInTheBlankPart):
 	"""
