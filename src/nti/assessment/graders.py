@@ -258,7 +258,11 @@ class FillInTheBlankWithWordBankGrader(EqualityGrader):
 
 	def _to_id_dict(self, the_dict):
 		result = {}
+
 		wordbank = self.part.wordbank
+		question_bank = getattr(self.part.__parent__, 'wordbank', None)
+		wordbank = wordbank + question_bank if wordbank else question_bank
+		
 		for x, y in the_dict.items():
 			if wordbank and not wordbank.contains_id(y):
 				y = wordbank.idOf(y) or y

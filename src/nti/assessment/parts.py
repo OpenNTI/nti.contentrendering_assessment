@@ -267,17 +267,8 @@ class QFillInTheBlankShortAnswerPart(QPart):
 @interface.implementer(interfaces.IQFillInTheBlankWithWordBankPart)
 class QFillInTheBlankWithWordBankPart(QPart, contained.Contained):
 
-	wordbank = None
-
 	response_interface = interfaces.IQDictResponse
 	grader_interface = interfaces.IQFillInTheBlankWithWordBankGrader
 
 	def _weight(self, result, solution):
 		return result * solution.weight
-
-	def __getattr__(self, name):
-		result = super(QFillInTheBlankWithWordBankPart, self).__getattr__(name)
-		if name == "wordbank":
-			parent_bank = getattr(self.__parent__, 'wordbank', None)
-			result = result + parent_bank if result is not None else parent_bank
-		return result
