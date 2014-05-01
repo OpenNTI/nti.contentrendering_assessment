@@ -20,11 +20,12 @@ from zope import interface
 from plasTeX.Renderers import render_children
 
 from nti.contentrendering import interfaces as crd_interfaces
-from .interfaces import IAssessmentExtractor
-from .interfaces import ILessonQuestionSetExtractor
 
 from nti.externalization import internalization
 from nti.externalization.externalization import toExternalObject
+
+from .interfaces import IAssessmentExtractor
+from .interfaces import ILessonQuestionSetExtractor
 
 @interface.implementer(IAssessmentExtractor)
 @component.adapter(crd_interfaces.IRenderedBook)
