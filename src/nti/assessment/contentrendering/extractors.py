@@ -3,7 +3,7 @@
 """
 Book extractors
 
-$Id: slidedeckextractor.py 21266 2013-07-23 21:52:35Z sean.jones $
+.. $Id$
 """
 from __future__ import print_function, unicode_literals, absolute_import, division
 __docformat__ = "restructuredtext en"
@@ -55,11 +55,12 @@ class _AssessmentExtractor(object):
 	def transform(self, book):
 		index = {'Items': {}}
 		self._build_index(book.document.getElementsByTagName('document')[0], index['Items'])
-		# index['filename'] = index.get( 'filename', 'index.html' ) # This leads to duplicate data
 		index['href'] = index.get('href', 'index.html')
-		with codecs.open(os.path.join(book.contentLocation, 'assessment_index.json'), 'w', encoding='utf-8') as fp:
-			# sort_keys for repeatability. Do force ensure_ascii because even though we're using codes to
-			# encode automatically, the reader might not decode
+		target = os.path.join(book.contentLocation, 'assessment_index.json')
+		logger.info("extracting assessments to %s" , target)
+		with codecs.open(target, 'w', encoding='utf-8') as fp:
+			# sort_keys for repeatability. Do force ensure_ascii because even though
+			# we're using codes to  encode automatically, the reader might not decode
 			json.dump(index, fp, indent='\t', sort_keys=True, ensure_ascii=True)
 		return index
 
@@ -96,6 +97,7 @@ class _AssessmentExtractor(object):
 				element_index['filename'] = getattr(element, 'filenameoverride') + '.html'
 			element_index['href'] = getattr(element, 'url', element_index['filename'])
 
+		__traceback_info__ = element_index
 		assessment_objects = element_index.setdefault('AssessmentItems', {})
 
 		for child in element.childNodes:
@@ -107,9 +109,11 @@ class _AssessmentExtractor(object):
 				# assessment_objects are leafs, never have children to worry about
 			elif child.hasChildNodes():  # Recurse for children if needed
 				if getattr(child, 'ntiid', None):
-					containing_index = element_index.setdefault('Items', {})  # we have a child with an NTIID; make sure we have a container for it
+					# we have a child with an NTIID; make sure we have a container for it
+					containing_index = element_index.setdefault('Items', {})
 				else:
-					containing_index = element_index  # an unnamed thing; wrap it up with us; should only have AssessmentItems
+					# an unnamed thing; wrap it up with us; should only have AssessmentItems
+					containing_index = element_index
 				self._build_index(child, containing_index)
 
 	def _ensure_roundtrips(self, assm_obj, provenance=None):
@@ -117,7 +121,9 @@ class _AssessmentExtractor(object):
 		__traceback_info__ = provenance, assm_obj, ext_obj
 		raw_int_obj = type(assm_obj)()  # Use the class of the object returned as a factory.
 		internalization.update_from_external_object(raw_int_obj, ext_obj, require_updater=True, notify=False)
-		factory = internalization.find_factory_for(toExternalObject(assm_obj))  # Also be sure factories can be found
+
+		# Also be sure factories can be found
+		factory = internalization.find_factory_for(toExternalObject(assm_obj))
 		assert factory is not None
 		# The ext_obj was mutated by the internalization process, so we need to externalize
 		# again. Or run a deep copy (?)
@@ -145,8 +151,6 @@ class _AssessmentExtractor(object):
 		except AttributeError: pass
 
 		return boring
-
-
 
 @interface.implementer(ILessonQuestionSetExtractor)
 @component.adapter(crd_interfaces.IRenderedBook)
