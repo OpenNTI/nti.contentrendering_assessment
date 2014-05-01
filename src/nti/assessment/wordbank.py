@@ -92,7 +92,7 @@ class WordBank(SchemaConfigured, persistent.Persistent, contained.Contained):
 		return sorted(self.entries)
 
 	def idOf(self, word):
-		return self._word_map.get(word, None)
+		return self._word_map.get(str(word), None) if word is not None else None
 	
 	def contains_word(self, word):
 		return self.idOf(word) != None
