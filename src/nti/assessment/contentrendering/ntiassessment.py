@@ -873,7 +873,14 @@ class naqmvalue(naqvalue):
 	pass
 
 class naqregex(naqvalue):
-	args = 'pid:str pattern:str'
+	args = 'pid:str pattern'
+	
+	def invoke(self, tex):
+		tok = super(naqregex, self).invoke(tex)
+		pattern = self.attributes['pattern'].source
+		pattern = pattern.replace('\\$', '$').strip()
+		self.attributes['pattern'] = pattern
+		return tok
 
 class naqregexes(Base.List):
 	pass
