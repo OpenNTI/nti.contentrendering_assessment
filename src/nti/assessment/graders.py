@@ -249,7 +249,8 @@ class FillInTheBlankShortAnswerGrader(EqualityGrader):
 		responses = self.response_converter(response_value)
 		for key, pattern in solutions.items():
 			resp = responses.get(key)
-			if resp is None or not _compile(pattern).match(resp):
+			__traceback_info__ = key, resp, pattern
+			if resp is None or not _compile(pattern).match(str(resp)):
 				return False
 		return True
 
