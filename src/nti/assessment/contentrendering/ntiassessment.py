@@ -1131,6 +1131,10 @@ class naquestionset(Base.List, plastexids.NTIIDMixin):
 class naquestionsetref(Crossref.ref):
 	"A reference to the label of a question set."
 
+	@readproperty
+	def questionset(self):
+		return self.idref['label']
+
 class naassignmentpart(_LocalContentMixin,
 					   Base.Environment):
 	r"""
