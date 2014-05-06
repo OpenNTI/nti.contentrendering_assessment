@@ -133,6 +133,8 @@ name: naqsolutions
 
 name: naquestionsetref
 <object class="naquestionsetref" >
+	<param name="label" value="Question Set Title" tal:attributes="value self/questionset/title" />
 	<param name="type" value="Question Set MIME Type" tal:attributes="value self/questionset/mimeType" />
-	<param name="ntiid" value="Question Set NTIID" tal:attributes="value self/questionset/ntiid" />
+	<param name="question-count" value="Number of questions in aQuestion Set" tal:attributes="value self/questionset/question_count" />
+	<param name="target-ntiid" value="Question Set NTIID" tal:attributes="value self/questionset/ntiid" />
 </object>

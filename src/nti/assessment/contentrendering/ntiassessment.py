@@ -1127,7 +1127,7 @@ class naquestionset(Base.List, plastexids.NTIIDMixin):
 
 	"""
 
-	args = "[options:dict:str] <title:str>"
+	args = "[options:dict:str] <title>"
 
 	# Only classes with counters can be labeled, and \label sets the
 	# id property, which in turn is used as part of the NTIID (when no NTIID is set explicitly)
@@ -1147,13 +1147,31 @@ class naquestionset(Base.List, plastexids.NTIIDMixin):
 		questions = [qref.idref['label'].assessment_object()
 					 for qref in self.getElementsByTagName('naquestionref')]
 		questions = PersistentList( questions )
+		assert self.title is not None
 		result = question.QQuestionSet( questions=questions,
-										title=self.attributes.get('title'))
+										title=unicode(''.join(render_children(self.renderer, self.title))))
 		errors = schema.getValidationErrors( as_interfaces.IQuestionSet, result )
 		if errors: # pragma: no cover
 			raise errors[0][1]
 		result.ntiid = self.ntiid # copy the id
 		return result
+
+	@readproperty
+	def question_count(self):
+		return unicode(len(self.getElementsByTagName('naquestionref')))
+
+	@readproperty
+	def title(self):
+		"""Provide an abstraction of the two ways to get a question set's title"""
+		title = self.attributes.get('title') or None
+		if title is None:
+			# SAJ: This code path is bad and needs to go away
+			title_el = self.parentNode
+			while (not hasattr(title_el, 'title')):
+				title_el = title_el.parentNode
+			title = title_el.title
+		assert title is not None
+		return title
 
 ###
 # Assignments

@@ -192,24 +192,23 @@ class _LessonQuestionSetExtractor(object):
 					if hasattr(parent_el, 'ntiid') and parent_el.tagName.startswith('course'):
 						lesson_el = topic_map.get(parent_el.ntiid)
 
-				# SAJ: Hack to give question sets a title
+				# SAJ: Hack to prevent question set sections from appearing on
+				# old style course overviews
 				title_el = el.parentNode
 				while (not hasattr(title_el, 'title')):
 					title_el = title_el.parentNode
-				label = render_children( title_el.renderer, title_el.title)[0]
 
 				# If the title_el is a topic in the ToC of a course, suppress it.
 				if dom.childNodes[0].getAttribute('isCourse') == u'true' and title_el.ntiid in topic_map.keys():
 					topic_map[title_el.ntiid].setAttribute('suppressed', 'true')
 
-				# Count how many questions are in a question set
-				count = unicode(len(el.getElementsByTagName('naquestionref')))
+				label = unicode(''.join(render_children( el.renderer, el.title )))
 
 				toc_el = dom.createElement('object')
 				toc_el.setAttribute('target-ntiid', el.ntiid)
 				toc_el.setAttribute('mimeType', el.mimeType)
 				toc_el.setAttribute('label', label)
-				toc_el.setAttribute('question-count', count)
+				toc_el.setAttribute('question-count', el.question_count)
 				if lesson_el:
 					lesson_el.appendChild(toc_el)
 					lesson_el.appendChild(dom.createTextNode(u'\n'))
