@@ -197,8 +197,8 @@ class _LessonQuestionSetExtractor(object):
 					title_el = title_el.parentNode
 				label = render_children( title_el.renderer, title_el.title)[0]
 
-				# If the title_el is a topic in the ToC, suppress it.
-				if title_el.ntiid in topic_map.keys():
+				# If the title_el is a topic in the ToC of a course, suppress it.
+				if dom.childNodes[0].getAttribute('isCourse') == u'true' and title_el.ntiid in topic_map.keys():
 					topic_map[title_el.ntiid].setAttribute('suppressed', 'true')
 
 				# Count how many questions are in a question set
