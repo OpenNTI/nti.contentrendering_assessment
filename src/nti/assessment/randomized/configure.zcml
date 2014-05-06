@@ -10,6 +10,18 @@
 	<include package="zope.component" />
 	<include package="zope.location" />
 
+	<adapter factory=".graders.RandomizedMatchingPartGrader"
+			 for=".interfaces.IQRandomizedMatchingPart 
+			 	  nti.assessment.interfaces.IQMatchingSolution
+			 	  nti.assessment.interfaces.IQDictResponse"
+			 provides=".interfaces.IQRandomizedMatchingPartGrader" />
+			 
+	<adapter factory=".graders.RandomizedMultipleChoiceGrader"
+			 for=".interfaces.IQRandomizedMultipleChoicePart 
+			 	  nti.assessment.interfaces.IQSingleValuedSolution
+			 	  nti.assessment.interfaces.IQTextResponse"
+			 provides=".interfaces.IQRandomizedMultipleChoicePartGrader" />
+	
 	<!-- Externalization -->
 	<include package="nti.externalization" file="meta.zcml" />
 	<include package="nti.externalization" />
