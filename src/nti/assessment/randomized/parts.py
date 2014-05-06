@@ -11,9 +11,13 @@ logger = __import__('logging').getLogger(__name__)
 from zope import interface
 
 from . import interfaces
+from ..parts import QMatchingPart
 from ..parts import QMultipleChoicePart
+
+@interface.implementer(interfaces.IQRandomizedMatchingPart)
+class QRandomizedMatchingPart(QMatchingPart):
+	grader_interface = interfaces.IQRandomizedMatchingPartGrader
 
 @interface.implementer(interfaces.IQRandomizedMultipleChoicePart)
 class QRandomizedMultipleChoicePart(QMultipleChoicePart):
 	grader_interface = interfaces.IQRandomizedMultipleChoicePartGrader
-
