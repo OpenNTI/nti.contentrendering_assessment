@@ -89,6 +89,7 @@ from nti.assessment import parts
 from nti.assessment import question
 from nti.assessment import assignment
 from nti.assessment import interfaces as as_interfaces
+from nti.assessment.randomized import parts as randomized_parts
 
 from nti.contentfragments import interfaces as cfg_interfaces
 
@@ -187,6 +188,7 @@ class naqsolution(Base.List.item):
 		units = self.units_to_text_list()
 		if units:
 			return ','.join( units )
+
 _LocalContentMixin._asm_ignorable_renderables += (naqsolution,)
 
 class naqsolexplanation(_LocalContentMixin, Base.Environment):
@@ -195,14 +197,20 @@ _LocalContentMixin._asm_ignorable_renderables += (naqsolexplanation,)
 
 class _AbstractNAQPart(_LocalContentMixin,Base.Environment):
 
+	randomize = False
+
 	#: Defines the type of part this maps too
 	part_interface = None
-	#: Defines the type of solution this part produces.
-	#: Solution objects will be created by adapting the text content of the solution DOM nodes
-	#: into this interface.
+
+	# Defines the type of solution this part produces.
+	# Solution objects will be created by adapting the text content of
+	# the solution DOM node into this interface.
 	soln_interface = None
+
 	part_factory = None
 	hint_interface = as_interfaces.IQHTMLHint
+
+	args = '[randomize:str]'
 
 	def _asm_solutions(self):
 		"""
@@ -300,6 +308,17 @@ class _AbstractNAQPart(_LocalContentMixin,Base.Environment):
 								 self.getElementsByTagName('naqmvalue')):
 			unicode(x)
 
+	def invoke(self, tex):
+		token = super(_AbstractNAQPart, self).invoke(tex)
+		if	'randomize' in self.attributes and \
+			(self.attributes['randomize'] or '').lower() == 'randomize=true':
+			self.randomize = True
+			self.attributes['randomize'] = 'true'
+		else:
+			self.randomize = False
+			self.attributes['randomize'] = 'false'
+		return token
+	
 _LocalContentMixin._asm_ignorable_renderables += (_AbstractNAQPart,)
 
 # NOTE: Part Node's MUST be named 'naq'XXX'part'
@@ -309,8 +328,8 @@ class naqnumericmathpart(_AbstractNAQPart):
 	Solutions are treated as numbers for the purposes of grading.
 	"""
 
-	part_interface = as_interfaces.IQNumericMathPart
 	part_factory = parts.QNumericMathPart
+	part_interface = as_interfaces.IQNumericMathPart
 	soln_interface = as_interfaces.IQNumericMathSolution
 
 class naqsymmathpart(_AbstractNAQPart):
@@ -318,13 +337,13 @@ class naqsymmathpart(_AbstractNAQPart):
 	Solutions are treated symbolicaly for the purposes of grading.
 	"""
 
-	part_interface = as_interfaces.IQSymbolicMathPart
 	part_factory = parts.QSymbolicMathPart
+	part_interface = as_interfaces.IQSymbolicMathPart
 	soln_interface = as_interfaces.IQLatexSymbolicMathSolution
 
 class naqfreeresponsepart(_AbstractNAQPart):
-	part_interface = as_interfaces.IQFreeResponsePart
 	part_factory = parts.QFreeResponsePart
+	part_interface = as_interfaces.IQFreeResponsePart
 	soln_interface = as_interfaces.IQFreeResponseSolution
 
 class naqmodeledcontentpart(_AbstractNAQPart):
@@ -333,9 +352,9 @@ class naqmodeledcontentpart(_AbstractNAQPart):
 	implementation, it is not actually meant for authoring.
 	External intent is better expressed with :class:`naqessaypart`
 	"""
-	part_interface = as_interfaces.IQModeledContentPart
-	part_factory = parts.QModeledContentPart
 	soln_interface = None
+	part_factory = parts.QModeledContentPart
+	part_interface = as_interfaces.IQModeledContentPart
 
 class naqessaypart(naqmodeledcontentpart):
 	r"""
@@ -378,8 +397,8 @@ class naqmultiplechoicepart(_AbstractNAQPart):
 		\end{naquestion}
 	"""
 
-	part_interface = as_interfaces.IQMultipleChoicePart
 	part_factory = parts.QMultipleChoicePart
+	part_interface = as_interfaces.IQMultipleChoicePart
 	soln_interface = as_interfaces.IQMultipleChoiceSolution
 
 	#forcePars = True
@@ -415,6 +434,12 @@ class naqmultiplechoicepart(_AbstractNAQPart):
 		self.insertAfter( _naqsolns, _naqchoices )
 		return res
 
+	def invoke(self, tex):
+		token = super(naqmultiplechoicepart, self).invoke(tex)
+		if self.randomize:
+			self.part_factory = randomized_parts.QRandomizedMultipleChoicePart
+		return token
+
 class naqmultiplechoicemultipleanswerpart(_AbstractNAQPart):
 	r"""
 	A multiple-choice / multiple-answer part (usually used as the sole part to a question).
@@ -439,8 +464,8 @@ class naqmultiplechoicemultipleanswerpart(_AbstractNAQPart):
 		\end{naquestion}
 	"""
 
-	part_interface = as_interfaces.IQMultipleChoiceMultipleAnswerPart
 	part_factory = parts.QMultipleChoiceMultipleAnswerPart
+	part_interface = as_interfaces.IQMultipleChoiceMultipleAnswerPart
 	soln_interface = as_interfaces.IQMultipleChoiceMultipleAnswerSolution
 
 	def _asm_choices(self):
