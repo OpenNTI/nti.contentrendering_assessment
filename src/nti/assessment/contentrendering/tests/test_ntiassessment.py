@@ -1,41 +1,47 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""" """
-from __future__ import print_function, unicode_literals
-import os
-from hamcrest import assert_that
+
+from __future__ import print_function, unicode_literals, absolute_import, division
+__docformat__ = "restructuredtext en"
+
+# disable: accessing protected members, too many methods
+# pylint: disable=W0212,R0904
+
 from hamcrest import is_
-from hamcrest import has_length
-from hamcrest import contains_string
-from hamcrest import same_instance
-from hamcrest import has_property
+from hamcrest import has_key
 from hamcrest import contains
 from hamcrest import has_item
-from hamcrest import has_key
 from hamcrest import has_entry
+from hamcrest import has_length
+from hamcrest import assert_that
+from hamcrest import has_property
+from hamcrest import same_instance
+from hamcrest import contains_string
 from hamcrest import is_not as does_not
-import unittest
 
+import os
+import unittest
 import anyjson as json
 from datetime import datetime
 
-from ..ntiassessment import naquestion, naquestionset, naquestionfillintheblankwordbank
+import nti.contentrendering
+
+import nti.externalization
+from nti.externalization.externalization import to_external_object
+from nti.externalization.internalization import update_from_external_object
+
+from ... import interfaces as asm_interfaces
 from ..interfaces import IAssessmentExtractor
-from nti.contentrendering.tests import buildDomFromString as _buildDomFromString
-from nti.contentrendering.tests import simpleLatexDocumentText
+from ..ntiassessment import naquestion, naquestionset, naquestionfillintheblankwordbank
+
 from nti.contentrendering.tests import RenderContext
+from nti.contentrendering.tests import simpleLatexDocumentText
+from nti.contentrendering.tests import buildDomFromString as _buildDomFromString
 
 import nti.testing.base
 from nti.testing.matchers import is_true
 from nti.externalization.tests import externalizes
 from nti.testing.matchers import verifiably_provides
-
-import nti.contentrendering
-from ... import interfaces as asm_interfaces
-
-import nti.externalization
-from nti.externalization.externalization import to_external_object
-from nti.externalization.internalization import update_from_external_object
 
 def _simpleLatexDocument(maths):
 	return simpleLatexDocumentText( preludes=(br'\usepackage{ntiassessment}',),

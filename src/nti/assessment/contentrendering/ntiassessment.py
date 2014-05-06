@@ -90,6 +90,7 @@ from nti.assessment import question
 from nti.assessment import assignment
 from nti.assessment import interfaces as as_interfaces
 from nti.assessment.randomized import parts as randomized_parts
+from nti.assessment.randomized import interfaces as rand_interfaces
 
 from nti.contentfragments import interfaces as cfg_interfaces
 
@@ -198,7 +199,7 @@ class naqsolexplanation(_LocalContentMixin, Base.Environment):
 
 _LocalContentMixin._asm_ignorable_renderables += (naqsolexplanation,)
 
-class _AbstractNAQPart(_LocalContentMixin,Base.Environment):
+class _AbstractNAQPart(_LocalContentMixin, Base.Environment):
 
 	randomize = False
 
@@ -269,7 +270,7 @@ class _AbstractNAQPart(_LocalContentMixin,Base.Environment):
 		and returns them in a list. For use by :meth:`assessment_object`
 		"""
 		hints = []
-		hint_els = self.getElementsByTagName( 'naqhint' )
+		hint_els = self.getElementsByTagName('naqhint')
 		for hint_el in hint_els:
 			hint = self.hint_interface( hint_el._asm_local_content )
 			hints.append( hint )
@@ -441,6 +442,7 @@ class naqmultiplechoicepart(_AbstractNAQPart):
 		token = super(naqmultiplechoicepart, self).invoke(tex)
 		if self.randomize:
 			self.part_factory = randomized_parts.QRandomizedMultipleChoicePart
+			self.part_interface = rand_interfaces.IQRandomizedMultipleChoicePart
 		return token
 
 class naqmultiplechoicemultipleanswerpart(_AbstractNAQPart):
@@ -640,20 +642,20 @@ class naqmatchingpart(_AbstractNAQPart):
 		# at least two of its own children, an naqvalues child of equal length
 		# and a proper matching between the two
 		if self.macroMode != Base.Environment.MODE_END:
-			_naqmlabels = self.getElementsByTagName( 'naqmlabels' )
+			_naqmlabels = self.getElementsByTagName('naqmlabels')
 			assert len(_naqmlabels) == 1
 			_naqmlabels = _naqmlabels[0]
 			assert len(_naqmlabels) > 1, "Must have more than one label; instead got: " + \
 										 str([x for x in _naqmlabels])
 
-			_naqmvalues = self.getElementsByTagName( 'naqmvalues' )
+			_naqmvalues = self.getElementsByTagName('naqmvalues')
 			assert len(_naqmvalues) == 1
 			_naqmvalues = _naqmvalues[0]
 			assert len(_naqmvalues) == len(_naqmlabels), "Must have exactly one value per label"
 
 			for i in range(len(_naqmlabels)):
 				assert any( (_naqmlabel.attributes['answer'] == i for _naqmlabel in _naqmlabels) )
-			assert len(self.getElementsByTagName( 'naqsolutions' )) == 0
+			assert len(self.getElementsByTagName('naqsolutions')) == 0
 
 			# Tranform the implicit solutions into an array
 			answer = {}
@@ -661,7 +663,7 @@ class naqmatchingpart(_AbstractNAQPart):
 			_naqsolns.macroMode = _naqsolns.MODE_BEGIN
 			for i, _naqmlabel in enumerate(_naqmlabels):
 				answer[i] = _naqmlabel.attributes['answer']
-			_naqsoln = self.ownerDocument.createElement( 'naqsolution' )
+			_naqsoln = self.ownerDocument.createElement('naqsolution')
 			_naqsoln.attributes['weight'] = 1.0
 
 			# Also put the attribute into the argument source, for presentation
@@ -670,6 +672,13 @@ class naqmatchingpart(_AbstractNAQPart):
 			_naqsolns.appendChild( _naqsoln )
 			self.insertAfter( _naqsolns, _naqmvalues)
 		return res
+
+	def invoke(self, tex):
+		token = super(naqmatchingpart, self).invoke(tex)
+		if self.randomize:
+			self.part_factory = randomized_parts.QRandomizedMatchingPart
+			self.part_interface = rand_interfaces.IQRandomizedMatchingPart
+		return token
 
 class naqfillintheblankshortanswerpart(_AbstractNAQPart):
 	r"""
