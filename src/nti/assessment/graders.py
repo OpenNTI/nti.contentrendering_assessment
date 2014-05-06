@@ -221,7 +221,7 @@ class MatchingPartGrader(EqualityGrader):
 		return self.part.labels
 	
 	def values(self):
-		return self.part.labels
+		return self.part.values
 	
 	def _to_int_dict(self, the_dict):
 		result = the_dict
