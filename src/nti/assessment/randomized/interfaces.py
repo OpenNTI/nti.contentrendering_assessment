@@ -13,7 +13,7 @@ from ..interfaces import IQMultipleChoicePartGrader
 class IQRandomizedPart(IQPart):
 	pass
 
-class IQRandomizedQMultipleChoicePart(IQRandomizedPart, IQMultipleChoicePart):
+class IQRandomizedMultipleChoicePart(IQRandomizedPart, IQMultipleChoicePart):
 	pass
 
 class IQRandomizedMultipleChoicePartGrader(IQMultipleChoicePartGrader):

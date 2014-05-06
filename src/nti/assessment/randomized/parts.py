@@ -13,7 +13,7 @@ from zope import interface
 from . import interfaces
 from ..parts import QMultipleChoicePart
 
-@interface.implementer(interfaces.IQRandomizedQMultipleChoicePart)
+@interface.implementer(interfaces.IQRandomizedMultipleChoicePart)
 class QRandomizedMultipleChoicePart(QMultipleChoicePart):
 	grader_interface = interfaces.IQRandomizedMultipleChoicePartGrader
 
