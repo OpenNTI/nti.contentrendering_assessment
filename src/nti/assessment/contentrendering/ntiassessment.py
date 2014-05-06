@@ -151,11 +151,13 @@ class naqsolutions(Base.List):
 				nodesToMove.append(node)
 
 		return res
+
 _LocalContentMixin._asm_ignorable_renderables += (naqsolutions,)
 
 class naqsolution(Base.List.item):
 
 	args = '[weight:float] <units>'
+
 	# We use <> for the units list because () looks like a geometric
 	# point, and there are valid answers like that.
 	# We also do NOT use the :list conversion, because if the units list
@@ -193,6 +195,7 @@ _LocalContentMixin._asm_ignorable_renderables += (naqsolution,)
 
 class naqsolexplanation(_LocalContentMixin, Base.Environment):
 	pass
+
 _LocalContentMixin._asm_ignorable_renderables += (naqsolexplanation,)
 
 class _AbstractNAQPart(_LocalContentMixin,Base.Environment):
@@ -232,7 +235,8 @@ class _AbstractNAQPart(_LocalContentMixin,Base.Environment):
 			# Note that this is already a latex content fragment, we don't need
 			# to adapt it with the interfaces. If we do, a content string like "75\%" becomes
 			# "75\\\\%\\", which is clearly wrong
-			solution = self.soln_interface( cfg_interfaces.LatexContentFragment( unicode(content).strip() ) )
+			sol_text = unicode(content).strip()
+			solution = self.soln_interface(cfg_interfaces.LatexContentFragment(sol_text))
 			weight = solution_el.attributes['weight']
 			if weight is not None:
 				solution.weight = weight
@@ -269,7 +273,6 @@ class _AbstractNAQPart(_LocalContentMixin,Base.Environment):
 		for hint_el in hint_els:
 			hint = self.hint_interface( hint_el._asm_local_content )
 			hints.append( hint )
-
 		return hints
 
 	def _asm_object_kwargs(self):
@@ -492,13 +495,13 @@ class naqmultiplechoicemultipleanswerpart(_AbstractNAQPart):
 		# weight == 1.  There is no explicit solution
 		_naqchoices = self.getElementsByTagName( 'naqchoices' )
 		assert len(_naqchoices) == 1
+
 		_naqchoices = _naqchoices[0]
 		assert len(_naqchoices) > 1, "Must have more than one choice"
 		assert any( (_naqchoice.attributes['weight'] == 1.0 for _naqchoice in _naqchoices) )
 		assert len(self.getElementsByTagName( 'naqsolutions' )) == 0
 
-		# Tranform the implicit solutions into a list of 0-based
-		# indices.
+		# Tranform the implicit solutions into a list of 0-based indices.
 		_naqsolns = self.ownerDocument.createElement( 'naqsolutions' )
 		_naqsolns.macroMode = _naqsolns.MODE_BEGIN
 		_naqsoln = self.ownerDocument.createElement( 'naqsolution' )
@@ -604,8 +607,8 @@ class naqmatchingpart(_AbstractNAQPart):
 		\end{naquestion}
 	"""
 
-	part_interface = as_interfaces.IQMatchingPart
 	part_factory = parts.QMatchingPart
+	part_interface = as_interfaces.IQMatchingPart
 	soln_interface = as_interfaces.IQMatchingSolution
 
 	#forcePars = True
@@ -640,7 +643,9 @@ class naqmatchingpart(_AbstractNAQPart):
 			_naqmlabels = self.getElementsByTagName( 'naqmlabels' )
 			assert len(_naqmlabels) == 1
 			_naqmlabels = _naqmlabels[0]
-			assert len(_naqmlabels) > 1, "Must have more than one label; instead got: " + str([x for x in _naqmlabels])
+			assert len(_naqmlabels) > 1, "Must have more than one label; instead got: " + \
+										 str([x for x in _naqmlabels])
+
 			_naqmvalues = self.getElementsByTagName( 'naqmvalues' )
 			assert len(_naqmvalues) == 1
 			_naqmvalues = _naqmvalues[0]
@@ -651,13 +656,14 @@ class naqmatchingpart(_AbstractNAQPart):
 			assert len(self.getElementsByTagName( 'naqsolutions' )) == 0
 
 			# Tranform the implicit solutions into an array
-			_naqsolns = self.ownerDocument.createElement( 'naqsolutions' )
-			_naqsolns.macroMode = _naqsolns.MODE_BEGIN
 			answer = {}
+			_naqsolns = self.ownerDocument.createElement('naqsolutions')
+			_naqsolns.macroMode = _naqsolns.MODE_BEGIN
 			for i, _naqmlabel in enumerate(_naqmlabels):
 				answer[i] = _naqmlabel.attributes['answer']
 			_naqsoln = self.ownerDocument.createElement( 'naqsolution' )
 			_naqsoln.attributes['weight'] = 1.0
+
 			# Also put the attribute into the argument source, for presentation
 			_naqsoln.argSource = '[%s]' % _naqsoln.attributes['weight']
 			_naqsoln.answer = answer
@@ -1236,9 +1242,10 @@ class naassignment(_LocalContentMixin,
 
 				# Now parse it, assuming that any missing timezone should be treated
 				# as local timezone
-				dt = datetime_from_string(val,
-										  assume_local=True,
-										  local_tzname=self.ownerDocument.userdata.get('document_timezone_name'))
+				dt = datetime_from_string(
+							val,
+							assume_local=True,
+							local_tzname=self.ownerDocument.userdata.get('document_timezone_name'))
 				return dt
 
 		# If they give no timestamp, make it midnight
@@ -1254,17 +1261,22 @@ class naassignment(_LocalContentMixin,
 		if 'public' in options and asbool(options['public']):
 			is_non_public = False
 
-		result = assignment.QAssignment( content=self._asm_local_content,
-										 available_for_submission_beginning=not_before,
-										 available_for_submission_ending=not_after,
-										 parts=[part.assessment_object() for part in self.getElementsByTagName('naassignmentpart')],
-										 title=self.attributes.get('title'),
-										 is_non_public=is_non_public)
+		result = assignment.QAssignment(
+						content=self._asm_local_content,
+						available_for_submission_beginning=not_before,
+						available_for_submission_ending=not_after,
+						parts=[part.assessment_object() for part in
+							   self.getElementsByTagName('naassignmentpart')],
+						title=self.attributes.get('title'),
+						is_non_public=is_non_public)
 		if 'category' in options:
-			result.category_name = as_interfaces.IQAssignment['category_name'].fromUnicode( options['category'] )
+			result.category_name = \
+				as_interfaces.IQAssignment['category_name'].fromUnicode( options['category'] )
+
 		errors = schema.getValidationErrors( as_interfaces.IQAssignment, result )
 		if errors: # pragma: no cover
 			raise errors[0][1]
+
 		result.ntiid = self.ntiid
 		return result
 
@@ -1272,11 +1284,11 @@ def ProcessOptions( options, document ):
 	# We are not setting up any global state here,
 	# only making changes to the document, so its
 	# fine that this runs each time we are imported
-	document.context.newcounter('naqsolutionnum')
 	document.context.newcounter('naquestion')
-	document.context.newcounter('naquestionfillintheblankwordbank')
-	document.context.newcounter('naquestionset')
 	document.context.newcounter('naassignment')
+	document.context.newcounter('naquestionset')
+	document.context.newcounter('naqsolutionnum')
+	document.context.newcounter('naquestionfillintheblankwordbank')
 
 #: The directory in which to find our templates.
 #: Used by plasTeX because we implement IPythonPackage
