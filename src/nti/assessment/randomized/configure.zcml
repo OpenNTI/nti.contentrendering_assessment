@@ -10,6 +10,8 @@
 	<include package="zope.component" />
 	<include package="zope.location" />
 
+	<!-- Adapters -->
+	
 	<adapter factory=".graders.RandomizedMatchingPartGrader"
 			 for=".interfaces.IQRandomizedMatchingPart 
 			 	  nti.assessment.interfaces.IQMatchingSolution
@@ -22,7 +24,20 @@
 			 	  nti.assessment.interfaces.IQTextResponse"
 			 provides=".interfaces.IQRandomizedMultipleChoicePartGrader" />
 	
+	<!-- Decorators -->
+	
+	<subscriber factory=".decorators.QRandomizedMultipleChoicePartDecorator"
+				provides="nti.externalization.interfaces.IExternalObjectDecorator"
+				for=".interfaces.IQRandomizedMultipleChoicePart
+					 pyramid.interfaces.IRequest"/>
+		
+	<subscriber factory=".decorators.QRandomizedMatchingPartDecorator"
+				provides="nti.externalization.interfaces.IExternalObjectDecorator"
+				for=".interfaces.IQRandomizedMatchingPart
+					 pyramid.interfaces.IRequest"/>
+					 			 
 	<!-- Externalization -->
+	
 	<include package="nti.externalization" file="meta.zcml" />
 	<include package="nti.externalization" />
 
