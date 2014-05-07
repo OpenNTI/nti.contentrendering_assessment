@@ -13,7 +13,7 @@ import random
 from zope import component
 from zope import interface
 
-import zope.intid.IIntIds
+import zc.intid
 
 from pyramid.threadlocal import get_current_request
 
@@ -32,7 +32,7 @@ def randomize(username=None):
 	username = username or get_current_user()
 	user = users.User.get_user(username) if username else None
 	if user is not None:
-		intids = component.getUtility(zope.intid.IIntIds)
+		intids = component.getUtility(zc.intid.IIntIds)
 		uid = intids.getId(user)
 		random.seed(uid)  # Seed w/ the user intid
 		return True
