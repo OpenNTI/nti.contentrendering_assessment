@@ -13,8 +13,6 @@ from hamcrest import has_entry
 from hamcrest import assert_that
 from hamcrest import has_entries
 
-from unittest import TestCase
-
 from zope import interface
 
 from nti.assessment import parts
@@ -25,15 +23,17 @@ from nti.assessment import solution as solutions
 from nti.assessment.tests import grades_right
 from nti.assessment.tests import grades_wrong
 
-import nti.testing.base
-from nti.testing.matchers import is_true, is_false
-from nti.testing.matchers import verifiably_provides
+from nti.testing.matchers import is_true
+from nti.testing.matchers import is_false
 from nti.testing.matchers import validly_provides
+from nti.testing.matchers import verifiably_provides
+
 from nti.externalization.tests import externalizes
+
 from nose.tools import assert_raises
 
 # nose module-level setup
-from . import AssessmentTestCase
+from nti.assessment.tests import AssessmentTestCase
 
 class TestQPart(AssessmentTestCase):
 
@@ -72,12 +72,12 @@ class TestMultipleChoicePart(AssessmentTestCase):
 		part = parts.QMultipleChoicePart( solutions=(solution,), choices=choices )
 
 		# Submitting the actual data
-		assert_that( part.grade( "B" ), is_true() )
-		assert_that( part.grade( "A" ), is_false() )
+		assert_that(part.grade("B").value, is_true())
+		assert_that(part.grade("A").value, is_false())
 
 		# Submitting the index
-		assert_that( part.grade( 1 ), is_true() )
-		assert_that( part.grade( 0 ), is_false() )
+		assert_that(part.grade(1).value, is_true())
+		assert_that(part.grade(0).value, is_false())
 
 class TestMultipleChoiceMultipleAnswerPart(AssessmentTestCase):
 
@@ -102,8 +102,8 @@ class TestMultipleChoiceMultipleAnswerPart(AssessmentTestCase):
 		part = parts.QMultipleChoiceMultipleAnswerPart( solutions=(solution,), choices=choices )
 
 		# Submitting the index
-		assert_that( part.grade( [ 1 ] ), is_true() )
-		assert_that( part.grade( [ 0 ] ), is_false() )
+		assert_that(part.grade([ 1 ]).value, is_true())
+		assert_that(part.grade([ 0 ]).value, is_false())
 
 class TestMatchingPart(AssessmentTestCase):
 
@@ -120,7 +120,6 @@ class TestMatchingPart(AssessmentTestCase):
 		assert_that( part, externalizes( has_entry( 'Class', 'MatchingPart') ) )
 		assert_that( part, is_( part ) )
 		assert_that( part, is_( part2 ) )
-
 
 		assert_that( part, grades_right( solution_keys ) )
 		assert_that( part, grades_right( solution_nums ) )
@@ -169,8 +168,8 @@ class TestFillInTheBlackWithWordBankPart(AssessmentTestCase):
 		part = parts.QFillInTheBlankWithWordBankPart(wordbank=bank, solutions=(solution,))
 		assert_that(part, verifiably_provides(interfaces.IQFillInTheBlankWithWordBankPart))
 		assert_that(part, externalizes(has_entry('Class', 'FillInTheBlankWithWordBankPart')))
-		assert_that(solution.grade({"x":"1", "y":"2"}), is_(True))
-		assert_that(solution.grade({"x":"1", "y":"4"}), is_(False))
+		assert_that(solution.grade({"x":"1", "y":"2"}).value, is_(True))
+		assert_that(solution.grade({"x":"1", "y":"4"}).value, is_(False))
 
 class TestFillInTheBlackShortAnswerPart(AssessmentTestCase):
 
@@ -181,9 +180,9 @@ class TestFillInTheBlackShortAnswerPart(AssessmentTestCase):
 		assert_that(part, externalizes(has_entry('Class', 'FillInTheBlankShortAnswerPart')))
 		assert_that(solution, externalizes(has_entries('Class', 'FillInTheBlankShortAnswerSolution',
 													   'value', {'x':'^1$'})))
-		assert_that(solution.grade({"x":"1"}), is_(True))
-		assert_that(solution.grade({"x":"2"}), is_(False))
-		assert_that(solution.grade({"y":"1"}), is_(False))
+		assert_that(solution.grade({"x":"1"}).value, is_(True))
+		assert_that(solution.grade({"x":"2"}).value, is_(False))
+		assert_that(solution.grade({"y":"1"}).value, is_(False))
 
 class TestFreeResponsePart(AssessmentTestCase):
 
@@ -225,7 +224,7 @@ class TestMathPart(AssessmentTestCase):
 		del part2.grader_interface
 		assert_that(part2, is_not(part))
 
-from .._util import superhash
+from nti.assessment._util import superhash
 
 class TestSuperHash(AssessmentTestCase):
 

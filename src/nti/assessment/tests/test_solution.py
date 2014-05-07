@@ -12,12 +12,10 @@ from hamcrest import is_not
 from hamcrest import has_entry
 from hamcrest import assert_that
 
-from unittest import TestCase
-
 from zope import interface
 
-from nti.assessment import solution, response
 from nti.assessment import interfaces
+from nti.assessment import solution, response
 
 from nti.externalization.externalization import toExternalObject
 
@@ -25,11 +23,10 @@ from nti.assessment.tests import grades_right
 from nti.assessment.tests import grades_wrong
 grades_correct = grades_right
 
-import nti.testing.base
 from nti.testing.matchers import is_true, is_false
 from nti.testing.matchers import verifiably_provides
 
-from . import AssessmentTestCase
+from nti.assessment.tests import AssessmentTestCase
 
 class TestConvert(AssessmentTestCase):
 
@@ -67,7 +64,7 @@ class TestNumericMathSolution(AssessmentTestCase):
 		assert_that( solution.QNumericMathSolution( 1 ).grade( "1.0" ), is_true( ) )
 		# via number-to-text-solution-to-number
 		assert_that( solution.QNumericMathSolution( 1 ).grade( 1 ), is_true( ) )
-		assert_that( solution.QNumericMathSolution( 1 ).grade( 1.2 ), is_false( ) )
+		assert_that(solution.QNumericMathSolution(1).grade(1.2).value, is_false())
 
 	def test_grade_units( self ):
 		forbidden = solution.QNumericMathSolution( 1, () )
@@ -110,7 +107,6 @@ class TestNumericMathSolution(AssessmentTestCase):
 		ext = toExternalObject( optional )
 		assert_that( ext, has_entry( 'allowed_units', ['cm', ''] ) )
 
-
 	def test_equality( self ):
 		soln = solution.QNumericMathSolution( 1 )
 		soln2 = solution.QNumericMathSolution( 1 )
@@ -143,17 +139,17 @@ class TestFreeResponseSolution(AssessmentTestCase):
 class TestMultipleChoiceMultipleAnswerSolution(AssessmentTestCase):
 
 	def test_multiplechoicemultipleanswersolution(self):
-		assert_that( solution.QMultipleChoiceMultipleAnswerSolution( [ 1 ] ), grades_correct( [ 1 ] ) )
-		assert_that( solution.QMultipleChoiceMultipleAnswerSolution( [ 1, 2 ] ), grades_correct( [ 1, 2 ] ) )
-		assert_that( solution.QMultipleChoiceMultipleAnswerSolution( [ 1, 2, 3 ] ), grades_correct( [ 1, 2, 3 ] ) )
-		assert_that( solution.QMultipleChoiceMultipleAnswerSolution( [ 1, 2 ] ), grades_wrong( [2, 1] ) )
+		assert_that(solution.QMultipleChoiceMultipleAnswerSolution([ 1 ]), grades_correct([ 1 ]))
+		assert_that(solution.QMultipleChoiceMultipleAnswerSolution([ 1, 2 ]), grades_correct([ 1, 2 ]))
+		assert_that(solution.QMultipleChoiceMultipleAnswerSolution([ 1, 2, 3 ]), grades_correct([ 1, 2, 3 ]))
+		assert_that(solution.QMultipleChoiceMultipleAnswerSolution([ 1, 2 ]), grades_wrong([2, 1]))
 
 class TestFillInTheBlankWithWordBankSolution(AssessmentTestCase):
 
 	def test_solution(self):
 		assert_that(solution.QFillInTheBlankWithWordBankSolution({'x':'1'}),
 					verifiably_provides(interfaces.IQFillInTheBlankWithWordBankSolution))
-		assert_that(solution.QFillInTheBlankWithWordBankSolution({'x':'1'}).grade({'x':'1'}), is_(1.0))
+		assert_that(solution.QFillInTheBlankWithWordBankSolution({'x':'1'}).grade({'x':'1'}).value, is_(1.0))
 
 class TestFillInTheBlankWithShortAnswerSolution(AssessmentTestCase):
 
@@ -161,7 +157,7 @@ class TestFillInTheBlankWithShortAnswerSolution(AssessmentTestCase):
 		regex = {'x':"^1$"}
 		assert_that(solution.QFillInTheBlankShortAnswerSolution(regex),
 					verifiably_provides(interfaces.IQFillInTheBlankShortAnswerSolution))
-		assert_that(solution.QFillInTheBlankShortAnswerSolution(regex).grade({'x':'1'}), is_(True))
-		assert_that(solution.QFillInTheBlankShortAnswerSolution(regex).grade({'x':'2'}), is_(False))
-		assert_that(solution.QFillInTheBlankShortAnswerSolution(regex).grade({'x':'11'}), is_(False))
-		assert_that(solution.QFillInTheBlankShortAnswerSolution(regex).grade({'x':'121'}), is_(False))
+		assert_that(solution.QFillInTheBlankShortAnswerSolution(regex).grade({'x':'1'}).value, is_(True))
+		assert_that(solution.QFillInTheBlankShortAnswerSolution(regex).grade({'x':'2'}).value, is_(False))
+		assert_that(solution.QFillInTheBlankShortAnswerSolution(regex).grade({'x':'11'}).value, is_(False))
+		assert_that(solution.QFillInTheBlankShortAnswerSolution(regex).grade({'x':'121'}).value, is_(False))

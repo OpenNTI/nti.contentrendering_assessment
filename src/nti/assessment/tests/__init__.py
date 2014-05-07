@@ -70,7 +70,7 @@ class GradeMatcher(BaseMatcher):
 		self.response = response
 
 	def _matches(self, solution):
-		return solution.grade(self.response) == self.value
+		return solution.grade(self.response).value == self.value
 
 	def describe_to(self, description):
 		description.append_text('solution that grades ').append_text(str(self.response)).append_text(' as ').append_text(str(self.value))

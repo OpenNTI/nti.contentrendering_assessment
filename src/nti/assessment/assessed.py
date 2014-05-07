@@ -203,8 +203,14 @@ def assess_question_submission(submission, registry=component):
 		# Grade what they submitted, if they submitted something. If they didn't
 		# submit anything, it's automatically "wrong."
 		try:
-			grade = q_part.grade(sub_part) if sub_part is not None else 0.0
-		except (LookupError,ValueError):
+			if sub_part is not None:
+				grade = None
+				result = q_part.grade(sub_part)
+				if result is not None:
+					sub_part, grade = result.response, result.value
+			else:
+				grade = 0.0
+		except (LookupError, ValueError):
 			# We couldn't grade the part because the submission was in the wrong
 			# format. Translate this error to something more useful.
 			raise InvalidValue(value=sub_part, field=interfaces.IQuestionSubmission['parts'])

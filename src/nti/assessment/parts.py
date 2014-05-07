@@ -27,6 +27,7 @@ from nti.contentfragments.interfaces import UnicodeContentFragment as _u
 from nti.externalization.externalization import make_repr
 
 from . import interfaces
+from ._grade import QGrade
 from ._util import superhash
 from .interfaces import convert_response_for_solution
 
@@ -44,6 +45,7 @@ class QPart(SchemaConfigured,Persistent):
 	#: class:`.IQPartGrader`. The response will have first been converted
 	#: for the solution.
 	grader_interface = interfaces.IQPartGrader
+
 	#: The name of the grader we will attempt to adapt to. Defaults to the default,
 	#: unnamed, adapter
 	grader_name = _u('')
@@ -55,28 +57,31 @@ class QPart(SchemaConfigured,Persistent):
 	#: of an appropriate type.
 	response_interface = None
 
-	content = _u('')
 	hints = ()
 	solutions = ()
+	content = _u('')
 	explanation = _u('')
 
 	def grade( self, response ):
-		if self.response_interface is not None:
-			response = self.response_interface(response)
-
 		if not self.solutions:
 			# No solutions, no opinion
 			return None
+
+		result = QGrade(response=response, value=0.0)
+
+		if self.response_interface is not None:
+			response = self.response_interface(response)
 
 		for solution in self.solutions:
 			# Attempt to get a proper solution
 			converted = convert_response_for_solution(solution, response)
 			# Graders return a true or false value. We are responsible
 			# for applying weights to that
-			result = self._grade(solution, converted)
-			if result:
-				return self._weight(result, solution)
-		return 0.0
+			value = self._grade(solution, converted)
+			if value:
+				result.value = self._weight(value, solution)
+				break
+		return result
 
 	def _weight(self, result, solution):
 		return 1.0 * solution.weight

@@ -19,13 +19,11 @@ from nti.assessment._latexplastexconverter import factory
 from nti.assessment._latexplastexdomcompare import _mathIsEqual as mathIsEqual
 from nti.assessment._latexplastexconverter import _mathTexToDOMNodes as mathTexToDOMNodes
 
-import nti.testing.base
 from nti.testing.matchers import validly_provides
 
-from . import AssessmentTestCase
+from nti.assessment.tests import AssessmentTestCase
 
 class TestAssessment(AssessmentTestCase):
-
 
 	def test_latex_factory(self):
 		from nti.assessment.response import QTextResponse
@@ -209,10 +207,11 @@ class TestAssessment(AssessmentTestCase):
 		responses = {1: '5', 2: '12', 3: '15.37', 4: '1 + x', 5:'\\frac{2}{3}', 6: '10', \
 					 7 : '42', 8: '210', 9: '6', 10: '0'}
 
-		expectedResults = {	1: True, 2: True, 3: True, 4:True, 5: True, 6:True, \
+		expectedResults = {	1:True, 2:True, 3:True, 4:True, 5:True, 6:True, \
 							7:True, 8:True, 9:True, 10:True}
 		results = assess(quiz, responses)
-		self.assertEqual(expectedResults, results)
+		transformed = {k:g.value for k, g in results.items()}
+		assert_that(transformed, is_(expectedResults))
 
 		responses[3] = '15'
 		responses[10] = '$1$'
@@ -220,7 +219,8 @@ class TestAssessment(AssessmentTestCase):
 		expectedResults[3] = False
 		expectedResults[10] = False
 		results = assess(quiz, responses)
-		self.assertEqual(expectedResults, results)
+		transformed = {k:g.value for k, g in results.items()}
+		assert_that(transformed, is_(expectedResults))
 
 		responses[4] = '<OMOBJ xmlns="http://www.openmath.org/OpenMath" '+ \
 					   'version="2.0" cdbase="http://www.openmath.org/cd"> '+\
@@ -234,15 +234,16 @@ class TestAssessment(AssessmentTestCase):
 
 		expectedResults[5] = False
 		results = assess(quiz, responses)
-		self.assertEqual(expectedResults, results)
+		transformed = {k:g.value for k, g in results.items()}
+		assert_that(transformed, is_(expectedResults))
 
 	def test_assess_two(self):
 		quiz = {1 : MockQuiz(['$(0.4, 0.3)$']) }
-
 		responses = {1: '(0.4, 0.3)'}
 
-		results = assess( quiz, responses )
-		assert_that( results, is_( {1: True} ) )
+		results = assess(quiz, responses)
+		transformed = {k:g.value for k, g in results.items()}
+		assert_that(transformed, is_({1: True}))
 
 class MockQuiz(object):
 	def __init__(self, answers):

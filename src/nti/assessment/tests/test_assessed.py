@@ -23,7 +23,6 @@ from hamcrest import raises
 
 import time
 import datetime
-from unittest import TestCase
 
 from zope import interface
 from zope import component
@@ -48,11 +47,10 @@ from nti.assessment.question import QQuestion, QQuestionSet
 
 from nti.externalization.tests import externalizes
 
-import nti.testing.base
 from nti.testing.matchers import is_false
 from nti.testing.matchers import verifiably_provides
 
-from . import AssessmentTestCase
+from nti.assessment.tests import AssessmentTestCase
 
 def _check_old_dublin_core( qaq ):
 	"we can read old dublin core metadata"
