@@ -9,16 +9,26 @@ __docformat__ = "restructuredtext en"
 
 from zope import component
 
+from nti.testing.layers import find_test
+from nti.testing.layers import GCLayerMixin
 from nti.testing.layers import ZopeComponentLayer
 from nti.testing.layers import ConfiguringLayerMixin
+
+from nti.dataserver.tests.mock_dataserver import DSInjectorMixin
 
 import zope.testing.cleanup
 
 class SharedConfiguringTestLayer(ZopeComponentLayer,
-								 ConfiguringLayerMixin):
+                                 GCLayerMixin,
+                                 ConfiguringLayerMixin,
+                                 DSInjectorMixin):
 
-	set_up_packages = ('nti.contentrendering', 'nti.assessment', 'nti.externalization',
-					   'zope.annotation', 'nti.mimetype')
+	set_up_packages = ('nti.dataserver',
+					   'nti.contentrendering',
+					   'nti.assessment',
+					   'nti.externalization',
+					   'nti.mimetype',
+					   'zope.annotation')
 
 	@classmethod
 	def setUp(cls):
