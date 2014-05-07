@@ -23,18 +23,20 @@ class QRandomizedDecorator(AbstractAuthenticatedRequestAwareDecorator):
 	def randomize(self):
 		intids = component.getUtility(zope.intid.IIntIds)
 		uid = intids.getId(self.remoteUser)
-		random.seed(uid)  # Seed w/ the user intid
+		generator = random.Random()
+		generator.seed(uid)  # Seed w/ the user intid
+		return random
 
 @component.adapter(rand_interfaces.IQRandomizedMatchingPart)
 class QRandomizedMatchingPartDecorator(QRandomizedDecorator):
 
 	def _do_decorate_external(self, context, result):
-		self.randomize()
-		random.shuffle(result['values'])
+		generator = self.randomize()
+		generator.shuffle(result['values'])
 		
 @component.adapter(rand_interfaces.IQRandomizedMultipleChoicePart)
 class QRandomizedMultipleChoicePartDecorator(QRandomizedDecorator):
 
 	def _do_decorate_external(self, context, result):
-		self.randomize()
-		random.shuffle(result['choices'])
+		generator = self.randomize()
+		generator.shuffle(result['choices'])

@@ -34,12 +34,13 @@ def randomize(username=None):
 	if user is not None:
 		intids = component.getUtility(zc.intid.IIntIds)
 		uid = intids.getId(user)
-		random.seed(uid)  # Seed w/ the user intid
-		return True
-	return False
+		generator = random.Random()
+		generator.seed(uid)  # Seed w/ the user intid
+		return generator
+	return None
 		
-def shuffle_list(target):
-	random.shuffle(target)
+def shuffle_list(generator, target):
+	generator.shuffle(target)
 	return target
 
 @interface.implementer(interfaces.IQRandomizedMatchingPartGrader)
@@ -47,14 +48,14 @@ class RandomizedMatchingPartGrader(MatchingPartGrader):
 
 	def _to_response_dict(self, the_dict):
 		the_dict = MatchingPartGrader._to_int_dict(self, the_dict)
-		if randomize():
+		generator = randomize()
+		if generator is not None:
 			values = list(self.part.values)
 			original = {v:idx for idx, v in enumerate(values)}
-			shuffled = {idx:v for idx, v in enumerate(shuffle_list(values))}
+			shuffled = {idx:v for idx, v in enumerate(shuffle_list(generator, values))}
 			for k in list(the_dict.keys()):
 				idx = the_dict[k]
-				v = shuffled.get(idx)
-				uidx = original.get(v, idx)
+				uidx = original.get(shuffled.get(idx), idx)
 				the_dict[k] = uidx
 		return the_dict
 
