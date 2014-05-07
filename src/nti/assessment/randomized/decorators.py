@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-External object decorators having to do with assessments.
-
 $Id$
 """
 
@@ -27,22 +25,16 @@ class QRandomizedDecorator(AbstractAuthenticatedRequestAwareDecorator):
 		uid = intids.getId(self.remoteUser)
 		random.seed(uid)  # Seed w/ the user intid
 
-	def shuffle_list(self, result, name):
-		target = result.get(name, None)
-		if target:
-			random.shuffle(target)
-		
 @component.adapter(rand_interfaces.IQRandomizedMatchingPart)
 class QRandomizedMatchingPartDecorator(QRandomizedDecorator):
 
 	def _do_decorate_external(self, context, result):
 		self.randomize()
-		self.shuffle_list(result, 'labels')
-		self.shuffle_list(result, 'values')
+		random.shuffle(result['values'])
 		
 @component.adapter(rand_interfaces.IQRandomizedMultipleChoicePart)
 class QRandomizedMultipleChoicePartDecorator(QRandomizedDecorator):
 
 	def _do_decorate_external(self, context, result):
 		self.randomize()
-		self.shuffle_list(result, 'choices')
+		random.shuffle(result['choices'])

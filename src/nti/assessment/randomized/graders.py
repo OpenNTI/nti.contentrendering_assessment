@@ -38,20 +38,27 @@ def randomize(username=None):
 		return True
 	return False
 		
+def shuffle_list(target):
+	random.shuffle(target)
+	return target
+
 @interface.implementer(interfaces.IQRandomizedMatchingPartGrader)
 class RandomizedMatchingPartGrader(MatchingPartGrader):
 
-	def labels(self):
-		result = self.part.labels
+	def _to_response_dict(self, the_dict):
+		the_dict = MatchingPartGrader._to_int_dict(self, the_dict)
 		if randomize():
-			random.shuffle(result)
-		return result
+			values = list(self.part.values)
+			original = {v:idx for idx, v in enumerate(values)}
+			shuffled = {idx:v for idx, v in enumerate(shuffle_list(values))}
+			for k in list(the_dict.keys()):
+				idx = the_dict[k]
+				v = shuffled.get(idx)
+				uidx = original.get(v, idx)
+				the_dict[k] = uidx
+		return the_dict
 
-	def values(self):
-		result = self.part.values
-		if randomize():
-			random.shuffle(result)
-		return result
+	response_converter = _to_response_dict
 
 @interface.implementer(interfaces.IQRandomizedMultipleChoicePartGrader)
 class RandomizedMultipleChoiceGrader(MultipleChoiceGrader):

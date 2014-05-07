@@ -216,21 +216,14 @@ class MatchingPartGrader(EqualityGrader):
 	Grader that deals with matching. Handles all combinations of int and key solutions
 	and int and key dicts.
 	"""
-
-	def labels(self):
-		return self.part.labels
-	
-	def values(self):
-		return self.part.values
 	
 	def _to_int_dict(self, the_dict):
 		result = the_dict
-		if not all( (isinstance(x,numbers.Integral) for x in the_dict.keys()) ):
+		if not all((isinstance(x, numbers.Integral) for x in the_dict.keys())):
 			# Then they must be actual key-value pairs
-			labels = self.labels()
-			values = self.values()
 			try:
-				result = { labels.index(k): values.index(v) for k, v in the_dict.items() }
+				result = { 	self.part.labels.index(k): self.part.values.index(v) \
+							for k, v in the_dict.items() }
 			except ValueError:
 				# Try string to int conversion
 				try:
