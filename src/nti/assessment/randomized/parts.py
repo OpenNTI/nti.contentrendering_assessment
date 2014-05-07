@@ -16,10 +16,12 @@ from ..parts import QMultipleChoicePart
 
 @interface.implementer(interfaces.IQRandomizedMatchingPart)
 class QRandomizedMatchingPart(QMatchingPart):
+	__external_class_name__ = "MatchingPart"
 	mimeType = mim_type = "application/vnd.nextthought.assessment.randomizedmatchingpart"
 	grader_interface = interfaces.IQRandomizedMatchingPartGrader
 
 @interface.implementer(interfaces.IQRandomizedMultipleChoicePart)
 class QRandomizedMultipleChoicePart(QMultipleChoicePart):
+	__external_class_name__ = "MultipleChoicePart"
 	mimeType = mim_type = "application/vnd.nextthought.assessment.randomizedmultiplechoicepart"
 	grader_interface = interfaces.IQRandomizedMultipleChoicePartGrader
