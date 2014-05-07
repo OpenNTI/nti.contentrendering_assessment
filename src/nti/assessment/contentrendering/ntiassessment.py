@@ -206,9 +206,9 @@ class _AbstractNAQPart(_LocalContentMixin, Base.Environment):
 	#: Defines the type of part this maps too
 	part_interface = None
 
-	# Defines the type of solution this part produces.
-	# Solution objects will be created by adapting the text content of
-	# the solution DOM node into this interface.
+	#: Defines the type of solution this part produces.
+	#: Solution objects will be created by adapting the text content of the solution DOM nodes
+	#: into this interface.
 	soln_interface = None
 
 	part_factory = None
