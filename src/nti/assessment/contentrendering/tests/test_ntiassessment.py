@@ -916,7 +916,7 @@ class TestRenderableSymMathPart(AssessmentTestCase):
 			\end{naqfilepart}
 		\end{naquestion}
 
-		\begin{naquestionset}<Set Title>
+		\begin{naquestionset}<Set Title With \% and \$>
 		\label{set}
 		\naquestionref{testquestion}
 		\end{naquestionset}
@@ -984,14 +984,14 @@ class TestRenderableSymMathPart(AssessmentTestCase):
 																				 'auto_grade': True,
 																				 'content': 'Some content.',
 																				 'question_set': {'Class': 'QuestionSet',
-																								  'title': 'Set Title',
+																								  'title': 'Set Title With % and $',
 																								  'MimeType': 'application/vnd.nextthought.naquestionset',
 																								  'NTIID': 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.set.set',
 																								  'questions': [question]},
 																				 'title': 'Part Title'}],
 																	  'title': 'Main Title'},
 																	 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.set.set': {'Class': 'QuestionSet',
-																																  'title': 'Set Title',
+																																  'title': 'Set Title With % and $',
 																																  'MimeType': 'application/vnd.nextthought.naquestionset',
 																																  'NTIID': 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.set.set',
 																																  'questions': [question]},

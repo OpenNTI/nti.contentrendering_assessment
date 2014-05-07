@@ -1137,7 +1137,7 @@ class naquestionset(Base.List, plastexids.NTIIDMixin):
 
 	"""
 
-	args = "[options:dict:str] <title:str>"
+	args = "[options:dict:str] <title:str:source>"
 
 	# Only classes with counters can be labeled, and \label sets the
 	# id property, which in turn is used as part of the NTIID (when no NTIID is set explicitly)
@@ -1226,7 +1226,7 @@ class naassignmentpart(_LocalContentMixin,
 
 	"""
 
-	args = "[options:dict:str] <title:str> question_set:idref"
+	args = "[options:dict:str] <title:str:source> question_set:idref"
 
 	@cachedIn('_v_assessment_object')
 	def assessment_object(self):
@@ -1257,7 +1257,7 @@ class naassignment(_LocalContentMixin,
 
 	"""
 
-	args = "[options:dict:str] <title:str>"
+	args = "[options:dict:str] <title:str:source>"
 
 	# Only classes with counters can be labeled, and \label sets the
 	# id property, which in turn is used as part of the NTIID (when no
