@@ -87,7 +87,10 @@ class EqualityGrader(_AbstractGrader):
 		return self._compare( self.solution.value, self.response.value )
 
 	def _compare( self, solution_value, response_value ):
-		return self.solution_converter(solution_value) == self.response_converter(response_value)
+		converted_solution = self.solution_converter(solution_value)
+		converted_response = self.response_converter(response_value)
+		result = converted_solution == converted_response
+		return result
 
 class StringEqualityGrader(EqualityGrader):
 	"""

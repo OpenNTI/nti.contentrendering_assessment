@@ -24,9 +24,6 @@ import os
 import anyjson as json
 from datetime import datetime
 
-
-
-import nti.externalization
 from nti.externalization.externalization import to_external_object
 from nti.externalization.internalization import update_from_external_object
 
@@ -35,21 +32,17 @@ from ..interfaces import IAssessmentExtractor
 from ..ntiassessment import naquestion, naquestionset, naquestionfillintheblankwordbank
 
 from nti.contentrendering.tests import RenderContext
-from nti.contentrendering.tests import simpleLatexDocumentText
 from nti.contentrendering.tests import buildDomFromString as _buildDomFromString
 
-import nti.testing.base
 from nti.testing.matchers import is_true
 from nti.externalization.tests import externalizes
 from nti.testing.matchers import verifiably_provides
 
-def _simpleLatexDocument(maths):
-	return simpleLatexDocumentText( preludes=(br'\usepackage{ntiassessment}',),
-									bodies=maths )
-
 from ...tests import AssessmentTestCase
+from ...tests import _simpleLatexDocument
 
 class TestMisc(AssessmentTestCase):
+
 	def test_generic_macros(self):
 		example = br"""
 		\begin{naquestion}[individual=true]

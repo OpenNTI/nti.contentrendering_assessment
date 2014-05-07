@@ -12,16 +12,15 @@ from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import has_property
 
-
 from nti.assessment.randomized import interfaces as rand_interfaces
 from nti.assessment.contentrendering.ntiassessment import naquestion
 
 from nti.testing.matchers import verifiably_provides
 
 from ...tests import AssessmentTestCase
+from ...tests import _simpleLatexDocument
 
-from .test_ntiassessment import _buildDomFromString
-from .test_ntiassessment import _simpleLatexDocument
+from nti.contentrendering.tests import buildDomFromString as _buildDomFromString
 
 class TestRandomized(AssessmentTestCase):
 

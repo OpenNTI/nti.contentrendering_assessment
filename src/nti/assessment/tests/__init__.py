@@ -48,6 +48,7 @@ class SharedConfiguringTestLayer(ZopeComponentLayer,
 		pass
 
 import unittest
+
 class AssessmentTestCase(unittest.TestCase):
 	layer = SharedConfiguringTestLayer
 

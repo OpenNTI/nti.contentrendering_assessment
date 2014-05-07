@@ -34,8 +34,7 @@ def randomize(username=None):
 	if user is not None:
 		intids = component.getUtility(zc.intid.IIntIds)
 		uid = intids.getId(user)
-		generator = random.Random()
-		generator.seed(uid)  # Seed w/ the user intid
+		generator = random.Random(uid)
 		return generator
 	return None
 		
@@ -47,6 +46,7 @@ def shuffle_list(generator, target):
 class RandomizedMatchingPartGrader(MatchingPartGrader):
 
 	def _to_response_dict(self, the_dict):
+		#### from IPython.core.debugger import Tracer; Tracer()()
 		the_dict = MatchingPartGrader._to_int_dict(self, the_dict)
 		generator = randomize()
 		if generator is not None:
