@@ -52,9 +52,7 @@ import nti.testing.base
 from nti.testing.matchers import is_false
 from nti.testing.matchers import verifiably_provides
 
-# nose module-level setup
-setUpModule = lambda: nti.testing.base.module_setup( set_up_packages=(__name__,'zope.annotation','nti.mimetype') )
-tearDownModule = nti.testing.base.module_teardown
+from . import AssessmentTestCase
 
 def _check_old_dublin_core( qaq ):
 	"we can read old dublin core metadata"
@@ -79,7 +77,7 @@ def _check_old_dublin_core( qaq ):
 	assert_that( qaq.createdTime, is_( time.mktime( now.timetuple() ) ) )
 
 
-class TestAssessedPart(TestCase):
+class TestAssessedPart(AssessmentTestCase):
 
 
 	def test_externalizes(self):
@@ -104,7 +102,7 @@ class TestAssessedPart(TestCase):
 		part = assessed.QAssessedPart(submittedResponse=[1,2,3])
 		hash(part)
 
-class TestAssessedQuestion(TestCase):
+class TestAssessedQuestion(AssessmentTestCase):
 
 
 	def test_externalizes(self):
@@ -262,7 +260,7 @@ class TestAssessedQuestion(TestCase):
 																					  assessedValue=None ) ) ) )
 
 
-class TestAssessedQuestionSet(TestCase):
+class TestAssessedQuestionSet(AssessmentTestCase):
 
 	def test_externalizes(self):
 		assert_that( assessed.QAssessedQuestionSet(), verifiably_provides( interfaces.IQAssessedQuestionSet ) )

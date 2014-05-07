@@ -12,21 +12,18 @@ from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import has_property
 
-import unittest
 
 from nti.assessment.randomized import interfaces as rand_interfaces
 from nti.assessment.contentrendering.ntiassessment import naquestion
 
 from nti.testing.matchers import verifiably_provides
 
-from nti.assessment.contentrendering.tests import _simpleLatexDocument
-from nti.assessment.contentrendering.tests import SharedConfiguringTestLayer
+from ...tests import AssessmentTestCase
 
-from nti.contentrendering.tests import buildDomFromString as _buildDomFromString
+from .test_ntiassessment import _buildDomFromString
+from .test_ntiassessment import _simpleLatexDocument
 
-class TestRandomized(unittest.TestCase):
-
-	layer = SharedConfiguringTestLayer
+class TestRandomized(AssessmentTestCase):
 
 	def test_multiple_choice_macros(self):
 		example = br"""

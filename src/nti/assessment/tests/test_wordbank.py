@@ -28,11 +28,9 @@ from nti.testing.matchers import verifiably_provides
 
 import nti.testing.base
 
-# nose module-level setup
-setUpModule = lambda: nti.testing.base.module_setup(set_up_packages=(__name__,))
-tearDownModule = nti.testing.base.module_teardown
+from . import AssessmentTestCase
 
-class TestWordBank(unittest.TestCase):
+class TestWordBank(AssessmentTestCase):
 
 	def test_entry(self):
 		we = WordEntry(wid='1', word='bankai')
@@ -46,7 +44,7 @@ class TestWordBank(unittest.TestCase):
 		lst = ['1', 'bankai']
 		awe = asm_interfaces.IWordEntry(lst)
 		assert_that(we, is_(equal_to(awe)))
-		
+
 		lst = ['2', 'shikai', 'ja']
 		awe = asm_interfaces.IWordEntry(lst)
 		assert_that(awe, has_property('wid', is_('2')))

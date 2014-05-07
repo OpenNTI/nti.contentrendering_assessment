@@ -27,12 +27,11 @@ from nti.assessment.question import QFillInTheBlankWithWordBankQuestion
 from nti.testing import base
 from nti.externalization.tests import externalizes
 
-setUpModule = lambda: base.module_setup(set_up_packages=(__name__,))
-tearDownModule = base.module_teardown
+from . import AssessmentTestCase
 
 GIF_DATAURL = b'data:image/gif;base64,R0lGODlhCwALAIAAAAAA3pn/ZiH5BAEAAAEALAAAAAALAAsAAAIUhA+hkcuO4lmNVindo7qyrIXiGBYAOw=='
 
-class TestExternalization(TestCase):
+class TestExternalization(AssessmentTestCase):
 
 	def test_file_upload(self):
 		ext_obj = {

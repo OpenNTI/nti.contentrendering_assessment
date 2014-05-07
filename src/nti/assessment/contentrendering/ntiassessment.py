@@ -68,6 +68,7 @@ logger = __import__('logging').getLogger(__name__)
 
 import os
 import six
+from six import text_type
 import itertools
 
 from zope import schema
@@ -322,7 +323,7 @@ class _AbstractNAQPart(_LocalContentMixin, Base.Environment):
 			self.randomize = False
 			self.attributes['randomize'] = 'false'
 		return token
-	
+
 _LocalContentMixin._asm_ignorable_renderables += (_AbstractNAQPart,)
 
 # NOTE: Part Node's MUST be named 'naq'XXX'part'
@@ -760,7 +761,7 @@ class naqfillintheblankshortanswerpart(_AbstractNAQPart):
 _LocalContentMixin._asm_ignorable_renderables += (naqfillintheblankshortanswerpart,)
 
 class _WordBankMixIn(object):
-	
+
 	def _asm_entries(self):
 		result = []
 		_naqwordbank = self.getElementsByTagName('naqwordbank')
@@ -914,7 +915,7 @@ class naqmvalue(naqvalue):
 
 class naqregex(naqvalue):
 	args = 'pid:str pattern'
-	
+
 	def invoke(self, tex):
 		tok = super(naqregex, self).invoke(tex)
 		pattern = self.attributes['pattern'].source
@@ -974,7 +975,7 @@ class naqinput(_LocalContentMixin, Base.Environment):
 
 	def _after_render(self, rendered):
 		self._asm_local_content = rendered
-		
+
 _LocalContentMixin._asm_ignorable_renderables += (naqinput,)
 
 class naqordereditem(naqvalue):
@@ -1136,7 +1137,7 @@ class naquestionset(Base.List, plastexids.NTIIDMixin):
 
 	"""
 
-	args = "[options:dict:str] <title>"
+	args = "[options:dict:str] <title:str>"
 
 	# Only classes with counters can be labeled, and \label sets the
 	# id property, which in turn is used as part of the NTIID (when no NTIID is set explicitly)
@@ -1156,9 +1157,23 @@ class naquestionset(Base.List, plastexids.NTIIDMixin):
 		questions = [qref.idref['label'].assessment_object()
 					 for qref in self.getElementsByTagName('naquestionref')]
 		questions = PersistentList( questions )
-		assert self.title is not None
+
+		# Note that we may not actually have a renderer, depending on when
+		# in our lifetime this is called (the renderer object mixin is deprecated
+		# anyway)
+		# If the title is ours, we're guaranteed it's a string. It's only in the
+		# weird legacy code path that tries to inherit a title from some arbitrary
+		# parent that it may not be a string
+		if getattr(self, 'renderer', None) and not isinstance(self.title, six.string_types):
+			title = text_type(''.join(render_children(getattr(self, 'renderer'),
+													  self.title)))
+		else:
+			title = text_type(getattr(self.title, 'source', self.title))
+
+		title = title.strip() or None
+
 		result = question.QQuestionSet( questions=questions,
-										title=unicode(''.join(render_children(self.renderer, self.title))))
+										title=title)
 		errors = schema.getValidationErrors( as_interfaces.IQuestionSet, result )
 		if errors: # pragma: no cover
 			raise errors[0][1]
@@ -1176,7 +1191,7 @@ class naquestionset(Base.List, plastexids.NTIIDMixin):
 		if title is None:
 			# SAJ: This code path is bad and needs to go away
 			title_el = self.parentNode
-			while (not hasattr(title_el, 'title')):
+			while not hasattr(title_el, 'title'):
 				title_el = title_el.parentNode
 			title = title_el.title
 		assert title is not None

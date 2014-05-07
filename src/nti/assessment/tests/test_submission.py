@@ -34,12 +34,9 @@ from nti.externalization.internalization import update_from_external_object
 from .. import interfaces
 from .. import submission
 
-# nose module-level setup
-setUpModule = lambda: nti.testing.base.module_setup( set_up_packages=(__name__,'nti.mimetype') )
-tearDownModule = nti.testing.base.module_teardown
+from . import AssessmentTestCase
 
-
-class TestQuestionSubmission(TestCase):
+class TestQuestionSubmission(AssessmentTestCase):
 
 	def test_externalizes(self):
 		assert_that( submission.QuestionSubmission(), verifiably_provides( interfaces.IQuestionSubmission ) )
@@ -65,7 +62,7 @@ class TestQuestionSubmission(TestCase):
 		update_from_external_object( submiss, {'questionId': 'foo', "parts": ["The text response"]}, require_updater=True )
 		assert_that( submiss, has_property( "parts", contains( "The text response" ) ) )
 
-class TestQuestionSetSubmission(TestCase):
+class TestQuestionSetSubmission(AssessmentTestCase):
 
 	def test_externalizes(self):
 		assert_that( submission.QuestionSetSubmission(), verifiably_provides( interfaces.IQuestionSetSubmission ) )
@@ -92,7 +89,7 @@ class TestQuestionSetSubmission(TestCase):
 
 		assert_that( qss, has_property( 'questions', contains( is_( submission.QuestionSubmission ) ) ) )
 
-class TestAssignmentSubmission(TestCase):
+class TestAssignmentSubmission(AssessmentTestCase):
 
 	def test_externalizes(self):
 		assert_that( submission.AssignmentSubmission(), verifiably_provides( interfaces.IQAssignmentSubmission ) )

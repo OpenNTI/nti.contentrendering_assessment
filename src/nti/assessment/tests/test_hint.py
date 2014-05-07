@@ -25,10 +25,9 @@ from nti.externalization.tests import externalizes
 from nti.testing import base
 from nti.testing.matchers import verifiably_provides
 
-setUpModule = lambda: base.module_setup(set_up_packages=(__name__,))
-tearDownModule = base.module_teardown
+from . import AssessmentTestCase
 
-class TestTextHint(TestCase):
+class TestTextHint(AssessmentTestCase):
 
 	def test_externalizes(self):
 		hint = interfaces.IQTextHint( "The hint" )

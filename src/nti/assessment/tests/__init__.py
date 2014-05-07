@@ -23,12 +23,12 @@ class SharedConfiguringTestLayer(ZopeComponentLayer,
                                  ConfiguringLayerMixin,
                                  DSInjectorMixin):
 
-	set_up_packages = ('nti.dataserver',
+	set_up_packages = (
 					   'nti.contentrendering',
 					   'nti.assessment',
 					   'nti.externalization',
 					   'nti.mimetype',
-					   'zope.annotation')
+					   )
 
 	@classmethod
 	def setUp(cls):
@@ -46,6 +46,10 @@ class SharedConfiguringTestLayer(ZopeComponentLayer,
 	@classmethod
 	def testTearDown(cls):
 		pass
+
+import unittest
+class AssessmentTestCase(unittest.TestCase):
+	layer = SharedConfiguringTestLayer
 
 from nti.contentrendering.tests import simpleLatexDocumentText
 

@@ -24,11 +24,9 @@ import nti.testing.base
 from nti.testing.matchers import is_true, is_false
 from nti.testing.matchers import verifiably_provides
 
-# nose module-level setup
-setUpModule = lambda: nti.testing.base.module_setup(set_up_packages=(__name__,))
-tearDownModule = nti.testing.base.module_teardown
+from . import AssessmentTestCase
 
-class TestLatex(TestCase):
+class TestLatex(AssessmentTestCase):
 
 	def test_simple_grade(self):
 

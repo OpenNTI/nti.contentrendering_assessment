@@ -27,11 +27,9 @@ from .. import assignment
 from .. import question
 from .. import parts
 
-# nose module-level setup
-setUpModule = lambda: nti.testing.base.module_setup( set_up_packages=(__name__,) )
-tearDownModule = nti.testing.base.module_teardown
+from . import AssessmentTestCase
 
-class TestAssignment(TestCase):
+class TestAssignment(AssessmentTestCase):
 
 	def test_externalizes(self):
 		assert_that( assignment.QAssignmentPart(), verifiably_provides( interfaces.IQAssignmentPart ) )

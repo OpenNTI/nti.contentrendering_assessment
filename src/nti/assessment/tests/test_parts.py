@@ -33,10 +33,9 @@ from nti.externalization.tests import externalizes
 from nose.tools import assert_raises
 
 # nose module-level setup
-setUpModule = lambda: nti.testing.base.module_setup( set_up_packages=(__name__,) )
-tearDownModule = nti.testing.base.module_teardown
+from . import AssessmentTestCase
 
-class TestQPart(TestCase):
+class TestQPart(AssessmentTestCase):
 
 	def test_part_provides(self):
 		part = parts.QPart()
@@ -50,7 +49,7 @@ class TestQPart(TestCase):
 		with assert_raises(TypeError):
 			parts.QPart( bad_kw=1 )
 
-class TestMultipleChoicePart(TestCase):
+class TestMultipleChoicePart(AssessmentTestCase):
 
 	def test_part_provides(self):
 		assert_that( parts.QMultipleChoicePart(), verifiably_provides( interfaces.IQMultipleChoicePart ) )
@@ -80,7 +79,7 @@ class TestMultipleChoicePart(TestCase):
 		assert_that( part.grade( 1 ), is_true() )
 		assert_that( part.grade( 0 ), is_false() )
 
-class TestMultipleChoiceMultipleAnswerPart(TestCase):
+class TestMultipleChoiceMultipleAnswerPart(AssessmentTestCase):
 
 	def test_part_provides(self):
 		assert_that( parts.QMultipleChoiceMultipleAnswerPart(), verifiably_provides( interfaces.IQMultipleChoiceMultipleAnswerPart ) )
@@ -106,7 +105,7 @@ class TestMultipleChoiceMultipleAnswerPart(TestCase):
 		assert_that( part.grade( [ 1 ] ), is_true() )
 		assert_that( part.grade( [ 0 ] ), is_false() )
 
-class TestMatchingPart(TestCase):
+class TestMatchingPart(AssessmentTestCase):
 
 	def test_grade(self):
 		labels = ("A","B")
@@ -160,7 +159,7 @@ class TestMatchingPart(TestCase):
 
 		assert_that( hash(part), is_( hash( part2 ) ) )
 
-class TestFillInTheBlackWithWordBankPart(TestCase):
+class TestFillInTheBlackWithWordBankPart(AssessmentTestCase):
 
 	def test_grade(self):
 		entries = [wordbank.WordEntry(wid='1', word='bankai'),
@@ -173,7 +172,7 @@ class TestFillInTheBlackWithWordBankPart(TestCase):
 		assert_that(solution.grade({"x":"1", "y":"2"}), is_(True))
 		assert_that(solution.grade({"x":"1", "y":"4"}), is_(False))
 
-class TestFillInTheBlackShortAnswerPart(TestCase):
+class TestFillInTheBlackShortAnswerPart(AssessmentTestCase):
 
 	def test_external(self):
 		solution = solutions.QFillInTheBlankShortAnswerSolution({'x':"^1$"})
@@ -186,7 +185,7 @@ class TestFillInTheBlackShortAnswerPart(TestCase):
 		assert_that(solution.grade({"x":"2"}), is_(False))
 		assert_that(solution.grade({"y":"1"}), is_(False))
 
-class TestFreeResponsePart(TestCase):
+class TestFreeResponsePart(AssessmentTestCase):
 
 	def test_eq(self):
 		part = parts.QFreeResponsePart()
@@ -211,7 +210,7 @@ class TestFreeResponsePart(TestCase):
 		part2 = parts.QFreeResponsePart(solutions=(solution2,))
 		assert_that(part, is_not(part2))
 
-class TestMathPart(TestCase):
+class TestMathPart(AssessmentTestCase):
 
 	def test_eq(self):
 		part = parts.QMathPart()
@@ -228,14 +227,14 @@ class TestMathPart(TestCase):
 
 from .._util import superhash
 
-class TestSuperHash(TestCase):
+class TestSuperHash(AssessmentTestCase):
 
 	def test_iterable(self):
 		assert_that(superhash([1, 3, 5]), is_(superhash([x for x in [1, 3, 5]])))
 		# TODO: The hash algorithm fails badly with integers
 		assert_that(superhash([1, 2]), is_(superhash([2, 1])))
 
-class TestFilePart(TestCase):
+class TestFilePart(AssessmentTestCase):
 
 	def test_allowed_mime(self):
 		part = parts.QFilePart()

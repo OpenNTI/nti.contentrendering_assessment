@@ -9,5 +9,9 @@ __docformat__ = "restructuredtext en"
 
 from zope.dottedname import resolve as dottedname
 
-def test_import_interfaces():
-	dottedname.resolve('nti.assessment.interfaces')
+import unittest
+
+class TestInterfaces(unittest.TestCase):
+
+	def test_import_interfaces(self):
+		dottedname.resolve('nti.assessment.interfaces')

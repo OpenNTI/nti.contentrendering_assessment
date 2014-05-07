@@ -22,8 +22,10 @@ from nti.assessment._latexplastexconverter import _mathTexToDOMNodes as mathTexT
 import nti.testing.base
 from nti.testing.matchers import validly_provides
 
-class TestAssessment(nti.testing.base.SharedConfiguringTestBase):
-	set_up_packages = (__name__,)
+from . import AssessmentTestCase
+
+class TestAssessment(AssessmentTestCase):
+
 
 	def test_latex_factory(self):
 		from nti.assessment.response import QTextResponse

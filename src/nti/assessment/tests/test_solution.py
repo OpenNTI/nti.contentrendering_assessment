@@ -29,11 +29,9 @@ import nti.testing.base
 from nti.testing.matchers import is_true, is_false
 from nti.testing.matchers import verifiably_provides
 
-# nose module-level setup
-setUpModule = lambda: nti.testing.base.module_setup( set_up_packages=(__name__,) )
-tearDownModule = nti.testing.base.module_teardown
+from . import AssessmentTestCase
 
-class TestConvert(TestCase):
+class TestConvert(AssessmentTestCase):
 
 	def test_not_isolution(self):
 		assert_that( interfaces.convert_response_for_solution( self, self ), is_( self ) )
@@ -58,7 +56,7 @@ class TestConvert(TestCase):
 
 		assert_that( interfaces.convert_response_for_solution( Soln(), 42 ), is_( response.QTextResponse ) )
 
-class TestNumericMathSolution(TestCase):
+class TestNumericMathSolution(AssessmentTestCase):
 
 	def test_grade_numbers(self):
 		assert_that( solution.QNumericMathSolution( 1 ), verifiably_provides( interfaces.IQNumericMathSolution ) )
@@ -126,7 +124,7 @@ class TestNumericMathSolution(TestCase):
 		assert_that( soln, is_not( soln4 ) )
 		assert soln != soln4 # hit the ne operator
 
-class TestFreeResponseSolution(TestCase):
+class TestFreeResponseSolution(AssessmentTestCase):
 
 	def test_grade_simple_string(self):
 		assert_that( solution.QFreeResponseSolution( "text" ), grades_correct( "text" ) )
@@ -142,7 +140,7 @@ class TestFreeResponseSolution(TestCase):
 		assert_that(solution.QFreeResponseSolution(solution_text),
 					grades_correct( response_text ) )
 
-class TestMultipleChoiceMultipleAnswerSolution(TestCase):
+class TestMultipleChoiceMultipleAnswerSolution(AssessmentTestCase):
 
 	def test_multiplechoicemultipleanswersolution(self):
 		assert_that( solution.QMultipleChoiceMultipleAnswerSolution( [ 1 ] ), grades_correct( [ 1 ] ) )
@@ -150,14 +148,14 @@ class TestMultipleChoiceMultipleAnswerSolution(TestCase):
 		assert_that( solution.QMultipleChoiceMultipleAnswerSolution( [ 1, 2, 3 ] ), grades_correct( [ 1, 2, 3 ] ) )
 		assert_that( solution.QMultipleChoiceMultipleAnswerSolution( [ 1, 2 ] ), grades_wrong( [2, 1] ) )
 
-class TestFillInTheBlankWithWordBankSolution(TestCase):
+class TestFillInTheBlankWithWordBankSolution(AssessmentTestCase):
 
 	def test_solution(self):
 		assert_that(solution.QFillInTheBlankWithWordBankSolution({'x':'1'}),
 					verifiably_provides(interfaces.IQFillInTheBlankWithWordBankSolution))
 		assert_that(solution.QFillInTheBlankWithWordBankSolution({'x':'1'}).grade({'x':'1'}), is_(1.0))
 
-class TestFillInTheBlankWithShortAnswerSolution(TestCase):
+class TestFillInTheBlankWithShortAnswerSolution(AssessmentTestCase):
 
 	def test_solution(self):
 		regex = {'x':"^1$"}
