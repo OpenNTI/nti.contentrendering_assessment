@@ -110,7 +110,7 @@ class TestAssessedQuestion(AssessmentTestCase):
 		assert_that( internalization.find_factory_for( toExternalObject( assessed.QAssessedQuestion() ) ),
 					 is_( none() ) )
 
-	def test_assess( self ):
+	def test_assess(self):
 		part = parts.QFreeResponsePart(solutions=(solutions.QFreeResponseSolution(value='correct'),))
 		question = QQuestion( parts=(part,) )
 		component.provideUtility( question, provides=interfaces.IQuestion,  name="1")
@@ -131,7 +131,7 @@ class TestAssessedQuestion(AssessmentTestCase):
 															 has_item( has_entry( 'value',
 																				  'correct' ))) ) ) ) )
 
-	def test_assess_with_null_part( self ):
+	def test_assess_with_null_part(self):
 		# A null part means no answer was provided
 		part = parts.QFreeResponsePart(solutions=(solutions.QFreeResponseSolution(value='correct'),))
 		question = QQuestion( parts=(part,) )
@@ -150,7 +150,7 @@ class TestAssessedQuestion(AssessmentTestCase):
 
 		_check_old_dublin_core( result )
 
-	def test_assess_with_incorrect_part( self ):
+	def test_assess_with_incorrect_part(self):
 		# An incorrect part raises a useful validation error
 		part = parts.QFreeResponsePart(solutions=(solutions.QFreeResponseSolution(value='correct'),))
 		question = QQuestion( parts=(part,) )
@@ -242,8 +242,8 @@ class TestAssessedQuestion(AssessmentTestCase):
 
 		sub = submission.QuestionSubmission( questionId="1", parts=('correct',) )
 		# Wrong submission type, cannot be assessed at all
-		assert_that( calling( interfaces.IQAssessedQuestion ).with_args(sub),
-					 raises( TypeError ))
+		assert_that(calling(interfaces.IQAssessedQuestion).with_args(sub),
+		 			raises(TypeError))
 
 		# Right submission type, but not a valid submission
 		sub = submission.QuestionSubmission( questionId="1", parts=(response.QModeledContentResponse(),) )
@@ -257,7 +257,6 @@ class TestAssessedQuestion(AssessmentTestCase):
 		assert_that( result, has_property( 'parts', contains( assessed.QAssessedPart( submittedResponse=sub.parts[0],
 																					  assessedValue=None ) ) ) )
 
-
 class TestAssessedQuestionSet(AssessmentTestCase):
 
 	def test_externalizes(self):
@@ -268,7 +267,7 @@ class TestAssessedQuestionSet(AssessmentTestCase):
 		assert_that( internalization.find_factory_for( toExternalObject( assessed.QAssessedQuestionSet() ) ),
 					 is_( none() ) )
 
-	def test_assess( self ):
+	def test_assess(self):
 		part = parts.QFreeResponsePart(solutions=(solutions.QFreeResponseSolution(value='correct'),))
 		question = QQuestion( parts=(part,) )
 		question_set = QQuestionSet( questions=(question,) )
@@ -297,7 +296,7 @@ class TestAssessedQuestionSet(AssessmentTestCase):
 
 		_check_old_dublin_core( result )
 
-	def test_assess_not_same_instance_question_but_id_matches( self ):
+	def test_assess_not_same_instance_question_but_id_matches(self):
 		part = parts.QFreeResponsePart(solutions=(solutions.QFreeResponseSolution(value='correct'),))
 		question = QQuestion( parts=(part,) )
 		question.ntiid = 'abc'
@@ -334,7 +333,7 @@ class TestAssessedQuestionSet(AssessmentTestCase):
 		ext_obj = toExternalObject( result )
 		assert_that( ext_obj, has_entry( 'questions', has_length( 1 ) ) )
 
-	def test_assess_not_same_instance_question_but_equals( self ):
+	def test_assess_not_same_instance_question_but_equals(self):
 		part = parts.QFreeResponsePart(solutions=(solutions.QFreeResponseSolution(value='correct'),))
 		question = QQuestion( content='foo', parts=(part,) )
 		question_set = QQuestionSet( questions=(question,) )

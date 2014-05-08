@@ -27,7 +27,6 @@ from nti.contentfragments.interfaces import UnicodeContentFragment as _u
 from nti.externalization.externalization import make_repr
 
 from . import interfaces
-from ._grade import QGrade
 from ._util import superhash
 from .interfaces import convert_response_for_solution
 
@@ -63,15 +62,15 @@ class QPart(SchemaConfigured,Persistent):
 	explanation = _u('')
 
 	def grade( self, response ):
-		if not self.solutions:
-			# No solutions, no opinion
-			return None
-
-		result = QGrade(response=response, value=0.0)
 
 		if self.response_interface is not None:
 			response = self.response_interface(response)
 
+		if not self.solutions:
+			# No solutions, no opinion
+			return None
+
+		result = 0.0
 		for solution in self.solutions:
 			# Attempt to get a proper solution
 			converted = convert_response_for_solution(solution, response)
@@ -79,7 +78,7 @@ class QPart(SchemaConfigured,Persistent):
 			# for applying weights to that
 			value = self._grade(solution, converted)
 			if value:
-				result.value = self._weight(value, solution)
+				result = self._weight(value, solution)
 				break
 		return result
 

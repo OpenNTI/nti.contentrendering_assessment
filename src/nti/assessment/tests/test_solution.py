@@ -64,7 +64,7 @@ class TestNumericMathSolution(AssessmentTestCase):
 		assert_that( solution.QNumericMathSolution( 1 ).grade( "1.0" ), is_true( ) )
 		# via number-to-text-solution-to-number
 		assert_that( solution.QNumericMathSolution( 1 ).grade( 1 ), is_true( ) )
-		assert_that(solution.QNumericMathSolution(1).grade(1.2).value, is_false())
+		assert_that(solution.QNumericMathSolution(1).grade(1.2), is_false())
 
 	def test_grade_units( self ):
 		forbidden = solution.QNumericMathSolution( 1, () )
@@ -149,7 +149,7 @@ class TestFillInTheBlankWithWordBankSolution(AssessmentTestCase):
 	def test_solution(self):
 		assert_that(solution.QFillInTheBlankWithWordBankSolution({'x':'1'}),
 					verifiably_provides(interfaces.IQFillInTheBlankWithWordBankSolution))
-		assert_that(solution.QFillInTheBlankWithWordBankSolution({'x':'1'}).grade({'x':'1'}).value, is_(1.0))
+		assert_that(solution.QFillInTheBlankWithWordBankSolution({'x':'1'}).grade({'x':'1'}), is_(1.0))
 
 class TestFillInTheBlankWithShortAnswerSolution(AssessmentTestCase):
 
@@ -157,7 +157,7 @@ class TestFillInTheBlankWithShortAnswerSolution(AssessmentTestCase):
 		regex = {'x':"^1$"}
 		assert_that(solution.QFillInTheBlankShortAnswerSolution(regex),
 					verifiably_provides(interfaces.IQFillInTheBlankShortAnswerSolution))
-		assert_that(solution.QFillInTheBlankShortAnswerSolution(regex).grade({'x':'1'}).value, is_(True))
-		assert_that(solution.QFillInTheBlankShortAnswerSolution(regex).grade({'x':'2'}).value, is_(False))
-		assert_that(solution.QFillInTheBlankShortAnswerSolution(regex).grade({'x':'11'}).value, is_(False))
-		assert_that(solution.QFillInTheBlankShortAnswerSolution(regex).grade({'x':'121'}).value, is_(False))
+		assert_that(solution.QFillInTheBlankShortAnswerSolution(regex).grade({'x':'1'}), is_(True))
+		assert_that(solution.QFillInTheBlankShortAnswerSolution(regex).grade({'x':'2'}), is_(False))
+		assert_that(solution.QFillInTheBlankShortAnswerSolution(regex).grade({'x':'11'}), is_(False))
+		assert_that(solution.QFillInTheBlankShortAnswerSolution(regex).grade({'x':'121'}), is_(False))

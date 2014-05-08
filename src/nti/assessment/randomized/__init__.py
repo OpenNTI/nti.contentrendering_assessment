@@ -17,15 +17,21 @@ import zc.intid
 from pyramid.threadlocal import get_current_request
 
 from nti.dataserver import users
+from nti.dataserver import interfaces as nti_interfaces
 
-def get_current_user():
+def get_current_request_user():
     request = get_current_request()
     username = request.authenticated_userid if request is not None else None
     return username
 
-def randomize(username=None):
-    username = username or get_current_user()
-    user = users.User.get_user(username) if username else None
+def get_user(user=None):
+    user = get_current_request_user() if user is None else user
+    if user is not None and not nti_interfaces.IUser.providedBy(user):
+        user = users.User.get_user(str(user))
+    return user
+
+def randomize(user=None):
+    user = get_user(user)        
     if user is not None:
         intids = component.getUtility(zc.intid.IIntIds)
         uid = intids.getId(user)
