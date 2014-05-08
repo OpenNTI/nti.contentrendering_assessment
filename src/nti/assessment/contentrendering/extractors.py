@@ -11,6 +11,7 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 import os
+import six
 import codecs
 import simplejson as json  # Needed for sort_keys, ensure_ascii
 
@@ -181,37 +182,43 @@ class _LessonQuestionSetExtractor(object):
 
 	def _process_questionsets(self, dom, els, topic_map):
 		for el in els:
-			if el.parentNode:
-				# Discover the nearest topic in the toc that is a 'course' node
-				parent_el = el.parentNode
-				lesson_el = None
+			if not el.parentNode:
+				continue
+
+			# Discover the nearest topic in the toc that is a 'course' node
+			parent_el = el.parentNode
+			lesson_el = None
+			if hasattr(parent_el, 'ntiid') and parent_el.tagName.startswith('course'):
+				lesson_el = topic_map.get(parent_el.ntiid)
+			while lesson_el is None and parent_el.parentNode is not None:
+				parent_el = parent_el.parentNode
 				if hasattr(parent_el, 'ntiid') and parent_el.tagName.startswith('course'):
 					lesson_el = topic_map.get(parent_el.ntiid)
-				while lesson_el is None and parent_el.parentNode is not None:
-					parent_el = parent_el.parentNode
-					if hasattr(parent_el, 'ntiid') and parent_el.tagName.startswith('course'):
-						lesson_el = topic_map.get(parent_el.ntiid)
 
-				# SAJ: Hack to prevent question set sections from appearing on
-				# old style course overviews
-				title_el = el.parentNode
-				while (not hasattr(title_el, 'title')):
-					title_el = title_el.parentNode
+			# SAJ: Hack to prevent question set sections from appearing on
+			# old style course overviews
+			title_el = el.parentNode
+			while (not hasattr(title_el, 'title')):
+				title_el = title_el.parentNode
 
-				# If the title_el is a topic in the ToC of a course, suppress it.
-				if dom.childNodes[0].getAttribute('isCourse') == u'true' and title_el.ntiid in topic_map.keys():
-					topic_map[title_el.ntiid].setAttribute('suppressed', 'true')
+			# If the title_el is a topic in the ToC of a course, suppress it.
+			if dom.childNodes[0].getAttribute('isCourse') == u'true' and title_el.ntiid in topic_map.keys():
+				topic_map[title_el.ntiid].setAttribute('suppressed', 'true')
 
-				label = unicode(''.join(render_children( el.renderer, el.title )))
+			title = el.title
+			if not isinstance(title, six.string_types):
+				label = unicode(''.join(render_children(el.renderer, el.title)))
+			else:
+				label = title
 
-				toc_el = dom.createElement('object')
-				toc_el.setAttribute('target-ntiid', el.ntiid)
-				toc_el.setAttribute('mimeType', el.mimeType)
-				toc_el.setAttribute('label', label)
-				toc_el.setAttribute('question-count', el.question_count)
-				if lesson_el:
-					lesson_el.appendChild(toc_el)
-					lesson_el.appendChild(dom.createTextNode(u'\n'))
+			toc_el = dom.createElement('object')
+			toc_el.setAttribute('label', label)
+			toc_el.setAttribute('mimeType', el.mimeType)
+			toc_el.setAttribute('target-ntiid', el.ntiid)
+			toc_el.setAttribute('question-count', el.question_count)
+			if lesson_el:
+				lesson_el.appendChild(toc_el)
+				lesson_el.appendChild(dom.createTextNode(u'\n'))
 
 	# SAJ: This method is a HACK to mark the parent topic of an assignment as 'suppressed'.
 	# In practice, this is only needed for 'no_submit' assignments since they have no
