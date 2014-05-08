@@ -27,7 +27,7 @@ class RandomizedMatchingPartGrader(MatchingPartGrader):
 			original = {v:idx for idx, v in enumerate(values)}
 			shuffled = {idx:v for idx, v in enumerate(shuffle_list(generator, values))}
 			for k in list(the_dict.keys()):
-				idx = the_dict[k]
+				idx = int(the_dict[k])
 				uidx = original.get(shuffled.get(idx), idx)
 				the_dict[k] = uidx
 		return the_dict
@@ -36,4 +36,15 @@ class RandomizedMatchingPartGrader(MatchingPartGrader):
 
 @interface.implementer(interfaces.IQRandomizedMultipleChoicePartGrader)
 class RandomizedMultipleChoiceGrader(MultipleChoiceGrader):
-	pass
+
+	def _shuffle(self, the_value):
+		generator = randomize()
+		if generator is not None:
+			the_value = int(the_value)
+			choices = list(self.part.choices)
+			original = {v:idx for idx, v in enumerate(choices)}
+			shuffled = {idx:v for idx, v in enumerate(shuffle_list(generator, choices))}
+			the_value = original[shuffled[the_value]]
+		return the_value
+
+	response_converter = _shuffle

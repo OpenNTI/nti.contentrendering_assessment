@@ -31,7 +31,6 @@ from dolmen.builtins.interfaces import IDict
 from dolmen.builtins.interfaces import IList
 from dolmen.builtins.interfaces import INumeric
 from dolmen.builtins.interfaces import IString
-from dolmen.builtins.interfaces import IBoolean
 from dolmen.builtins.interfaces import IUnicode
 from dolmen.builtins.interfaces import IIterable
 
@@ -83,82 +82,16 @@ class IQSolution(interface.Interface):
 					max=1.0,
 					default=1.0 )
 
+class IQPartSolutionsExternalizer(interface.Interface):
+	"""
+	marker interface to externalize a part solutions
+	"""
+
+	def to_external_object(self):
+		pass
+
 # It seems like the concepts of domain and range may come into play here,
 # somewhere
-
-class IQResponse(IContained,
-				 INeverStoredInSharedStream):
-	"""
-	A response submitted by the student.
-	"""
-
-class IQTextResponse(IQResponse):
-	"""
-	A response submitted as text.
-	"""
-
-	value = Text(title="The response text")
-
-class IQListResponse(IQResponse):
-	"""
-	A response submitted as a list.
-	"""
-
-	value = List(title="The response list",
-				  min_length=1,
-				  value_type=TextLine(title="The value"))
-
-class IQDictResponse(IQResponse):
-	"""
-	A response submitted as a mapping between keys and values.
-	"""
-	value = Dict(title="The response dictionary",
-				  key_type=TextLine(title="The key"),
-				  value_type=TextLine(title="The value"))
-
-
-class IQModeledContentResponse(IQResponse,
-							   ITitledContent):
-	"""
-	A response with a value similar to that of a conventional
-	Note, consisting of multiple parts and allowing for things
-	like embedded whiteboards and the like.
-
-	Unlike other response types, this one must be submitted
-	in its proper external form as this type object, not a primitive.
-	"""
-
-	value = CompoundModeledContentBody()
-	value.required = True
-	value.__name__ = 'value'
-
-
-import plone.namedfile.interfaces
-
-class IQUploadedFile(plone.namedfile.interfaces.INamedFile, ILastModified):
-	pass
-
-class IQGrade(interface.Interface):
-
-	response = Variant( (Object(IString),
-						 Object(INumeric),
-						 Object(IDict),
-						 Object(IList),
-						 Object(IUnicode),
-						 Object(IQResponse),
-						 Object(IQUploadedFile),
-						 Object(IQModeledContentResponse)),  # List this so we get specific validation for it),
-						 variant_raise_when_schema_provided=True,
-						 title="The response as the student submitted it, or None if they skipped",
-						 required=False,
-						 default=None)
-
-	value = Variant( (Object(IBoolean),
-					  Object(INumeric)),
-					  variant_raise_when_schema_provided=True,
-					  title="The actual grade value",
-					  required=False,
-					  default=None)
 
 class IQPart(interface.Interface):
 	"""
@@ -183,7 +116,10 @@ class IQPart(interface.Interface):
 		:param response: An :class:`IResponse` object representing the student's input for this
 			part of the question. If the response is an inappropriate type for the part,
 			an exception may be raised.
-		:return: a :class:`IQGrade` object
+		:return: A value that can be interpreted as a boolean, indicating correct (``True``) or incorrect
+			(``False``) response. A return value of ``None`` indicates no opinion, typically because
+			there are no provided solutions. If solution weights are
+			taken into account, this will be a floating point number between 0.0 (incorrect) and 1.0 (perfect).
 		"""
 
 class IQMathPart(IQPart):
@@ -252,7 +188,7 @@ class IQNumericMathSolution(IQMathSolution,IQSingleValuedSolution):
 class IQSymbolicMathSolution(IQMathSolution):
 	"""
 	A solution whose correct answer should be interpreted symbolically.
-	For example, "12π" (twelve pi, not 37.6...) or "√2" (the square root of two, not
+	For example, "12��" (twelve pi, not 37.6...) or "���2" (the square root of two, not
 	1.4...).
 
 	This is intended to be further subclassed to support specific types of
@@ -602,6 +538,60 @@ class IQAssignment(ITitledContent,
 	# will check that the assignment has been opened, and the elapsed time.
 	# Depending on the policy and context, submission will either be blocked,
 	# or the elapsed time will simply be recorded.
+
+
+
+class IQResponse(IContained,
+				 INeverStoredInSharedStream):
+	"""
+	A response submitted by the student.
+	"""
+
+class IQTextResponse(IQResponse):
+	"""
+	A response submitted as text.
+	"""
+
+	value = Text(title="The response text")
+
+class IQListResponse(IQResponse):
+	"""
+	A response submitted as a list.
+	"""
+
+	value = List(title="The response list",
+				  min_length=1,
+				  value_type=TextLine(title="The value"))
+
+class IQDictResponse(IQResponse):
+	"""
+	A response submitted as a mapping between keys and values.
+	"""
+	value = Dict(title="The response dictionary",
+				  key_type=TextLine(title="The key"),
+				  value_type=TextLine(title="The value"))
+
+
+class IQModeledContentResponse(IQResponse,
+							   ITitledContent):
+	"""
+	A response with a value similar to that of a conventional
+	Note, consisting of multiple parts and allowing for things
+	like embedded whiteboards and the like.
+
+	Unlike other response types, this one must be submitted
+	in its proper external form as this type object, not a primitive.
+	"""
+
+	value = CompoundModeledContentBody()
+	value.required = True
+	value.__name__ = 'value'
+
+
+import plone.namedfile.interfaces
+
+class IQUploadedFile(plone.namedfile.interfaces.INamedFile, ILastModified):
+	pass
 
 class IQFileResponse(IQResponse):
 	"""

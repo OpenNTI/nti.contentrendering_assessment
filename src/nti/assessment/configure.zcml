@@ -176,6 +176,10 @@
 		for=".interfaces.IQAssessedQuestion"
 		provides="nti.externalization.interfaces.IExternalObjectDecorator" />
 
+	<adapter factory=".decorators._DefaultPartSolutionsExternalizer"
+			 for=".interfaces.IQPart"
+			 provides=".interfaces.IQPartSolutionsExternalizer" />
+			 
 	<!-- Give assignments a containerId -->
 	<subscriber
 		factory=".decorators._QAssessmentObjectIContainedAdder"

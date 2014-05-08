@@ -26,16 +26,24 @@
 	
 	<!-- Decorators -->
 	
-	<subscriber factory=".decorators.QRandomizedMultipleChoicePartDecorator"
-				provides="nti.externalization.interfaces.IExternalObjectDecorator"
-				for=".interfaces.IQRandomizedMultipleChoicePart
-					 pyramid.interfaces.IRequest"/>
-		
 	<subscriber factory=".decorators.QRandomizedMatchingPartDecorator"
 				provides="nti.externalization.interfaces.IExternalObjectDecorator"
 				for=".interfaces.IQRandomizedMatchingPart
 					 pyramid.interfaces.IRequest"/>
-					 			 
+					 
+	<adapter factory=".decorators._RandomizedMatchingPartSolutionsExternalizer"
+			 for=".interfaces.IQRandomizedMatchingPart"
+			 provides="..interfaces.IQPartSolutionsExternalizer" />
+			 			 
+	<subscriber factory=".decorators.QRandomizedMultipleChoicePartDecorator"
+				provides="nti.externalization.interfaces.IExternalObjectDecorator"
+				for=".interfaces.IQRandomizedMultipleChoicePart
+					 pyramid.interfaces.IRequest"/>
+	
+	<adapter factory=".decorators._RandomizedMultipleChoicePartSolutionsExternalizer"
+			 for=".interfaces.IQRandomizedMultipleChoicePart"
+			 provides="..interfaces.IQPartSolutionsExternalizer" />
+			  	 			 
 	<!-- Externalization -->
 	
 	<include package="nti.externalization" file="meta.zcml" />

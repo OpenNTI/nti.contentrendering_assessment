@@ -3,7 +3,7 @@
 """
 Decorators for assessment objects.
 
-$Id$
+.. $Id$
 """
 from __future__ import unicode_literals, print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
@@ -18,6 +18,18 @@ from nti.externalization.singleton import SingletonDecorator
 from nti.externalization.externalization import to_external_object
 
 from . import interfaces
+
+@interface.implementer(interfaces.IQPartSolutionsExternalizer)
+@component.adapter(interfaces.IQPart)
+class _DefaultPartSolutionsExternalizer(object):
+
+	__slots__ = ('part',)
+
+	def __init__(self, part):
+		self.part = part
+
+	def to_external_object(self):
+		return to_external_object(self.part.solutions)
 
 @interface.implementer(ext_interfaces.IExternalObjectDecorator)
 @component.adapter(interfaces.IQAssessedQuestion)
@@ -43,7 +55,8 @@ class _QAssessedQuestionExplanationSolutionAdder(object):
 			return
 
 		for question_part, external_part in zip(question.parts, mapping['parts']):
-			external_part['solutions'] = to_external_object(question_part.solutions)
+			externalizer = interfaces.IQPartSolutionsExternalizer(question_part)
+			external_part['solutions'] = externalizer.to_external_object()
 			external_part['explanation'] = to_external_object(question_part.explanation)
 
 @interface.implementer(ext_interfaces.IExternalObjectDecorator)
