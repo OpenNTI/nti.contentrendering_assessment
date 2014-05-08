@@ -27,9 +27,9 @@ from datetime import datetime
 from nti.externalization.externalization import to_external_object
 from nti.externalization.internalization import update_from_external_object
 
-from ... import interfaces as asm_interfaces
-from ..interfaces import IAssessmentExtractor
-from ..ntiassessment import naquestion, naquestionset, naquestionfillintheblankwordbank
+from nti.assessment import interfaces as asm_interfaces
+from nti.assessment.contentrendering.interfaces import IAssessmentExtractor
+from nti.assessment.contentrendering.ntiassessment import naquestion, naquestionset, naquestionfillintheblankwordbank
 
 from nti.contentrendering.tests import RenderContext
 from nti.contentrendering.tests import buildDomFromString as _buildDomFromString
@@ -38,8 +38,8 @@ from nti.testing.matchers import is_true
 from nti.externalization.tests import externalizes
 from nti.testing.matchers import verifiably_provides
 
-from ...tests import AssessmentTestCase
-from ...tests import _simpleLatexDocument
+from nti.assessment.tests import AssessmentTestCase
+from nti.assessment.tests import _simpleLatexDocument
 
 class TestMisc(AssessmentTestCase):
 
@@ -421,7 +421,7 @@ class TestMisc(AssessmentTestCase):
 					Arbitrary content for this part goes here.
 					\naqblankfield{001}[2] \naqblankfield{002}[2]
 					\begin{naqregexes}
-						\naqregex{001}{.*}  Everything.
+						\naqregex{001}{^yes\\s*[\,|\\s]\\s*I will\$} Yes, I will.
 						\naqregex{002}{^1\$} Only 1.
 					\end{naqregexes}
 					\begin{naqsolexplanation}
@@ -442,6 +442,8 @@ class TestMisc(AssessmentTestCase):
 		naq = dom.getElementsByTagName('naquestion')[0]
 		part_el = naq.getElementsByTagName('naqfillintheblankshortanswerpart')[0]
 		solns = getattr(part_el, '_asm_solutions')()
+		assert_that(solns, has_length(1))
+		assert_that(solns[0], has_property('value', has_entry('001', '^yes\\s*[,|\\s]\\s*I will$')))
 
 		assert_that(solns[0], verifiably_provides(part_el.soln_interface))
 		assert_that(solns[0], has_property('weight', 1.0))
