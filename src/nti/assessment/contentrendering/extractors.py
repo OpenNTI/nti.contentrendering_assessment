@@ -231,7 +231,6 @@ class _LessonQuestionSetExtractor(object):
 
 			category = el.attributes.get('options', {}).get('category')
 			if category != u'no_submit':
-				from IPython.core.debugger import Tracer; Tracer()()
 				continue
 
 			# Discover the nearest topic in the toc that is a 'course' node
