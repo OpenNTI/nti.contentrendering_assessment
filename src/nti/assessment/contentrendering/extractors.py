@@ -226,16 +226,40 @@ class _LessonQuestionSetExtractor(object):
 	# own extractor, but for now it is here.
 	def _process_assignments(self, dom, els, topic_map):
 		for el in els:
-			if el.parentNode:
-				# If the assignment el's parent topic is a topic in the ToC, suppress it.
-				# Discover the nearest topic in the toc that is a 'course' node
-				parent_el = el.parentNode
-				topic_el = None
-				if hasattr(parent_el, 'ntiid') and parent_el.ntiid in topic_map.keys():
-					topic_el = topic_map.get(parent_el.ntiid)
-				while topic_el is None and parent_el.parentNode is not None:
-					parent_el = parent_el.parentNode
-					if hasattr(parent_el, 'ntiid') and parent_el.ntiid in topic_map.keys():
-						topic_el = topic_map.get(parent_el.ntiid)
+			if not el.parentNode:
+				continue
 
-				topic_el.setAttribute('suppressed', 'true')
+			category = el.attributes.get('options', {}).get('category')
+			if category != u'no_submit':
+				from IPython.core.debugger import Tracer; Tracer()()
+				continue
+
+			# Discover the nearest topic in the toc that is a 'course' node
+			parent_el = el.parentNode
+			lesson_el = None
+			if hasattr(parent_el, 'ntiid') and parent_el.tagName.startswith('course'):
+				lesson_el = topic_map.get(parent_el.ntiid)
+			while lesson_el is None and parent_el.parentNode is not None:
+				parent_el = parent_el.parentNode
+				if hasattr(parent_el, 'ntiid') and parent_el.tagName.startswith('course'):
+					lesson_el = topic_map.get(parent_el.ntiid)
+
+			# SAJ: Hack to prevent no_submit assignment sections from appearing on
+			# old style course overviews
+			title_el = el.parentNode
+			while (not hasattr(title_el, 'title')):
+				title_el = title_el.parentNode
+
+			# If the title_el is a topic in the ToC of a course, suppress it.
+			if dom.childNodes[0].getAttribute('isCourse') == u'true' and title_el.ntiid in topic_map.keys():
+				topic_map[title_el.ntiid].setAttribute('suppressed', 'true')
+
+			mimeType = 'application/vnd.nextthought.nanosubmitassignment'
+
+			toc_el = dom.createElement('object')
+			toc_el.setAttribute('label', el.title)
+			toc_el.setAttribute('mimeType', mimeType)
+			toc_el.setAttribute('target-ntiid', el.ntiid)
+			if lesson_el:
+				lesson_el.appendChild(toc_el)
+				lesson_el.appendChild(dom.createTextNode(u'\n'))
