@@ -492,7 +492,7 @@ class naqmultiplechoicemultipleanswerpart(_AbstractNAQPart):
 		return solutions
 
 	def digest( self, tokens ):
-		res = super(naqmultiplechoicemultipleanswerpart,self).digest( tokens )
+		res = super(naqmultiplechoicemultipleanswerpart, self).digest(tokens)
 		# Validate the document structure: we have a naqchoices child
 		# with at least two of its own children, and at least one
 		# weight == 1.  There is no explicit solution
@@ -517,6 +517,13 @@ class naqmultiplechoicemultipleanswerpart(_AbstractNAQPart):
 		_naqsolns.appendChild( _naqsoln )
 		self.insertAfter( _naqsolns, _naqchoices )
 		return res
+
+	def invoke(self, tex):
+		token = super(naqmultiplechoicemultipleanswerpart, self).invoke(tex)
+		if self.randomize:
+			self.part_factory = randomized_parts.QRandomizedMultipleChoiceMultipleAnswerPart
+			self.part_interface = rand_interfaces.IQRandomizedMultipleChoiceMultipleAnswerPart
+		return token
 
 class naqfilepart(_AbstractNAQPart):
 	r"""
