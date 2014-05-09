@@ -62,8 +62,9 @@ class RandomizedMultipleChoiceMultipleAnswerGrader(MultipleChoiceMultipleAnswerG
 			shuffled = {idx:v for idx, v in enumerate(shuffle_list(generator, choices))}
 			for pos, value in enumerate(the_values):
 				idx = int(value)
-				uidx = shuffled[original[idx]]
+				uidx = original[shuffled[idx]]
 				the_values[pos] = uidx
+			the_values = sorted(the_values)
 		return the_values
 	
 	response_converter = _unshuffle
