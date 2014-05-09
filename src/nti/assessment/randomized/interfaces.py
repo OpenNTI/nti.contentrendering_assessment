@@ -11,6 +11,8 @@ from ..interfaces import IQMatchingPart
 from ..interfaces import IQMatchingPartGrader
 from ..interfaces import IQMultipleChoicePart
 from ..interfaces import IQMultipleChoicePartGrader
+from ..interfaces import IQMultipleChoiceMultipleAnswerPart
+from ..interfaces import IQMultipleChoiceMultipleAnswerPartGrader
 
 class IQRandomizedPart(IQPart):
 	pass
@@ -31,3 +33,11 @@ class IQRandomizedMultipleChoicePart(IQRandomizedPart, IQMultipleChoicePart):
 class IQRandomizedMultipleChoicePartGrader(IQMultipleChoicePartGrader):
 	pass
 
+
+# multiple choice, multiple answer
+
+class IQRandomizedMultipleChoiceMultipleAnswerPart(IQRandomizedPart, IQMultipleChoiceMultipleAnswerPart):
+	pass
+
+class IQRandomizedMultipleChoiceMultipleAnswerPartGrader(IQMultipleChoiceMultipleAnswerPartGrader):
+	pass

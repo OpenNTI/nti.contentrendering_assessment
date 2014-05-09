@@ -24,9 +24,15 @@
 			 	  nti.assessment.interfaces.IQTextResponse"
 			 provides=".interfaces.IQRandomizedMultipleChoicePartGrader" />
 	
+	<adapter factory=".graders.RandomizedMultipleChoiceMultipleAnswerGrader"
+			 for=".interfaces.IQRandomizedMultipleChoiceMultipleAnswerPart 
+			 	  nti.assessment.interfaces.IQMultiValuedSolution
+			 	  nti.assessment.interfaces.IQListResponse"
+			 provides=".interfaces.IQRandomizedMultipleChoiceMultipleAnswerPartGrader" />
+			 
 	<!-- Decorators -->
 	
-	<subscriber factory=".decorators.QRandomizedMatchingPartDecorator"
+	<subscriber factory=".decorators._QRandomizedMatchingPartDecorator"
 				provides="nti.externalization.interfaces.IExternalObjectDecorator"
 				for=".interfaces.IQRandomizedMatchingPart
 					 pyramid.interfaces.IRequest"/>
@@ -35,15 +41,24 @@
 			 for=".interfaces.IQRandomizedMatchingPart"
 			 provides="..interfaces.IQPartSolutionsExternalizer" />
 			 			 
-	<subscriber factory=".decorators.QRandomizedMultipleChoicePartDecorator"
+	<subscriber factory=".decorators._QRandomizedMultipleChoicePartDecorator"
 				provides="nti.externalization.interfaces.IExternalObjectDecorator"
 				for=".interfaces.IQRandomizedMultipleChoicePart
 					 pyramid.interfaces.IRequest"/>
 	
 	<adapter factory=".decorators._RandomizedMultipleChoicePartSolutionsExternalizer"
 			 for=".interfaces.IQRandomizedMultipleChoicePart"
-			 provides="..interfaces.IQPartSolutionsExternalizer" />
-			  	 			 
+			 provides="nti.assessment.interfaces.IQPartSolutionsExternalizer" />
+		
+	<subscriber factory=".decorators._QRandomizedMultipleChoiceMultipleAnswerPartDecorator"
+				provides="nti.externalization.interfaces.IExternalObjectDecorator"
+				for=".interfaces.IQRandomizedMultipleChoiceMultipleAnswerPart
+					 pyramid.interfaces.IRequest"/>
+			
+	<adapter factory=".decorators._RandomizedMultipleChoiceMultipleAnswerPartSolutionsExternalizer"
+			 for=".interfaces.IQRandomizedMultipleChoiceMultipleAnswerPart"
+			 provides="nti.assessment.interfaces.IQPartSolutionsExternalizer" />
+				 	  	 			 
 	<!-- Externalization -->
 	
 	<include package="nti.externalization" file="meta.zcml" />

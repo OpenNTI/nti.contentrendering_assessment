@@ -15,6 +15,7 @@ from . import interfaces
 from . import shuffle_list
 from ..graders import MatchingPartGrader
 from ..graders import MultipleChoiceGrader
+from ..graders import MultipleChoiceMultipleAnswerGrader
 
 @interface.implementer(interfaces.IQRandomizedMatchingPartGrader)
 class RandomizedMatchingPartGrader(MatchingPartGrader):
@@ -48,3 +49,8 @@ class RandomizedMultipleChoiceGrader(MultipleChoiceGrader):
 		return the_value
 
 	response_converter = _shuffle
+
+
+@interface.implementer(interfaces.IQRandomizedMultipleChoiceMultipleAnswerPartGrader)
+class RandomizedMultipleChoiceMultipleAnswerGrader(MultipleChoiceMultipleAnswerGrader):
+	pass

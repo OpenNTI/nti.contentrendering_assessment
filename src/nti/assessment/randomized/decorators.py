@@ -50,7 +50,7 @@ class _RandomizedMatchingPartSolutionsExternalizer(object):
 		return solutions
 
 @component.adapter(rand_interfaces.IQRandomizedMatchingPart)
-class QRandomizedMatchingPartDecorator(AbstractAuthenticatedRequestAwareDecorator):
+class _QRandomizedMatchingPartDecorator(AbstractAuthenticatedRequestAwareDecorator):
 
 	def _do_decorate_external(self, context, result):
 		values = list(result['values'])
@@ -85,10 +85,47 @@ class _RandomizedMultipleChoicePartSolutionsExternalizer(object):
 		return solutions
 
 @component.adapter(rand_interfaces.IQRandomizedMultipleChoicePart)
-class QRandomizedMultipleChoicePartDecorator(AbstractAuthenticatedRequestAwareDecorator):
+class _QRandomizedMultipleChoicePartDecorator(AbstractAuthenticatedRequestAwareDecorator):
 
 	def _do_decorate_external(self, context, result):
 		choices = list(result['choices'])
 		generator = randomize(self.remoteUser)
 		generator.shuffle(result['choices'])
 		_shuffle_multiple_choice_part_solutions(generator, choices, result['solutions'])
+
+# === multiple choice, multiple answer part
+
+def _shuffle_multiple_choice_multiple_answer_part_solutions(generator, choices, ext_solutions):
+	original = {idx:v for idx, v in enumerate(choices)}
+	shuffled = {v:idx for idx, v in enumerate(shuffle_list(generator, choices))}
+	for solution in ext_solutions:
+		value = solution['value']
+		for pos, v in enumerate(value):
+			idx = int(v)
+			uidx = shuffled[original[idx]]
+			value[pos] = uidx
+
+@interface.implementer(IQPartSolutionsExternalizer)
+@component.adapter(rand_interfaces.IQRandomizedMultipleChoiceMultipleAnswerPart)
+class _RandomizedMultipleChoiceMultipleAnswerPartSolutionsExternalizer(object):
+
+	__slots__ = ('part',)
+
+	def __init__(self, part):
+		self.part = part
+
+	def to_external_object(self):
+		generator = randomize()
+		choices = to_external_object(self.part.choices)
+		solutions = to_external_object(self.part.solutions)
+		_shuffle_multiple_choice_multiple_answer_part_solutions(generator, choices, solutions)
+		return solutions
+
+@component.adapter(rand_interfaces.IQRandomizedMultipleChoiceMultipleAnswerPart)
+class _QRandomizedMultipleChoiceMultipleAnswerPartDecorator(AbstractAuthenticatedRequestAwareDecorator):
+
+	def _do_decorate_external(self, context, result):
+		choices = list(result['choices'])
+		generator = randomize(self.remoteUser)
+		generator.shuffle(result['choices'])
+		_shuffle_multiple_choice_multiple_answer_part_solutions(generator, choices, result['solutions'])

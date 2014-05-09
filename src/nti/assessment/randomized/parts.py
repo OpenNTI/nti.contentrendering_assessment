@@ -13,6 +13,7 @@ from zope import interface
 from . import interfaces
 from ..parts import QMatchingPart
 from ..parts import QMultipleChoicePart
+from ..parts import QMultipleChoiceMultipleAnswerPart
 
 @interface.implementer(interfaces.IQRandomizedMatchingPart)
 class QRandomizedMatchingPart(QMatchingPart):
@@ -34,3 +35,12 @@ class QRandomizedMultipleChoicePart(QMultipleChoicePart):
 
 	grader_interface = interfaces.IQRandomizedMultipleChoicePartGrader
 
+@interface.implementer(interfaces.IQRandomizedMultipleChoiceMultipleAnswerPart)
+class QRandomizedMultipleChoiceMultipleAnswerPart(QMultipleChoiceMultipleAnswerPart):
+
+	response_interface = None
+
+	__external_class_name__ = "MultipleChoiceMultipleAnswerPart"
+	mimeType = mime_type = "application/vnd.nextthought.assessment.randomizedmultiplechoicemultipleanswerpart"
+
+	grader_interface = interfaces.IQRandomizedMultipleChoiceMultipleAnswerPartGrader
