@@ -818,7 +818,9 @@ class IQFillInTheBlankWithWordBankGrader(IQPartGrader):
 class IQFillInTheBlankWithWordBankSolution(IQSolution):
 
 	value = Dict(key_type=TextLine(title="input name/id"),
-				 value_type=TextLine(title="word id answer"),
+				 value_type=Variant( (TextLine(title="word id answer"),
+									  ListOrTuple(TextLine(title="word id answer"))), 
+								    title="The word ids"),
 				 title="The correct answer selections",
 				 description="The correct word id map.",
 				 min_length=1)

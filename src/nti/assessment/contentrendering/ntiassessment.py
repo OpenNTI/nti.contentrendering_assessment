@@ -885,7 +885,7 @@ class naqfillintheblankwithwordbankpart(_AbstractNAQPart, _WordBankMixIn):
 				wid = _item.attributes['y']
 				assert bid and isinstance(bid, six.string_types) and bid in _blankids
 				assert wid and isinstance(wid, six.string_types)
-				answer[bid] = wid
+				answer[bid] = wid.split(',')
 			_naqsoln = self.ownerDocument.createElement('naqsolution')
 			_naqsoln.attributes['weight'] = 1.0
 			_naqsoln.argSource = '[%s]' % _naqsoln.attributes['weight']

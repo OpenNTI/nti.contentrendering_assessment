@@ -11,6 +11,7 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 import re
+import six
 import numbers
 
 from zope import interface
@@ -259,18 +260,34 @@ class FillInTheBlankShortAnswerGrader(EqualityGrader):
 @interface.implementer(interfaces.IQFillInTheBlankWithWordBankGrader)
 class FillInTheBlankWithWordBankGrader(EqualityGrader):
 
-	def _to_id_dict(self, the_dict):
-		result = {}
-
+	@property
+	def _wordbank(self):
 		wordbank = self.part.wordbank
 		question_bank = getattr(self.part.__parent__, 'wordbank', None)
 		wordbank = wordbank + question_bank if wordbank else question_bank
+		return wordbank
 		
+	def _to_id_dict(self, the_dict):
+		result = {}
+		wordbank = self._wordbank
 		for x, y in the_dict.items():
-			if wordbank and not wordbank.contains_id(y):
-				y = wordbank.idOf(y) or y
+			if isinstance(y, six.string_types):
+				y = [y]
+			if wordbank is not None:
+				y = {wordbank.idOf(w) or w for w in y}
+			else:
+				y = {w for w in y}
 			result[x] = y
 		return result
 
+	def _compare(self, solution_value, response_value):		
+		converted_solution = self.solution_converter(solution_value)
+		converted_response = self.response_converter(response_value)
+		for x,y in converted_solution.items():
+			ir = converted_response.get(x)
+			if not ir or not y.intersection(ir):
+				return False
+		return True
+		
 	solution_converter = _to_id_dict
 	response_converter = _to_id_dict
