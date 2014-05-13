@@ -95,8 +95,7 @@ class _QAssessmentObjectIContainedAdder(object):
 	def decorateExternalObject( self, context, mapping ):
 		if not mapping.get('containerId'):
 			# Be careful not to write this out at rendering time
-			# with a None value, but if it does happen overwrite
-			# it
+			# with a None value, but if it does happen overwrite it
 			containerId = None
 			containerId = getattr( context.__parent__, 'ntiid', None )
 			if containerId:

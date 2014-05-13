@@ -51,7 +51,6 @@ class _AssessmentExtractor(object):
 	"""
 
 	def __init__(self, book=None):
-		# Usable as either a utility factory or an adapter
 		pass
 
 	def transform(self, book):
@@ -234,10 +233,11 @@ class _LessonQuestionSetExtractor(object):
 				continue
 
 			# Discover the nearest topic in the toc that is a 'course' node
-			parent_el = el.parentNode
 			lesson_el = None
+			parent_el = el.parentNode
 			if hasattr(parent_el, 'ntiid') and parent_el.tagName.startswith('course'):
 				lesson_el = topic_map.get(parent_el.ntiid)
+
 			while lesson_el is None and parent_el.parentNode is not None:
 				parent_el = parent_el.parentNode
 				if hasattr(parent_el, 'ntiid') and parent_el.tagName.startswith('course'):

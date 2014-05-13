@@ -24,9 +24,8 @@ class _NAQuestionSetRefJSONTransformer(object):
 		self.el = element
 
 	def transform(self):
-		output = {}
-		output['label'] = unicode(''.join(render_children(self.el.questionset.renderer,
-														  self.el.questionset.title)))
+		output = {'label': unicode(''.join(render_children(self.el.questionset.renderer,
+										   self.el.questionset.title)))}
 		output['MimeType'] = self.el.questionset.mimeType
 		output['Target-NTIID'] = self.el.questionset.ntiid
 		output['question-count'] = self.el.questionset.question_count
