@@ -153,11 +153,12 @@
 		factory_modules=".submission .question .response"
 		iobase=".externalization._AssessmentInternalObjectIOBase"/>
 
-	<!-- WordBank -->
+	<!-- WordBank & Regex -->
 	<ext:registerAutoPackageIO
 		root_interfaces=".interfaces.IWordEntry
-						 .interfaces.IWordBank"
-		modules=".wordbank" />
+						 .interfaces.IWordBank
+						 .interfaces.IRegEx"
+		modules=".wordbank .regex" />
 
 	<adapter factory="list .wordbank._wordbank_adapter"
 			 provides=".interfaces.IWordBank"
@@ -170,7 +171,19 @@
 	<adapter factory=".internalization._WordEntryUpdater"
 			 for=".interfaces.IWordEntry"
 			 provides="nti.externalization.interfaces.IInternalObjectUpdater" />
+			 
+	<adapter factory="basestring .regex._regex_str_adapter"
+			 provides=".interfaces.IRegEx"
+			 for="basestring" />
 
+	<adapter factory="list .regex._regex_collection_adapter"
+			 provides=".interfaces.IRegEx"
+			 for="list"/>
+			
+	<adapter factory="tuple .regex._regex_collection_adapter"
+			 provides=".interfaces.IRegEx"
+			 for="tuple"/>
+			  
 	<!-- Decorators -->
 	<subscriber
 		factory=".decorators._QAssessedQuestionExplanationSolutionAdder"

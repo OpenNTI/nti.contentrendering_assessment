@@ -14,18 +14,18 @@ from zope.mimetype.interfaces import mimeTypeConstraint
 from zope.container.interfaces import IContained
 from zope.annotation.interfaces import IAnnotatable
 
-from nti.utils.schema import Bool
-from nti.utils.schema import ValidDatetime as Datetime
-from nti.utils.schema import Dict
-from nti.utils.schema import Float
-from nti.utils.schema import IndexedIterable
 from nti.utils.schema import Int
+from nti.utils.schema import Bool
+from nti.utils.schema import Dict
 from nti.utils.schema import List
-from nti.utils.schema import ListOrTuple
+from nti.utils.schema import Float
 from nti.utils.schema import Object
 from nti.utils.schema import Variant
+from nti.utils.schema import ListOrTuple
+from nti.utils.schema import IndexedIterable
 from nti.utils.schema import ValidText as Text
 from nti.utils.schema import ValidTextLine as TextLine
+from nti.utils.schema import ValidDatetime as Datetime
 
 from dolmen.builtins.interfaces import IDict
 from dolmen.builtins.interfaces import IList
@@ -188,7 +188,7 @@ class IQNumericMathSolution(IQMathSolution,IQSingleValuedSolution):
 class IQSymbolicMathSolution(IQMathSolution):
 	"""
 	A solution whose correct answer should be interpreted symbolically.
-	For example, "12��" (twelve pi, not 37.6...) or "���2" (the square root of two, not
+	For example, "12Π" (twelve pi, not 37.6...) or "√2" (the square root of two, not
 	1.4...).
 
 	This is intended to be further subclassed to support specific types of
@@ -605,12 +605,11 @@ class IQFileResponse(IQResponse):
 	value = Object( IQUploadedFile,
 					title="The uploaded file" )
 
-
-IQMathSolution.setTaggedValue( 'response_type', IQTextResponse )
-IQFreeResponseSolution.setTaggedValue( 'response_type', IQTextResponse )
-IQMultipleChoiceSolution.setTaggedValue( 'response_type', IQTextResponse )
-IQMultipleChoiceMultipleAnswerSolution.setTaggedValue( 'response_type', IQListResponse )
-IQMatchingSolution.setTaggedValue( 'response_type', IQDictResponse )
+IQMathSolution.setTaggedValue('response_type', IQTextResponse)
+IQMatchingSolution.setTaggedValue('response_type', IQDictResponse)
+IQFreeResponseSolution.setTaggedValue('response_type', IQTextResponse)
+IQMultipleChoiceSolution.setTaggedValue('response_type', IQTextResponse)
+IQMultipleChoiceMultipleAnswerSolution.setTaggedValue('response_type', IQListResponse)
 
 def convert_response_for_solution(solution, response):
 	"""
@@ -630,7 +629,6 @@ def convert_response_for_solution(solution, response):
 			if result is not None:
 				response = result
 				break
-
 	return response
 
 ###
@@ -791,13 +789,19 @@ class IQFillInTheBlankPart(IQPart):
 	Marker interface for a Fill-in-the-blank question part.
 	"""
 
+class IRegEx(interface.Interface):
+	pattern = TextLine(title="the pattern")
+	solution = _ContentFragment(title="A solution to present to the user.", required=False)
+
 class IQFillInTheBlankShortAnswerGrader(IQPartGrader):
 	pass
 
 class IQFillInTheBlankShortAnswerSolution(IQSolution):
 
 	value = Dict(key_type=TextLine(title="input name/id"),
-				 value_type=TextLine(title="The correct regex"),
+				 value_type=Variant((TextLine(title="The pattern"),
+									 Object(IRegEx, title="The regex object")),
+									 title="The correct regex"),
 				 title="The correct answer regexes",
 				 description="The correct word id map.",
 				 min_length=1)
