@@ -47,17 +47,18 @@ class _QAssessedQuestionExplanationSolutionAdder(object):
 
 	def decorateExternalObject( self, context, mapping ):
 		question_id = context.questionId
-		question = component.queryUtility( interfaces.IQuestion,
-										   name=question_id )
+		question = component.queryUtility(interfaces.IQuestion, name=question_id)
 		if question is None:
 			# In case of old answers to questions
 			# that no longer exist mostly
 			return
 
 		for question_part, external_part in zip(question.parts, mapping['parts']):
-			externalizer = interfaces.IQPartSolutionsExternalizer(question_part)
-			external_part['solutions'] = externalizer.to_external_object()
 			external_part['explanation'] = to_external_object(question_part.explanation)
+			externalizer = interfaces.IQPartSolutionsExternalizer(question_part)
+			ext_solutions = externalizer.to_external_object()
+			if ext_solutions is not None:
+				external_part['solutions'] = externalizer.to_external_object()
 
 @interface.implementer(ext_interfaces.IExternalObjectDecorator)
 class _QAssessmentObjectIContainedAdder(object):
