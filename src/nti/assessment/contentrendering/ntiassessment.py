@@ -927,6 +927,9 @@ class naqregex(naqvalue):
 		tok = super(naqregex, self).invoke(tex)
 		return tok
 
+	def _after_render(self, rendered):
+		self._asm_local_content = rendered
+
 class naqregexes(Base.List):
 	pass
 
