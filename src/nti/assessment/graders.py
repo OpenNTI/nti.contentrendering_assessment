@@ -273,6 +273,8 @@ class FillInTheBlankWithWordBankGrader(EqualityGrader):
 		for x, y in the_dict.items():
 			if isinstance(y, six.string_types):
 				y = [y]
+			elif not y:
+				y = ()
 			if wordbank is not None:
 				y = {wordbank.idOf(w) or w for w in y}
 			else:
