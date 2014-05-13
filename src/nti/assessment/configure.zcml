@@ -10,6 +10,7 @@
 	<include package="zope.component" />
 	<include package="zope.location" />
 	<include package="zope.annotation" />
+	
 	<include package="nti.contentfragments" />
 
 	<include package="plone.namedfile" file="z3c-blobfile.zcml" />
@@ -179,7 +180,11 @@
 	<adapter factory=".decorators._DefaultPartSolutionsExternalizer"
 			 for=".interfaces.IQPart"
 			 provides=".interfaces.IQPartSolutionsExternalizer" />
-			 
+			
+	<adapter factory=".decorators._NoPartSolutionsExternalizer"
+			 for=".interfaces.IQFillInTheBlankShortAnswerPart"
+			 provides=".interfaces.IQPartSolutionsExternalizer" />
+			  
 	<!-- Give assignments a containerId -->
 	<subscriber
 		factory=".decorators._QAssessmentObjectIContainedAdder"

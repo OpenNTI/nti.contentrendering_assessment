@@ -31,6 +31,18 @@ class _DefaultPartSolutionsExternalizer(object):
 	def to_external_object(self):
 		return to_external_object(self.part.solutions)
 
+@interface.implementer(interfaces.IQPartSolutionsExternalizer)
+@component.adapter(interfaces.IQFillInTheBlankShortAnswerPart)
+class _NoPartSolutionsExternalizer(object):
+
+	__slots__ = ()
+
+	def __init__(self, part=None):
+		pass
+
+	def to_external_object(self):
+		return ()
+
 @interface.implementer(ext_interfaces.IExternalObjectDecorator)
 @component.adapter(interfaces.IQAssessedQuestion)
 class _QAssessedQuestionExplanationSolutionAdder(object):
@@ -54,11 +66,9 @@ class _QAssessedQuestionExplanationSolutionAdder(object):
 			return
 
 		for question_part, external_part in zip(question.parts, mapping['parts']):
-			external_part['explanation'] = to_external_object(question_part.explanation)
 			externalizer = interfaces.IQPartSolutionsExternalizer(question_part)
-			ext_solutions = externalizer.to_external_object()
-			if ext_solutions is not None:
-				external_part['solutions'] = externalizer.to_external_object()
+			external_part['solutions'] = externalizer.to_external_object()
+			external_part['explanation'] = to_external_object(question_part.explanation)
 
 @interface.implementer(ext_interfaces.IExternalObjectDecorator)
 class _QAssessmentObjectIContainedAdder(object):
