@@ -42,6 +42,9 @@ class RegEx(SchemaConfigured, persistent.Persistent, contained.Contained):
 		except AttributeError:
 			return NotImplemented
 
+	def __str__(self):
+		return self.pattern
+
 	__repr__ = make_repr()
 
 	def __hash__(self):

@@ -51,7 +51,7 @@ _normalize_quotes = staticmethod(__normalize_quotes)
 
 @staticmethod
 def _lower_normalized(string):
-	return __normalize_quotes( __lower( string ) )
+	return __normalize_quotes(__lower(string))
 
 class _AbstractGrader(object):
 	"""
@@ -250,10 +250,11 @@ class FillInTheBlankShortAnswerGrader(EqualityGrader):
 	def _compare(self, solution_value, response_value):
 		solutions = self.solution_converter(solution_value)
 		responses = self.response_converter(response_value)
-		for key, pattern in solutions.items():
-			resp = responses.get(key)
-			__traceback_info__ = key, resp, pattern
-			if resp is None or not _compile(pattern).match(str(resp)):
+		for key, regex in solutions.items():
+			response = responses.get(key)
+			pattern = regex.pattern if interfaces.IRegEx.providedBy(regex) else regex
+			__traceback_info__ = key, response, pattern
+			if response is None or not _compile(pattern).match(str(response)):
 				return False
 		return True
 
