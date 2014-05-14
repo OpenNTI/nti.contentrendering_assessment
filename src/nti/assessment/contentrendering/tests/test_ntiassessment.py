@@ -384,11 +384,9 @@ class TestMisc(AssessmentTestCase):
 		assert_that(dom.getElementsByTagName('naqchoice'), has_length(3))
 		assert_that(dom.getElementsByTagName('naqsolution'), has_length(2))
 
-
 		naq = dom.getElementsByTagName('naquestion')[0]
 		part_el = naq.getElementsByTagName('naqmultiplechoicepart')[0]
 		solns = getattr(part_el, '_asm_solutions')()
-
 
 		assert_that(solns[0], verifiably_provides(part_el.soln_interface))
 		assert_that(solns[0], has_property('weight', 1.0))
@@ -403,7 +401,6 @@ class TestMisc(AssessmentTestCase):
 		assert_that(part.explanation, is_("Arbitrary content explaining how the correct solution is arrived at."))
 		assert_that(part, has_property('choices', has_length(3)))
 		assert_that(part.choices, has_item('Arbitrary content for the choice.'))
-
 
 		quest_el = dom.getElementsByTagName('naquestion')[0]
 		question = quest_el.assessment_object()
@@ -443,7 +440,7 @@ class TestMisc(AssessmentTestCase):
 		part_el = naq.getElementsByTagName('naqfillintheblankshortanswerpart')[0]
 		solns = getattr(part_el, '_asm_solutions')()
 		assert_that(solns, has_length(1))
-		assert_that(solns[0], has_property('value', has_entry('001', '^yes\\s*[,|\\s]\\s*I will$')))
+		assert_that(solns[0], has_property('value', has_entry('001', has_property('pattern', '^yes\\s*[,|\\s]\\s*I will$'))))
 
 		assert_that(solns[0], verifiably_provides(part_el.soln_interface))
 		assert_that(solns[0], has_property('weight', 1.0))

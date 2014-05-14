@@ -624,12 +624,12 @@ from nti.assessment.contentrendering.ntialibra import naqwordentry, naqwordbank,
 from nti.assessment.contentrendering.ntialibra import naqfillintheblankshortanswerpart, naqfillintheblankwithwordbankpart
 
 naqregexref = naqregexref
+naqblankfield = naqblankfield
 naqwordbankref = naqwordbankref
 naquestionfillintheblankwordbank = naquestionfillintheblankwordbank
 
 _LocalContentMixin._asm_ignorable_renderables += (_WordBankMixIn,
 												  naqinput,
-												  naqblankfield,
 												  naqregex,
 												  naqregexes,
 												  naqwordentry,

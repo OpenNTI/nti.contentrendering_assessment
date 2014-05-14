@@ -259,6 +259,10 @@ class naqwordentry(_LocalContentMixin, Base.List.item):
 class naqblankfield(Base.Command):
 	args = 'id:str [maxlength:int]'
 
+	def digest(self, tokens):
+		res = super(naqblankfield, self).digest(tokens)
+		return res
+
 class naqwordbank(Base.List):
 	args = '[unique:str] [label:idref]'
 
