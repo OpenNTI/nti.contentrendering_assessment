@@ -198,7 +198,7 @@
 			 for=".interfaces.IQPart"
 			 provides=".interfaces.IQPartSolutionsExternalizer" />
 			
-	<adapter factory=".decorators._NoPartSolutionsExternalizer"
+	<adapter factory=".decorators._FillInTheBlankShortAnswerPartSolutionsExternalizer"
 			 for=".interfaces.IQFillInTheBlankShortAnswerPart"
 			 provides=".interfaces.IQPartSolutionsExternalizer" />
 			  

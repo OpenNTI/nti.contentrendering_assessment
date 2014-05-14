@@ -33,15 +33,25 @@ class _DefaultPartSolutionsExternalizer(object):
 
 @interface.implementer(interfaces.IQPartSolutionsExternalizer)
 @component.adapter(interfaces.IQFillInTheBlankShortAnswerPart)
-class _NoPartSolutionsExternalizer(object):
+class _FillInTheBlankShortAnswerPartSolutionsExternalizer(object):
 
-	__slots__ = ()
+	__slots__ = ('part',)
 
-	def __init__(self, part=None):
-		pass
+	def __init__(self, part):
+		self.part = part
 
 	def to_external_object(self):
-		return ()
+		result = []
+		for solution in self.part.solutions:
+			ext = to_external_object(solution)
+			if interfaces.IQFillInTheBlankShortAnswerSolution.providedBy(solution):
+				value = {}
+				for k, v in solution.value.items():
+					txt = v.solution if interfaces.IRegEx.providedBy(v) else v
+					value[k] = txt
+				ext['value'] = value
+			result.append(ext)
+		return result
 
 @interface.implementer(ext_interfaces.IExternalObjectDecorator)
 @component.adapter(interfaces.IQAssessedQuestion)
