@@ -747,20 +747,19 @@ class naqfillintheblankshortanswerpart(_AbstractNAQPart):
 			assert len(_regentries) > 0, "Must specified at least one regex"
 
 			assert len(_blankids) <= len(_regentries)
-
 			assert len(self.getElementsByTagName('naqsolutions')) == 0
 
+			answer = {}
 			_naqsolns = self.ownerDocument.createElement('naqsolutions')
 			_naqsolns.macroMode = _naqsolns.MODE_BEGIN
-			answer = {}
 			for _naqmregex in _regentries:
 				pid, pattern = _naqmregex.attributes['pid'], _naqmregex.attributes['pattern']
 				assert pattern and pid
 				answer[pid] = pattern
 			_naqsoln = self.ownerDocument.createElement('naqsolution')
+			_naqsoln.answer = answer
 			_naqsoln.attributes['weight'] = 1.0
 			_naqsoln.argSource = '[%s]' % _naqsoln.attributes['weight']
-			_naqsoln.answer = answer
 			_naqsolns.appendChild(_naqsoln)
 			self.insertAfter(_naqsolns, _naqregexes)
 		return res
