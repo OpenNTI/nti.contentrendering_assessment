@@ -132,3 +132,19 @@ class TestExternalization(AssessmentTestCase):
 	def test_question(self):
 		internal = QFillInTheBlankWithWordBankQuestion()
 		assert_that(internal, externalizes(all_of(has_entry('Class', 'Question')))),
+
+	def test_regex(self):
+		ext_obj = {u'MimeType': u'application/vnd.nextthought.naqregex',
+				   u'pattern': u"(^yes\\s*[,|\\s]\\s*I will(\\.)?$)|(^no\\s*[,|\\s]\\s*I (won't|will not)(\\.)?$)",
+				   u'Class': 'RegEx',
+				   u'solution': u'yes, I will'}
+		assert_that(internalization.find_factory_for(ext_obj),
+					is_(not_none()))
+
+		internal = internalization.find_factory_for(ext_obj)()
+		internalization.update_from_external_object(internal,
+													 ext_obj,
+													 require_updater=True)
+
+		assert_that(internal, has_property('solution', is_(u'yes, I will')))
+		assert_that(internal, has_property('pattern', is_(u"(^yes\\s*[,|\\s]\\s*I will(\\.)?$)|(^no\\s*[,|\\s]\\s*I (won't|will not)(\\.)?$)")))
