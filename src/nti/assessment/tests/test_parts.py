@@ -32,7 +32,6 @@ from nti.externalization.tests import externalizes
 
 from nose.tools import assert_raises
 
-# nose module-level setup
 from nti.assessment.tests import AssessmentTestCase
 
 class TestQPart(AssessmentTestCase):

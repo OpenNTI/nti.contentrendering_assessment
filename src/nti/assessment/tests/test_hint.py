@@ -13,8 +13,6 @@ from hamcrest import not_none
 from hamcrest import has_entry
 from hamcrest import assert_that
 
-from unittest import TestCase
-
 from nti.externalization import internalization
 from nti.externalization.externalization import toExternalObject
 
@@ -22,10 +20,9 @@ from nti.assessment import interfaces
 
 from nti.externalization.tests import externalizes
 
-from nti.testing import base
 from nti.testing.matchers import verifiably_provides
 
-from . import AssessmentTestCase
+from nti.assessment.tests import AssessmentTestCase
 
 class TestTextHint(AssessmentTestCase):
 
@@ -35,7 +32,6 @@ class TestTextHint(AssessmentTestCase):
 		assert_that( hint, externalizes( has_entry( 'Class', 'TextHint' ) ) )
 		assert_that( internalization.find_factory_for( toExternalObject( hint ) ),
 					 is_( not_none() ) )
-
 
 	def test_eq(self):
 		hint1 = interfaces.IQTextHint( "The hint" )

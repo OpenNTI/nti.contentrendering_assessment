@@ -18,16 +18,13 @@ from hamcrest import has_property
 from hamcrest import has_key
 from hamcrest import all_of
 
-from unittest import TestCase
-
 from nti.externalization import internalization
 
 from nti.assessment.question import QFillInTheBlankWithWordBankQuestion
 
-from nti.testing import base
 from nti.externalization.tests import externalizes
 
-from . import AssessmentTestCase
+from nti.assessment.tests import AssessmentTestCase
 
 GIF_DATAURL = b'data:image/gif;base64,R0lGODlhCwALAIAAAAAA3pn/ZiH5BAEAAAEALAAAAAALAAsAAAIUhA+hkcuO4lmNVindo7qyrIXiGBYAOw=='
 

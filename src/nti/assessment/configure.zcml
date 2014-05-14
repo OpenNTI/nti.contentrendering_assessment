@@ -172,7 +172,7 @@
 			 for=".interfaces.IWordEntry"
 			 provides="nti.externalization.interfaces.IInternalObjectUpdater" />
 			 
-	<adapter factory="basestring .regex._regex_str_adapter"
+	<adapter factory=".regex._regex_str_adapter"
 			 provides=".interfaces.IRegEx"
 			 for="basestring" />
 

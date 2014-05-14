@@ -16,8 +16,6 @@ from hamcrest import assert_that
 from hamcrest import has_entries
 from hamcrest import has_property
 
-import unittest
-
 from nti.assessment.wordbank import WordBank
 from nti.assessment.wordbank import WordEntry
 from nti.assessment import interfaces as asm_interfaces
@@ -25,8 +23,6 @@ from nti.assessment import interfaces as asm_interfaces
 from nti.externalization.tests import externalizes
 
 from nti.testing.matchers import verifiably_provides
-
-import nti.testing.base
 
 from . import AssessmentTestCase
 

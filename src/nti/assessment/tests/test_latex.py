@@ -9,22 +9,19 @@ __docformat__ = "restructuredtext en"
 
 from hamcrest import assert_that
 
-from unittest import TestCase
-
 from zope import component
 
+from nti.assessment import interfaces
 from nti.assessment import response, solution
 from nti.assessment import grade_one_response
-from nti.assessment import interfaces
 from nti.assessment._latexplastexdomcompare import _mathChildIsEqual as mce
 
 from nti.assessment.tests.test_solution import grades_right, grades_wrong
 
-import nti.testing.base
 from nti.testing.matchers import is_true, is_false
 from nti.testing.matchers import verifiably_provides
 
-from . import AssessmentTestCase
+from nti.assessment.tests import AssessmentTestCase
 
 class TestLatex(AssessmentTestCase):
 
