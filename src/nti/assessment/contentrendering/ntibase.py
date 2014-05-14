@@ -30,9 +30,6 @@ class _LocalContentMixin(_BaseLocalContentMixin):
 
 class _AbstractNAQPart(_LocalContentMixin, Base.Environment):
 
-	after_render_elements = ('naqsolexplanation', 'naqsolution', 'naqhint',
-							 'naqchoice', 'naqmlabel', 'naqmvalue')
-
 	randomize = False
 
 	#: Defines the type of part this maps too
@@ -134,7 +131,14 @@ class _AbstractNAQPart(_LocalContentMixin, Base.Environment):
 
 	def _after_render( self, rendered ):
 		super(_AbstractNAQPart,self)._after_render( rendered )
-		for x in itertools.chain(self.getElementsByTagName(e) for e in self.after_render_elements):
+		# The hints and explanations don't normally get rendered
+		# by the templates, so make sure they do
+		for x in itertools.chain(self.getElementsByTagName('naqsolexplanation'),
+								 self.getElementsByTagName('naqsolution'),
+								 self.getElementsByTagName('naqhint'),
+								 self.getElementsByTagName('naqchoice'),
+								 self.getElementsByTagName('naqmlabel'),
+								 self.getElementsByTagName('naqmvalue')):
 			unicode(x)
 
 	def invoke(self, tex):
