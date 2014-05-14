@@ -10,6 +10,9 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+import six
+import collections
+
 from zope import interface
 from zope import component
 
@@ -50,6 +53,31 @@ class _FillInTheBlankShortAnswerPartSolutionsExternalizer(object):
 					txt = v.solution if interfaces.IRegEx.providedBy(v) else v
 					value[k] = txt
 				ext['value'] = value
+			result.append(ext)
+		return result
+
+	__slots__ = ('part',)
+
+@interface.implementer(interfaces.IQPartSolutionsExternalizer)
+@component.adapter(interfaces.IQFillInTheBlankWithWordBankPart)
+class _FillInTheBlankWithWordBankPartSolutionsExternalizer(object):
+
+	__slots__ = ('part',)
+
+	def __init__(self, part):
+		self.part = part
+
+	def to_external_object(self):
+		result = []
+		for solution in self.part.solutions:
+			ext = to_external_object(solution)
+			if interfaces.IQFillInTheBlankWithWordBankSolution.providedBy(solution):
+				value = ext.get('value', {})
+				for k in list(value.keys()):
+					v = value.get(k)
+					if 	v and not isinstance(v, six.string_types) and \
+						isinstance(v, collections.Sequence):
+						value[k] = v[0]  # pick first one always
 			result.append(ext)
 		return result
 

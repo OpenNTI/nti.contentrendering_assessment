@@ -202,6 +202,10 @@
 			 for=".interfaces.IQFillInTheBlankShortAnswerPart"
 			 provides=".interfaces.IQPartSolutionsExternalizer" />
 			  
+	<adapter factory=".decorators._FillInTheBlankWithWordBankPartSolutionsExternalizer"
+			 for=".interfaces.IQFillInTheBlankWithWordBankPart"
+			 provides=".interfaces.IQPartSolutionsExternalizer" />
+			 
 	<!-- Give assignments a containerId -->
 	<subscriber
 		factory=".decorators._QAssessmentObjectIContainedAdder"
