@@ -218,9 +218,11 @@ class naqfillintheblankshortanswerpart(_AbstractNAQPart):
 			_naqsolns = self.ownerDocument.createElement('naqsolutions')
 			_naqsolns.macroMode = _naqsolns.MODE_BEGIN
 			for _naqmregex in _regentries:
-				pid, pattern = _naqmregex.attributes['pid'], _naqmregex.attributes['pattern']
+				pid, pattern, solution = _naqmregex.attributes['pid'], \
+										 _naqmregex.attributes['pattern'], \
+										 _naqmregex._asm_local_content
 				assert pattern and pid
-				answer[pid] = pattern
+				answer[pid] = as_interfaces.IRegEx((pattern, solution or None))
 			_naqsoln = self.ownerDocument.createElement('naqsolution')
 			_naqsoln.answer = answer
 			_naqsoln.attributes['weight'] = 1.0
