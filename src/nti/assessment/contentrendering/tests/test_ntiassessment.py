@@ -415,8 +415,7 @@ class TestMisc(AssessmentTestCase):
 				\begin{naquestion}
 				Arbitrary prefix content goes here.
 				\begin{naqfillintheblankshortanswerpart}
-					Arbitrary content for this part goes here.
-					\naqblankfield{001}[2] \naqblankfield{002}[2]
+					Arbitrary content for this part goes here. \naqblankfield{001}[2] \naqblankfield{002}[2]
 					\begin{naqregexes}
 						\naqregex{001}{^yes\\s*[\,|\\s]\\s*I will\$} Yes, I will.
 						\naqregex{002}{^1\$} Only 1.
@@ -714,7 +713,6 @@ class TestRenderableSymMathPart(AssessmentTestCase):
 				assert_that( index, does_not( contains_string( 'data-nti-units' ) ) )
 
 	def test_render_id(self):
-		"The label for the question becomes part of its NTIID."
 		self._do_test_render( r'\label{testquestion}', 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.testquestion')
 
 	def test_render_counter(self):
@@ -734,31 +732,30 @@ class TestRenderableSymMathPart(AssessmentTestCase):
 			self._do_test_render( '', 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.1', units=r'<$m^2$>')
 
 	def test_assessment_index(self):
-
 		example = br"""
-		\chapter{Chapter One}
-
-		We have a paragraph.
-
-		\section{Section One}
-
-		\begin{naquestion}[individual=true]\label{testquestion}
-			Arbitrary content goes here.
-			\begin{naqsymmathpart}
-			Arbitrary content goes here.
-			\begin{naqsolutions}
-				\naqsolution<unit1,unit2> Some solution
-			\end{naqsolutions}
-			\begin{naqhints}
-				\naqhint Some hint
-			\end{naqhints}
-			\end{naqsymmathpart}
-		\end{naquestion}
-
-		\begin{naquestionset}\label{testset}
-			\naquestionref{testquestion}
-		\end{naquestionset}
-		"""
+			\chapter{Chapter One}
+	
+			We have a paragraph.
+	
+			\section{Section One}
+	
+			\begin{naquestion}[individual=true]\label{testquestion}
+				Arbitrary content goes here.
+				\begin{naqsymmathpart}
+				Arbitrary content goes here.
+				\begin{naqsolutions}
+					\naqsolution<unit1,unit2> Some solution
+				\end{naqsolutions}
+				\begin{naqhints}
+					\naqhint Some hint
+				\end{naqhints}
+				\end{naqsymmathpart}
+			\end{naquestion}
+	
+			\begin{naquestionset}\label{testset}
+				\naquestionref{testquestion}
+			\end{naquestionset}
+			"""
 
 		with RenderContext(_simpleLatexDocument( (example,) )) as ctx:
 			dom  = ctx.dom
