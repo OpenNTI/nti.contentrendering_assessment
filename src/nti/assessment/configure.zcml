@@ -153,6 +153,10 @@
 		factory_modules=".submission .question .response"
 		iobase=".externalization._AssessmentInternalObjectIOBase"/>
 
+	<adapter factory=".internalization._QFillInTheBlankWithWordBankSolutionUpdater"
+			 for=".interfaces.IQFillInTheBlankShortAnswerSolution"
+			 provides="nti.externalization.interfaces.IInternalObjectUpdater" />
+			 
 	<!-- WordBank & Regex -->
 	<ext:registerAutoPackageIO
 		root_interfaces=".interfaces.IWordEntry

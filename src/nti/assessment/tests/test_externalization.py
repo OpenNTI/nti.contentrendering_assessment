@@ -148,3 +148,30 @@ class TestExternalization(AssessmentTestCase):
 
 		assert_that(internal, has_property('solution', is_(u'yes, I will')))
 		assert_that(internal, has_property('pattern', is_(u"(^yes\\s*[,|\\s]\\s*I will(\\.)?$)|(^no\\s*[,|\\s]\\s*I (won't|will not)(\\.)?$)")))
+
+	def test_regex_part(self):
+		ext_obj = {u'MimeType': 'application/vnd.nextthought.assessment.fillintheblankshortanswerpart',
+					'explanation': u'',
+					'content': u'Will you visit America next year?',
+					'solutions': [
+									{u'MimeType': 'application/vnd.nextthought.assessment.fillintheblankshortanswersolution',
+									 'value': {u'001': {u'MimeType': u'application/vnd.nextthought.naqregex',
+														 'pattern': u"(^yes\\s*[,|\\s]\\s*I will(\\.)?$)|(^no\\s*[,|\\s]\\s*I (won't|will not)(\\.)?$)",
+														 u'Class': 'RegEx',
+														 'solution': u'yes, I will'}},
+									 u'Class': 'FillInTheBlankShortAnswerSolution',
+									 'weight': 1.0}
+								 ],
+				   u'Class': 'FillInTheBlankShortAnswerPart',
+				    'hints': []}
+
+		assert_that(internalization.find_factory_for(ext_obj),
+					is_(not_none()))
+
+		internal = internalization.find_factory_for(ext_obj)()
+		internalization.update_from_external_object(internal, ext_obj,
+													require_updater=True)
+
+		assert_that(internal, has_property('solutions', has_length(1)))
+		sol = internal.solutions[0]
+		assert_that(sol, has_property('value', has_entry('001', has_property('solution', 'yes, I will'))))
