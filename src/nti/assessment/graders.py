@@ -16,6 +16,8 @@ import numbers
 
 from zope import interface
 
+from pyramid.location import lineage
+
 import repoze.lru
 
 from nti.utils.schema import InvalidValue
@@ -263,9 +265,13 @@ class FillInTheBlankWithWordBankGrader(EqualityGrader):
 
 	@property
 	def _wordbank(self):
-		wordbank = self.part.wordbank
-		question_bank = getattr(self.part.__parent__, 'wordbank', None)
-		wordbank = wordbank + question_bank if wordbank else question_bank
+		wordbank = None
+		for obj in lineage(self.part):
+			parent_bank = getattr(obj, 'wordbank', None)
+			if not wordbank:
+				wordbank = parent_bank
+			elif parent_bank:
+				wordbank = wordbank + parent_bank
 		return wordbank
 		
 	def _to_id_dict(self, the_dict):
