@@ -49,6 +49,17 @@ the TeX DOM.
 
 .. $Id$
 """
+# All of these have too many public methods
+# pylint: disable=R0904
+
+# "not callable" for the default values of None
+# pylint: disable=E1102
+
+# access to protected members -> _asm_local_content defined in this module
+# pylint: disable=W0212
+
+# "Method __delitem__ is abstract in Node and not overridden"
+# pylint: disable=W0223
 
 from __future__ import print_function, unicode_literals, absolute_import, division
 __docformat__ = "restructuredtext en"
