@@ -9,7 +9,6 @@ __docformat__ = "restructuredtext en"
 
 from hamcrest import is_
 from hamcrest import is_not
-from hamcrest import contains
 from hamcrest import equal_to
 from hamcrest import has_length
 from hamcrest import assert_that
@@ -61,7 +60,7 @@ class TestWordBank(AssessmentTestCase):
 		assert_that(bank.contains_word('foo'), is_(False))
 
 		assert_that(bank.words, has_length(2))
-		assert_that(bank.words, contains('bankai', 'shikai'))
+		assert_that(sorted(bank.words), is_(['bankai', 'shikai']))
 
 		w1 = bank.get('1')
 		assert_that(w1, has_property('wid', is_('1')))
