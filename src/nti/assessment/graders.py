@@ -15,8 +15,7 @@ import six
 import numbers
 
 from zope import interface
-
-from pyramid.location import lineage
+from zope.location import LocationIterator
 
 import repoze.lru
 
@@ -266,7 +265,7 @@ class FillInTheBlankWithWordBankGrader(EqualityGrader):
 	@property
 	def _wordbank(self):
 		wordbank = None
-		for obj in lineage(self.part):
+		for obj in LocationIterator(self.part):
 			parent_bank = getattr(obj, 'wordbank', None)
 			if not wordbank:
 				wordbank = parent_bank
