@@ -26,8 +26,6 @@ from . import interfaces
 @component.adapter(interfaces.IQPart)
 class _DefaultPartSolutionsExternalizer(object):
 
-	__slots__ = ('part',)
-
 	def __init__(self, part):
 		self.part = part
 
@@ -37,8 +35,6 @@ class _DefaultPartSolutionsExternalizer(object):
 @interface.implementer(interfaces.IQPartSolutionsExternalizer)
 @component.adapter(interfaces.IQFillInTheBlankShortAnswerPart)
 class _FillInTheBlankShortAnswerPartSolutionsExternalizer(object):
-
-	__slots__ = ('part',)
 
 	def __init__(self, part):
 		self.part = part
@@ -56,13 +52,9 @@ class _FillInTheBlankShortAnswerPartSolutionsExternalizer(object):
 			result.append(ext)
 		return result
 
-	__slots__ = ('part',)
-
 @interface.implementer(interfaces.IQPartSolutionsExternalizer)
 @component.adapter(interfaces.IQFillInTheBlankWithWordBankPart)
 class _FillInTheBlankWithWordBankPartSolutionsExternalizer(object):
-
-	__slots__ = ('part',)
 
 	def __init__(self, part):
 		self.part = part
