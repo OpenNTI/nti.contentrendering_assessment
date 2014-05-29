@@ -9,6 +9,8 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+import six
+
 from zope import interface
 
 from plasTeX.Renderers import render_children
@@ -24,8 +26,11 @@ class _NAQuestionSetRefJSONTransformer(object):
 		self.el = element
 
 	def transform(self):
-		output = {'label': unicode(''.join(render_children(self.el.questionset.renderer,
-										   self.el.questionset.title)))}
+		title = self.el.questionset.title
+		if not isinstance(title, six.string_types):
+			title = unicode(''.join(render_children(self.el.questionset.renderer,
+									self.el.questionset.title)))
+		output = {'label': title}
 		output['MimeType'] = self.el.questionset.mimeType
 		output['Target-NTIID'] = self.el.questionset.ntiid
 		output['question-count'] = self.el.questionset.question_count
