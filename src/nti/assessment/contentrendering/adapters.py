@@ -28,8 +28,7 @@ class _NAQuestionSetRefJSONTransformer(object):
 	def transform(self):
 		title = self.el.questionset.title
 		if not isinstance(title, six.string_types):
-			title = unicode(''.join(render_children(self.el.questionset.renderer,
-									self.el.questionset.title)))
+			title = unicode(''.join(render_children(self.el.questionset.renderer, title)))
 		output = {'label': title}
 		output['MimeType'] = self.el.questionset.mimeType
 		output['Target-NTIID'] = self.el.questionset.ntiid
