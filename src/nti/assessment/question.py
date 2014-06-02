@@ -36,9 +36,13 @@ class QQuestion(Persistent,
 	createDirectFieldProperties(interfaces.IQuestion)
 
 	def __eq__(self, other):
-		return other is self or (isinstance(other, QQuestion)
-								 and self.content == other.content
-								 and self.parts == other.parts)
+		try:
+			return other is self or (isinstance(other, QQuestion)
+								 	 and self.content == other.content
+								 	 and self.parts == other.parts)
+		except AttributeError:
+			return NotImplemented
+
 	def __ne__(self, other):
 		return not (self == other)
 
@@ -57,9 +61,13 @@ class QQuestionSet(Persistent,
 	createDirectFieldProperties(interfaces.IQuestionSet)
 
 	def __eq__(self, other):
-		return other is self or (isinstance(other, QQuestionSet)
-								 and self.questions == other.questions
-								 and self.title == other.title)
+		try:
+			return other is self or (isinstance(other, QQuestionSet)
+								 	 and self.questions == other.questions
+									 and self.title == other.title)
+		except AttributeError:
+			return NotImplemented
+
 	def __ne__(self, other):
 		return not (self == other)
 
@@ -81,8 +89,11 @@ class QFillInTheBlankWithWordBankQuestion(QQuestion):
 				x.__parent__ = self  # take ownership
 
 	def __eq__(self, other):
-		return	super(QFillInTheBlankWithWordBankQuestion, self).__eq__(other) and \
-				(self is other or self.wordBank == other.wordBank)
+		try:
+			return	super(QFillInTheBlankWithWordBankQuestion, self).__eq__(other) and \
+					(self is other or self.wordBank == other.wordBank)
+		except AttributeError:
+			return NotImplemented
 
 	def sublocations(self):
 		for part in self.parts or ():
