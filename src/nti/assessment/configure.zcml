@@ -168,10 +168,18 @@
 			 provides=".interfaces.IWordBank"
 			 for="list"/>
 
+	<adapter factory="list .wordbank._wordbank_adapter"
+			 provides=".interfaces.IWordBank"
+			 for="tuple"/>
+			 
 	<adapter factory="list .wordbank._wordentry_adapter"
 			 provides=".interfaces.IWordEntry"
 			 for="list"/>
 
+	<adapter factory="list .wordbank._wordentry_adapter"
+			 provides=".interfaces.IWordEntry"
+			 for="tuple"/>
+			 
 	<adapter factory=".internalization._WordEntryUpdater"
 			 for=".interfaces.IWordEntry"
 			 provides="nti.externalization.interfaces.IInternalObjectUpdater" />
@@ -230,12 +238,10 @@
 	<adapter factory=".externalization._QUploadedFileFactory"
 			 for="dolmen.builtins.IDict"
 			 provides="nti.externalization.interfaces.IMimeObjectFactory"
-			 name="application/vnd.nextthought.assessment.uploadedfile"
-			 />
+			 name="application/vnd.nextthought.assessment.uploadedfile" />
 
 	<adapter factory=".externalization._QUploadedFileObjectIO"
-			 for=".interfaces.IQUploadedFile"
-			 />
+			 for=".interfaces.IQUploadedFile"  />
 
 	<!-- randomized -->
 	<include package=".randomized" file="configure.zcml" />

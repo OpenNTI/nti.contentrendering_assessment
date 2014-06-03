@@ -10,12 +10,9 @@ logger = __import__('logging').getLogger(__name__)
 
 import functools
 
-from zope import component
 from zope import interface
 from zope.container import contained
 from zope.location.interfaces import ISublocations
-
-import dolmen.builtins.interfaces
 
 import persistent
 
@@ -149,17 +146,15 @@ class WordBank(SchemaConfigured, persistent.Persistent, contained.Contained):
 		result = CaseInsensitiveDict()
 		result.update({x.word:x.wid for x in self.entries})
 		return result
-					
-@component.adapter(dolmen.builtins.interfaces.IList)
+
 @interface.implementer(interfaces.IWordEntry)
-def _wordentry_adapter(lst):
-	result = WordEntry(wid=unicode(lst[0]), word=unicode(lst[1]))
-	result.lang = unicode(lst[2]) if len(lst) > 2 and lst[2] else u'en'
-	content = unicode(lst[3]) if len(lst) > 3 and lst[3] else result.word
+def _wordentry_adapter(sequence):
+	result = WordEntry(wid=unicode(sequence[0]), word=unicode(sequence[1]))
+	result.lang = unicode(sequence[2]) if len(sequence) > 2 and sequence[2] else u'en'
+	content = unicode(sequence[3]) if len(sequence) > 3 and sequence[3] else result.word
 	result.content = cfg_interfaces.HTMLContentFragment(content)
 	return result
 
-@component.adapter(dolmen.builtins.interfaces.IList)
 @interface.implementer(interfaces.IWordBank)
 def _wordbank_adapter(entries, unique=True):
 	entries = {e.wid:e for e in entries}
