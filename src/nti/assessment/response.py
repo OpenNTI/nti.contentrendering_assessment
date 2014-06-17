@@ -18,6 +18,7 @@ from persistent import Persistent
 
 from plone.namedfile.file import NamedBlobFile
 from plone.namedfile.file import NamedBlobImage
+
 from nti.dataserver.datastructures import PersistentCreatedModDateTrackingObject
 
 from . import interfaces

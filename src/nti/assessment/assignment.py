@@ -3,7 +3,7 @@
 """
 The assignment related objects.
 
-$Id$
+.. $Id$
 """
 from __future__ import print_function, unicode_literals, absolute_import, division
 __docformat__ = "restructuredtext en"
@@ -22,9 +22,9 @@ from nti.externalization.externalization import make_repr
 from nti.dataserver.datastructures import PersistentCreatedModDateTrackingObject
 from nti.dataserver.datastructures import ContainedMixin
 
-from nti.utils.schema import createDirectFieldProperties
-from nti.utils.schema import SchemaConfigured
-from nti.utils.schema import AdaptingFieldProperty
+from nti.schema.field import SchemaConfigured
+from nti.schema.fieldproperty import AdaptingFieldProperty
+from nti.schema.fieldproperty import createDirectFieldProperties
 
 from nti.utils.property import alias
 

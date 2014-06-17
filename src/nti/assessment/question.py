@@ -18,9 +18,9 @@ from zope.annotation.interfaces import IAttributeAnnotatable
 
 from persistent import Persistent
 
-from nti.utils.schema import SchemaConfigured
-from nti.utils.schema import AdaptingFieldProperty
-from nti.utils.schema import createDirectFieldProperties
+from nti.schema.field import SchemaConfigured
+from nti.schema.fieldproperty import AdaptingFieldProperty
+from nti.schema.fieldproperty import createDirectFieldProperties
 
 from . import interfaces
 from ._util import superhash

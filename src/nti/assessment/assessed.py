@@ -20,9 +20,9 @@ from persistent.list import PersistentList
 
 from nti.externalization.externalization import make_repr
 
-from nti.utils.schema import InvalidValue
-from nti.utils.schema import SchemaConfigured
-from nti.utils.schema import createDirectFieldProperties
+from nti.schema.field import InvalidValue
+from nti.schema.field import SchemaConfigured
+from nti.schema.fieldproperty import createDirectFieldProperties
 
 # EWW...but we need to be IContained in order to be stored
 # in container data structures.

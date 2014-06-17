@@ -35,7 +35,7 @@ from nti.externalization import internalization
 from nti.externalization.externalization import toExternalObject
 from nti.externalization.internalization import update_from_external_object
 
-from nti.utils.schema import InvalidValue
+from nti.schema.field import InvalidValue
 
 from nti.assessment import parts
 from nti.assessment import assessed

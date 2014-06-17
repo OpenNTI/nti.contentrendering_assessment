@@ -3,7 +3,7 @@
 """
 Having to do with submitting external data for grading.
 
-$Id$
+.. $Id$
 """
 from __future__ import unicode_literals, print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
@@ -19,8 +19,8 @@ from nti.dataserver.datastructures import PersistentCreatedModDateTrackingObject
 
 from nti.externalization.externalization import make_repr
 
-from nti.utils.schema import SchemaConfigured
-from nti.utils.schema import createDirectFieldProperties
+from nti.schema.field import SchemaConfigured
+from nti.schema.fieldproperty import createDirectFieldProperties
 
 from . import interfaces
 from ._util import make_sublocations as _make_sublocations

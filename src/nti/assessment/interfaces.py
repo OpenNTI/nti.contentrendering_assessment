@@ -14,19 +14,6 @@ from zope.mimetype.interfaces import mimeTypeConstraint
 from zope.container.interfaces import IContained
 from zope.annotation.interfaces import IAnnotatable
 
-from nti.utils.schema import Int
-from nti.utils.schema import Bool
-from nti.utils.schema import Dict
-from nti.utils.schema import List
-from nti.utils.schema import Float
-from nti.utils.schema import Object
-from nti.utils.schema import Variant
-from nti.utils.schema import ListOrTuple
-from nti.utils.schema import IndexedIterable
-from nti.utils.schema import ValidText as Text
-from nti.utils.schema import ValidTextLine as TextLine
-from nti.utils.schema import ValidDatetime as Datetime
-
 from dolmen.builtins.interfaces import IDict
 from dolmen.builtins.interfaces import IList
 from dolmen.builtins.interfaces import INumeric
@@ -34,20 +21,33 @@ from dolmen.builtins.interfaces import IString
 from dolmen.builtins.interfaces import IUnicode
 from dolmen.builtins.interfaces import IIterable
 
-NTIID_TYPE = 'NAQ'
-
 from nti.contentfragments.schema import LatexFragmentTextLine as _LatexTextLine
 from nti.contentfragments.schema import HTMLContentFragment as _HTMLContentFragment
 from nti.contentfragments.schema import TextUnicodeContentFragment as _ContentFragment
 
+from nti.dataserver.interfaces import Tag
+from nti.dataserver.interfaces import ILastModified
+from nti.dataserver.interfaces import ITitledContent
 from nti.dataserver.interfaces import CompoundModeledContentBody
 from nti.dataserver.interfaces import INeverStoredInSharedStream
-from nti.dataserver.interfaces import ITitledContent
-from nti.dataserver.interfaces import ILastModified
-from nti.dataserver.interfaces import Tag
+
+from nti.schema.field import Int
+from nti.schema.field import Bool
+from nti.schema.field import Dict
+from nti.schema.field import List
+from nti.schema.field import Float
+from nti.schema.field import Object
+from nti.schema.field import Variant
+from nti.schema.field import ListOrTuple
+from nti.schema.field import IndexedIterable
+from nti.schema.field import ValidText as Text
+from nti.schema.field import ValidTextLine as TextLine
+from nti.schema.field import ValidDatetime as Datetime
 
 from nti.monkey import plonefile_zopefile_patch_on_import
 plonefile_zopefile_patch_on_import.patch()
+
+NTIID_TYPE = 'NAQ'
 
 class IQHint(interface.Interface):
 	"""

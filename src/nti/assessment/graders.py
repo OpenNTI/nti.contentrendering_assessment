@@ -19,7 +19,7 @@ from zope.location import LocationIterator
 
 import repoze.lru
 
-from nti.utils.schema import InvalidValue
+from nti.schema.field import InvalidValue
 
 from . import interfaces
 

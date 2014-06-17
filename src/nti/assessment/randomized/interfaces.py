@@ -36,7 +36,8 @@ class IQRandomizedMultipleChoicePartGrader(IQMultipleChoicePartGrader):
 
 # multiple choice, multiple answer
 
-class IQRandomizedMultipleChoiceMultipleAnswerPart(IQRandomizedPart, IQMultipleChoiceMultipleAnswerPart):
+class IQRandomizedMultipleChoiceMultipleAnswerPart(IQRandomizedPart,
+												   IQMultipleChoiceMultipleAnswerPart):
 	pass
 
 class IQRandomizedMultipleChoiceMultipleAnswerPartGrader(IQMultipleChoiceMultipleAnswerPartGrader):

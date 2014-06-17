@@ -20,11 +20,11 @@ from nti.contentfragments import interfaces as cfg_interfaces
 
 from nti.externalization.externalization import make_repr
 
+from nti.schema.field import SchemaConfigured
+from nti.schema.fieldproperty import createDirectFieldProperties
+
 from nti.utils.property import Lazy
 from nti.utils.maps import CaseInsensitiveDict
-
-from nti.utils.schema import SchemaConfigured
-from nti.utils.schema import createDirectFieldProperties
 
 from . import interfaces
 from ._util import superhash

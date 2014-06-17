@@ -20,11 +20,11 @@ from zope.schema.interfaces import ConstraintNotSatisfied
 
 from persistent import Persistent
 
-from nti.utils.schema import SchemaConfigured
-
 from nti.contentfragments.interfaces import UnicodeContentFragment as _u
 
 from nti.externalization.externalization import make_repr
+
+from nti.schema.field import SchemaConfigured
 
 from . import interfaces
 from ._util import superhash
