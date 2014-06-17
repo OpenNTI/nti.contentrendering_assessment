@@ -78,7 +78,7 @@ class QFileResponse(TrivialValuedMixin, QResponse):
 	An uploaded file response.
 	"""
 
-from nti.utils.schema import AdaptingFieldProperty
+from nti.schema.fieldproperty import AdaptingFieldProperty
 from nti.dataserver.contenttypes.note import BodyFieldProperty
 
 @interface.implementer(interfaces.IQModeledContentResponse)
