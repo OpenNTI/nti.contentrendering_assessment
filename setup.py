@@ -45,7 +45,7 @@ setup(
 		# deployments, we do not yet declare that.
 		# We will declare it when everything is in
 		# buildout:
-		# 'nti.utils.schema',
+		# 'nti.schema',
 		# 'nti.externalization',
 		# 'nti.contentfragments.schema'
 	],
