@@ -79,6 +79,12 @@ def _symbolic( child ):
 		# See https://github.com/sympy/sympy/issues/2515
 		# We have a test case for this.
 		return child
+	except MemoryError:
+		# On some deeply nested expressions that are incredibly
+		# unlikely in real life, sympy can overflow the stack
+		# ("s_push: parser stack overflow" is printed to console). See
+		# the test case. Hopefully this correctly reclaims memory.
+		return child
 
 def _mathChildIsEqual(child1, child2):
 	# If are children aren't even the same type they are probably not equal
