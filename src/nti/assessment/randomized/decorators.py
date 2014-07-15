@@ -14,11 +14,20 @@ from zope import interface
 
 from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecorator
 
+from nti.externalization.singleton import SingletonDecorator
 from nti.externalization.externalization import to_external_object
+from nti.externalization.interfaces import IExternalObjectDecorator
 
 from . import randomize
 from . import shuffle_list
-from . import interfaces as rand_interfaces
+
+from .interfaces import IQRandomizedPart
+from .interfaces import IQRandomizedMatchingPart
+from .interfaces import IQRandomizedMultipleChoicePart
+from .interfaces import IQRandomizedMultipleChoiceMultipleAnswerPart
+
+from ..interfaces import IQuestion
+from ..interfaces import IQAssessedPart
 from ..interfaces import IQPartSolutionsExternalizer
 
 # === matching
@@ -34,7 +43,7 @@ def _shuffle_matching_part_solutions(generator, values, ext_solutions):
 			value[k] = uidx
 
 @interface.implementer(IQPartSolutionsExternalizer)
-@component.adapter(rand_interfaces.IQRandomizedMatchingPart)
+@component.adapter(IQRandomizedMatchingPart)
 class _RandomizedMatchingPartSolutionsExternalizer(object):
 
 	__slots__ = ('part',)
@@ -49,7 +58,7 @@ class _RandomizedMatchingPartSolutionsExternalizer(object):
 		_shuffle_matching_part_solutions(generator, values, solutions)
 		return solutions
 
-@component.adapter(rand_interfaces.IQRandomizedMatchingPart)
+@component.adapter(IQRandomizedMatchingPart)
 class _QRandomizedMatchingPartDecorator(AbstractAuthenticatedRequestAwareDecorator):
 
 	def _do_decorate_external(self, context, result):
@@ -69,7 +78,7 @@ def _shuffle_multiple_choice_part_solutions(generator, choices, ext_solutions):
 		solution['value'] = uidx
 
 @interface.implementer(IQPartSolutionsExternalizer)
-@component.adapter(rand_interfaces.IQRandomizedMultipleChoicePart)
+@component.adapter(IQRandomizedMultipleChoicePart)
 class _RandomizedMultipleChoicePartSolutionsExternalizer(object):
 
 	__slots__ = ('part',)
@@ -84,7 +93,7 @@ class _RandomizedMultipleChoicePartSolutionsExternalizer(object):
 		_shuffle_multiple_choice_part_solutions(generator, choices, solutions)
 		return solutions
 
-@component.adapter(rand_interfaces.IQRandomizedMultipleChoicePart)
+@component.adapter(IQRandomizedMultipleChoicePart)
 class _QRandomizedMultipleChoicePartDecorator(AbstractAuthenticatedRequestAwareDecorator):
 
 	def _do_decorate_external(self, context, result):
@@ -106,7 +115,7 @@ def _shuffle_multiple_choice_multiple_answer_part_solutions(generator, choices, 
 			value[pos] = uidx
 
 @interface.implementer(IQPartSolutionsExternalizer)
-@component.adapter(rand_interfaces.IQRandomizedMultipleChoiceMultipleAnswerPart)
+@component.adapter(IQRandomizedMultipleChoiceMultipleAnswerPart)
 class _RandomizedMultipleChoiceMultipleAnswerPartSolutionsExternalizer(object):
 
 	__slots__ = ('part',)
@@ -121,7 +130,7 @@ class _RandomizedMultipleChoiceMultipleAnswerPartSolutionsExternalizer(object):
 		_shuffle_multiple_choice_multiple_answer_part_solutions(generator, choices, solutions)
 		return solutions
 
-@component.adapter(rand_interfaces.IQRandomizedMultipleChoiceMultipleAnswerPart)
+@component.adapter(IQRandomizedMultipleChoiceMultipleAnswerPart)
 class _QRandomizedMultipleChoiceMultipleAnswerPartDecorator(AbstractAuthenticatedRequestAwareDecorator):
 
 	def _do_decorate_external(self, context, result):
@@ -129,3 +138,28 @@ class _QRandomizedMultipleChoiceMultipleAnswerPartDecorator(AbstractAuthenticate
 		generator = randomize(self.remoteUser)
 		generator.shuffle(result['choices'])
 		_shuffle_multiple_choice_multiple_answer_part_solutions(generator, choices, result['solutions'])
+
+
+# === asssed part
+
+@interface.implementer(IExternalObjectDecorator)
+@component.adapter(IQAssessedPart)
+class _QAssessedPartDecorator(object):
+	
+	__metaclass__ = SingletonDecorator
+
+	def decorateExternalObject(self, context, mapping):
+		assessed_question = context.__parent__
+		index = assessed_question.parts.index(context)
+		
+		question_id = assessed_question.questionId
+		question = component.queryUtility(IQuestion, name=question_id)
+		if question is None:
+			return
+		
+		try:
+			question_part = question.parts[index]
+			if not IQRandomizedPart.providedBy(question_part):
+				return
+		except IndexError:
+			return

@@ -58,6 +58,11 @@
 	<adapter factory=".decorators._RandomizedMultipleChoiceMultipleAnswerPartSolutionsExternalizer"
 			 for=".interfaces.IQRandomizedMultipleChoiceMultipleAnswerPart"
 			 provides="nti.assessment.interfaces.IQPartSolutionsExternalizer" />
+			 
+	<subscriber factory=".decorators._QAssessedPartDecorator"
+				provides="nti.externalization.interfaces.IExternalObjectDecorator"
+				for="..interfaces.IQAssessedPart 
+					 pyramid.interfaces.IRequest"/>
 				 	  	 			 
 	<!-- Externalization -->
 	
