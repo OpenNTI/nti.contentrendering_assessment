@@ -16,9 +16,9 @@ from zope import interface
 from dolmen.builtins.interfaces import IList
 from dolmen.builtins.interfaces import ITuple
 
-from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecorator
-
+from nti.externalization.singleton import SingletonDecorator
 from nti.externalization.externalization import to_external_object
+from nti.externalization.interfaces import IExternalObjectDecorator
 
 from . import randomize
 from . import shuffle_list
@@ -54,20 +54,25 @@ class _RandomizedMatchingPartSolutionsExternalizer(object):
 		self.part = part
 
 	def to_external_object(self):
-		generator = randomize()
-		values = to_external_object(self.part.values)
 		solutions = to_external_object(self.part.solutions)
-		_shuffle_matching_part_solutions(generator, values, solutions)
+		generator = randomize()
+		if generator:
+			values = to_external_object(self.part.values)
+			_shuffle_matching_part_solutions(generator, values, solutions)
 		return solutions
 
+@interface.implementer(IExternalObjectDecorator)
 @component.adapter(IQRandomizedMatchingPart)
-class _QRandomizedMatchingPartDecorator(AbstractAuthenticatedRequestAwareDecorator):
+class _QRandomizedMatchingPartDecorator(object):
 
-	def _do_decorate_external(self, context, result):
-		values = list(result['values'])
-		generator = randomize(self.remoteUser)
-		generator.shuffle(result['values'])
-		_shuffle_matching_part_solutions(generator, values, result['solutions'])
+	__metaclass__ = SingletonDecorator
+
+	def decorateExternalObject(self, context, result):
+		generator = randomize()
+		if generator:
+			values = list(result['values'])
+			generator.shuffle(result['values'])
+			_shuffle_matching_part_solutions(generator, values, result['solutions'])
 		
 # === multiple choice
 
@@ -89,24 +94,32 @@ class _RandomizedMultipleChoicePartSolutionsExternalizer(object):
 		self.part = part
 
 	def to_external_object(self):
-		generator = randomize()
-		choices = to_external_object(self.part.choices)
 		solutions = to_external_object(self.part.solutions)
-		_shuffle_multiple_choice_part_solutions(generator, choices, solutions)
+		generator = randomize()
+		if generator:
+			choices = to_external_object(self.part.choices)
+			_shuffle_multiple_choice_part_solutions(generator, choices, solutions)
 		return solutions
 
+@interface.implementer(IExternalObjectDecorator)
 @component.adapter(IQRandomizedMultipleChoicePart)
-class _QRandomizedMultipleChoicePartDecorator(AbstractAuthenticatedRequestAwareDecorator):
+class _QRandomizedMultipleChoicePartDecorator(object):
 
-	def _do_decorate_external(self, context, result):
-		choices = list(result['choices'])
-		generator = randomize(self.remoteUser)
-		generator.shuffle(result['choices'])
-		_shuffle_multiple_choice_part_solutions(generator, choices, result['solutions'])
+	__metaclass__ = SingletonDecorator
+
+	def decorateExternalObject(self, context, result):
+		generator = randomize()
+		if generator:
+			choices = list(result['choices'])
+			generator.shuffle(result['choices'])
+			solutions = result['solutions']
+			_shuffle_multiple_choice_part_solutions(generator, choices, solutions)
 
 # === multiple choice, multiple answer part
 
-def _shuffle_multiple_choice_multiple_answer_part_solutions(generator, choices, ext_solutions):
+def _shuffle_multiple_choice_multiple_answer_part_solutions(generator,
+															choices,
+															ext_solutions):
 	original = {idx:v for idx, v in enumerate(choices)}
 	shuffled = {v:idx for idx, v in enumerate(shuffle_list(generator, choices))}
 	for solution in ext_solutions:
@@ -126,30 +139,45 @@ class _RandomizedMultipleChoiceMultipleAnswerPartSolutionsExternalizer(object):
 		self.part = part
 
 	def to_external_object(self):
-		generator = randomize()
-		choices = to_external_object(self.part.choices)
 		solutions = to_external_object(self.part.solutions)
-		_shuffle_multiple_choice_multiple_answer_part_solutions(generator, choices, solutions)
+		generator = randomize()
+		if generator:
+			choices = to_external_object(self.part.choices)
+			_shuffle_multiple_choice_multiple_answer_part_solutions(generator, 
+																	choices, 
+																	solutions)
 		return solutions
 
+@interface.implementer(IExternalObjectDecorator)
 @component.adapter(IQRandomizedMultipleChoiceMultipleAnswerPart)
-class _QRandomizedMultipleChoiceMultipleAnswerPartDecorator(AbstractAuthenticatedRequestAwareDecorator):
+class _QRandomizedMultipleChoiceMultipleAnswerPartDecorator(object):
 
-	def _do_decorate_external(self, context, result):
-		choices = list(result['choices'])
-		generator = randomize(self.remoteUser)
-		generator.shuffle(result['choices'])
-		_shuffle_multiple_choice_multiple_answer_part_solutions(generator, choices, result['solutions'])
+	__metaclass__ = SingletonDecorator
 
+	def decorateExternalObject(self, context, result):
+		generator = randomize()
+		if generator:
+			choices = list(result['choices'])
+			generator = randomize(self.remoteUser)
+			generator.shuffle(result['choices'])
+			_shuffle_multiple_choice_multiple_answer_part_solutions(generator,
+																	choices,
+																	result['solutions'])
 
 # === assessed part
 
+@interface.implementer(IExternalObjectDecorator)
 @component.adapter(IQAssessedPart)
-class _QAssessedPartDecorator(AbstractAuthenticatedRequestAwareDecorator):
+class _QAssessedPartDecorator(object):
 	
-	def _do_decorate_external(self, context, mapping):
-		# from IPython.core.debugger import Tracer; Tracer()()
+	__metaclass__ = SingletonDecorator
+
+	def decorateExternalObject(self, context, result):
+		#from IPython.core.debugger import Tracer; Tracer()()
 		assessed_question = context.__parent__
+		if assessed_question is None:
+			return
+		
 		index = assessed_question.parts.index(context)
 		
 		question_id = assessed_question.questionId
@@ -162,8 +190,13 @@ class _QAssessedPartDecorator(AbstractAuthenticatedRequestAwareDecorator):
 		except IndexError:
 			return
 		
-		if IQRandomizedPart.providedBy(question_part):
-			response = context.submittedResponse
-			generator = randomize(self.remoteUser)
-			if ITuple.providedBy(response) or IList.providedBy(response):
-				generator.shuffle(mapping['submittedResponse'])
+		if not IQRandomizedPart.providedBy(question_part):
+			return
+	
+		generator = randomize()
+		if not generator:
+			return
+		
+		response = context.submittedResponse
+		if ITuple.providedBy(response) or IList.providedBy(response):
+			generator.shuffle(result['submittedResponse'])

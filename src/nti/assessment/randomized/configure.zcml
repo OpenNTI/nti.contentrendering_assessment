@@ -34,8 +34,7 @@
 	
 	<subscriber factory=".decorators._QRandomizedMatchingPartDecorator"
 				provides="nti.externalization.interfaces.IExternalObjectDecorator"
-				for=".interfaces.IQRandomizedMatchingPart
-					 pyramid.interfaces.IRequest"/>
+				for=".interfaces.IQRandomizedMatchingPart"/>
 					 
 	<adapter factory=".decorators._RandomizedMatchingPartSolutionsExternalizer"
 			 for=".interfaces.IQRandomizedMatchingPart"
@@ -43,8 +42,7 @@
 			 			 
 	<subscriber factory=".decorators._QRandomizedMultipleChoicePartDecorator"
 				provides="nti.externalization.interfaces.IExternalObjectDecorator"
-				for=".interfaces.IQRandomizedMultipleChoicePart
-					 pyramid.interfaces.IRequest"/>
+				for=".interfaces.IQRandomizedMultipleChoicePart"/>
 	
 	<adapter factory=".decorators._RandomizedMultipleChoicePartSolutionsExternalizer"
 			 for=".interfaces.IQRandomizedMultipleChoicePart"
@@ -52,8 +50,7 @@
 		
 	<subscriber factory=".decorators._QRandomizedMultipleChoiceMultipleAnswerPartDecorator"
 				provides="nti.externalization.interfaces.IExternalObjectDecorator"
-				for=".interfaces.IQRandomizedMultipleChoiceMultipleAnswerPart
-					 pyramid.interfaces.IRequest"/>
+				for=".interfaces.IQRandomizedMultipleChoiceMultipleAnswerPart"/>
 			
 	<adapter factory=".decorators._RandomizedMultipleChoiceMultipleAnswerPartSolutionsExternalizer"
 			 for=".interfaces.IQRandomizedMultipleChoiceMultipleAnswerPart"
@@ -61,8 +58,7 @@
 			 
 	<subscriber factory=".decorators._QAssessedPartDecorator"
 				provides="nti.externalization.interfaces.IExternalObjectDecorator"
-				for="..interfaces.IQAssessedPart 
-					 pyramid.interfaces.IRequest"/>
+				for="..interfaces.IQAssessedPart"/>
 				 	  	 			 
 	<!-- Externalization -->
 	
