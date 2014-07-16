@@ -12,11 +12,13 @@ logger = __import__('logging').getLogger(__name__)
 from zope import component
 from zope import interface
 
+#from dolmen.builtins.interfaces import IDict
+from dolmen.builtins.interfaces import IList
+from dolmen.builtins.interfaces import ITuple
+
 from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecorator
 
-from nti.externalization.singleton import SingletonDecorator
 from nti.externalization.externalization import to_external_object
-from nti.externalization.interfaces import IExternalObjectDecorator
 
 from . import randomize
 from . import shuffle_list
@@ -140,26 +142,28 @@ class _QRandomizedMultipleChoiceMultipleAnswerPartDecorator(AbstractAuthenticate
 		_shuffle_multiple_choice_multiple_answer_part_solutions(generator, choices, result['solutions'])
 
 
-# === asssed part
+# === assessed part
 
-@interface.implementer(IExternalObjectDecorator)
 @component.adapter(IQAssessedPart)
-class _QAssessedPartDecorator(object):
+class _QAssessedPartDecorator(AbstractAuthenticatedRequestAwareDecorator):
 	
-	__metaclass__ = SingletonDecorator
-
-	def decorateExternalObject(self, context, mapping):
+	def _do_decorate_external(self, context, mapping):
+		# from IPython.core.debugger import Tracer; Tracer()()
 		assessed_question = context.__parent__
 		index = assessed_question.parts.index(context)
 		
 		question_id = assessed_question.questionId
 		question = component.queryUtility(IQuestion, name=question_id)
 		if question is None:
-			return
+			return # old question?
 		
 		try:
 			question_part = question.parts[index]
-			if not IQRandomizedPart.providedBy(question_part):
-				return
 		except IndexError:
 			return
+		
+		if IQRandomizedPart.providedBy(question_part):
+			response = context.submittedResponse
+			generator = randomize(self.remoteUser)
+			if ITuple.providedBy(response) or IList.providedBy(response):
+				generator.shuffle(mapping['submittedResponse'])
