@@ -539,6 +539,21 @@ class IQAssignment(ITitledContent,
 	# Depending on the policy and context, submission will either be blocked,
 	# or the elapsed time will simply be recorded.
 
+class IQAssignmentDateContext(interface.Interface):
+	"""
+	An object that can be used as context to adapt an assignment
+	date.
+
+	This package provides no implementations of this interface.
+	"""
+
+	def of(assignment):
+		"""
+		Given an assignment, return an object having the same date
+		attributes as the assignment, but interpreted in the context
+		of this object. If no changes are required, can return the assignment
+		itself.
+		"""
 
 
 class IQResponse(IContained,
@@ -823,7 +838,7 @@ class IQFillInTheBlankWithWordBankSolution(IQSolution):
 
 	value = Dict(key_type=TextLine(title="input name/id"),
 				 value_type=Variant( (TextLine(title="word id answer"),
-									  ListOrTuple(TextLine(title="word id answer"))), 
+									  ListOrTuple(TextLine(title="word id answer"))),
 								    title="The word ids"),
 				 title="The correct answer selections",
 				 description="The correct word id map.",
