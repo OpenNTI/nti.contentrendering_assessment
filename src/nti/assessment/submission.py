@@ -58,6 +58,8 @@ class QuestionSetSubmission(SchemaConfigured, contained.Contained):
 
 	__repr__ = make_repr()
 
+	time_length = -1
+
 	sublocations = _make_sublocations('questions')
 
 @interface.implementer(interfaces.IQAssignmentSubmission,
@@ -79,5 +81,7 @@ class AssignmentSubmission(PersistentCreatedModDateTrackingObject,
 	mime_type = 'application/vnd.nextthought.assessment.assignmentsubmission'
 
 	__repr__ = make_repr()
+
+	time_length = -1
 
 	sublocations = _make_sublocations()

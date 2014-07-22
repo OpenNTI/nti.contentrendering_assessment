@@ -113,3 +113,19 @@ class TestAssignmentSubmission(AssessmentTestCase):
 		assert_that( asub, has_property( 'parts', contains( is_( submission.QuestionSetSubmission ) ) ) )
 
 		assert_that( asub, validly_provides( interfaces.IQAssignmentSubmission ))
+
+		# time_length
+		update_from_external_object( asub,
+									 {'parts': [submission.QuestionSetSubmission(questionSetId='foo', questions=(), time_length=10)],
+									  'assignmentId': 'baz'},
+									 require_updater=True )
+
+		assert_that( asub, validly_provides( interfaces.IQAssignmentSubmission ))
+
+		update_from_external_object( asub,
+									 {'parts': [submission.QuestionSetSubmission(questionSetId='foo', questions=())],
+									  'assignmentId': 'baz',
+									  'time_length': 10},
+									 require_updater=True )
+
+		assert_that( asub, validly_provides( interfaces.IQAssignmentSubmission ))

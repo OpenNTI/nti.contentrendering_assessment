@@ -32,6 +32,7 @@ from nti.dataserver.interfaces import CompoundModeledContentBody
 from nti.dataserver.interfaces import INeverStoredInSharedStream
 
 from nti.schema.field import Int
+from nti.schema.field import Number
 from nti.schema.field import Bool
 from nti.schema.field import Dict
 from nti.schema.field import List
@@ -646,6 +647,14 @@ def convert_response_for_solution(solution, response):
 				break
 	return response
 
+class ITimeLength(interface.Interface):
+	"""
+	Holds how long it took for the user to perform an action (e.g. submission).
+	"""
+	time_length = Number(title=u"The time length of the submission, in seconds",
+						required=False,
+						default=-1)
+
 ###
 # Objects having to do with the assessment process itself.
 # There is a three part lifecycle: The source object,
@@ -713,7 +722,7 @@ class IQAssessedQuestion(IContained):
 							 value_type=Object( IQAssessedPart, title="The assessment of a part." ) )
 
 
-class IQuestionSetSubmission(IContained):
+class IQuestionSetSubmission(IContained,ITimeLength):
 	"""
 	A student's submission in response to an entire question set.
 
@@ -738,7 +747,7 @@ class IQAssessedQuestionSet(IContained):
 	questions = IndexedIterable( title="Assessed questions, one for each question in the set.",
 								 value_type=Object( IQAssessedQuestion, title="The assessed value for a particular question.") )
 
-class IQAssignmentSubmission(IContained):
+class IQAssignmentSubmission(IContained,ITimeLength):
 	"""
 	A student's submission in response to an assignment.
 	"""
@@ -757,7 +766,7 @@ class IQAssignmentSubmission(IContained):
 	# It's not always an `Assessed` object, because not all parts will have been
 	# assessed in all cases.
 
-class IQAssignmentSubmissionPendingAssessment(IContained):
+class IQAssignmentSubmissionPendingAssessment(IContained,ITimeLength):
 	"""
 	A submission for an assignment that cannot be completely assessed;
 	complete assessment is pending. This is typically the step after

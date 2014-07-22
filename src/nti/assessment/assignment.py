@@ -76,6 +76,7 @@ class QAssignmentSubmissionPendingAssessment(PersistentCreatedModDateTrackingObj
 	# However, because these objects are new and not seen before, we can
 	# safely cause name and id to be aliases
 	__name__ = alias('id')
+	time_length = -1
 
 	mime_type = 'application/vnd.nextthought.assessment.assignmentsubmissionpendingassessment'
 	__external_can_create__ = False

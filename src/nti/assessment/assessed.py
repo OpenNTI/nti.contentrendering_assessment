@@ -146,6 +146,7 @@ class QAssessedQuestionSet(SchemaConfigured, ContainedMixin, Persistent):
 	creator = None
 	createdTime = _dctimes_property_fallback('createdTime', 'Date.Modified')
 	lastModified = _dctimes_property_fallback('lastModified', 'Date.Created')
+
 	def updateLastMod(self, t=None):
 		self.lastModified = (t if t is not None and t > self.lastModified else time.time())
 		return self.lastModified
