@@ -647,14 +647,6 @@ def convert_response_for_solution(solution, response):
 				break
 	return response
 
-class ITimeLength(interface.Interface):
-	"""
-	Holds how long it took for the user to perform an action (e.g. submission).
-	"""
-	time_length = Number(title=u"The time length of the submission, in seconds",
-						required=False,
-						default=-1)
-
 ###
 # Objects having to do with the assessment process itself.
 # There is a three part lifecycle: The source object,
@@ -662,7 +654,33 @@ class ITimeLength(interface.Interface):
 # parts have similar structure.
 ###
 
-class IQuestionSubmission(IContained):
+class IQBaseSubmission(IContained):
+	"""
+	The root of the tree for submission objects.
+	"""
+
+	CreatorRecordedEffortDuration = Number(
+		title="A fractional count of seconds spent creating the submission",
+		description="If desired, the creator (i.e., external client) can "
+		"optionally track the amount of time spent creating the submission and "
+		"submit it here with the initial submission; after that it is immutable and "
+		"(currently) unseen. NOTE: Because this is tracked and submitted by the client, "
+		"it is NOT suitable to use for any actual assessment purposes such as imposing time "
+		"limits.",
+		min=0.0,
+		required=False,
+		readonly=True,
+		default=None)
+
+	CreatorRecordedEffortDuration.setTaggedValue('_ext_allow_initial_set', True)
+	# XXX: This is documented as not being available for public
+	# consumption, but if we enforce that, we also are not able to
+	# automatically read it on creation, because
+	# `nti.externalization.datastructures.InterfaceObjectIO``
+	# collapses the two concepts into one.
+	#CreatorRecordedEffortDuration.setTaggedValue('_ext_excluded_out', True)
+
+class IQuestionSubmission(IQBaseSubmission):
 	"""
 	A student's submission in response to a question.
 
@@ -722,7 +740,7 @@ class IQAssessedQuestion(IContained):
 							 value_type=Object( IQAssessedPart, title="The assessment of a part." ) )
 
 
-class IQuestionSetSubmission(IContained,ITimeLength):
+class IQuestionSetSubmission(IQBaseSubmission):
 	"""
 	A student's submission in response to an entire question set.
 
@@ -747,7 +765,7 @@ class IQAssessedQuestionSet(IContained):
 	questions = IndexedIterable( title="Assessed questions, one for each question in the set.",
 								 value_type=Object( IQAssessedQuestion, title="The assessed value for a particular question.") )
 
-class IQAssignmentSubmission(IContained,ITimeLength):
+class IQAssignmentSubmission(IQBaseSubmission):
 	"""
 	A student's submission in response to an assignment.
 	"""
@@ -766,7 +784,7 @@ class IQAssignmentSubmission(IContained,ITimeLength):
 	# It's not always an `Assessed` object, because not all parts will have been
 	# assessed in all cases.
 
-class IQAssignmentSubmissionPendingAssessment(IContained,ITimeLength):
+class IQAssignmentSubmissionPendingAssessment(IQBaseSubmission):
 	"""
 	A submission for an assignment that cannot be completely assessed;
 	complete assessment is pending. This is typically the step after

@@ -17,7 +17,7 @@ from zope.annotation.interfaces import IAttributeAnnotatable
 
 from persistent import Persistent # Why are these persistent exactly?
 
-from nti.externalization.externalization import make_repr
+from nti.externalization.externalization import WithRepr
 
 from nti.dataserver.datastructures import PersistentCreatedModDateTrackingObject
 from nti.dataserver.datastructures import ContainedMixin
@@ -34,23 +34,24 @@ from ._util import make_sublocations as _make_sublocations
 @interface.implementer(interfaces.IQAssignmentPart,
 					   mime_interfaces.IContentTypeAware,
 					   IAttributeAnnotatable)
-class QAssignmentPart(Persistent,
-					  SchemaConfigured,
-					  contained.Contained):
+@WithRepr
+class QAssignmentPart(SchemaConfigured,
+					  contained.Contained,
+					  Persistent):
 
 	title = AdaptingFieldProperty(interfaces.IQAssignmentPart['title'])
 	createDirectFieldProperties(interfaces.IQAssignmentPart)
 
 	mime_type = 'application/vnd.nextthought.assessment.assignmentpart'
 
-	__repr__ = make_repr()
 
 @interface.implementer(interfaces.IQAssignment,
 					   mime_interfaces.IContentTypeAware,
 					   IAttributeAnnotatable)
-class QAssignment(Persistent,
-				  SchemaConfigured,
-				  contained.Contained):
+@WithRepr
+class QAssignment(SchemaConfigured,
+				  contained.Contained,
+				  Persistent):
 
 	title = AdaptingFieldProperty(interfaces.IQAssignment['title'])
 	createDirectFieldProperties(interfaces.IQAssignment)
@@ -60,7 +61,6 @@ class QAssignment(Persistent,
 
 	mime_type = 'application/vnd.nextthought.assessment.assignment'
 
-	__repr__ = make_repr()
 
 from zope.location.interfaces import ISublocations
 
@@ -68,19 +68,24 @@ from zope.location.interfaces import ISublocations
 					   mime_interfaces.IContentTypeAware,
 					   IAttributeAnnotatable,
 					   ISublocations)
-class QAssignmentSubmissionPendingAssessment(PersistentCreatedModDateTrackingObject,
+@WithRepr
+class QAssignmentSubmissionPendingAssessment(ContainedMixin,
 											 SchemaConfigured,
-											 ContainedMixin):
+											 PersistentCreatedModDateTrackingObject):
+	createDirectFieldProperties(interfaces.IQBaseSubmission)
 	createDirectFieldProperties(interfaces.IQAssignmentSubmissionPendingAssessment)
 	# We get nti.dataserver.interfaces.IContained from ContainedMixin (containerId, id)
 	# However, because these objects are new and not seen before, we can
 	# safely cause name and id to be aliases
 	__name__ = alias('id')
-	time_length = -1
 
 	mime_type = 'application/vnd.nextthought.assessment.assignmentsubmissionpendingassessment'
 	__external_can_create__ = False
 
-	__repr__ = make_repr()
-
 	sublocations = _make_sublocations()
+
+
+	def __init__(self, *args, **kwargs):
+		# schema configured is not cooperative
+		ContainedMixin.__init__(self, *args, **kwargs)
+		PersistentCreatedModDateTrackingObject.__init__(self)

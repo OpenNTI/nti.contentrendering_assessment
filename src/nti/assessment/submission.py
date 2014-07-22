@@ -17,7 +17,7 @@ from zope.location.interfaces import ISublocations
 from nti.dataserver.datastructures import ContainedMixin
 from nti.dataserver.datastructures import PersistentCreatedModDateTrackingObject
 
-from nti.externalization.externalization import make_repr
+from nti.externalization.externalization import WithRepr
 
 from nti.schema.field import SchemaConfigured
 from nti.schema.fieldproperty import createDirectFieldProperties
@@ -44,29 +44,28 @@ from ._util import make_sublocations as _make_sublocations
 
 @interface.implementer(interfaces.IQuestionSubmission,
 					   ISublocations)
+@WithRepr
 class QuestionSubmission(SchemaConfigured, contained.Contained):
+	createDirectFieldProperties(interfaces.IQBaseSubmission)
 	createDirectFieldProperties(interfaces.IQuestionSubmission)
-
-	__repr__ = make_repr()
 
 	sublocations = _make_sublocations()
 
 @interface.implementer(interfaces.IQuestionSetSubmission,
 					   ISublocations)
+@WithRepr
 class QuestionSetSubmission(SchemaConfigured, contained.Contained):
+	createDirectFieldProperties(interfaces.IQBaseSubmission)
 	createDirectFieldProperties(interfaces.IQuestionSetSubmission)
-
-	__repr__ = make_repr()
-
-	time_length = -1
 
 	sublocations = _make_sublocations('questions')
 
 @interface.implementer(interfaces.IQAssignmentSubmission,
 					   ISublocations)
-class AssignmentSubmission(PersistentCreatedModDateTrackingObject,
-						   ContainedMixin,
-						   SchemaConfigured):
+@WithRepr
+class AssignmentSubmission(ContainedMixin,
+						   SchemaConfigured,
+						   PersistentCreatedModDateTrackingObject):
 	"""
 	We do expect assignment submissions to be stored in the database
 	for some period of time so it should be persistent. When you set
@@ -76,12 +75,14 @@ class AssignmentSubmission(PersistentCreatedModDateTrackingObject,
 	that will still result in a partial data copy of the QuestionSetSubmission
 	objects as they are not persistent).
 	"""
+	createDirectFieldProperties(interfaces.IQBaseSubmission)
 	createDirectFieldProperties(interfaces.IQAssignmentSubmission)
 
 	mime_type = 'application/vnd.nextthought.assessment.assignmentsubmission'
 
-	__repr__ = make_repr()
-
-	time_length = -1
-
 	sublocations = _make_sublocations()
+
+	def __init__(self, *args, **kwargs):
+		# schema configured is not cooperative
+		ContainedMixin.__init__(self, *args, **kwargs)
+		PersistentCreatedModDateTrackingObject.__init__(self)

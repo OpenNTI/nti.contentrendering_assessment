@@ -16,6 +16,7 @@ from hamcrest import same_instance
 from hamcrest import has_key
 from hamcrest import not_none
 from hamcrest import has_entries
+from hamcrest import greater_than
 
 from unittest import TestCase
 
@@ -97,6 +98,8 @@ class TestAssignmentSubmission(AssessmentTestCase):
 																				   'MimeType', 'application/vnd.nextthought.assessment.assignmentsubmission') ) )
 
 		asub = submission.AssignmentSubmission()
+		assert_that( asub, has_property('lastModified', greater_than(0)))
+		assert_that( asub, has_property('createdTime', greater_than(0)))
 		# Recursive validation
 		with assert_raises(sch_interfaces.WrongContainedType) as wct:
 			update_from_external_object( asub,
@@ -116,16 +119,21 @@ class TestAssignmentSubmission(AssessmentTestCase):
 
 		# time_length
 		update_from_external_object( asub,
-									 {'parts': [submission.QuestionSetSubmission(questionSetId='foo', questions=(), time_length=10)],
+									 {'parts': [submission.QuestionSetSubmission(questionSetId='foo',
+																				 questions=(),
+																				 CreatorRecordedEffortDuration=10)],
 									  'assignmentId': 'baz'},
 									 require_updater=True )
 
 		assert_that( asub, validly_provides( interfaces.IQAssignmentSubmission ))
+		assert_that( asub.parts[0], has_property('CreatorRecordedEffortDuration', 10) )
 
 		update_from_external_object( asub,
 									 {'parts': [submission.QuestionSetSubmission(questionSetId='foo', questions=())],
 									  'assignmentId': 'baz',
-									  'time_length': 10},
+									  'CreatorRecordedEffortDuration': 12},
 									 require_updater=True )
 
 		assert_that( asub, validly_provides( interfaces.IQAssignmentSubmission ))
+
+		assert_that( asub, has_property('CreatorRecordedEffortDuration', 12))
