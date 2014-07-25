@@ -14,7 +14,7 @@ from . import randomize
 from . import interfaces
 from . import shuffle_list
 from ..graders import MatchingPartGrader
-from ..graders import MultipleChoiceGrader
+from ..graders import EqualityGrader
 from ..graders import MultipleChoiceMultipleAnswerGrader
 
 @interface.implementer(interfaces.IQRandomizedMatchingPartGrader)
@@ -36,7 +36,9 @@ class RandomizedMatchingPartGrader(MatchingPartGrader):
 	response_converter = _to_response_dict
 
 @interface.implementer(interfaces.IQRandomizedMultipleChoicePartGrader)
-class RandomizedMultipleChoiceGrader(MultipleChoiceGrader):
+class RandomizedMultipleChoiceGrader(EqualityGrader):
+	# MultipleChoiceGrader tries really hard to verify correctness,
+	# when we just need something simple. Thus, we inherit from EqualityGrader.
 
 	def _unshuffle(self, the_value):
 		generator = randomize()
@@ -53,7 +55,7 @@ class RandomizedMultipleChoiceGrader(MultipleChoiceGrader):
 
 @interface.implementer(interfaces.IQRandomizedMultipleChoiceMultipleAnswerPartGrader)
 class RandomizedMultipleChoiceMultipleAnswerGrader(MultipleChoiceMultipleAnswerGrader):
-	
+
 	def _unshuffle(self, the_values):
 		generator = randomize()
 		if generator is not None:
@@ -66,5 +68,5 @@ class RandomizedMultipleChoiceMultipleAnswerGrader(MultipleChoiceMultipleAnswerG
 				the_values[pos] = uidx
 			the_values = sorted(the_values)
 		return the_values
-	
+
 	response_converter = _unshuffle

@@ -221,7 +221,7 @@ class MatchingPartGrader(EqualityGrader):
 	Grader that deals with matching. Handles all combinations of int and key solutions
 	and int and key dicts.
 	"""
-	
+
 	def _to_int_dict(self, the_dict):
 		result = the_dict
 		if not all((isinstance(x, numbers.Integral) for x in the_dict.keys())):
@@ -272,7 +272,7 @@ class FillInTheBlankWithWordBankGrader(EqualityGrader):
 			elif parent_bank:
 				wordbank = wordbank + parent_bank
 		return wordbank
-		
+
 	def _to_id_dict(self, the_dict):
 		result = {}
 		wordbank = self._wordbank
@@ -288,7 +288,7 @@ class FillInTheBlankWithWordBankGrader(EqualityGrader):
 			result[x] = y
 		return result
 
-	def _compare(self, solution_value, response_value):		
+	def _compare(self, solution_value, response_value):
 		converted_solution = self.solution_converter(solution_value)
 		converted_response = self.response_converter(response_value)
 		for x,y in converted_solution.items():
@@ -296,6 +296,6 @@ class FillInTheBlankWithWordBankGrader(EqualityGrader):
 			if not ir or not y.intersection(ir):
 				return False
 		return True
-		
+
 	solution_converter = _to_id_dict
 	response_converter = _to_id_dict
