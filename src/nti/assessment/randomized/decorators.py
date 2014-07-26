@@ -73,7 +73,7 @@ class _QRandomizedMatchingPartDecorator(object):
 			values = list(result['values'])
 			generator.shuffle(result['values'])
 			_shuffle_matching_part_solutions(generator, values, result['solutions'])
-		
+
 # === multiple choice
 
 def _shuffle_multiple_choice_part_solutions(generator, choices, ext_solutions):
@@ -143,8 +143,8 @@ class _RandomizedMultipleChoiceMultipleAnswerPartSolutionsExternalizer(object):
 		generator = randomize()
 		if generator:
 			choices = to_external_object(self.part.choices)
-			_shuffle_multiple_choice_multiple_answer_part_solutions(generator, 
-																	choices, 
+			_shuffle_multiple_choice_multiple_answer_part_solutions(generator,
+																	choices,
 																	solutions)
 		return solutions
 
@@ -158,7 +158,6 @@ class _QRandomizedMultipleChoiceMultipleAnswerPartDecorator(object):
 		generator = randomize()
 		if generator:
 			choices = list(result['choices'])
-			generator = randomize(self.remoteUser)
 			generator.shuffle(result['choices'])
 			_shuffle_multiple_choice_multiple_answer_part_solutions(generator,
 																	choices,
@@ -169,7 +168,7 @@ class _QRandomizedMultipleChoiceMultipleAnswerPartDecorator(object):
 @interface.implementer(IExternalObjectDecorator)
 @component.adapter(IQAssessedPart)
 class _QAssessedPartDecorator(object):
-	
+
 	__metaclass__ = SingletonDecorator
 
 	def decorateExternalObject(self, context, result):
@@ -177,26 +176,26 @@ class _QAssessedPartDecorator(object):
 		assessed_question = context.__parent__
 		if assessed_question is None:
 			return
-		
+
 		index = assessed_question.parts.index(context)
-		
+
 		question_id = assessed_question.questionId
 		question = component.queryUtility(IQuestion, name=question_id)
 		if question is None:
 			return # old question?
-		
+
 		try:
 			question_part = question.parts[index]
 		except IndexError:
 			return
-		
+
 		if not IQRandomizedPart.providedBy(question_part):
 			return
-	
+
 		generator = randomize()
 		if not generator:
 			return
-		
+
 		response = context.submittedResponse
 		if ITuple.providedBy(response) or IList.providedBy(response):
 			generator.shuffle(result['submittedResponse'])
