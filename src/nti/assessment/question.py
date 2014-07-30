@@ -26,7 +26,6 @@ from ._util import superhash
 
 from .interfaces import IQuestion
 from .interfaces import IQuestionSet
-from .interfaces import IRandomizedQuestionSet
 from .interfaces import IQFillInTheBlankWithWordBankQuestion
 
 @interface.implementer(IQuestion,
@@ -86,20 +85,6 @@ class QQuestionSet(Contained, SchemaConfigured, Persistent):
 	def sublocations(self):
 		for question in self.questions or ():
 			yield question
-
-@interface.implementer(IRandomizedQuestionSet)
-class QRandomizedQuestionSet(QQuestionSet):
-	createDirectFieldProperties(IRandomizedQuestionSet)
-	
-	__external_class_name__ = "QQuestionSet"
-	mimeType = mime_type = 'application/vnd.nextthought.narandomizedquestionset'
-	
-	def __eq__(self, other):
-		try:
-			return 	super(QRandomizedQuestionSet, self).__eq__(other) and \
-					self.limit == other.limit
-		except AttributeError:
-			return NotImplemented
 	
 @interface.implementer(IQFillInTheBlankWithWordBankQuestion, ISublocations)
 class QFillInTheBlankWithWordBankQuestion(QQuestion):

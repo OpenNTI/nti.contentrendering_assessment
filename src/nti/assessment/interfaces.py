@@ -7,17 +7,17 @@ from __future__ import unicode_literals, print_function, absolute_import, divisi
 __docformat__ = "restructuredtext en"
 
 from zope import interface
-from zope.interface.common import mapping
-from zope.interface.common import sequence
-from zope.mimetype.interfaces import mimeTypeConstraint
+from zope.interface.common.mapping import IReadMapping
+from zope.interface.common.sequence import IReadSequence
 
 from zope.container.interfaces import IContained
 from zope.annotation.interfaces import IAnnotatable
+from zope.mimetype.interfaces import mimeTypeConstraint
 
 from dolmen.builtins.interfaces import IDict
 from dolmen.builtins.interfaces import IList
-from dolmen.builtins.interfaces import INumeric
 from dolmen.builtins.interfaces import IString
+from dolmen.builtins.interfaces import INumeric
 from dolmen.builtins.interfaces import IUnicode
 from dolmen.builtins.interfaces import IIterable
 
@@ -32,12 +32,12 @@ from nti.dataserver.interfaces import CompoundModeledContentBody
 from nti.dataserver.interfaces import INeverStoredInSharedStream
 
 from nti.schema.field import Int
-from nti.schema.field import Number
 from nti.schema.field import Bool
 from nti.schema.field import Dict
 from nti.schema.field import List
 from nti.schema.field import Float
 from nti.schema.field import Object
+from nti.schema.field import Number
 from nti.schema.field import Variant
 from nti.schema.field import ListOrTuple
 from nti.schema.field import IndexedIterable
@@ -429,16 +429,6 @@ class IQuestionSet(ITitledContent,IAnnotatable):
 								 value_type=Object( IQuestion, title="The questions" ),
 								 )
 
-class IRandomizedQuestionSet(IQuestionSet):
-	"""
-	An group of questions taken at random based on the taker.
-
-	A maximum total of questions of the question set is drawn to be presented and evaluated. 
-	"""
-	
-	max = Int(title="number of questions to be randomly drawn", min=1, required=True,
-			  default=1)
-	
 class IQAssignmentPart(ITitledContent):
 	"""
 	One portion of an assignment.
@@ -809,7 +799,7 @@ class IQAssignmentSubmissionPendingAssessment(IQBaseSubmission):
 	#parts.setTaggedValue( '_ext_excluded_out', True ) # Internal use only
 
 
-class IQAssessmentItemContainer(sequence.IReadSequence):
+class IQAssessmentItemContainer(IReadSequence):
 	"""
 	Something that is an unordered bag of assessment items (such as
 	questions, question sets, and assignments).
@@ -825,7 +815,7 @@ class IWordEntry(interface.Interface):
 	lang = TextLine(title="language identifier", default="en", required=False)
 	content = _ContentFragment(title="The input to present to the user.", required=False)
 
-class IWordBank(IIterable, mapping.IReadMapping):
+class IWordBank(IIterable, IReadMapping):
 
 	entries = List(title="The word entries",
 				   value_type=Object(IWordEntry, title="The word"),

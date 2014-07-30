@@ -12,12 +12,12 @@ import random
 
 from zope import component
 
-import zc.intid
+from zc.intid import IIntIds
 
 from zope.security.management import queryInteraction
 
-from nti.dataserver import users
-from nti.dataserver import interfaces as nti_interfaces
+from nti.dataserver.users import User
+from nti.dataserver.interfaces import IUser
 
 def get_current_user():
     interaction = queryInteraction()
@@ -28,15 +28,14 @@ def get_current_user():
 
 def get_user(user=None):
     user = get_current_user() if user is None else user
-    if user is not None and not nti_interfaces.IUser.providedBy(user):
-        user = users.User.get_user(str(user))
+    if user is not None and not IUser.providedBy(user):
+        user = User.get_user(str(user))
     return user
 
 def randomize(user=None):
     user = get_user(user)        
     if user is not None:
-        intids = component.getUtility(zc.intid.IIntIds)
-        uid = intids.getId(user)
+        uid = component.getUtility(IIntIds).getId(user)
         generator = random.Random(uid)
         return generator
     return None

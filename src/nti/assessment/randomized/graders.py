@@ -13,8 +13,9 @@ from zope import interface
 from . import randomize
 from . import interfaces
 from . import shuffle_list
-from ..graders import MatchingPartGrader
+
 from ..graders import EqualityGrader
+from ..graders import MatchingPartGrader
 from ..graders import MultipleChoiceMultipleAnswerGrader
 
 @interface.implementer(interfaces.IQRandomizedMatchingPartGrader)
@@ -51,7 +52,6 @@ class RandomizedMultipleChoiceGrader(EqualityGrader):
 		return the_value
 
 	response_converter = _unshuffle
-
 
 @interface.implementer(interfaces.IQRandomizedMultipleChoiceMultipleAnswerPartGrader)
 class RandomizedMultipleChoiceMultipleAnswerGrader(MultipleChoiceMultipleAnswerGrader):
