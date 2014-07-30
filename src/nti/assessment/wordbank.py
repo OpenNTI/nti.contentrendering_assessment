@@ -8,51 +8,41 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-import functools
+from functools import total_ordering
 
 from zope import interface
-from zope.container import contained
+from zope.container.contained import Contained
 from zope.location.interfaces import ISublocations
 
-import persistent
+from persistent import Persistent
 
 from nti.contentfragments import interfaces as cfg_interfaces
 
-from nti.externalization.externalization import make_repr
+from nti.externalization.externalization import WithRepr
 
+from nti.schema.schema import EqHash
 from nti.schema.field import SchemaConfigured
 from nti.schema.fieldproperty import createDirectFieldProperties
 
 from nti.utils.property import Lazy
 from nti.utils.maps import CaseInsensitiveDict
 
-from . import interfaces
-from ._util import superhash
+from .interfaces import IWordBank
+from .interfaces import IWordEntry
 
-@functools.total_ordering
-@interface.implementer(interfaces.IWordEntry)
-class WordEntry(SchemaConfigured, persistent.Persistent, contained.Contained):
-	createDirectFieldProperties(interfaces.IWordEntry)
+@total_ordering
+@interface.implementer(IWordEntry)
+@WithRepr
+@EqHash("wid")
+class WordEntry(Contained, SchemaConfigured, Persistent):
+	createDirectFieldProperties(IWordEntry)
 	
 	__external_can_create__ = True
 	mime_type = mimeType = 'application/vnd.nextthought.naqwordentry'
 
 	def __init__(self, *args, **kwargs):
-		persistent.Persistent.__init__(self)
+		Persistent.__init__(self)
 		SchemaConfigured.__init__(self, *args, **kwargs)
-
-	def __eq__(self, other):
-		try:
-			return self is other or self.wid == other.wid
-		except AttributeError:
-			return NotImplemented
-
-	__repr__ = make_repr()
-
-	def __hash__(self):
-		xhash = 47
-		xhash ^= hash(self.wid)
-		return xhash
 
 	def __lt__(self, other):
 		try:
@@ -66,15 +56,17 @@ class WordEntry(SchemaConfigured, persistent.Persistent, contained.Contained):
 		except AttributeError:
 			return NotImplemented
 
-@interface.implementer(interfaces.IWordBank, ISublocations)
-class WordBank(SchemaConfigured, persistent.Persistent, contained.Contained):
-	createDirectFieldProperties(interfaces.IWordBank)
+@interface.implementer(IWordBank, ISublocations)
+@WithRepr
+@EqHash("ids", "unique")
+class WordBank(Contained, SchemaConfigured, Persistent):
+	createDirectFieldProperties(IWordBank)
 
 	__external_can_create__ = True
 	mime_type = mimeType = 'application/vnd.nextthought.naqwordbank'
 
 	def __init__(self, *args, **kwargs):
-		persistent.Persistent.__init__(self)
+		Persistent.__init__(self)
 		SchemaConfigured.__init__(self, *args, **kwargs)
 
 	@property
@@ -111,18 +103,6 @@ class WordBank(SchemaConfigured, persistent.Persistent, contained.Contained):
 	def __iter__(self):
 		return iter(self.entries)
 
-	def __eq__(self, other):
-		try:
-			return self is other or (self.ids == other.ids
-									 and self.unique == other.unique)
-		except AttributeError:
-			return NotImplemented
-
-	def __hash__(self):
-		return 47 + (superhash(self.entries) << 2) ^ superhash(self.unique)
-
-	__repr__ = make_repr()
-
 	def __add__(self, other):
 		unique = self.unique
 		entries = set(self.entries)
@@ -147,7 +127,7 @@ class WordBank(SchemaConfigured, persistent.Persistent, contained.Contained):
 		result.update({x.word:x.wid for x in self.entries})
 		return result
 
-@interface.implementer(interfaces.IWordEntry)
+@interface.implementer(IWordEntry)
 def _wordentry_adapter(sequence):
 	result = WordEntry(wid=unicode(sequence[0]), word=unicode(sequence[1]))
 	result.lang = unicode(sequence[2]) if len(sequence) > 2 and sequence[2] else u'en'
@@ -155,7 +135,7 @@ def _wordentry_adapter(sequence):
 	result.content = cfg_interfaces.HTMLContentFragment(content)
 	return result
 
-@interface.implementer(interfaces.IWordBank)
+@interface.implementer(IWordBank)
 def _wordbank_adapter(entries, unique=True):
 	entries = {e.wid:e for e in entries}
 	result = WordBank(entries=list(entries.values()), unique=unique)

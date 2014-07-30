@@ -10,24 +10,27 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
 
-from . import interfaces
-from ._util import TrivialValuedMixin
-
 from persistent import Persistent
 
-@interface.implementer(interfaces.IQHint)
+from ._util import TrivialValuedMixin
+
+from .interfaces import IQHint
+from .interfaces import IQHTMLHint
+from .interfaces import IQTextHint
+
+@interface.implementer(IQHint)
 class QHint(Persistent):
 	"""
 	Base class for hints.
 	"""
 
-@interface.implementer(interfaces.IQTextHint)
+@interface.implementer(IQTextHint)
 class QTextHint(TrivialValuedMixin, QHint):
 	"""
 	A text hint.
 	"""
 
-@interface.implementer(interfaces.IQHTMLHint)
+@interface.implementer(IQHTMLHint)
 class QHTMLHint(TrivialValuedMixin, QHint):
 	"""
 	A text hint.

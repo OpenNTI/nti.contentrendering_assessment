@@ -429,6 +429,16 @@ class IQuestionSet(ITitledContent,IAnnotatable):
 								 value_type=Object( IQuestion, title="The questions" ),
 								 )
 
+class IRandomizedQuestionSet(IQuestionSet):
+	"""
+	An group of questions taken at random based on the taker.
+
+	A maximum total of questions of the question set is drawn to be presented and evaluated. 
+	"""
+	
+	max = Int(title="number of questions to be randomly drawn", min=1, required=True,
+			  default=1)
+	
 class IQAssignmentPart(ITitledContent):
 	"""
 	One portion of an assignment.
@@ -808,8 +818,6 @@ class IQAssessmentItemContainer(sequence.IReadSequence):
 	something like the content library package may be adaptable to this,
 	typically with annotations).
 	"""
-
-# Alibra
 
 class IWordEntry(interface.Interface):
 	wid = TextLine(title="word identifier")

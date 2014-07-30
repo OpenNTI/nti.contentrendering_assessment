@@ -11,9 +11,9 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
-from zope.container import contained
+from zope.container.contained import Contained
 from zope.location.interfaces import ISublocations
-from zope.mimetype import interfaces as mime_interfaces
+from zope.mimetype.interfaces import IContentTypeAware
 from zope.annotation.interfaces import IAttributeAnnotatable
 
 from persistent import Persistent
@@ -22,19 +22,25 @@ from nti.schema.field import SchemaConfigured
 from nti.schema.fieldproperty import AdaptingFieldProperty
 from nti.schema.fieldproperty import createDirectFieldProperties
 
-from . import interfaces
 from ._util import superhash
 
-@interface.implementer(interfaces.IQuestion,
-					   mime_interfaces.IContentTypeAware,
+from .interfaces import IQuestion
+from .interfaces import IQuestionSet
+from .interfaces import IRandomizedQuestionSet
+from .interfaces import IQFillInTheBlankWithWordBankQuestion
+
+@interface.implementer(IQuestion,
+					   IContentTypeAware,
 					   IAttributeAnnotatable)
-class QQuestion(Persistent,
-				SchemaConfigured,
-				contained.Contained):
-	mime_type = 'application/vnd.nextthought.naquestion'
+class QQuestion(Contained, SchemaConfigured, Persistent):
+	createDirectFieldProperties(IQuestion)
+	
+	mimeType = mime_type = 'application/vnd.nextthought.naquestion'
 
-	createDirectFieldProperties(interfaces.IQuestion)
-
+	def __init__(self, *args, **kwargs):
+		Persistent.__init__(self)
+		SchemaConfigured.__init__(self, *args, **kwargs)
+		
 	def __eq__(self, other):
 		try:
 			return other is self or (isinstance(other, QQuestion)
@@ -49,17 +55,20 @@ class QQuestion(Persistent,
 	def __hash__(self):
 		return 47 + (superhash(self.content) << 2) ^ superhash(self.parts)
 
-@interface.implementer(interfaces.IQuestionSet,
-					   mime_interfaces.IContentTypeAware,
+@interface.implementer(IQuestionSet,
+					   ISublocations,
+					   IContentTypeAware,
 					   IAttributeAnnotatable)
-class QQuestionSet(Persistent,
-				   SchemaConfigured,
-				   contained.Contained):
-	mime_type = 'application/vnd.nextthought.naquestionset'
+class QQuestionSet(Contained, SchemaConfigured, Persistent):
+	createDirectFieldProperties(IQuestionSet)
+	title = AdaptingFieldProperty(IQuestionSet['title'])
 
-	title = AdaptingFieldProperty(interfaces.IQuestionSet['title'])
-	createDirectFieldProperties(interfaces.IQuestionSet)
+	mimeType = mime_type = 'application/vnd.nextthought.naquestionset'
 
+	def __init__(self, *args, **kwargs):
+		Persistent.__init__(self)
+		SchemaConfigured.__init__(self, *args, **kwargs)
+		
 	def __eq__(self, other):
 		try:
 			return other is self or (isinstance(other, QQuestionSet)
@@ -73,14 +82,31 @@ class QQuestionSet(Persistent,
 
 	def __hash__(self):
 		return 47 + (superhash(self.questions) << 2)
+	
+	def sublocations(self):
+		for question in self.questions or ():
+			yield question
 
-@interface.implementer(interfaces.IQFillInTheBlankWithWordBankQuestion, ISublocations)
+@interface.implementer(IRandomizedQuestionSet)
+class QRandomizedQuestionSet(QQuestionSet):
+	createDirectFieldProperties(IRandomizedQuestionSet)
+	
+	__external_class_name__ = "QQuestionSet"
+	mimeType = mime_type = 'application/vnd.nextthought.narandomizedquestionset'
+	
+	def __eq__(self, other):
+		try:
+			return 	super(QRandomizedQuestionSet, self).__eq__(other) and \
+					self.limit == other.limit
+		except AttributeError:
+			return NotImplemented
+	
+@interface.implementer(IQFillInTheBlankWithWordBankQuestion, ISublocations)
 class QFillInTheBlankWithWordBankQuestion(QQuestion):
+	createDirectFieldProperties(IQFillInTheBlankWithWordBankQuestion)
 
 	__external_class_name__ = "Question"
 	mime_type = mimeType = 'application/vnd.nextthought.naquestionfillintheblankwordbank'
-
-	createDirectFieldProperties(interfaces.IQFillInTheBlankWithWordBankQuestion)
 
 	def __setattr__(self, name, value):
 		super(QFillInTheBlankWithWordBankQuestion, self).__setattr__(name, value)
