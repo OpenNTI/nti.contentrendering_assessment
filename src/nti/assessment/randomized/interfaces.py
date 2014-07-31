@@ -57,6 +57,5 @@ class IRandomizedQuestionSet(IQuestionSet):
 	A maximum total of questions of the question set is drawn to be presented and evaluated. 
 	"""
 	
-	max = Int(title="number of questions to be randomly drawn", min=1, required=True,
-			  default=1)
-	
+	draw = Int(	title="number of questions to be randomly drawn", min=1, 
+				required=True, default=1)

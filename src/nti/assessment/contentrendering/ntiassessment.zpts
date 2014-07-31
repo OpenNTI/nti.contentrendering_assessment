@@ -123,7 +123,7 @@ name: naqaudio
 </object>
 
 # Things that shouldn't render, just be placeholders
-name: naqsolexplanation naqhints naqhint  naquestionset naassignment
+name: naqsolexplanation naqhints naqhint  naquestionset narandomizedquestionset naassignment
 <span tal:attributes="class string:${self/__class__/__name__} hidden" ></span>
 
 name: naqsolutions

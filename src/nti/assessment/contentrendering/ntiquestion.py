@@ -26,8 +26,15 @@ from plasTeX.Renderers import render_children
 from nti.contentrendering import plastexids
 from nti.contentrendering import interfaces as crd_interfaces
 
-from .. import question
-from .. import interfaces as as_interfaces
+from ..question import QQuestion
+from ..question import QQuestionSet
+
+from ..interfaces import IQuestion
+from ..interfaces import NTIID_TYPE
+from ..interfaces import IQuestionSet
+
+from ..randomized.question import QRandomizedQuestionSet
+from ..randomized.interfaces import IRandomizedQuestionSet
 
 from .ntibase import _LocalContentMixin
 
@@ -54,7 +61,7 @@ class naquestion(_LocalContentMixin, Base.Environment, plastexids.NTIIDMixin):
 	_ntiid_suffix = 'naq.'
 	_ntiid_title_attr_name = 'ref'  # Use our counter to generate IDs if no ID is given
 	_ntiid_allow_missing_title = True
-	_ntiid_type = as_interfaces.NTIID_TYPE
+	_ntiid_type = NTIID_TYPE
 	_ntiid_cache_map_name = '_naquestion_ntiid_map'
 
 	def invoke( self, tex ):
@@ -91,14 +98,14 @@ class naquestion(_LocalContentMixin, Base.Environment, plastexids.NTIIDMixin):
 		return [x.assessment_object() for x in to_iter if hasattr(x,'assessment_object')]
 
 	def _createQuestion(self):
-		result = question.QQuestion(content=self._asm_local_content,
-									parts=self._asm_question_parts())
+		result = QQuestion(content=self._asm_local_content,
+						   parts=self._asm_question_parts())
 		return result
 
 	@cachedIn('_v_assessment_object')
 	def assessment_object(self):
 		result = self._createQuestion()
-		errors = schema.getValidationErrors( as_interfaces.IQuestion, result )
+		errors = schema.getValidationErrors(IQuestion, result)
 		if errors: # pragma: no cover
 			raise errors[0][1]
 		result.ntiid = self.ntiid # copy the id
@@ -136,14 +143,24 @@ class naquestionset(Base.List, plastexids.NTIIDMixin):
 	counter = 'naquestionset'
 
 	_ntiid_suffix = 'naq.set.'
+	_ntiid_type = NTIID_TYPE
 	_ntiid_title_attr_name = 'ref'  # Use our counter to generate IDs if no ID is given
 	_ntiid_allow_missing_title = True
-	_ntiid_type = as_interfaces.NTIID_TYPE
 	_ntiid_cache_map_name = '_naquestionset_ntiid_map'
 
 	#: From IEmbeddedContainer
 	mimeType = "application/vnd.nextthought.naquestionset"
-
+	
+	def create_questionset(self, questions, title, **kwargs):
+		result = QQuestionSet(questions=questions, title=title)
+		return result
+	
+	def validate_questionset(self, questionset):
+		errors = schema.getValidationErrors(IQuestionSet, questionset)
+		if errors: # pragma: no cover
+			raise errors[0][1]
+		return questionset
+	
 	@cachedIn('_v_assessment_object')
 	def assessment_object(self):
 		questions = [qref.idref['label'].assessment_object()
@@ -164,11 +181,8 @@ class naquestionset(Base.List, plastexids.NTIIDMixin):
 
 		title = title.strip() or None
 
-		result = question.QQuestionSet( questions=questions,
-										title=title)
-		errors = schema.getValidationErrors( as_interfaces.IQuestionSet, result )
-		if errors: # pragma: no cover
-			raise errors[0][1]
+		result = self.create_questionset(questions=questions, title=title)
+		self.validate_questionset(result)
 		result.ntiid = self.ntiid # copy the id
 		return result
 
@@ -190,7 +204,44 @@ class naquestionset(Base.List, plastexids.NTIIDMixin):
 			title = title_el.title
 		assert title is not None
 		return title
+	
+class narandomizedquestionset(naquestionset):
+	r"""
+	Example::
 
+		\begin{naquestion}[individual=true]
+			\label{question}
+			...
+		\end{question}
+
+		\begin{narandomizedquestionset}[draw=2]<My Title>
+			\label{set}
+			\naquestionref{question}
+		\end{narandomizedquestionset}
+
+	"""
+
+	args = "[options:dict:str]<title:str:source>"
+
+	mimeType = "application/vnd.nextthought.narandomizedquestionset"
+
+	@readproperty
+	def draw(self):
+		options = self.attributes.get('options') or {}
+		draw = options.get('draw') or self.attributes.get('draw') 
+		return int(draw) if draw else None
+	
+	def create_questionset(self, questions, title, **kwargs):
+		draw = self.draw or len(questions)
+		result = QRandomizedQuestionSet(questions=questions, title=title, draw=draw)
+		return result
+	
+	def validate_questionset(self, questionset):
+		errors = schema.getValidationErrors(IRandomizedQuestionSet, questionset)
+		if errors: # pragma: no cover
+			raise errors[0][1]
+		return questionset
+	
 class naquestionsetref(Crossref.ref):
 	"A reference to the label of a question set."
 

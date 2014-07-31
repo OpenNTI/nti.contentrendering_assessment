@@ -20,16 +20,17 @@ from zope import interface
 
 from plasTeX.Renderers import render_children
 
-from nti.contentrendering import interfaces as crd_interfaces
+from nti.contentrendering.interfaces import IRenderedBook
 
-from nti.externalization import internalization
 from nti.externalization.externalization import toExternalObject
+from nti.externalization.internalization import find_factory_for
+from nti.externalization.internalization import update_from_external_object
 
 from .interfaces import IAssessmentExtractor
 from .interfaces import ILessonQuestionSetExtractor
 
 @interface.implementer(IAssessmentExtractor)
-@component.adapter(crd_interfaces.IRenderedBook)
+@component.adapter(IRenderedBook)
 class _AssessmentExtractor(object):
 	"""
 	"Transforms" a rendered book by extracting assessment information into a separate file
@@ -121,10 +122,10 @@ class _AssessmentExtractor(object):
 		ext_obj = toExternalObject(assm_obj)  # No need to go into its children, like parts.
 		__traceback_info__ = provenance, assm_obj, ext_obj
 		raw_int_obj = type(assm_obj)()  # Use the class of the object returned as a factory.
-		internalization.update_from_external_object(raw_int_obj, ext_obj, require_updater=True, notify=False)
+		update_from_external_object(raw_int_obj, ext_obj, require_updater=True, notify=False)
 
 		# Also be sure factories can be found
-		factory = internalization.find_factory_for(toExternalObject(assm_obj))
+		factory = find_factory_for(toExternalObject(assm_obj))
 		assert factory is not None
 		# The ext_obj was mutated by the internalization process, so we need to externalize
 		# again. Or run a deep copy (?)
@@ -155,19 +156,24 @@ class _AssessmentExtractor(object):
 		return boring
 
 @interface.implementer(ILessonQuestionSetExtractor)
-@component.adapter(crd_interfaces.IRenderedBook)
+@component.adapter(IRenderedBook)
 class _LessonQuestionSetExtractor(object):
 
 	def __init__(self, book=None):
 		pass
 
 	def transform( self, book ):
-		questionset_els = book.document.getElementsByTagName( 'naquestionset' )
-		assignment_els = book.document.getElementsByTagName( 'naassignment' )
+		found_sets = False
 		dom = book.toc.dom
-		if questionset_els:
-			topic_map = self._get_topic_map(dom)
-			self._process_questionsets(dom, questionset_els, topic_map)
+		topic_map = self._get_topic_map(dom)
+		assignment_els = book.document.getElementsByTagName('naassignment')
+		for tag_name in ('naquestionset', 'narandomizedquestionset'):
+			questionset_els = book.document.getElementsByTagName(tag_name)
+			if questionset_els:
+				found_sets = True
+				self._process_questionsets(dom, questionset_els, topic_map)
+		
+		if found_sets:
 			self._process_assignments(dom, assignment_els, topic_map)
 			book.toc.save()
 
@@ -189,6 +195,7 @@ class _LessonQuestionSetExtractor(object):
 			lesson_el = None
 			if hasattr(parent_el, 'ntiid') and parent_el.tagName.startswith('course'):
 				lesson_el = topic_map.get(parent_el.ntiid)
+			
 			while lesson_el is None and parent_el.parentNode is not None:
 				parent_el = parent_el.parentNode
 				if hasattr(parent_el, 'ntiid') and parent_el.tagName.startswith('course'):
@@ -201,7 +208,8 @@ class _LessonQuestionSetExtractor(object):
 				title_el = title_el.parentNode
 
 			# If the title_el is a topic in the ToC of a course, suppress it.
-			if dom.childNodes[0].getAttribute('isCourse') == u'true' and title_el.ntiid in topic_map.keys():
+			if 	dom.childNodes[0].getAttribute('isCourse') == u'true' and \
+				title_el.ntiid in topic_map.keys():
 				topic_map[title_el.ntiid].setAttribute('suppressed', 'true')
 
 			title = el.title
@@ -250,7 +258,8 @@ class _LessonQuestionSetExtractor(object):
 				title_el = title_el.parentNode
 
 			# If the title_el is a topic in the ToC of a course, suppress it.
-			if dom.childNodes[0].getAttribute('isCourse') == u'true' and title_el.ntiid in topic_map.keys():
+			if 	dom.childNodes[0].getAttribute('isCourse') == u'true' and \
+				title_el.ntiid in topic_map.keys():
 				topic_map[title_el.ntiid].setAttribute('suppressed', 'true')
 
 			mimeType = 'application/vnd.nextthought.nanosubmitassignment'

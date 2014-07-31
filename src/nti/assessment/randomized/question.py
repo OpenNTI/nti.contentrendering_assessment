@@ -26,6 +26,6 @@ class QRandomizedQuestionSet(QQuestionSet):
 	def __eq__(self, other):
 		try:
 			return  super(QRandomizedQuestionSet, self).__eq__(other) and \
-					self.limit == other.limit
+					self.draw == other.draw
 		except AttributeError:
 			return NotImplemented

@@ -614,13 +614,16 @@ class naqvideo(ntiincludevideo):
 # Question
 ###
 
+# make them available in this module
 from nti.assessment.contentrendering.ntiquestion import naquestion, naquestionref
-from nti.assessment.contentrendering.ntiquestion import naquestionset, naquestionsetref
+from nti.assessment.contentrendering.ntiquestion import naquestionset, naquestionsetref, narandomizedquestionset
 
+# avoid warning
 naquestion = naquestion
 naquestionref = naquestionref
 naquestionset = naquestionset
 naquestionsetref = naquestionsetref
+narandomizedquestionset = narandomizedquestionset
 
 ###
 # Alibra
@@ -780,6 +783,7 @@ def ProcessOptions( options, document ):
 	document.context.newcounter('naassignment')
 	document.context.newcounter('naquestionset')
 	document.context.newcounter('naqsolutionnum')
+	document.context.newcounter('narandomizedquestionset')
 	document.context.newcounter('naquestionfillintheblankwordbank')
 
 #: The directory in which to find our templates.
