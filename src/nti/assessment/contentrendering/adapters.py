@@ -15,9 +15,9 @@ from zope import interface
 
 from plasTeX.Renderers import render_children
 
-from nti.contentrendering import interfaces as crd_interfaces
+from nti.contentrendering.interfaces import IJSONTransformer
 
-@interface.implementer(crd_interfaces.IJSONTransformer)
+@interface.implementer(IJSONTransformer)
 class _NAQuestionSetRefJSONTransformer(object):
 
 	__slots__ = ('el',)

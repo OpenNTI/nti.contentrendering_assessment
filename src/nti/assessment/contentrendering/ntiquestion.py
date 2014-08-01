@@ -33,8 +33,8 @@ from ..interfaces import IQuestion
 from ..interfaces import NTIID_TYPE
 from ..interfaces import IQuestionSet
 
-from ..randomized.question import QRandomizedQuestionSet
-from ..randomized.interfaces import IRandomizedQuestionSet
+from ..randomized.question import QQuestionBank
+from ..randomized.interfaces import IQuestionBank
 
 from .ntibase import _LocalContentMixin
 
@@ -205,7 +205,7 @@ class naquestionset(Base.List, plastexids.NTIIDMixin):
 		assert title is not None
 		return title
 	
-class narandomizedquestionset(naquestionset):
+class naquestionbank(naquestionset):
 	r"""
 	Example::
 
@@ -214,16 +214,16 @@ class narandomizedquestionset(naquestionset):
 			...
 		\end{question}
 
-		\begin{narandomizedquestionset}[draw=2]<My Title>
+		\begin{naquestionbank}[draw=2]<My Title>
 			\label{set}
 			\naquestionref{question}
-		\end{narandomizedquestionset}
+		\end{naquestionbank}
 
 	"""
 
 	args = "[options:dict:str]<title:str:source>"
 
-	mimeType = "application/vnd.nextthought.narandomizedquestionset"
+	mimeType = "application/vnd.nextthought.naquestionbank"
 
 	@readproperty
 	def draw(self):
@@ -233,11 +233,11 @@ class narandomizedquestionset(naquestionset):
 	
 	def create_questionset(self, questions, title, **kwargs):
 		draw = self.draw or len(questions)
-		result = QRandomizedQuestionSet(questions=questions, title=title, draw=draw)
+		result = QQuestionBank(questions=questions, title=title, draw=draw)
 		return result
 	
 	def validate_questionset(self, questionset):
-		errors = schema.getValidationErrors(IRandomizedQuestionSet, questionset)
+		errors = schema.getValidationErrors(IQuestionBank, questionset)
 		if errors: # pragma: no cover
 			raise errors[0][1]
 		return questionset

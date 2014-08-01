@@ -12,20 +12,20 @@ from zope import interface
 
 from nti.schema.fieldproperty import createDirectFieldProperties
 
-from .interfaces import IRandomizedQuestionSet
+from .interfaces import IQuestionBank
 
 from ..question import QQuestionSet
 
-@interface.implementer(IRandomizedQuestionSet)
-class QRandomizedQuestionSet(QQuestionSet):
-	createDirectFieldProperties(IRandomizedQuestionSet)
+@interface.implementer(IQuestionBank)
+class QQuestionBank(QQuestionSet):
+	createDirectFieldProperties(IQuestionBank)
 	
-	__external_class_name__ = "QQuestionSet"
-	mimeType = mime_type = 'application/vnd.nextthought.narandomizedquestionset'
+	__external_class_name__ = "QQuestionBank"
+	mimeType = mime_type = 'application/vnd.nextthought.naquestionbank'
 	
 	def __eq__(self, other):
 		try:
-			return  super(QRandomizedQuestionSet, self).__eq__(other) and \
+			return  super(QQuestionBank, self).__eq__(other) and \
 					self.draw == other.draw
 		except AttributeError:
 			return NotImplemented

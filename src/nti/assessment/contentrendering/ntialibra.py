@@ -16,9 +16,15 @@ from plasTeX.Renderers import render_children
 
 from nti.assessment import parts
 from nti.assessment import question
-from nti.assessment import interfaces as as_interfaces
+from nti.assessment.interfaces import IRegEx
+from nti.assessment.interfaces import IWordBank
+from nti.assessment.interfaces import IWordEntry
+from nti.assessment.interfaces import IQFillInTheBlankShortAnswerPart
+from nti.assessment.interfaces import IQFillInTheBlankWithWordBankPart
+from nti.assessment.interfaces import IQFillInTheBlankShortAnswerSolution
+from nti.assessment.interfaces import IQFillInTheBlankWithWordBankSolution
 
-from nti.contentfragments import interfaces as cfg_interfaces
+from nti.contentfragments.interfaces import HTMLContentFragment
 
 from .ntibase import naqvalue
 from .ntibase import _AbstractNAQPart
@@ -41,7 +47,7 @@ class _WordBankMixIn(object):
 							x.attributes['word'],
 							x.attributes.get('lang'),
 							x._asm_local_content]
-					we = as_interfaces.IWordEntry(data)
+					we = IWordEntry(data)
 					result.append(we)
 		return _naqwordbank, result
 
@@ -49,7 +55,7 @@ class _WordBankMixIn(object):
 		result = None
 		_naqwordbank, entries = self._asm_entries()
 		if entries:
-			result = as_interfaces.IWordBank(entries)
+			result = IWordBank(entries)
 			result.unique = _naqwordbank.attributes.get('unique', 'true') == 'true'
 		return result
 
@@ -84,8 +90,8 @@ class naqfillintheblankwithwordbankpart(_AbstractNAQPart, _WordBankMixIn):
 	"""
 
 	part_factory = parts.QFillInTheBlankWithWordBankPart
-	part_interface = as_interfaces.IQFillInTheBlankWithWordBankPart
-	soln_interface = as_interfaces.IQFillInTheBlankWithWordBankSolution
+	part_interface = IQFillInTheBlankWithWordBankPart
+	soln_interface = IQFillInTheBlankWithWordBankSolution
 
 	def _asm_object_kwargs(self):
 		return { 'wordbank': self._asm_wordbank(),
@@ -93,7 +99,7 @@ class naqfillintheblankwithwordbankpart(_AbstractNAQPart, _WordBankMixIn):
 
 	def _asm_input(self):
 		input_el = self.getElementsByTagName('naqinput')[0]
-		return cfg_interfaces.HTMLContentFragment(input_el._asm_local_content.strip())
+		return HTMLContentFragment(input_el._asm_local_content.strip())
 
 	def _asm_solutions(self):
 		solutions = []
@@ -176,8 +182,8 @@ class naqfillintheblankshortanswerpart(_AbstractNAQPart):
 	"""
 
 	part_factory = parts.QFillInTheBlankShortAnswerPart
-	part_interface = as_interfaces.IQFillInTheBlankShortAnswerPart
-	soln_interface = as_interfaces.IQFillInTheBlankShortAnswerSolution
+	part_interface = IQFillInTheBlankShortAnswerPart
+	soln_interface = IQFillInTheBlankShortAnswerSolution
 
 	def _asm_object_kwargs(self):
 		return {}
@@ -222,7 +228,7 @@ class naqfillintheblankshortanswerpart(_AbstractNAQPart):
 										 _naqmregex.attributes['pattern'], \
 										 _naqmregex._asm_local_content
 				assert pattern and pid
-				answer[pid] = as_interfaces.IRegEx((pattern, solution or None))
+				answer[pid] = IRegEx((pattern, solution or None))
 			_naqsoln = self.ownerDocument.createElement('naqsolution')
 			_naqsoln.answer = answer
 			_naqsoln.attributes['weight'] = 1.0
@@ -313,7 +319,7 @@ def _remove_parts_after_render(self, rendered):
 	# do not include them in the asm_local_content
 	selected = [n for n in self.childNodes if _check(n)]
 	output = render_children(self.renderer, selected)
-	output = cfg_interfaces.HTMLContentFragment(''.join(output).strip())
+	output = HTMLContentFragment(''.join(output).strip())
 	return output
 
 class naquestionfillintheblankwordbank(naquestion, _WordBankMixIn):

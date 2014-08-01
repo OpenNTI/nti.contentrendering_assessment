@@ -50,7 +50,7 @@ class IQRandomizedMultipleChoiceMultipleAnswerPartGrader(IQMultipleChoiceMultipl
 
 # question set
 
-class IRandomizedQuestionSet(IQuestionSet):
+class IQuestionBank(IQuestionSet):
 	"""
 	An group of questions taken at random based on the taker.
 

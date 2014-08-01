@@ -52,9 +52,9 @@
 				provides="nti.externalization.interfaces.IExternalObjectDecorator"
 				for=".interfaces.IQRandomizedMultipleChoiceMultipleAnswerPart"/>
 		
-	<subscriber factory=".decorators._QRandomizedQuestionSetDecorator"
+	<subscriber factory=".decorators._QQuestionBankDecorator"
 				provides="nti.externalization.interfaces.IExternalObjectDecorator"
-				for=".interfaces.IRandomizedQuestionSet"/>
+				for=".interfaces.IQuestionBank"/>
 	
 	<adapter factory=".decorators._RandomizedMultipleChoiceMultipleAnswerPartSolutionsExternalizer"
 			 for=".interfaces.IQRandomizedMultipleChoiceMultipleAnswerPart"

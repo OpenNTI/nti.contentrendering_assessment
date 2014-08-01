@@ -11,14 +11,17 @@ logger = __import__('logging').getLogger(__name__)
 from zope import interface
 
 from . import randomize
-from . import interfaces
 from . import shuffle_list
+
+from .interfaces import IQRandomizedMatchingPartGrader
+from .interfaces import IQRandomizedMultipleChoicePartGrader
+from .interfaces import IQRandomizedMultipleChoiceMultipleAnswerPartGrader
 
 from ..graders import EqualityGrader
 from ..graders import MatchingPartGrader
 from ..graders import MultipleChoiceMultipleAnswerGrader
 
-@interface.implementer(interfaces.IQRandomizedMatchingPartGrader)
+@interface.implementer(IQRandomizedMatchingPartGrader)
 class RandomizedMatchingPartGrader(MatchingPartGrader):
 
 	def _to_response_dict(self, the_dict):
@@ -36,7 +39,7 @@ class RandomizedMatchingPartGrader(MatchingPartGrader):
 
 	response_converter = _to_response_dict
 
-@interface.implementer(interfaces.IQRandomizedMultipleChoicePartGrader)
+@interface.implementer(IQRandomizedMultipleChoicePartGrader)
 class RandomizedMultipleChoiceGrader(EqualityGrader):
 	# MultipleChoiceGrader tries really hard to verify correctness,
 	# when we just need something simple. Thus, we inherit from EqualityGrader.
@@ -53,7 +56,7 @@ class RandomizedMultipleChoiceGrader(EqualityGrader):
 
 	response_converter = _unshuffle
 
-@interface.implementer(interfaces.IQRandomizedMultipleChoiceMultipleAnswerPartGrader)
+@interface.implementer(IQRandomizedMultipleChoiceMultipleAnswerPartGrader)
 class RandomizedMultipleChoiceMultipleAnswerGrader(MultipleChoiceMultipleAnswerGrader):
 
 	def _unshuffle(self, the_values):

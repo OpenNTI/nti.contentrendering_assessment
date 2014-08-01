@@ -21,8 +21,8 @@ from nti.externalization.interfaces import IExternalObjectDecorator
 from . import randomize
 from . import shuffle_list
 
+from .interfaces import IQuestionBank
 from .interfaces import IQRandomizedPart
-from .interfaces import IRandomizedQuestionSet
 from .interfaces import IQRandomizedMatchingPart
 from .interfaces import IQRandomizedMultipleChoicePart
 from .interfaces import IQRandomizedMultipleChoiceMultipleAnswerPart
@@ -165,16 +165,16 @@ class _QRandomizedMultipleChoiceMultipleAnswerPartDecorator(object):
 # === question set
 
 @interface.implementer(IExternalObjectDecorator)
-@component.adapter(IRandomizedQuestionSet)
-class _QRandomizedQuestionSetDecorator(object):
+@component.adapter(IQuestionBank)
+class _QQuestionBankDecorator(object):
 
 	__metaclass__ = SingletonDecorator
 
 	def decorateExternalObject(self, context, result):
 		generator = randomize()
 		questions = result.get('questions', ())
-		if generator and questions and context.max != len(questions):
-			questions = generator.sample(questions, context.max)
+		if generator and questions and context.draw != len(questions):
+			questions = generator.sample(questions, context.draw)
 			result['questions'] = questions 
 
 # === assessed part

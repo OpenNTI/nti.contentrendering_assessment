@@ -10,12 +10,18 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
 
-from . import interfaces
 from ..parts import QMatchingPart
 from ..parts import QMultipleChoicePart
 from ..parts import QMultipleChoiceMultipleAnswerPart
 
-@interface.implementer(interfaces.IQRandomizedMatchingPart)
+from .interfaces import IQRandomizedMatchingPart
+from .interfaces import IQRandomizedMatchingPartGrader
+from .interfaces import IQRandomizedMultipleChoicePart
+from .interfaces import IQRandomizedMultipleChoicePartGrader
+from .interfaces import IQRandomizedMultipleChoiceMultipleAnswerPart
+from .interfaces import IQRandomizedMultipleChoiceMultipleAnswerPartGrader
+
+@interface.implementer(IQRandomizedMatchingPart)
 class QRandomizedMatchingPart(QMatchingPart):
 
 	response_interface = None
@@ -23,9 +29,9 @@ class QRandomizedMatchingPart(QMatchingPart):
 	__external_class_name__ = "MatchingPart"
 	mimeType = mime_type = "application/vnd.nextthought.assessment.randomizedmatchingpart"
 
-	grader_interface = interfaces.IQRandomizedMatchingPartGrader
+	grader_interface = IQRandomizedMatchingPartGrader
 
-@interface.implementer(interfaces.IQRandomizedMultipleChoicePart)
+@interface.implementer(IQRandomizedMultipleChoicePart)
 class QRandomizedMultipleChoicePart(QMultipleChoicePart):
 
 	response_interface = None
@@ -33,9 +39,9 @@ class QRandomizedMultipleChoicePart(QMultipleChoicePart):
 	__external_class_name__ = "MultipleChoicePart"
 	mimeType = mime_type = "application/vnd.nextthought.assessment.randomizedmultiplechoicepart"
 
-	grader_interface = interfaces.IQRandomizedMultipleChoicePartGrader
+	grader_interface = IQRandomizedMultipleChoicePartGrader
 
-@interface.implementer(interfaces.IQRandomizedMultipleChoiceMultipleAnswerPart)
+@interface.implementer(IQRandomizedMultipleChoiceMultipleAnswerPart)
 class QRandomizedMultipleChoiceMultipleAnswerPart(QMultipleChoiceMultipleAnswerPart):
 
 	response_interface = None
@@ -43,4 +49,4 @@ class QRandomizedMultipleChoiceMultipleAnswerPart(QMultipleChoiceMultipleAnswerP
 	__external_class_name__ = "MultipleChoiceMultipleAnswerPart"
 	mimeType = mime_type = "application/vnd.nextthought.assessment.randomizedmultiplechoicemultipleanswerpart"
 
-	grader_interface = interfaces.IQRandomizedMultipleChoiceMultipleAnswerPartGrader
+	grader_interface = IQRandomizedMultipleChoiceMultipleAnswerPartGrader

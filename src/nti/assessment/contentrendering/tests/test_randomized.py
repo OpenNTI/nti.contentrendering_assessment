@@ -14,7 +14,7 @@ from hamcrest import has_property
 from hamcrest import contains_string
 
 from nti.assessment.contentrendering.ntiassessment import naquestion
-from nti.assessment.contentrendering.ntiassessment import narandomizedquestionset 
+from nti.assessment.contentrendering.ntiassessment import naquestionbank 
 
 from nti.assessment.randomized.interfaces import IQRandomizedMultipleChoicePart
 
@@ -60,7 +60,7 @@ class TestRandomized(AssessmentTestCase):
 		assert_that(part, verifiably_provides(part_el.part_interface))
 		assert_that(part_el.part_interface, is_(IQRandomizedMultipleChoicePart))
 
-	def test_randomizedquestion_set_macros(self):
+	def test_questionbank_macros(self):
 		example = br"""
 		\begin{naquestion}[individual=true]
 			\label{question1}
@@ -93,11 +93,11 @@ class TestRandomized(AssessmentTestCase):
 			\end{naqessaypart}
 		\end{naquestion}
 		
-		\begin{narandomizedquestionset}[draw=1]
+		\begin{naquestionbank}[draw=1]
 			\label{set}
 			\naquestionref{question1}
 			\naquestionref{question2}
-		\end{narandomizedquestionset}
+		\end{naquestionbank}
 
 		"""
 
@@ -106,10 +106,10 @@ class TestRandomized(AssessmentTestCase):
 		assert_that( dom.getElementsByTagName('naquestion')[0], is_(naquestion))
 		assert_that( dom.getElementsByTagName('naquestion')[1], is_(naquestion))
 
-		assert_that( dom.getElementsByTagName('narandomizedquestionset'), has_length( 1 ) )
-		assert_that( dom.getElementsByTagName('narandomizedquestionset')[0], is_(narandomizedquestionset))
+		assert_that( dom.getElementsByTagName('naquestionbank'), has_length( 1 ) )
+		assert_that( dom.getElementsByTagName('naquestionbank')[0], is_(naquestionbank))
 
-		qset_object = dom.getElementsByTagName('narandomizedquestionset')[0].assessment_object()
+		qset_object = dom.getElementsByTagName('naquestionbank')[0].assessment_object()
 		assert_that(qset_object.questions, has_length(2) )
 		assert_that(qset_object, has_property('draw', is_(1)))
 		assert_that(qset_object.ntiid, contains_string('set'))

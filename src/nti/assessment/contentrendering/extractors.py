@@ -167,7 +167,7 @@ class _LessonQuestionSetExtractor(object):
 		dom = book.toc.dom
 		topic_map = self._get_topic_map(dom)
 		assignment_els = book.document.getElementsByTagName('naassignment')
-		for tag_name in ('naquestionset', 'narandomizedquestionset'):
+		for tag_name in ('naquestionset', 'naquestionbank', 'narandomizedquestionset'):
 			questionset_els = book.document.getElementsByTagName(tag_name)
 			if questionset_els:
 				found_sets = True
