@@ -23,6 +23,7 @@ from . import shuffle_list
 
 from .interfaces import IQuestionBank
 from .interfaces import IQRandomizedPart
+from .interfaces import IRandomizedQuestionSet
 from .interfaces import IQRandomizedMatchingPart
 from .interfaces import IQRandomizedMultipleChoicePart
 from .interfaces import IQRandomizedMultipleChoiceMultipleAnswerPart
@@ -163,6 +164,18 @@ class _QRandomizedMultipleChoiceMultipleAnswerPartDecorator(object):
 																	result['solutions'])
 
 # === question set
+
+@interface.implementer(IExternalObjectDecorator)
+@component.adapter(IRandomizedQuestionSet)
+class _QRandomizedQuestionSetDecorator(object):
+
+	__metaclass__ = SingletonDecorator
+
+	def decorateExternalObject(self, context, result):
+		generator = randomize()
+		questions = result.get('questions', ())
+		if generator:
+			shuffle_list(generator, questions)
 
 @interface.implementer(IExternalObjectDecorator)
 @component.adapter(IQuestionBank)
