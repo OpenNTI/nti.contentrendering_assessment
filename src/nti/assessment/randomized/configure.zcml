@@ -75,7 +75,7 @@
 
 	<ext:registerAutoPackageIO
 		root_interfaces=".interfaces.IQRandomizedPart
-						 .interfaces.IQRandomizedQuestionSet
+						 .interfaces.IRandomizedQuestionSet
 						 .interfaces.IQuestionBank"
 		modules=".parts .question"
 		iobase="..externalization._AssessmentInternalObjectIOBase"/>
