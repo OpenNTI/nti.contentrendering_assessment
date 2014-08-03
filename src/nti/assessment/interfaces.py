@@ -556,6 +556,24 @@ class IQAssignmentDateContext(interface.Interface):
 		itself.
 		"""
 
+class IQAssignmentPolicies(interface.Interface):
+	"""
+	An object that can be used to hold (uninterpreted) policy
+	objects keyed off of assignment NTIIDs.
+
+	This package defines no implementations of this interface.
+	"""
+
+	def getPolicyForAssignment(assignment_ntiid):
+		"""
+		Return a policy object for the assignment.
+		"""
+
+	def __bool__():
+		"""
+		Are there any policies registered? If no, return False.
+		"""
+
 
 class IQResponse(IContained,
 				 INeverStoredInSharedStream):
