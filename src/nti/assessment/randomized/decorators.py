@@ -186,7 +186,7 @@ class _QQuestionBankDecorator(object):
 	def decorateExternalObject(self, context, result):
 		generator = randomize()
 		questions = result.get('questions', ())
-		if generator and questions and context.draw != len(questions):
+		if generator and questions and context.draw < len(questions):
 			questions = generator.sample(questions, context.draw)
 			result['questions'] = questions 
 
