@@ -15,7 +15,10 @@ from hamcrest import contains_string
 
 from nti.assessment.contentrendering.ntiassessment import naquestion
 from nti.assessment.contentrendering.ntiassessment import naquestionbank 
+from nti.assessment.contentrendering.ntiassessment import narandomizedquestionset
 
+from nti.assessment.randomized.interfaces import IQuestionBank
+from nti.assessment.randomized.interfaces import IRandomizedQuestionSet
 from nti.assessment.randomized.interfaces import IQRandomizedMultipleChoicePart
 
 from nti.testing.matchers import verifiably_provides
@@ -59,6 +62,45 @@ class TestRandomized(AssessmentTestCase):
 		part = part_el.assessment_object()
 		assert_that(part, verifiably_provides(part_el.part_interface))
 		assert_that(part_el.part_interface, is_(IQRandomizedMultipleChoicePart))
+
+	def test_randomizedquestionset_macros(self):
+		example = br"""
+		\begin{naquestion}[individual=true]
+			\label{question1}
+			Arbitrary content goes here.
+			\begin{naqsymmathpart}
+			Arbitrary content goes here.
+			\begin{naqsolutions}
+				\naqsolution $420$
+				\naqsolution $\frac{5}{8}$
+				\naqsolution $\left(3x+2\right)\left(2x+3\right)$
+				\naqsolution $\surd2$
+				\naqsolution $\frac{\surd\left(8x+5\right)\left(12x+12\right)}{\approx152318}+1204$
+			\end{naqsolutions}
+			\begin{naqhints}
+				\naqhint Some hint
+			\end{naqhints}
+			\end{naqsymmathpart}
+		\end{naquestion}
+		
+		\begin{narandomizedquestionset}
+			\label{set}
+			\naquestionref{question1}
+		\end{narandomizedquestionset}
+
+		"""
+
+		dom = _buildDomFromString( _simpleLatexDocument((example,)))
+		assert_that( dom.getElementsByTagName('naquestion'), has_length(1) )
+		assert_that( dom.getElementsByTagName('naquestion')[0], is_(naquestion))
+
+		assert_that( dom.getElementsByTagName('narandomizedquestionset'), has_length( 1 ) )
+		assert_that( dom.getElementsByTagName('narandomizedquestionset')[0], is_(narandomizedquestionset))
+
+		qset_object = dom.getElementsByTagName('narandomizedquestionset')[0].assessment_object()
+		assert_that(qset_object.questions, has_length(1) )
+		assert_that(qset_object.ntiid, contains_string('set'))
+		assert_that(qset_object, verifiably_provides(IRandomizedQuestionSet))
 
 	def test_questionbank_macros(self):
 		example = br"""
@@ -113,3 +155,4 @@ class TestRandomized(AssessmentTestCase):
 		assert_that(qset_object.questions, has_length(2) )
 		assert_that(qset_object, has_property('draw', is_(1)))
 		assert_that(qset_object.ntiid, contains_string('set'))
+		assert_that(qset_object, verifiably_provides(IQuestionBank))

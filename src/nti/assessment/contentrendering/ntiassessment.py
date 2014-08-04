@@ -615,8 +615,12 @@ class naqvideo(ntiincludevideo):
 ###
 
 # make them available in this module
-from nti.assessment.contentrendering.ntiquestion import naquestion, naquestionref
-from nti.assessment.contentrendering.ntiquestion import naquestionset, naquestionsetref, naquestionbank
+from nti.assessment.contentrendering.ntiquestion import naquestion 
+from nti.assessment.contentrendering.ntiquestion import naquestionref 
+from nti.assessment.contentrendering.ntiquestion import naquestionset
+from nti.assessment.contentrendering.ntiquestion import naquestionbank
+from nti.assessment.contentrendering.ntiquestion import naquestionsetref
+from nti.assessment.contentrendering.ntiquestion import narandomizedquestionset
 
 # avoid warning
 naquestion = naquestion
@@ -624,18 +628,26 @@ naquestionref = naquestionref
 naquestionset = naquestionset
 naquestionbank = naquestionbank
 naquestionsetref = naquestionsetref
+narandomizedquestionset = narandomizedquestionset
 
 ###
 # Alibra
 ###
 
+from nti.assessment.contentrendering.ntialibra import naqinput
+from nti.assessment.contentrendering.ntialibra import naqregex
+from nti.assessment.contentrendering.ntialibra import naqregexes
+from nti.assessment.contentrendering.ntialibra import naqregexref
+from nti.assessment.contentrendering.ntialibra import naqwordbank
+from nti.assessment.contentrendering.ntialibra import naqwordentry
+from nti.assessment.contentrendering.ntialibra import naqblankfield
+from nti.assessment.contentrendering.ntialibra import naqpaireditem
+from nti.assessment.contentrendering.ntialibra import naqpaireditems
+from nti.assessment.contentrendering.ntialibra import naqwordbankref
 from nti.assessment.contentrendering.ntialibra import _WordBankMixIn
-from nti.assessment.contentrendering.ntialibra import naqblankfield, naqinput
-from nti.assessment.contentrendering.ntialibra import naqpaireditem, naqpaireditems
 from nti.assessment.contentrendering.ntialibra import naquestionfillintheblankwordbank
-from nti.assessment.contentrendering.ntialibra import naqregex, naqregexes, naqregexref
-from nti.assessment.contentrendering.ntialibra import naqwordentry, naqwordbank, naqwordbankref
-from nti.assessment.contentrendering.ntialibra import naqfillintheblankshortanswerpart, naqfillintheblankwithwordbankpart
+from nti.assessment.contentrendering.ntialibra import naqfillintheblankshortanswerpart
+from nti.assessment.contentrendering.ntialibra import naqfillintheblankwithwordbankpart
 
 naqregexref = naqregexref
 naqblankfield = naqblankfield
@@ -784,6 +796,7 @@ def ProcessOptions( options, document ):
 	document.context.newcounter('naquestionset')
 	document.context.newcounter('naqsolutionnum')
 	document.context.newcounter('naquestionbank')
+	document.context.newcounter('narandomizedquestionset')
 	document.context.newcounter('naquestionfillintheblankwordbank')
 
 #: The directory in which to find our templates.

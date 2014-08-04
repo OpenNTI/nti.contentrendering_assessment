@@ -34,7 +34,10 @@ from ..interfaces import NTIID_TYPE
 from ..interfaces import IQuestionSet
 
 from ..randomized.question import QQuestionBank
+from ..randomized.question import QRandomizedQuestionSet
+
 from ..randomized.interfaces import IQuestionBank
+from ..randomized.interfaces import IRandomizedQuestionSet
 
 from .ntibase import _LocalContentMixin
 
@@ -204,7 +207,34 @@ class naquestionset(Base.List, plastexids.NTIIDMixin):
 			title = title_el.title
 		assert title is not None
 		return title
+
+class narandomizedquestionset(naquestionset):
+	r"""
+	Example::
+
+		\begin{naquestion}[individual=true]
+			\label{question}
+			...
+		\end{question}
+
+		\begin{narandomizedquestionset}<My Title>
+			\label{set}
+			\naquestionref{question}
+		\end{narandomizedquestionset}
+	"""
+
+	mimeType = "application/vnd.nextthought.narandomizedquestionset"
 	
+	def create_questionset(self, questions, title, **kwargs):
+		result = QRandomizedQuestionSet(questions=questions, title=title)
+		return result
+	
+	def validate_questionset(self, questionset):
+		errors = schema.getValidationErrors(IRandomizedQuestionSet, questionset)
+		if errors: # pragma: no cover
+			raise errors[0][1]
+		return questionset
+
 class naquestionbank(naquestionset):
 	r"""
 	Example::
@@ -220,8 +250,6 @@ class naquestionbank(naquestionset):
 		\end{naquestionbank}
 
 	"""
-
-	args = "[options:dict:str]<title:str:source>"
 
 	mimeType = "application/vnd.nextthought.naquestionbank"
 
