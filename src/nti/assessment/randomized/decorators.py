@@ -199,7 +199,6 @@ class _QAssessedPartDecorator(object):
 	__metaclass__ = SingletonDecorator
 
 	def decorateExternalObject(self, context, result):
-		#from IPython.core.debugger import Tracer; Tracer()()
 		assessed_question = context.__parent__
 		if assessed_question is None:
 			return

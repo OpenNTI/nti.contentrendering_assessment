@@ -11,6 +11,7 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
 
+from nti.schema.schema import EqHash
 from nti.schema.fieldproperty import createDirectFieldProperties
 
 from .interfaces import IQuestionBank
@@ -27,15 +28,9 @@ class QRandomizedQuestionSet(QQuestionSet):
 
 
 @interface.implementer(IQuestionBank)
+@EqHash('draw', include_super=True)
 class QQuestionBank(QQuestionSet):
 	createDirectFieldProperties(IQuestionBank)
 	
 	__external_class_name__ = "QQuestionBank"
 	mimeType = mime_type = 'application/vnd.nextthought.naquestionbank'
-	
-	def __eq__(self, other):
-		try:
-			return  super(QQuestionBank, self).__eq__(other) and \
-					self.draw == other.draw
-		except AttributeError:
-			return NotImplemented
