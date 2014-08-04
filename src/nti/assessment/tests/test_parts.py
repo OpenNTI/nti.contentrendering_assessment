@@ -223,15 +223,6 @@ class TestMathPart(AssessmentTestCase):
 		del part2.grader_interface
 		assert_that(part2, is_not(part))
 
-from nti.assessment._util import superhash
-
-class TestSuperHash(AssessmentTestCase):
-
-	def test_iterable(self):
-		assert_that(superhash([1, 3, 5]), is_(superhash([x for x in [1, 3, 5]])))
-		# TODO: The hash algorithm fails badly with integers
-		assert_that(superhash([1, 2]), is_(superhash([2, 1])))
-
 class TestFilePart(AssessmentTestCase):
 
 	def test_allowed_mime(self):

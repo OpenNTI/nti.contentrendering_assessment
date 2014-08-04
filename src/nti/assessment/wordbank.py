@@ -8,7 +8,7 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from functools import total_ordering
+import functools
 
 from zope import interface
 from zope.container.contained import Contained
@@ -25,18 +25,24 @@ from nti.schema.field import SchemaConfigured
 from nti.schema.fieldproperty import createDirectFieldProperties
 
 from nti.utils.property import Lazy
+from nti.utils.property import CachedProperty
 from nti.utils.maps import CaseInsensitiveDict
 
 from .interfaces import IWordBank
 from .interfaces import IWordEntry
 
-@total_ordering
+@functools.total_ordering
 @interface.implementer(IWordEntry)
 @WithRepr
-@EqHash("wid")
+@EqHash("wid") # XXX: The word isn't included?
 class WordEntry(Contained, SchemaConfigured, Persistent):
+
+	wid = None
+	word = None
+	lang = None
+
 	createDirectFieldProperties(IWordEntry)
-	
+
 	__external_can_create__ = True
 	mime_type = mimeType = 'application/vnd.nextthought.naqwordentry'
 
@@ -60,6 +66,10 @@ class WordEntry(Contained, SchemaConfigured, Persistent):
 @WithRepr
 @EqHash("ids", "unique")
 class WordBank(Contained, SchemaConfigured, Persistent):
+
+	entries = ()
+	unique = None
+
 	createDirectFieldProperties(IWordBank)
 
 	__external_can_create__ = True
@@ -69,23 +79,23 @@ class WordBank(Contained, SchemaConfigured, Persistent):
 		Persistent.__init__(self)
 		SchemaConfigured.__init__(self, *args, **kwargs)
 
-	@property
+	@CachedProperty('entries')
 	def words(self):
-		return {x.word for x in self.entries}
+		return frozenset({x.word for x in self.entries})
 
-	@property
+	@CachedProperty('entries')
 	def ids(self):
-		return {x.wid for x in self.entries}
+		return frozenset({x.wid for x in self.entries})
 
 	def sorted(self):
 		return sorted(self.entries)
 
 	def idOf(self, word):
 		return self._word_map.get(str(word), None) if word is not None else None
-	
+
 	def contains_word(self, word):
 		return self.idOf(word) != None
-	
+
 	def get(self, wid, default=None):
 		result = self._id_map.get(wid, default)
 		return result
@@ -99,7 +109,7 @@ class WordBank(Contained, SchemaConfigured, Persistent):
 
 	def __len__(self):
 		return len(self.entries)
-	
+
 	def __iter__(self):
 		return iter(self.entries)
 
@@ -118,13 +128,13 @@ class WordBank(Contained, SchemaConfigured, Persistent):
 
 	@Lazy
 	def _id_map(self):
-		result = {x.wid:x for x in self.entries}
+		result = {x.wid: x for x in self.entries}
 		return result
 
 	@Lazy
 	def _word_map(self):
 		result = CaseInsensitiveDict()
-		result.update({x.word:x.wid for x in self.entries})
+		result.update({x.word: x.wid for x in self.entries})
 		return result
 
 @interface.implementer(IWordEntry)

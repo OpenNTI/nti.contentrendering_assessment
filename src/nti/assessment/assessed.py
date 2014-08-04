@@ -19,10 +19,13 @@ from persistent import Persistent
 from persistent.list import PersistentList
 
 from nti.externalization.externalization import make_repr
+from nti.externalization.externalization import WithRepr
 
 from nti.schema.field import InvalidValue
 from nti.schema.field import SchemaConfigured
 from nti.schema.fieldproperty import createDirectFieldProperties
+
+from nti.schema.schema import EqHash
 
 # EWW...but we need to be IContained in order to be stored
 # in container data structures.
@@ -34,28 +37,21 @@ from nti.dataserver import interfaces as nti_interfaces
 from nti.dataserver.datastructures import ContainedMixin
 
 from . import interfaces
-from ._util import superhash
 from ._util import make_sublocations as _make_sublocations
 
-@interface.implementer(interfaces.IQAssessedPart, ISublocations)
-class QAssessedPart(SchemaConfigured, contained.Contained, Persistent):
+@interface.implementer(interfaces.IQAssessedPart,
+					   ISublocations)
+@EqHash('assessedValue', 'submittedResponse',
+		superhash=True)
+@WithRepr
+class QAssessedPart(SchemaConfigured,
+					contained.Contained,
+					Persistent):
+
+	submittedResponse = None
+
 	createDirectFieldProperties(interfaces.IQAssessedPart)
 	__external_can_create__ = False
-
-	def __eq__(self, other):
-		try:
-			return self is other or (self.submittedResponse == other.submittedResponse
-									 and self.assessedValue == other.assessedValue)
-		except AttributeError: # pragma: no cover
-			return NotImplemented
-
-	def __ne__(self, other):
-		return not self == other
-
-	__repr__ = make_repr()
-
-	def __hash__(self):
-		return superhash((self.submittedResponse, self.assessedValue))
 
 	def sublocations(self):
 		part = self.submittedResponse
@@ -103,7 +99,12 @@ def _dctimes_property_fallback(attrname, dcname):
 					   nti_interfaces.ICreated,
 					   nti_interfaces.ILastModified,
 					   ISublocations)
-class QAssessedQuestion(SchemaConfigured, ContainedMixin, Persistent):
+@EqHash('questionId', 'parts',
+		superhash=True)
+@WithRepr
+class QAssessedQuestion(SchemaConfigured,
+						ContainedMixin,
+						Persistent):
 	createDirectFieldProperties(interfaces.IQAssessedQuestion)
 
 	__external_can_create__ = False
@@ -119,27 +120,18 @@ class QAssessedQuestion(SchemaConfigured, ContainedMixin, Persistent):
 		super(QAssessedQuestion, self).__init__(*args, **kwargs)
 		self.lastModified = self.createdTime = time.time()
 
-	def __eq__(self, other):
-		try:
-			return self is other or (self.questionId == other.questionId
-									 and self.parts == other.parts)
-		except AttributeError: # pragma: no cover
-			return NotImplemented
-
-	def __ne__(self, other):
-		return not self == other
-
-	__repr__ = make_repr()
-
-	def __hash__(self):
-		return superhash((self.questionId, tuple(self.parts)))
-
 	sublocations = _make_sublocations()
 
 @interface.implementer(interfaces.IQAssessedQuestionSet,
 					   nti_interfaces.ICreated,
 					   nti_interfaces.ILastModified)
-class QAssessedQuestionSet(SchemaConfigured, ContainedMixin, Persistent):
+@EqHash('questionSetId', 'questions',
+		superhash=True)
+@WithRepr
+class QAssessedQuestionSet(SchemaConfigured,
+						   ContainedMixin,
+						   Persistent):
+
 	createDirectFieldProperties(interfaces.IQAssessedQuestionSet)
 	__external_can_create__ = False
 
@@ -154,22 +146,6 @@ class QAssessedQuestionSet(SchemaConfigured, ContainedMixin, Persistent):
 	def __init__(self, *args, **kwargs):
 		super(QAssessedQuestionSet, self).__init__(*args, **kwargs)
 		self.lastModified = self.createdTime = time.time()
-
-
-	def __eq__(self, other):
-		try:
-			return self is other or (self.questionSetId == other.questionSetId
-									 and self.questions == other.questions)
-		except AttributeError: # pragma: no cover
-			return NotImplemented
-
-	def __ne__(self, other):
-		return not self == other
-
-	__repr__ = make_repr()
-
-	def __hash__(self):
-		return superhash((self.questionSetId, tuple(self.questions)))
 
 	sublocations = _make_sublocations('questions')
 

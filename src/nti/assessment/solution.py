@@ -12,14 +12,16 @@ from zope import interface
 
 from persistent import Persistent
 
-from nti.externalization.externalization import make_repr
+from nti.externalization.externalization import WithRepr
+
+from nti.schema.schema import EqHash
 
 from . import parts
 from . import interfaces
-from ._util import superhash
 from ._util import TrivialValuedMixin as _TrivialValuedMixin
 
 @interface.implementer(interfaces.IQSolution)
+@WithRepr
 class QSolution(Persistent):
 	"""
 	Base class for solutions. Its :meth:`grade` method
@@ -41,7 +43,6 @@ class QSolution(Persistent):
 		"""
 		return self._part_type(solutions=(self,)).grade(response)
 
-QSolution.__repr__ = make_repr()
 
 @interface.implementer(interfaces.IQMathSolution)
 class QMathSolution(QSolution):
@@ -57,22 +58,13 @@ class QMathSolution(QSolution):
 		if allowed_units is not None:
 			self.allowed_units = allowed_units # TODO: Do we need to defensively copy?
 
-def _eq_(self, other):
-	try:
-		return other is self or (self._part_type == other._part_type
-								 and self.weight == other.weight
-								 and self.value == other.value)
-	except AttributeError: #pragma: no cover
-		return NotImplemented
-
-def _ne_(self, other):
-	return not (self == other) is True
-
-def __hash__(self):
-	return hash(self.weight) + superhash(self.value)
+@EqHash('_part_type', 'weight', 'value',
+		superhash=True)
+class _EqualityValuedMixin(_TrivialValuedMixin):
+	pass
 
 @interface.implementer(interfaces.IQNumericMathSolution)
-class QNumericMathSolution(_TrivialValuedMixin,QMathSolution):
+class QNumericMathSolution(_EqualityValuedMixin,QMathSolution):
 	"""
 	Numeric math solution.
 
@@ -82,21 +74,13 @@ class QNumericMathSolution(_TrivialValuedMixin,QMathSolution):
 
 	_part_type = parts.QNumericMathPart
 
-	__eq__ = _eq_
-	__ne__ = _ne_
-	__hash__ = __hash__
-
 @interface.implementer(interfaces.IQFreeResponseSolution)
-class QFreeResponseSolution(_TrivialValuedMixin,QSolution):
+class QFreeResponseSolution(_EqualityValuedMixin,QSolution):
 	"""
 	Simple free-response solution.
 	"""
 
 	_part_type = parts.QFreeResponsePart
-
-	__eq__ = _eq_
-	__ne__ = _ne_
-	__hash__ = __hash__
 
 @interface.implementer(interfaces.IQSymbolicMathSolution)
 class QSymbolicMathSolution(QMathSolution):
@@ -108,37 +92,25 @@ class QSymbolicMathSolution(QMathSolution):
 	_part_type = parts.QSymbolicMathPart
 
 @interface.implementer(interfaces.IQLatexSymbolicMathSolution)
-class QLatexSymbolicMathSolution(_TrivialValuedMixin,QSymbolicMathSolution):
+class QLatexSymbolicMathSolution(_EqualityValuedMixin,QSymbolicMathSolution):
 	"""
 	The answer is defined to be in latex.
 	"""
 
 	# TODO: Verification of the value? Minor transforms like adding $$?
 
-	__eq__ = _eq_
-	__ne__ = _ne_
-	__hash__ = __hash__
-
 @interface.implementer(interfaces.IQMatchingSolution)
-class QMatchingSolution(_TrivialValuedMixin,QSolution):
+class QMatchingSolution(_EqualityValuedMixin,QSolution):
 
 	_part_type = parts.QMatchingPart
 
-	__eq__ = _eq_
-	__ne__ = _ne_
-	__hash__ = __hash__
-
 @interface.implementer(interfaces.IQMultipleChoiceSolution)
-class QMultipleChoiceSolution(_TrivialValuedMixin,QSolution):
+class QMultipleChoiceSolution(_EqualityValuedMixin,QSolution):
 
 	_part_type = parts.QMultipleChoicePart
 
-	__eq__ = _eq_
-	__ne__ = _ne_
-	__hash__ = __hash__
-
 @interface.implementer(interfaces.IQMultipleChoiceMultipleAnswerSolution)
-class QMultipleChoiceMultipleAnswerSolution(_TrivialValuedMixin,QSolution):
+class QMultipleChoiceMultipleAnswerSolution(_EqualityValuedMixin,QSolution):
 	"""
 	The answer is defined as a list of selections which best represent
 	the correct answer.
@@ -146,24 +118,12 @@ class QMultipleChoiceMultipleAnswerSolution(_TrivialValuedMixin,QSolution):
 
 	_part_type = parts.QMultipleChoiceMultipleAnswerPart
 
-	__eq__ = _eq_
-	__ne__ = _ne_
-	__hash__ = __hash__
-
 @interface.implementer(interfaces.IQFillInTheBlankShortAnswerSolution)
-class QFillInTheBlankShortAnswerSolution(_TrivialValuedMixin, QSolution):
+class QFillInTheBlankShortAnswerSolution(_EqualityValuedMixin, QSolution):
 
 	_part_type = parts.QFillInTheBlankShortAnswerPart
 
-	__eq__ = _eq_
-	__ne__ = _ne_
-	__hash__ = __hash__
-
 @interface.implementer(interfaces.IQFillInTheBlankWithWordBankSolution)
-class QFillInTheBlankWithWordBankSolution(_TrivialValuedMixin, QSolution):
+class QFillInTheBlankWithWordBankSolution(_EqualityValuedMixin, QSolution):
 
 	_part_type = parts.QFillInTheBlankWithWordBankPart
-
-	__eq__ = _eq_
-	__ne__ = _ne_
-	__hash__ = __hash__

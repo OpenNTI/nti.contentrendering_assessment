@@ -22,15 +22,19 @@ from persistent import Persistent
 
 from nti.contentfragments.interfaces import UnicodeContentFragment as _u
 
-from nti.externalization.externalization import make_repr
+from nti.externalization.externalization import WithRepr
 
 from nti.schema.field import SchemaConfigured
+from nti.schema.schema import EqHash
 
 from . import interfaces
-from ._util import superhash
 from .interfaces import convert_response_for_solution
 
 @interface.implementer(interfaces.IQPart)
+@WithRepr
+@EqHash('content', 'hints', 'solutions', 'explanation', 'grader_interface', 'grader_name',
+		superhash=True,
+		include_type=True)
 class QPart(SchemaConfigured,Persistent):
 	"""
 	Base class for parts. Its :meth:`grade` method will attempt to
@@ -92,72 +96,37 @@ class QPart(SchemaConfigured,Persistent):
 											name=self.grader_name)
 		return grader()
 
-	__repr__ = make_repr()
-
-	def __eq__( self, other ):
-		try:
-			return self is other or (self._eq_instance(other)
-									 and self.content == other.content
-									 and self.hints == other.hints
-									 and self.solutions == other.solutions
-									 and self.explanation == other.explanation
-									 and self.grader_interface == other.grader_interface
-									 and self.grader_name == other.grader_name)
-		except AttributeError:  # pragma: no cover
-			return NotImplemented
-
-	def _eq_instance( self, other ):
-		return True
-
-	def __ne__( self, other ):
-		return not (self == other is True)
-
-	def __hash__( self ):
-		xhash = 47
-		xhash ^= hash(self.content)
-		xhash ^= superhash(self.hints)
-		xhash ^= superhash(self.solutions)
-		xhash ^= hash(self.explanation) << 5
-		return xhash
-
 @interface.implementer(interfaces.IQMathPart)
+@EqHash(include_super=True,
+		include_type=True)
 class QMathPart(QPart):
 
 	def _eq_instance( self, other ):
 		return isinstance(other, QMathPart)
 
 @interface.implementer(interfaces.IQSymbolicMathPart)
+@EqHash(include_super=True,
+		include_type=True)
 class QSymbolicMathPart(QMathPart):
 
 	grader_interface = interfaces.IQSymbolicMathGrader
 
-	def _eq_instance( self, other ):
-		return isinstance(other, QSymbolicMathPart)
-
-
 @interface.implementer(interfaces.IQNumericMathPart)
+@EqHash(include_super=True,
+		include_type=True)
 class QNumericMathPart(QMathPart):
+	pass
 
-	def _eq_instance( self, other ):
-		return isinstance(other, QNumericMathPart)
 
 @interface.implementer(interfaces.IQMultipleChoicePart)
+@EqHash('choices',
+		include_super=True,
+		include_type=True)
 class QMultipleChoicePart(QPart):
 
 	grader_interface = interfaces.IQMultipleChoicePartGrader
 	choices = ()
 
-	def __eq__( self, other ):
-		try:
-			return self is other or (isinstance(other, QMultipleChoicePart)
-									 and super(QMultipleChoicePart, self).__eq__(other) is True
-									 and self.choices == other.choices)
-		except AttributeError:  # pragma: no cover
-			return NotImplemented
-
-	def __hash__(self):
-		xhash = super(QMultipleChoicePart, self).__hash__()
-		return xhash + superhash(self.choices)
 
 @interface.implementer(interfaces.IQMultipleChoiceMultipleAnswerPart)
 class QMultipleChoiceMultipleAnswerPart(QMultipleChoicePart):
@@ -165,6 +134,9 @@ class QMultipleChoiceMultipleAnswerPart(QMultipleChoicePart):
 	grader_interface = interfaces.IQMultipleChoiceMultipleAnswerPartGrader
 
 @interface.implementer(interfaces.IQMatchingPart)
+@EqHash('labels', 'values',
+		include_super=True,
+		superhash=True)
 class QMatchingPart(QPart):
 
 	grader_interface = interfaces.IQMatchingPartGrader
@@ -172,29 +144,17 @@ class QMatchingPart(QPart):
 	labels = ()
 	values = ()
 
-	def __eq__( self, other ):
-		try:
-			return self is other or (isinstance(other, QMatchingPart)
-									 and super(QMatchingPart, self).__eq__(other) is True
-									 and self.labels == other.labels
-									 and self.values == other.values)
-		except AttributeError:  # pragma: no cover
-			return NotImplemented
-
-	def __hash__( self ):
-		xhash = super(QMatchingPart, self).__hash__()
-		return xhash + superhash( self.labels ) + superhash( self.values )
-
 @interface.implementer(interfaces.IQFreeResponsePart)
+@EqHash(include_super=True,
+		include_type=True)
 class QFreeResponsePart(QPart):
 
 	grader_name = 'LowerQuoteNormalizedStringEqualityGrader'
 
-	def _eq_instance( self, other ):
-		return isinstance(other, QFreeResponsePart)
-
 
 @interface.implementer(interfaces.IQFilePart)
+@EqHash('allowed_mime_types', 'allowed_extensions', 'max_file_size',
+		include_super=True)
 class QFilePart(QPart):
 
 	response_interface = interfaces.IQFileResponse
@@ -202,11 +162,6 @@ class QFilePart(QPart):
 	allowed_mime_types = ()
 	allowed_extensions = ()
 	max_file_size = None
-
-	def _eq_instance(self,other):
-		return (self.allowed_mime_types == other.allowed_mime_types
-				and self.allowed_extensions == other.allowed_extensions
-				and self.max_file_size == other.max_file_size)
 
 	def grade(self, response):
 		response = self.response_interface(response)
@@ -256,12 +211,11 @@ class QFilePart(QPart):
 					  or '*' in self.allowed_extensions))
 
 @interface.implementer(interfaces.IQModeledContentPart)
+@EqHash(include_super=True,
+		include_type=True)
 class QModeledContentPart(QPart):
 
 	response_interface = interfaces.IQModeledContentResponse
-
-	def _eq_instance( self, other ):
-		return isinstance(other, QModeledContentPart)
 
 @interface.implementer(interfaces.IQFillInTheBlankShortAnswerPart)
 class QFillInTheBlankShortAnswerPart(QPart):
