@@ -21,7 +21,14 @@ import repoze.lru
 
 from nti.schema.field import InvalidValue
 
-from . import interfaces
+from .interfaces import IRegEx
+from .interfaces import IQPartGrader
+from .interfaces import IQuestionSubmission
+from .interfaces import IQMatchingPartGrader
+from .interfaces import IQMultipleChoicePartGrader
+from .interfaces import IQFillInTheBlankShortAnswerGrader
+from .interfaces import IQFillInTheBlankWithWordBankGrader
+from .interfaces import IQMultipleChoiceMultipleAnswerPartGrader
 
 @staticmethod
 def _id(o):
@@ -71,7 +78,7 @@ class _AbstractGrader(object):
 	def __call__( self ):
 		raise NotImplementedError()
 
-@interface.implementer(interfaces.IQPartGrader)
+@interface.implementer(IQPartGrader)
 class EqualityGrader(_AbstractGrader):
 	"""
 	Grader that simply checks for equality using the python equality operator.
@@ -160,7 +167,7 @@ class UnitAwareFloatEqualityGrader(FloatEqualityGrader):
 		# and not given
 		return False
 
-@interface.implementer(interfaces.IQMultipleChoicePartGrader)
+@interface.implementer(IQMultipleChoicePartGrader)
 class MultipleChoiceGrader(EqualityGrader):
 	"""
 	Grader that grades multiple choice questions by
@@ -179,7 +186,8 @@ class MultipleChoiceGrader(EqualityGrader):
 		# we don't want to reveal the solutions so we must reject grading
 		# altogether. (Currently off for backwards compat.)
 		if self.response.value == '':
-			raise InvalidValue(value=self.response.value,field=interfaces.IQuestionSubmission['parts'])
+			value = self.response.value
+			raise InvalidValue(value=value, field=IQuestionSubmission['parts'])
 
 		# Does it exactly match?
 		result = super(MultipleChoiceGrader,self).__call__()
@@ -205,7 +213,7 @@ class MultipleChoiceGrader(EqualityGrader):
 
 		return result
 
-@interface.implementer(interfaces.IQMultipleChoiceMultipleAnswerPartGrader)
+@interface.implementer(IQMultipleChoiceMultipleAnswerPartGrader)
 class MultipleChoiceMultipleAnswerGrader(EqualityGrader):
 	"""
 	Grader that grades multiple choice / multiple answer questions by
@@ -215,7 +223,7 @@ class MultipleChoiceMultipleAnswerGrader(EqualityGrader):
 	to be a key).
 	"""
 
-@interface.implementer(interfaces.IQMatchingPartGrader)
+@interface.implementer(IQMatchingPartGrader)
 class MatchingPartGrader(EqualityGrader):
 	"""
 	Grader that deals with matching. Handles all combinations of int and key solutions
@@ -245,7 +253,7 @@ class MatchingPartGrader(EqualityGrader):
 def _compile(pattern, flags=re.I | re.U | re.M):
 	return re.compile(pattern, flags)
 
-@interface.implementer(interfaces.IQFillInTheBlankShortAnswerGrader)
+@interface.implementer(IQFillInTheBlankShortAnswerGrader)
 class FillInTheBlankShortAnswerGrader(EqualityGrader):
 
 	def _compare(self, solution_value, response_value):
@@ -253,13 +261,13 @@ class FillInTheBlankShortAnswerGrader(EqualityGrader):
 		responses = self.response_converter(response_value)
 		for key, regex in solutions.items():
 			response = responses.get(key)
-			pattern = regex.pattern if interfaces.IRegEx.providedBy(regex) else regex
+			pattern = regex.pattern if IRegEx.providedBy(regex) else regex
 			__traceback_info__ = key, response, pattern
 			if response is None or not _compile(pattern).match(str(response)):
 				return False
 		return True
 
-@interface.implementer(interfaces.IQFillInTheBlankWithWordBankGrader)
+@interface.implementer(IQFillInTheBlankWithWordBankGrader)
 class FillInTheBlankWithWordBankGrader(EqualityGrader):
 
 	@property
