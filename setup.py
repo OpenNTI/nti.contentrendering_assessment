@@ -39,13 +39,12 @@ setup(
 		'zope.datetime',
 		'nti.plasTeX',
 		'nti.openmath',
-
+		'nti.schema',
 		# NOTE: We actually depend on nti.dataserver
 		# as well, but for the sake of legacy
 		# deployments, we do not yet declare that.
 		# We will declare it when everything is in
 		# buildout:
-		# 'nti.schema',
 		# 'nti.externalization',
 		# 'nti.contentfragments.schema'
 	],

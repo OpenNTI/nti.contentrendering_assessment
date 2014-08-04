@@ -425,6 +425,7 @@ class IQuestionSet(ITitledContent,IAnnotatable):
 	"""
 
 	questions = IndexedIterable( title="The ordered questions in the set.",
+								 description="For convenience, this should also be aliased to `parts`",
 								 min_length=1,
 								 value_type=Object( IQuestion, title="The questions" ),
 								 )
