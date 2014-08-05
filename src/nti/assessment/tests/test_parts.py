@@ -58,6 +58,7 @@ class TestMultipleChoicePart(AssessmentTestCase):
 		part = parts.QMultipleChoicePart( solutions=("foo",) )
 		assert_that( part, verifiably_provides( interfaces.IQMultipleChoicePart ) )
 		assert_that( part, is_( part ) )
+		assert_that( hash(part), is_( hash(part) ) )
 
 		with assert_raises(interface.Invalid):
 			sf = interfaces.IQMultipleChoicePart['solutions']
@@ -68,7 +69,8 @@ class TestMultipleChoicePart(AssessmentTestCase):
 	def test_grade(self):
 		solution = solutions.QMultipleChoiceSolution( 1 )
 		choices = ("A", "B", "C")
-		part = parts.QMultipleChoicePart( solutions=(solution,), choices=choices )
+		part = parts.QMultipleChoicePart( solutions=(solution,), choices=list(choices) )
+		assert_that( hash(part), is_( hash(part) ) )
 
 		# Submitting the actual data
 		assert_that(part.grade("B"), is_true())
@@ -88,6 +90,7 @@ class TestMultipleChoiceMultipleAnswerPart(AssessmentTestCase):
 		part = parts.QMultipleChoiceMultipleAnswerPart( solutions=( [ 0, 1 ],) )
 		assert_that( part, verifiably_provides( interfaces.IQMultipleChoiceMultipleAnswerPart ) )
 		assert_that( part, is_( part ) )
+		assert_that( hash(part), is_( hash(part) ) )
 
 		with assert_raises(interface.Invalid):
 			sf = interfaces.IQMultipleChoiceMultipleAnswerPart['solutions']
@@ -119,6 +122,7 @@ class TestMatchingPart(AssessmentTestCase):
 		assert_that( part, externalizes( has_entry( 'Class', 'MatchingPart') ) )
 		assert_that( part, is_( part ) )
 		assert_that( part, is_( part2 ) )
+		assert_that( hash(part), is_( hash(part) ) )
 
 		assert_that( part, grades_right( solution_keys ) )
 		assert_that( part, grades_right( solution_nums ) )

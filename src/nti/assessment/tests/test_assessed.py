@@ -99,6 +99,7 @@ class TestAssessedPart(AssessmentTestCase):
 	def test_hash(self):
 		part = assessed.QAssessedPart(submittedResponse=[1,2,3])
 		hash(part)
+		assert_that(part, is_(part))
 
 class TestAssessedQuestion(AssessmentTestCase):
 
@@ -113,6 +114,8 @@ class TestAssessedQuestion(AssessmentTestCase):
 	def test_assess(self):
 		part = parts.QFreeResponsePart(solutions=(solutions.QFreeResponseSolution(value='correct'),))
 		question = QQuestion( parts=(part,) )
+		assert_that(hash(question), is_(hash(question)))
+		assert_that(question, is_(question))
 		component.provideUtility( question, provides=interfaces.IQuestion,  name="1")
 
 		sub = submission.QuestionSubmission( questionId="1", parts=('correct',) )
@@ -167,6 +170,9 @@ class TestAssessedQuestion(AssessmentTestCase):
 	def test_assess_with_incorrect_multichoice_part(self):
 		part = parts.QMultipleChoicePart(solutions=(solutions.QMultipleChoiceSolution(value=1),))
 		question = QQuestion( parts=(part,) )
+		assert_that(hash(question), is_(hash(question)))
+		assert_that(question, is_(question))
+
 		component.provideUtility( question, provides=interfaces.IQuestion,  name="1")
 
 		sub = submission.QuestionSubmission( )

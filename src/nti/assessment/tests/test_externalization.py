@@ -171,6 +171,7 @@ class TestExternalization(AssessmentTestCase):
 		internal = internalization.find_factory_for(ext_obj)()
 		internalization.update_from_external_object(internal, ext_obj,
 													require_updater=True)
+		hash(internal)
 
 		assert_that(internal, has_property('solutions', has_length(1)))
 		sol = internal.solutions[0]

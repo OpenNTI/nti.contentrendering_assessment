@@ -121,7 +121,8 @@ class QNumericMathPart(QMathPart):
 @interface.implementer(interfaces.IQMultipleChoicePart)
 @EqHash('choices',
 		include_super=True,
-		include_type=True)
+		include_type=True,
+		superhash=True)
 class QMultipleChoicePart(QPart):
 
 	grader_interface = interfaces.IQMultipleChoicePartGrader
@@ -154,7 +155,8 @@ class QFreeResponsePart(QPart):
 
 @interface.implementer(interfaces.IQFilePart)
 @EqHash('allowed_mime_types', 'allowed_extensions', 'max_file_size',
-		include_super=True)
+		include_super=True,
+		superhash=True)
 class QFilePart(QPart):
 
 	response_interface = interfaces.IQFileResponse
