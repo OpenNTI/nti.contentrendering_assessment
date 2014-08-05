@@ -31,5 +31,5 @@ class QRandomizedQuestionSet(QQuestionSet):
 class QQuestionBank(QQuestionSet):
 	createDirectFieldProperties(IQuestionBank)
 	
-	__external_class_name__ = "QQuestionBank"
+	__external_class_name__ = "QQuestionSet"
 	mimeType = mime_type = 'application/vnd.nextthought.naquestionbank'
