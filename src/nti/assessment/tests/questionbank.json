@@ -36,7 +36,7 @@
                         "5": 1,
                         "6": 4
                     },
-                    "weight": 1
+                    "weight": 1.0
                 }],
                 "values": [
                     "<a name=\"c4ca4238a0b923820dcc509a6f75849b\" ><\/a>\n\n<p class=\"par\" id=\"c4ca4238a0b923820dcc509a6f75849b\">1 <\/p>",
@@ -69,7 +69,7 @@
                     "Class": "MultipleChoiceSolution",
                     "MimeType": "application/vnd.nextthought.assessment.multiplechoicesolution",
                     "value": 0,
-                    "weight": 1
+                    "weight": 1.0
                 }]
             }]
         },
@@ -94,7 +94,7 @@
                     "Class": "MultipleChoiceSolution",
                     "MimeType": "application/vnd.nextthought.assessment.multiplechoicesolution",
                     "value": 0,
-                    "weight": 1
+                    "weight": 1.0
                 }]
             }]
         },
@@ -118,7 +118,7 @@
                     "Class": "MultipleChoiceSolution",
                     "MimeType": "application/vnd.nextthought.assessment.multiplechoicesolution",
                     "value": 1,
-                    "weight": 1
+                    "weight": 1.0
                 }]
             }]
         },
@@ -148,7 +148,7 @@
                         1,
                         2
                     ],
-                    "weight": 1
+                    "weight": 1.0
                 }]
             }]
         },
@@ -178,7 +178,7 @@
                         "2": 3,
                         "3": 2
                     },
-                    "weight": 1
+                    "weight": 1.0
                 }],
                 "values": [
                     "<a name=\"66b792ce161e8f56840d634a0d9d8704\" ><\/a>\n\n<p class=\"par\" id=\"66b792ce161e8f56840d634a0d9d8704\">Reticular lamina <\/p>",
@@ -209,7 +209,7 @@
                     "Class": "MultipleChoiceSolution",
                     "MimeType": "application/vnd.nextthought.assessment.multiplechoicesolution",
                     "value": 0,
-                    "weight": 1
+                    "weight": 1.0
                 }]
             }]
         },
@@ -234,7 +234,7 @@
                     "Class": "MultipleChoiceSolution",
                     "MimeType": "application/vnd.nextthought.assessment.multiplechoicesolution",
                     "value": 0,
-                    "weight": 1
+                    "weight": 1.0
                 }]
             }]
         },
@@ -259,7 +259,7 @@
                     "Class": "MultipleChoiceSolution",
                     "MimeType": "application/vnd.nextthought.assessment.multiplechoicesolution",
                     "value": 0,
-                    "weight": 1
+                    "weight": 1.0
                 }]
             }]
         },
@@ -284,7 +284,7 @@
                     "Class": "MultipleChoiceSolution",
                     "MimeType": "application/vnd.nextthought.assessment.multiplechoicesolution",
                     "value": 0,
-                    "weight": 1
+                    "weight": 1.0
                 }]
             }]
         },
@@ -309,7 +309,7 @@
                     "Class": "MultipleChoiceSolution",
                     "MimeType": "application/vnd.nextthought.assessment.multiplechoicesolution",
                     "value": 0,
-                    "weight": 1
+                    "weight": 1.0
                 }]
             }]
         },
@@ -334,7 +334,7 @@
                     "Class": "MultipleChoiceSolution",
                     "MimeType": "application/vnd.nextthought.assessment.multiplechoicesolution",
                     "value": 0,
-                    "weight": 1
+                    "weight": 1.0
                 }]
             }]
         },
@@ -358,7 +358,7 @@
                         "002": ["1"],
                         "003": ["0"]
                     },
-                    "weight": 1
+                    "weight": 1.0
                 }],
                 "wordbank": {
                     "Class": "WordBank",
@@ -445,7 +445,7 @@
                         "006": ["3"],
                         "007": ["4"]
                     },
-                    "weight": 1
+                    "weight": 1.0
                 }],
                 "wordbank": {
                     "Class": "WordBank",
@@ -546,7 +546,7 @@
                         "008": ["7"],
                         "009": ["8"]
                     },
-                    "weight": 1
+                    "weight": 1.0
                 }],
                 "wordbank": {
                     "Class": "WordBank",
@@ -616,7 +616,7 @@
                         "011": ["11"],
                         "012": ["9"]
                     },
-                    "weight": 1
+                    "weight": 1.0
                 }],
                 "wordbank": {
                     "Class": "WordBank",
@@ -701,7 +701,7 @@
                     "Class": "MultipleChoiceSolution",
                     "MimeType": "application/vnd.nextthought.assessment.multiplechoicesolution",
                     "value": 1,
-                    "weight": 1
+                    "weight": 1.0
                 }]
             }]
         },
@@ -724,7 +724,7 @@
                     "Class": "MultipleChoiceSolution",
                     "MimeType": "application/vnd.nextthought.assessment.multiplechoicesolution",
                     "value": 0,
-                    "weight": 1
+                    "weight": 1.0
                 }]
             }]
         },
@@ -747,7 +747,7 @@
                     "Class": "MultipleChoiceSolution",
                     "MimeType": "application/vnd.nextthought.assessment.multiplechoicesolution",
                     "value": 1,
-                    "weight": 1
+                    "weight": 1.0
                 }]
             }]
         },
@@ -770,7 +770,7 @@
                     "Class": "MultipleChoiceSolution",
                     "MimeType": "application/vnd.nextthought.assessment.multiplechoicesolution",
                     "value": 0,
-                    "weight": 1
+                    "weight": 1.0
                 }]
             }]
         }

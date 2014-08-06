@@ -74,7 +74,7 @@ class IQHTMLHint(IQHint):
 
 class IQSolution(interface.Interface):
 
-	weight = Number(title="The relative correctness of this solution, from 0 to 1",
+	weight = Float( title="The relative correctness of this solution, from 0 to 1",
 					description="""If a question has multiple possible solutions, some may
 					be more right than others. This is captured by the weight field. If there is only
 					one right answer, then it has a weight of 1.0.
