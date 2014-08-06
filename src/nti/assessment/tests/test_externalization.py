@@ -7,24 +7,32 @@ __docformat__ = "restructuredtext en"
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
 
-from hamcrest import assert_that
+
 from hamcrest import is_
-from hamcrest import is_not as does_not
-from hamcrest import not_none
 from hamcrest import none
+from hamcrest import is_not
+from hamcrest import all_of
+from hamcrest import has_key
+from hamcrest import not_none
 from hamcrest import has_entry
 from hamcrest import has_length
+from hamcrest import assert_that
 from hamcrest import has_property
-from hamcrest import has_key
-from hamcrest import all_of
+does_not = is_not
+
+import os
+import json
+
+from nti.assessment.randomized.interfaces import IQuestionBank
+from nti.assessment.question import QFillInTheBlankWithWordBankQuestion
 
 from nti.externalization import internalization
-
-from nti.assessment.question import QFillInTheBlankWithWordBankQuestion
 
 from nti.externalization.tests import externalizes
 
 from nti.assessment.tests import AssessmentTestCase
+
+from nti.testing.matchers import verifiably_provides
 
 GIF_DATAURL = b'data:image/gif;base64,R0lGODlhCwALAIAAAAAA3pn/ZiH5BAEAAAEALAAAAAALAAsAAAIUhA+hkcuO4lmNVindo7qyrIXiGBYAOw=='
 
@@ -55,11 +63,11 @@ class TestExternalization(AssessmentTestCase):
 		assert_that(internal, has_property('mimeType', 'image/gif'))
 		assert_that(internal, has_property('filename', 'file.gif'))
 
-		assert_that(internal, externalizes(all_of(has_key('FileMimeType'),
-													 has_key('filename'),
-													 has_entry('url', none()),
-													 has_key('CreatedTime'),
-													 has_key('Last Modified'))))
+		assert_that(internal, externalizes(all_of(	has_key('FileMimeType'),
+													has_key('filename'),
+													has_entry('url', none()),
+													has_key('CreatedTime'),
+													has_key('Last Modified'))))
 		# But we have no URL because we're not in a connection anywhere
 
 	def test_modeled_response_uploaded(self):
@@ -176,3 +184,20 @@ class TestExternalization(AssessmentTestCase):
 		assert_that(internal, has_property('solutions', has_length(1)))
 		sol = internal.solutions[0]
 		assert_that(sol, has_property('value', has_entry('001', has_property('solution', 'yes, I will'))))
+		
+	def test_question_bank(self):
+
+		path = os.path.join(os.path.dirname(__file__), "questionbank.json")
+		with open(path, "r") as fp:
+			ext_obj = json.load(fp)
+			
+		factory = internalization.find_factory_for(ext_obj)
+		assert_that(factory, is_(not_none()))
+
+		internal = factory()
+		internalization.update_from_external_object(internal, ext_obj, require_updater=True)
+
+		assert_that(internal, verifiably_provides(IQuestionBank) )
+				
+		assert_that(internal, has_property('draw', is_(5)))
+		assert_that(internal, has_property('questions', has_length(20)))
