@@ -262,7 +262,7 @@ class naquestionbank(naquestionset):
 	@readproperty
 	def question_count(self):
 		result = self.draw or super(naquestionbank, self).question_count
-		return result
+		return unicode(result)
 	
 	def create_questionset(self, questions, title, **kwargs):
 		draw = self.draw or len(questions)
