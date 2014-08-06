@@ -620,6 +620,7 @@ from nti.assessment.contentrendering.ntiquestion import naquestionref
 from nti.assessment.contentrendering.ntiquestion import naquestionset
 from nti.assessment.contentrendering.ntiquestion import naquestionbank
 from nti.assessment.contentrendering.ntiquestion import naquestionsetref
+from nti.assessment.contentrendering.ntiquestion import naquestionbankref
 from nti.assessment.contentrendering.ntiquestion import narandomizedquestionset
 
 # avoid warning
@@ -628,6 +629,7 @@ naquestionref = naquestionref
 naquestionset = naquestionset
 naquestionbank = naquestionbank
 naquestionsetref = naquestionsetref
+naquestionbankref = naquestionbankref
 narandomizedquestionset = narandomizedquestionset
 
 ###

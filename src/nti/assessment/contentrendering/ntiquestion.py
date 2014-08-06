@@ -259,6 +259,11 @@ class naquestionbank(naquestionset):
 		draw = options.get('draw') or self.attributes.get('draw') 
 		return int(draw) if draw else None
 	
+	@readproperty
+	def question_count(self):
+		result = self.draw or super(naquestionbank, self).question_count
+		return result
+	
 	def create_questionset(self, questions, title, **kwargs):
 		draw = self.draw or len(questions)
 		result = QQuestionBank(questions=questions, title=title, draw=draw)
@@ -271,8 +276,20 @@ class naquestionbank(naquestionset):
 		return questionset
 	
 class naquestionsetref(Crossref.ref):
-	"A reference to the label of a question set."
+	r"""
+	A reference to the label of a question set.
+	"""
 
 	@readproperty
 	def questionset(self):
 		return self.idref['label']
+	
+class naquestionbankref(Crossref.ref):
+	"""
+	A reference to the label of a question bank.
+	"""
+
+	@readproperty
+	def questionset(self):
+		return self.idref['label']
+	questionbank = questionset

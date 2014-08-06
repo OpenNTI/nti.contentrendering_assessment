@@ -17,10 +17,10 @@ from plasTeX.Renderers import render_children
 
 from nti.contentrendering.interfaces import IJSONTransformer
 
-@interface.implementer(IJSONTransformer)
-class _NAQuestionSetRefJSONTransformer(object):
+from nti.assessment.question import QQuestionSet
 
-	__slots__ = ('el',)
+@interface.implementer(IJSONTransformer)
+class _BaseQuestionSetRefJSONTransformer(object):
 
 	def __init__(self, element):
 		self.el = element
@@ -34,5 +34,14 @@ class _NAQuestionSetRefJSONTransformer(object):
 		output['Target-NTIID'] = self.el.questionset.ntiid
 		output['question-count'] = self.el.questionset.question_count
 		return output
+	
+class _NAQuestionSetRefJSONTransformer(_BaseQuestionSetRefJSONTransformer):
+	pass
 
+class _NAQuestionBankRefJSONTransformer(_BaseQuestionSetRefJSONTransformer):
 
+	def transform(self):
+		output = super(_NAQuestionBankRefJSONTransformer, self).transform()
+		output['question-count'] = self.el.questionbank.draw
+		output['MimeType'] = QQuestionSet.mimeType # force question set MimeType
+		return output
