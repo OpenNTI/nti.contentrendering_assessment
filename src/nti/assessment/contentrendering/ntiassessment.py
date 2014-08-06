@@ -615,7 +615,9 @@ class naqvideo(ntiincludevideo):
 ###
 
 # make them available in this module
+
 from nti.assessment.contentrendering.ntiquestion import naquestion 
+from nti.assessment.contentrendering.ntiquestion import naqindexrange
 from nti.assessment.contentrendering.ntiquestion import naquestionref 
 from nti.assessment.contentrendering.ntiquestion import naquestionset
 from nti.assessment.contentrendering.ntiquestion import naquestionbank
@@ -662,6 +664,7 @@ _LocalContentMixin._asm_ignorable_renderables += (_WordBankMixIn,
 												  naqregexes,
 												  naqwordentry,
 												  naqwordbank,
+												  naqindexrange,
 												  naqpaireditem,
 												  naqpaireditems,
 												  naqfillintheblankwithwordbankpart,

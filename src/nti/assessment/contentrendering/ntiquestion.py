@@ -40,6 +40,7 @@ from ..randomized.question import QRandomizedQuestionSet
 from ..randomized.interfaces import IQuestionBank
 from ..randomized.interfaces import IRandomizedQuestionSet
 
+from .ntibase import naqvalue
 from .ntibase import _LocalContentMixin
 
 class naquestion(_LocalContentMixin, Base.Environment, plastexids.NTIIDMixin):
@@ -234,6 +235,9 @@ class narandomizedquestionset(naquestionset):
 			raise errors[0][1]
 		return questionset
 
+class naqindexrange(naqvalue):
+	args = 'x:int y:int'
+	
 class naquestionbank(naquestionset):
 	r"""
 	Example::
