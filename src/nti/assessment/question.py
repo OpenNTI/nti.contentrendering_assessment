@@ -28,6 +28,7 @@ from nti.utils.property import alias
 
 from .interfaces import IQuestion
 from .interfaces import IQuestionSet
+from .interfaces import QUESTION_SET_MIME_TYPE
 from .interfaces import IQFillInTheBlankWithWordBankQuestion
 
 @interface.implementer(IQuestion,
@@ -66,7 +67,7 @@ class QQuestionSet(Contained,
 
 	title = AdaptingFieldProperty(IQuestionSet['title'])
 
-	mimeType = mime_type = 'application/vnd.nextthought.naquestionset'
+	mimeType = mime_type = QUESTION_SET_MIME_TYPE
 
 	def __init__(self, *args, **kwargs):
 		Persistent.__init__(self)

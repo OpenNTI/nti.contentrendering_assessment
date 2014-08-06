@@ -32,6 +32,7 @@ from ..question import QQuestionSet
 from ..interfaces import IQuestion
 from ..interfaces import NTIID_TYPE
 from ..interfaces import IQuestionSet
+from ..interfaces import QUESTION_SET_MIME_TYPE
 
 from ..randomized.question import QQuestionBank
 from ..randomized.question import QRandomizedQuestionSet
@@ -152,7 +153,7 @@ class naquestionset(Base.List, plastexids.NTIIDMixin):
 	_ntiid_cache_map_name = '_naquestionset_ntiid_map'
 
 	#: From IEmbeddedContainer
-	mimeType = "application/vnd.nextthought.naquestionset"
+	mimeType = QUESTION_SET_MIME_TYPE
 	
 	def create_questionset(self, questions, title, **kwargs):
 		result = QQuestionSet(questions=questions, title=title)
@@ -222,8 +223,6 @@ class narandomizedquestionset(naquestionset):
 			\naquestionref{question}
 		\end{narandomizedquestionset}
 	"""
-
-	mimeType = "application/vnd.nextthought.narandomizedquestionset"
 	
 	def create_questionset(self, questions, title, **kwargs):
 		result = QRandomizedQuestionSet(questions=questions, title=title)
@@ -250,8 +249,6 @@ class naquestionbank(naquestionset):
 		\end{naquestionbank}
 
 	"""
-
-	mimeType = "application/vnd.nextthought.naquestionbank"
 
 	@readproperty
 	def draw(self):
@@ -284,12 +281,9 @@ class naquestionsetref(Crossref.ref):
 	def questionset(self):
 		return self.idref['label']
 	
-class naquestionbankref(Crossref.ref):
+class naquestionbankref(naquestionsetref):
 	"""
 	A reference to the label of a question bank.
 	"""
 
-	@readproperty
-	def questionset(self):
-		return self.idref['label']
-	questionbank = questionset
+	questionbank = naquestionsetref.questionset

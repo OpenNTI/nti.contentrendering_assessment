@@ -49,6 +49,7 @@ from nti.monkey import plonefile_zopefile_patch_on_import
 plonefile_zopefile_patch_on_import.patch()
 
 NTIID_TYPE = 'NAQ'
+QUESTION_SET_MIME_TYPE = u'application/vnd.nextthought.naquestionset'
 
 class IQHint(interface.Interface):
 	"""
