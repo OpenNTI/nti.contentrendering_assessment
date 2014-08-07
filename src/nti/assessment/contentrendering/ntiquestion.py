@@ -238,6 +238,15 @@ class narandomizedquestionset(naquestionset):
 class naqindexrange(naqvalue):
 	args = 'x:int y:int'
 	
+	def digest(self, tokens):
+		res = super(naqindexrange, self).digest(tokens)
+		if self.macroMode != Base.Environment.MODE_END:
+			x = self.attributes.get('x')
+			y = self.attributes.get('y')
+			assert x >= 0 and y>=0 and x<=y
+		return res
+
+	
 class naquestionbank(naquestionset):
 	r"""
 	Example::
