@@ -30,6 +30,14 @@
 			 	  nti.assessment.interfaces.IQListResponse"
 			 provides=".interfaces.IQRandomizedMultipleChoiceMultipleAnswerPartGrader" />
 			 
+	<adapter factory="list .question._range_adapter"
+			 provides=".interfaces.IQuestionIndexRange"
+			 for="list"/>
+
+	<adapter factory="list .question._range_adapter"
+			 provides=".interfaces.IQuestionIndexRange"
+			 for="tuple"/>
+			 
 	<!-- Decorators -->
 	
 	<subscriber factory=".decorators._QRandomizedMatchingPartDecorator"
@@ -76,6 +84,7 @@
 	<ext:registerAutoPackageIO
 		root_interfaces=".interfaces.IQRandomizedPart
 						 .interfaces.IRandomizedQuestionSet
+						 .interfaces.IQuestionIndexRange
 						 .interfaces.IQuestionBank"
 		modules=".parts .question"
 		iobase="..externalization._AssessmentInternalObjectIOBase"/>

@@ -139,6 +139,9 @@ class TestRandomized(AssessmentTestCase):
 			\label{set}
 			\naquestionref{question1}
 			\naquestionref{question2}
+			\begin{naqindexranges}
+				\naqindexrange[0,1]
+			\end{naqindexranges}
 		\end{naquestionbank}
 
 		"""
