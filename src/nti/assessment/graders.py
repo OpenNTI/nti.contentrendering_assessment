@@ -25,6 +25,7 @@ from .interfaces import IRegEx
 from .interfaces import IQPartGrader
 from .interfaces import IQuestionSubmission
 from .interfaces import IQMatchingPartGrader
+from .interfaces import IQOrderingPartGrader
 from .interfaces import IQMultipleChoicePartGrader
 from .interfaces import IQFillInTheBlankShortAnswerGrader
 from .interfaces import IQFillInTheBlankWithWordBankGrader
@@ -249,6 +250,10 @@ class MatchingPartGrader(EqualityGrader):
 	solution_converter = _to_int_dict
 	response_converter = _to_int_dict
 
+@interface.implementer(IQOrderingPartGrader)
+class OrderingPartGrader(MatchingPartGrader):
+	pass
+	
 @repoze.lru.lru_cache(200)
 def _compile(pattern, flags=re.I | re.U | re.M):
 	return re.compile(pattern, flags)

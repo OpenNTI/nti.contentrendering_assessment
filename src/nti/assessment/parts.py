@@ -139,19 +139,23 @@ class QMultipleChoiceMultipleAnswerPart(QMultipleChoicePart):
 		include_super=True,
 		superhash=True)
 class QMatchingPart(QPart):
-
+	
 	grader_interface = interfaces.IQMatchingPartGrader
 
 	labels = ()
 	values = ()
 
+@interface.implementer(interfaces.IQOrderingPart)
+class QOrderingPart(QMatchingPart):
+
+	grader_interface = interfaces.IQOrderingPartGrader
+	
 @interface.implementer(interfaces.IQFreeResponsePart)
 @EqHash(include_super=True,
 		include_type=True)
 class QFreeResponsePart(QPart):
 
 	grader_name = 'LowerQuoteNormalizedStringEqualityGrader'
-
 
 @interface.implementer(interfaces.IQFilePart)
 @EqHash('allowed_mime_types', 'allowed_extensions', 'max_file_size',

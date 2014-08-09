@@ -96,7 +96,6 @@
 			 for="* .interfaces.IQLatexSymbolicMathSolution .interfaces.IQTextResponse"
 			 provides=".interfaces.IQSymbolicMathGrader" />
 
-
 	<!-- Generic grading -->
 	<adapter factory=".graders.StringEqualityGrader"
 			 for="* .interfaces.IQSingleValuedSolution .interfaces.IQTextResponse" />
@@ -120,6 +119,10 @@
 			 for=".interfaces.IQMatchingPart .interfaces.IQMatchingSolution .interfaces.IQDictResponse"
 			 provides=".interfaces.IQMatchingPartGrader" />
 
+	<adapter factory=".graders.OrderingPartGrader"
+			 for=".interfaces.IQOrderingPart .interfaces.IQOrderingSolution .interfaces.IQDictResponse"
+			 provides=".interfaces.IQOrderingPartGrader" />
+			 
 	<adapter factory=".graders.FillInTheBlankShortAnswerGrader"
 			 for=".interfaces.IQFillInTheBlankShortAnswerPart .interfaces.IQFillInTheBlankShortAnswerSolution .interfaces.IQDictResponse"
 			 provides=".interfaces.IQFillInTheBlankShortAnswerGrader" />

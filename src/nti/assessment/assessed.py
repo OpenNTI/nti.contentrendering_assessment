@@ -18,7 +18,6 @@ from zope.location.interfaces import ISublocations
 from persistent import Persistent
 from persistent.list import PersistentList
 
-from nti.externalization.externalization import make_repr
 from nti.externalization.externalization import WithRepr
 
 from nti.schema.field import InvalidValue

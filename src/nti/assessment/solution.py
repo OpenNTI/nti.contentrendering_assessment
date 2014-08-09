@@ -16,11 +16,33 @@ from nti.externalization.externalization import WithRepr
 
 from nti.schema.schema import EqHash
 
-from . import parts
-from . import interfaces
+from .parts import QPart
+from .parts import QMatchingPart
+from .parts import QOrderingPart
+from .parts import QNumericMathPart
+from .parts import QFreeResponsePart
+from .parts import QSymbolicMathPart
+from .parts import QMultipleChoicePart
+from .parts import QFillInTheBlankShortAnswerPart
+from .parts import QFillInTheBlankWithWordBankPart
+from .parts import QMultipleChoiceMultipleAnswerPart
+
+from .interfaces import IQSolution
+from .interfaces import IQMathSolution
+from .interfaces import IQMatchingSolution
+from .interfaces import IQOrderingSolution
+from .interfaces import IQNumericMathSolution
+from .interfaces import IQFreeResponseSolution
+from .interfaces import IQSymbolicMathSolution
+from .interfaces import IQMultipleChoiceSolution
+from .interfaces import IQLatexSymbolicMathSolution
+from .interfaces import IQFillInTheBlankShortAnswerSolution
+from .interfaces import IQFillInTheBlankWithWordBankSolution
+from .interfaces import IQMultipleChoiceMultipleAnswerSolution
+
 from ._util import TrivialValuedMixin as _TrivialValuedMixin
 
-@interface.implementer(interfaces.IQSolution)
+@interface.implementer(IQSolution)
 @WithRepr
 class QSolution(Persistent):
 	"""
@@ -32,7 +54,7 @@ class QSolution(Persistent):
 	#: Defines the factory used by the :meth:`grade` method to construct
 	#: a :class:`.IQPart` object. Also, instances are only equal if this value
 	#: is equal
-	_part_type = parts.QPart
+	_part_type = QPart
 
 	weight = 1.0
 
@@ -43,8 +65,7 @@ class QSolution(Persistent):
 		"""
 		return self._part_type(solutions=(self,)).grade(response)
 
-
-@interface.implementer(interfaces.IQMathSolution)
+@interface.implementer(IQMathSolution)
 class QMathSolution(QSolution):
 	"""
 	Base class for the math hierarchy.
@@ -54,7 +75,7 @@ class QMathSolution(QSolution):
 
 	def __init__( self, *args, **kwargs ):
 		super(QMathSolution,self).__init__()
-		allowed_units = args[1] if len(args) > 1 else kwargs.get( 'allowed_units' )
+		allowed_units = args[1] if len(args) > 1 else kwargs.get('allowed_units')
 		if allowed_units is not None:
 			self.allowed_units = allowed_units # TODO: Do we need to defensively copy?
 
@@ -63,8 +84,8 @@ class QMathSolution(QSolution):
 class _EqualityValuedMixin(_TrivialValuedMixin):
 	pass
 
-@interface.implementer(interfaces.IQNumericMathSolution)
-class QNumericMathSolution(_EqualityValuedMixin,QMathSolution):
+@interface.implementer(IQNumericMathSolution)
+class QNumericMathSolution(_EqualityValuedMixin, QMathSolution):
 	"""
 	Numeric math solution.
 
@@ -72,58 +93,63 @@ class QNumericMathSolution(_EqualityValuedMixin,QMathSolution):
 		by exact equality.
 	"""
 
-	_part_type = parts.QNumericMathPart
+	_part_type = QNumericMathPart
 
-@interface.implementer(interfaces.IQFreeResponseSolution)
-class QFreeResponseSolution(_EqualityValuedMixin,QSolution):
+@interface.implementer(IQFreeResponseSolution)
+class QFreeResponseSolution(_EqualityValuedMixin, QSolution):
 	"""
 	Simple free-response solution.
 	"""
 
-	_part_type = parts.QFreeResponsePart
+	_part_type = QFreeResponsePart
 
-@interface.implementer(interfaces.IQSymbolicMathSolution)
+@interface.implementer(IQSymbolicMathSolution)
 class QSymbolicMathSolution(QMathSolution):
 	"""
 	Symbolic math grading is redirected through
 	grading components for extensibility.
 	"""
 
-	_part_type = parts.QSymbolicMathPart
+	_part_type = QSymbolicMathPart
 
-@interface.implementer(interfaces.IQLatexSymbolicMathSolution)
-class QLatexSymbolicMathSolution(_EqualityValuedMixin,QSymbolicMathSolution):
+@interface.implementer(IQLatexSymbolicMathSolution)
+class QLatexSymbolicMathSolution(_EqualityValuedMixin, QSymbolicMathSolution):
 	"""
 	The answer is defined to be in latex.
 	"""
 
 	# TODO: Verification of the value? Minor transforms like adding $$?
 
-@interface.implementer(interfaces.IQMatchingSolution)
-class QMatchingSolution(_EqualityValuedMixin,QSolution):
+@interface.implementer(IQMatchingSolution)
+class QMatchingSolution(_EqualityValuedMixin, QSolution):
 
-	_part_type = parts.QMatchingPart
+	_part_type = QMatchingPart
 
-@interface.implementer(interfaces.IQMultipleChoiceSolution)
-class QMultipleChoiceSolution(_EqualityValuedMixin,QSolution):
+@interface.implementer(IQOrderingSolution)
+class QOrderingSolution(QMatchingSolution):
 
-	_part_type = parts.QMultipleChoicePart
+	_part_type = QOrderingPart
+	
+@interface.implementer(IQMultipleChoiceSolution)
+class QMultipleChoiceSolution(_EqualityValuedMixin, QSolution):
 
-@interface.implementer(interfaces.IQMultipleChoiceMultipleAnswerSolution)
-class QMultipleChoiceMultipleAnswerSolution(_EqualityValuedMixin,QSolution):
+	_part_type = QMultipleChoicePart
+
+@interface.implementer(IQMultipleChoiceMultipleAnswerSolution)
+class QMultipleChoiceMultipleAnswerSolution(_EqualityValuedMixin, QSolution):
 	"""
 	The answer is defined as a list of selections which best represent
 	the correct answer.
 	"""
 
-	_part_type = parts.QMultipleChoiceMultipleAnswerPart
+	_part_type = QMultipleChoiceMultipleAnswerPart
 
-@interface.implementer(interfaces.IQFillInTheBlankShortAnswerSolution)
+@interface.implementer(IQFillInTheBlankShortAnswerSolution)
 class QFillInTheBlankShortAnswerSolution(_EqualityValuedMixin, QSolution):
 
-	_part_type = parts.QFillInTheBlankShortAnswerPart
+	_part_type = QFillInTheBlankShortAnswerPart
 
-@interface.implementer(interfaces.IQFillInTheBlankWithWordBankSolution)
+@interface.implementer(IQFillInTheBlankWithWordBankSolution)
 class QFillInTheBlankWithWordBankSolution(_EqualityValuedMixin, QSolution):
 
-	_part_type = parts.QFillInTheBlankWithWordBankPart
+	_part_type = QFillInTheBlankWithWordBankPart

@@ -317,6 +317,10 @@ class IQMatchingSolution(IQSolution):
 	"""
 
 	value = Dict( title="The correct mapping." )
+	
+class IQOrderingSolution(IQMatchingSolution):
+	
+	value = Dict( title="The correct ordering." )
 
 class IQMatchingPart(IQPart):
 	"""
@@ -340,9 +344,19 @@ class IQMatchingPart(IQPart):
 								 min_length=1,
 								 value_type=Object( IQMatchingSolution, title="Matching solution" ) )
 
+class IQOrderingPart(IQMatchingPart):
+	"""
+	Subclass to let clients render the these questions pars differently"
+	"""
+
 class IQMatchingPartGrader(IQPartGrader):
 	"""
 	A grader for matching questions.
+	"""
+	
+class IQOrderingPartGrader(IQMatchingPartGrader):
+	"""
+	A grader for ordering questions.
 	"""
 
 class IQFilePart(IQPart):

@@ -14,14 +14,18 @@ import collections
 from zope import interface
 from zope import component
 
-from nti.externalization import internalization
-from nti.externalization import interfaces as ext_interfaces
 from nti.externalization.datastructures import InterfaceObjectIO
+from nti.externalization.interfaces import IInternalObjectUpdater
 
-from . import interfaces as asm_interfaces
+from nti.externalization.internalization import find_factory_for
+from nti.externalization.internalization import update_from_external_object
 
-@interface.implementer(ext_interfaces.IInternalObjectUpdater)
-@component.adapter(asm_interfaces.IWordEntry)
+from .interfaces import IRegEx
+from .interfaces import IWordEntry
+from .interfaces import IQFillInTheBlankShortAnswerSolution
+
+@interface.implementer(IInternalObjectUpdater)
+@component.adapter(IWordEntry)
 class _WordEntryUpdater(object):
 
     __slots__ = ('obj',)
@@ -33,13 +37,11 @@ class _WordEntryUpdater(object):
         if 'content' not in parsed or not parsed['content']:
             parsed['content'] = parsed['word']
 
-        result = InterfaceObjectIO(
-                    self.obj,
-                    asm_interfaces.IWordEntry).updateFromExternalObject(parsed)
+        result = InterfaceObjectIO(self.obj, IWordEntry).updateFromExternalObject(parsed)
         return result
 
-@interface.implementer(ext_interfaces.IInternalObjectUpdater)
-@component.adapter(asm_interfaces.IQFillInTheBlankShortAnswerSolution)
+@interface.implementer(IInternalObjectUpdater)
+@component.adapter(IQFillInTheBlankShortAnswerSolution)
 class _QFillInTheBlankWithWordBankSolutionUpdater(object):
 
     __slots__ = ('obj',)
@@ -52,14 +54,14 @@ class _QFillInTheBlankWithWordBankSolutionUpdater(object):
         for key in value.keys():
             regex = value.get(key)
             if isinstance(regex, six.string_types):
-                regex = asm_interfaces.IRegEx(regex)
+                regex = IRegEx(regex)
             elif isinstance(regex, collections.Mapping):
                 ext_obj = regex
-                regex = internalization.find_factory_for(ext_obj)()
-                internalization.update_from_external_object(regex, ext_obj)
+                regex = find_factory_for(ext_obj)()
+                update_from_external_object(regex, ext_obj)
             value[key] = regex
             
         result = InterfaceObjectIO(
                     self.obj,
-                    asm_interfaces.IQFillInTheBlankShortAnswerSolution).updateFromExternalObject(parsed)
+                    IQFillInTheBlankShortAnswerSolution).updateFromExternalObject(parsed)
         return result
