@@ -616,50 +616,51 @@ class TestMisc(AssessmentTestCase):
 		assert_that( question, externalizes( has_entry( 'NTIID', question.ntiid ) ) )
 
 	def test_matching_macros(self):
-		example = br"""
-			\begin{naquestion}
-				\begin{naqmatchingpart}
-				In Rome, women used hair color to indicate their class in society. Match the correct shade with its corresponding class:
-					\begin{tabular}{cc}
-						Noblewomen & Black \\
-						Middle-class & Red \\
-						Poor women & Blond \\
-					\end{tabular}
-					\begin{naqmlabels}
-						\naqmlabel[2] Noblewomen
-						\naqmlabel[0] Middle-class
-						\naqmlabel[1] Poor women
-					\end{naqmlabels}
-					\begin{naqmvalues}
-					   \naqmvalue Black
-					   \naqmvalue Red
-					   \naqmvalue Blond
-					\end{naqmvalues}
-				\end{naqmatchingpart}
-			\end{naquestion}
-			"""
+		for part_name in ("naqmatchingpart", "naqorderingpart"):
+			example = br"""
+				\begin{naquestion}
+					\begin{xxxxxxxxx}
+					In Rome, women used hair color to indicate their class in society. Match the correct shade with its corresponding class:
+						\begin{tabular}{cc}
+							Noblewomen & Black \\
+							Middle-class & Red \\
+							Poor women & Blond \\
+						\end{tabular}
+						\begin{naqmlabels}
+							\naqmlabel[2] Noblewomen
+							\naqmlabel[0] Middle-class
+							\naqmlabel[1] Poor women
+						\end{naqmlabels}
+						\begin{naqmvalues}
+						   \naqmvalue Black
+						   \naqmvalue Red
+						   \naqmvalue Blond
+						\end{naqmvalues}
+					\end{xxxxxxxxx}
+				\end{naquestion}
+				""".replace("xxxxxxxxx", part_name)
 
-		dom = _buildDomFromString( _simpleLatexDocument( (example,) ) )
-		assert_that( dom.getElementsByTagName('naquestion'), has_length( 1 ) )
-		assert_that( dom.getElementsByTagName('naquestion')[0], is_( naquestion ) )
-
-		assert_that( dom.getElementsByTagName('naqmlabel'), has_length( 3 ) )
-		assert_that( dom.getElementsByTagName('naqmvalue'), has_length( 3 ) )
-
-		naq = dom.getElementsByTagName('naquestion')[0]
-		part_el = naq.getElementsByTagName( 'naqmatchingpart' )[0]
-		soln = getattr( part_el, '_asm_solutions' )()[0]
-
-		assert_that( soln, verifiably_provides( part_el.soln_interface ) )
-		assert_that( soln, has_property( 'value', {0: 2, 1: 0, 2: 1} ) )
-		assert_that( soln, has_property( 'weight', 1.0 ) )
-
-		part = part_el.assessment_object()
-		assert_that( part, verifiably_provides( part_el.part_interface ) )
-		assert_that( part, has_property( 'labels', has_length( 3 ) ) )
-		assert_that( part.labels, has_item( 'Noblewomen' ) )
-		assert_that( part, has_property( 'values', has_length( 3 ) ) )
-		assert_that( part.values, has_item( 'Black' ) )
+			dom = _buildDomFromString( _simpleLatexDocument( (example,) ) )
+			assert_that( dom.getElementsByTagName('naquestion'), has_length( 1 ) )
+			assert_that( dom.getElementsByTagName('naquestion')[0], is_( naquestion ) )
+	
+			assert_that( dom.getElementsByTagName('naqmlabel'), has_length( 3 ) )
+			assert_that( dom.getElementsByTagName('naqmvalue'), has_length( 3 ) )
+	
+			naq = dom.getElementsByTagName('naquestion')[0]
+			part_el = naq.getElementsByTagName(part_name)[0]
+			soln = getattr( part_el, '_asm_solutions' )()[0]
+	
+			assert_that( soln, verifiably_provides( part_el.soln_interface ) )
+			assert_that( soln, has_property( 'value', {0: 2, 1: 0, 2: 1} ) )
+			assert_that( soln, has_property( 'weight', 1.0 ) )
+	
+			part = part_el.assessment_object()
+			assert_that( part, verifiably_provides( part_el.part_interface ) )
+			assert_that( part, has_property( 'labels', has_length( 3 ) ) )
+			assert_that( part.labels, has_item( 'Noblewomen' ) )
+			assert_that( part, has_property( 'values', has_length( 3 ) ) )
+			assert_that( part.values, has_item( 'Black' ) )
 
 
 from zope import component

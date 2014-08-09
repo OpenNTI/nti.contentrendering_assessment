@@ -30,7 +30,6 @@ class QRandomizedQuestionSet(QQuestionSet):
 	__external_class_name__ = "QQuestionSet"
 	mimeType = mime_type = 'application/vnd.nextthought.narandomizedquestionset'
 
-
 @interface.implementer(IQuestionBank)
 @EqHash('draw', include_super=True)
 class QQuestionBank(QQuestionSet):

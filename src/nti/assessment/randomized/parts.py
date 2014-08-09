@@ -16,6 +16,7 @@ from ..parts import QMultipleChoiceMultipleAnswerPart
 
 from .interfaces import IQRandomizedMatchingPart
 from .interfaces import IQRandomizedMatchingPartGrader
+from .interfaces import IQRandomizedOrderingPartGrader
 from .interfaces import IQRandomizedMultipleChoicePart
 from .interfaces import IQRandomizedMultipleChoicePartGrader
 from .interfaces import IQRandomizedMultipleChoiceMultipleAnswerPart
@@ -31,6 +32,14 @@ class QRandomizedMatchingPart(QMatchingPart):
 
 	grader_interface = IQRandomizedMatchingPartGrader
 
+@interface.implementer(IQRandomizedMatchingPart)
+class QRandomizedOrderingPart(QRandomizedMatchingPart):
+
+	__external_class_name__ = "OrderingPart"
+	mimeType = mime_type = "application/vnd.nextthought.assessment.randomizedorderingpart"
+
+	grader_interface = IQRandomizedOrderingPartGrader
+	
 @interface.implementer(IQRandomizedMultipleChoicePart)
 class QRandomizedMultipleChoicePart(QMultipleChoicePart):
 

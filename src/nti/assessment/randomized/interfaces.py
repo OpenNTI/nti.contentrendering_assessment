@@ -15,7 +15,9 @@ from nti.schema.field import ListOrTuple
 from ..interfaces import IQPart
 from ..interfaces import IQuestionSet
 from ..interfaces import IQMatchingPart
+from ..interfaces import IQOrderingPart
 from ..interfaces import IQMatchingPartGrader
+from ..interfaces import IQOrderingPartGrader
 from ..interfaces import IQMultipleChoicePart
 from ..interfaces import IQMultipleChoicePartGrader
 from ..interfaces import IQMultipleChoiceMultipleAnswerPart
@@ -32,6 +34,14 @@ class IQRandomizedMatchingPart(IQRandomizedPart, IQMatchingPart):
 	pass
 
 class IQRandomizedMatchingPartGrader(IQMatchingPartGrader):
+	pass
+
+# ordering
+
+class IQRandomizedOrderingPart(IQRandomizedPart, IQOrderingPart):
+	pass
+
+class IQRandomizedOrderingPartGrader(IQOrderingPartGrader):
 	pass
 
 # multiple choice

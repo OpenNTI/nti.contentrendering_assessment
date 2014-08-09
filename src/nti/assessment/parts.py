@@ -117,7 +117,6 @@ class QSymbolicMathPart(QMathPart):
 class QNumericMathPart(QMathPart):
 	pass
 
-
 @interface.implementer(interfaces.IQMultipleChoicePart)
 @EqHash('choices',
 		include_super=True,

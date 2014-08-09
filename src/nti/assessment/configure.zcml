@@ -75,6 +75,10 @@
 			 provides=".interfaces.IQMatchingSolution"
 			 for="dict"/>
 
+	<adapter factory="dict .solution.QOrderingSolution"
+			 provides=".interfaces.IQOrderingSolution"
+			 for="dict"/>
+
 	<adapter factory=".solution.QFreeResponseSolution"
 			 provides=".interfaces.IQFreeResponseSolution"
 			 for="basestring"/>
@@ -144,14 +148,21 @@
 	<include package="nti.externalization" file="meta.zcml" />
 	<include package="nti.externalization" />
 	<ext:registerAutoPackageIO
-		root_interfaces=".interfaces.IQPart .interfaces.IQuestion .interfaces.IQSolution
+		root_interfaces=".interfaces.IQPart 
+						 .interfaces.IQuestion 
+						 .interfaces.IQSolution
 						 .interfaces.IQAssignment
-						 .interfaces.IQAssignmentPart .interfaces.IQAssignmentSubmissionPendingAssessment
-						 .interfaces.IQuestionSubmission .interfaces.IQAssessedPart .interfaces.IQAssessedQuestion
-						 .interfaces.IQuestionSetSubmission .interfaces.IQAssessedQuestionSet
+						 .interfaces.IQAssignmentPart 
+						 .interfaces.IQAssignmentSubmissionPendingAssessment
+						 .interfaces.IQuestionSubmission 
+						 .interfaces.IQAssessedPart 
+						 .interfaces.IQAssessedQuestion
+						 .interfaces.IQuestionSetSubmission 
+						 .interfaces.IQAssessedQuestionSet
 						 .interfaces.IQAssignmentSubmission
 						 .interfaces.IQResponse
-						 .interfaces.IQHint .interfaces.IQuestionSet"
+						 .interfaces.IQHint 
+						 .interfaces.IQuestionSet"
 		modules=".hint .assessed .parts .question .response .solution .submission .assignment"
 		factory_modules=".submission .question .response"
 		iobase=".externalization._AssessmentInternalObjectIOBase"/>

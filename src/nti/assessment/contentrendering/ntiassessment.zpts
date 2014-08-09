@@ -58,6 +58,12 @@ name: naqmatchingpart
 	 <span tal:content="self"></span>
 </div>
 
+name: naqorderingpart
+<div class="naquestionpart naqorderingpart" tal:attributes="name self/id" >
+	 <a tal:attributes="name self/id"></a>
+	 <span tal:content="self"></span>
+</div>
+
 name: naqfillintheblankshortanswerpart
 <div class="naquestionpart naqfillintheblankshortanswerpart" tal:attributes="name self/id" >
 	 <a tal:attributes="name self/id"></a>

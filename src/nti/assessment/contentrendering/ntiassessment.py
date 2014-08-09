@@ -492,6 +492,11 @@ class naqmatchingpart(_AbstractNAQPart):
 	part_interface = as_interfaces.IQMatchingPart
 	soln_interface = as_interfaces.IQMatchingSolution
 
+	# randomized
+	
+	randomized_part_factory = randomized_parts.QRandomizedMatchingPart
+	randomized_part_interface = rand_interfaces.IQRandomizedMatchingPart
+			
 	#forcePars = True
 
 	def _asm_labels(self):
@@ -555,9 +560,25 @@ class naqmatchingpart(_AbstractNAQPart):
 	def invoke(self, tex):
 		token = super(naqmatchingpart, self).invoke(tex)
 		if self.randomize:
-			self.part_factory = randomized_parts.QRandomizedMatchingPart
-			self.part_interface = rand_interfaces.IQRandomizedMatchingPart
+			self.part_factory = self.randomized_part_factory
+			self.part_interface = self.randomized_part_interface
 		return token
+
+class naqorderingpart(naqmatchingpart):
+	r"""
+	\begin{naquestion}
+		Arbitrary prefix content goes here.
+		\begin{naqorderingpart}
+		   ...
+		\end{naqorderingpart}
+	\end{naquestion}
+	"""
+	part_factory = parts.QOrderingPart
+	part_interface = as_interfaces.IQOrderingPart
+	soln_interface = as_interfaces.IQOrderingSolution
+	
+	randomized_part_factory = randomized_parts.QRandomizedOrderingPart
+	randomized_part_interface = rand_interfaces.IQRandomizedOrderingPart
 
 _LocalContentMixin._asm_ignorable_renderables += (_AbstractNAQPart,)
 

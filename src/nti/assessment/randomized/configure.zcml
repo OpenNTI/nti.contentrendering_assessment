@@ -17,7 +17,13 @@
 			 	  nti.assessment.interfaces.IQMatchingSolution
 			 	  nti.assessment.interfaces.IQDictResponse"
 			 provides=".interfaces.IQRandomizedMatchingPartGrader" />
-			 
+			
+	<adapter factory=".graders.RandomizedOrderingPartGrader"
+			 for=".interfaces.IQRandomizedOrderingPart 
+			 	  nti.assessment.interfaces.IQOrderingSolution
+			 	  nti.assessment.interfaces.IQDictResponse"
+			 provides=".interfaces.IQRandomizedOrderingPartGrader" />
+			  
 	<adapter factory=".graders.RandomizedMultipleChoiceGrader"
 			 for=".interfaces.IQRandomizedMultipleChoicePart 
 			 	  nti.assessment.interfaces.IQSingleValuedSolution
@@ -43,11 +49,19 @@
 	<subscriber factory=".decorators._QRandomizedMatchingPartDecorator"
 				provides="nti.externalization.interfaces.IExternalObjectDecorator"
 				for=".interfaces.IQRandomizedMatchingPart"/>
-					 
+			
+	<subscriber factory=".decorators._QRandomizedOrderingPartDecorator"
+				provides="nti.externalization.interfaces.IExternalObjectDecorator"
+				for=".interfaces.IQRandomizedOrderingPart"/>
+						 
 	<adapter factory=".decorators._RandomizedMatchingPartSolutionsExternalizer"
 			 for=".interfaces.IQRandomizedMatchingPart"
 			 provides="..interfaces.IQPartSolutionsExternalizer" />
-			 			 
+		
+	<adapter factory=".decorators._RandomizedOrderingPartSolutionsExternalizer"
+			 for=".interfaces.IQRandomizedOrderingPart"
+			 provides="..interfaces.IQPartSolutionsExternalizer" />
+			 	 			 
 	<subscriber factory=".decorators._QRandomizedMultipleChoicePartDecorator"
 				provides="nti.externalization.interfaces.IExternalObjectDecorator"
 				for=".interfaces.IQRandomizedMultipleChoicePart"/>

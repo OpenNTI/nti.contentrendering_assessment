@@ -102,11 +102,14 @@ class IQPart(interface.Interface):
 	"""
 
 	content = _ContentFragment( title="The content to present to the user for this portion, if any." )
+	
 	hints = IndexedIterable( title="Any hints that pertain to this part",
 							 value_type=Object(IQHint, title="A hint for the part") )
+	
 	solutions = IndexedIterable( title="Acceptable solutions for this question part in no particular order.",
 								 description="All solutions must be of the same type, and there must be at least one.",
 								 value_type=Object(IQSolution, title="A solution for this part")	)
+	
 	explanation = _ContentFragment( title="An explanation of how the solution is arrived at.",
 									default='' )
 
@@ -253,6 +256,7 @@ class IQMultipleChoicePart(IQPart):
 					description="""Presentation order may matter, hence the list. But for grading purposes,
 					the order does not matter and simple existence within the set is sufficient.""",
 					value_type=_ContentFragment( title="A rendered value" ) )
+	
 	solutions = IndexedIterable( title="The multiple-choice solutions",
 								 min_length=1,
 								 value_type=Object( IQMultipleChoiceSolution, title="Multiple choice solution" ) )
@@ -285,7 +289,8 @@ class IQMultipleChoiceMultipleAnswerPart(IQMultipleChoicePart):
 
 	solutions = IndexedIterable( title="The multiple-choice solutions",
 								 min_length=1,
-								 value_type=Object( IQMultipleChoiceMultipleAnswerSolution, title="Multiple choice / multiple answer solution" ) )
+								 value_type=Object(IQMultipleChoiceMultipleAnswerSolution,
+												   title="Multiple choice / multiple answer solution" ) )
 
 
 class IQMultipleChoiceMultipleAnswerPartGrader(IQPartGrader):
@@ -319,8 +324,7 @@ class IQMatchingSolution(IQSolution):
 	value = Dict( title="The correct mapping." )
 	
 class IQOrderingSolution(IQMatchingSolution):
-	
-	value = Dict( title="The correct ordering." )
+	pass
 
 class IQMatchingPart(IQPart):
 	"""
@@ -346,7 +350,7 @@ class IQMatchingPart(IQPart):
 
 class IQOrderingPart(IQMatchingPart):
 	"""
-	Subclass to let clients render the these questions pars differently"
+	Subclass to let clients render the these questions parts differently"
 	"""
 
 class IQMatchingPartGrader(IQPartGrader):
@@ -377,6 +381,7 @@ class IQFilePart(IQPart):
 										  min_length=1,
 										  value_type=Text(title="An allowed mimetype",
 														  constraint=mimeTypeConstraint) )
+	
 	allowed_extensions = IndexedIterable( title="Extensions like '.doc' that are accepted for upload",
 										  min_length=0,
 										  value_type=Text(title="An allowed extension") )
@@ -455,6 +460,7 @@ class IQAssignmentPart(ITitledContent):
 
 	question_set = Object(IQuestionSet,
 						  title="The question set to submit with this part")
+	
 	auto_grade = Bool(title="Should this part be run through the grading machinery?",
 					  default=False)
 
@@ -503,6 +509,7 @@ class IQAssignment(ITitledContent,
 		will be relative to something else (a ``timedelta``) and conversion to absolute
 		timestamp will be done as needed.""",
 		required=False)
+
 	available_for_submission_ending = Datetime(
 		title="Submissions are accepted no later than this.",
 		description="""When present, this specifies the last instance at which
@@ -657,6 +664,7 @@ class IQFileResponse(IQResponse):
 
 IQMathSolution.setTaggedValue('response_type', IQTextResponse)
 IQMatchingSolution.setTaggedValue('response_type', IQDictResponse)
+IQOrderingSolution.setTaggedValue('response_type', IQDictResponse)
 IQFreeResponseSolution.setTaggedValue('response_type', IQTextResponse)
 IQMultipleChoiceSolution.setTaggedValue('response_type', IQTextResponse)
 IQMultipleChoiceMultipleAnswerSolution.setTaggedValue('response_type', IQListResponse)

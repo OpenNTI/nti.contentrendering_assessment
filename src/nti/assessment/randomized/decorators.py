@@ -25,6 +25,7 @@ from .interfaces import IQuestionBank
 from .interfaces import IQRandomizedPart
 from .interfaces import IRandomizedQuestionSet
 from .interfaces import IQRandomizedMatchingPart
+from .interfaces import IQRandomizedOrderingPart
 from .interfaces import IQRandomizedMultipleChoicePart
 from .interfaces import IQRandomizedMultipleChoiceMultipleAnswerPart
 
@@ -73,6 +74,18 @@ class _QRandomizedMatchingPartDecorator(object):
 			values = list(result['values'])
 			generator.shuffle(result['values'])
 			_shuffle_matching_part_solutions(generator, values, result['solutions'])
+
+# === ordering
+
+@interface.implementer(IQPartSolutionsExternalizer)
+@component.adapter(IQRandomizedOrderingPart)
+class _RandomizedOrderingPartSolutionsExternalizer(_RandomizedMatchingPartSolutionsExternalizer):
+	pass
+
+@interface.implementer(IExternalObjectDecorator)
+@component.adapter(IQRandomizedOrderingPart)
+class _QRandomizedOrderingPartDecorator(_QRandomizedMatchingPartDecorator):
+	pass
 
 # === multiple choice
 

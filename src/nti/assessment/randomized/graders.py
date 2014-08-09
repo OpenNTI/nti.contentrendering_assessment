@@ -14,6 +14,7 @@ from . import randomize
 from . import shuffle_list
 
 from .interfaces import IQRandomizedMatchingPartGrader
+from .interfaces import IQRandomizedOrderingPartGrader
 from .interfaces import IQRandomizedMultipleChoicePartGrader
 from .interfaces import IQRandomizedMultipleChoiceMultipleAnswerPartGrader
 
@@ -38,6 +39,10 @@ class RandomizedMatchingPartGrader(MatchingPartGrader):
 		return the_dict
 
 	response_converter = _to_response_dict
+
+@interface.implementer(IQRandomizedOrderingPartGrader)
+class RandomizedOrderingPartGrader(RandomizedMatchingPartGrader):
+	pass
 
 @interface.implementer(IQRandomizedMultipleChoicePartGrader)
 class RandomizedMultipleChoiceGrader(EqualityGrader):
