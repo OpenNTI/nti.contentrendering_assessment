@@ -199,10 +199,19 @@ class _QQuestionBankDecorator(object):
 	def decorateExternalObject(self, context, result):
 		generator = randomize()
 		questions = result.get('questions', ())
-		if generator and questions and context.draw < len(questions):
-			questions = generator.sample(questions, context.draw)
-			result['questions'] = questions 
-
+		if generator and questions and context.draw:
+			ranges = context.ranges or ()
+			if not ranges and context.draw < len(questions):
+				questions = generator.sample(questions, context.draw)
+				result['questions'] = questions 
+			elif context.draw == len(ranges) and context.draw == len(questions):
+				new_questions = []
+				for r in ranges:
+					idx = generator.randint(r.start, r.end)
+					new_questions.append(questions[idx])
+					generator = randomize()
+				result['questions'] = new_questions
+					
 # === assessed part
 
 @interface.implementer(IExternalObjectDecorator)
