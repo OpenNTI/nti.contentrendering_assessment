@@ -16,14 +16,22 @@ import collections
 from zope import interface
 from zope import component
 
-from nti.externalization import interfaces as ext_interfaces
 from nti.externalization.singleton import SingletonDecorator
 from nti.externalization.externalization import to_external_object
+from nti.externalization.interfaces import IExternalObjectDecorator
 
-from . import interfaces
+from .interfaces import IRegEx
+from .interfaces import IQPart
+from .interfaces import IQuestion
+from .interfaces import IQAssessedQuestion
+from .interfaces import IQPartSolutionsExternalizer
+from .interfaces import IQFillInTheBlankShortAnswerPart
+from .interfaces import IQFillInTheBlankWithWordBankPart
+from .interfaces import IQFillInTheBlankShortAnswerSolution
+from .interfaces import IQFillInTheBlankWithWordBankSolution
 
-@interface.implementer(interfaces.IQPartSolutionsExternalizer)
-@component.adapter(interfaces.IQPart)
+@interface.implementer(IQPartSolutionsExternalizer)
+@component.adapter(IQPart)
 class _DefaultPartSolutionsExternalizer(object):
 
 	def __init__(self, part):
@@ -32,8 +40,8 @@ class _DefaultPartSolutionsExternalizer(object):
 	def to_external_object(self):
 		return to_external_object(self.part.solutions)
 
-@interface.implementer(interfaces.IQPartSolutionsExternalizer)
-@component.adapter(interfaces.IQFillInTheBlankShortAnswerPart)
+@interface.implementer(IQPartSolutionsExternalizer)
+@component.adapter(IQFillInTheBlankShortAnswerPart)
 class _FillInTheBlankShortAnswerPartSolutionsExternalizer(object):
 
 	def __init__(self, part):
@@ -43,17 +51,17 @@ class _FillInTheBlankShortAnswerPartSolutionsExternalizer(object):
 		result = []
 		for solution in self.part.solutions:
 			ext = to_external_object(solution)
-			if interfaces.IQFillInTheBlankShortAnswerSolution.providedBy(solution):
+			if IQFillInTheBlankShortAnswerSolution.providedBy(solution):
 				value = {}
 				for k, v in solution.value.items():
-					txt = v.solution if interfaces.IRegEx.providedBy(v) else v
+					txt = v.solution if IRegEx.providedBy(v) else v
 					value[k] = txt
 				ext['value'] = value
 			result.append(ext)
 		return result
 
-@interface.implementer(interfaces.IQPartSolutionsExternalizer)
-@component.adapter(interfaces.IQFillInTheBlankWithWordBankPart)
+@interface.implementer(IQPartSolutionsExternalizer)
+@component.adapter(IQFillInTheBlankWithWordBankPart)
 class _FillInTheBlankWithWordBankPartSolutionsExternalizer(object):
 
 	def __init__(self, part):
@@ -63,7 +71,7 @@ class _FillInTheBlankWithWordBankPartSolutionsExternalizer(object):
 		result = []
 		for solution in self.part.solutions:
 			ext = to_external_object(solution)
-			if interfaces.IQFillInTheBlankWithWordBankSolution.providedBy(solution):
+			if IQFillInTheBlankWithWordBankSolution.providedBy(solution):
 				value = ext.get('value', {})
 				for k in list(value.keys()):
 					v = value.get(k)
@@ -73,8 +81,8 @@ class _FillInTheBlankWithWordBankPartSolutionsExternalizer(object):
 			result.append(ext)
 		return result
 
-@interface.implementer(ext_interfaces.IExternalObjectDecorator)
-@component.adapter(interfaces.IQAssessedQuestion)
+@interface.implementer(IExternalObjectDecorator)
+@component.adapter(IQAssessedQuestion)
 class _QAssessedQuestionExplanationSolutionAdder(object):
 	"""
 	Because we don't generally want to provide solutions and explanations
@@ -89,18 +97,18 @@ class _QAssessedQuestionExplanationSolutionAdder(object):
 
 	def decorateExternalObject( self, context, mapping ):
 		question_id = context.questionId
-		question = component.queryUtility(interfaces.IQuestion, name=question_id)
+		question = component.queryUtility(IQuestion, name=question_id)
 		if question is None:
 			# In case of old answers to questions
 			# that no longer exist mostly
 			return
 
 		for question_part, external_part in zip(question.parts, mapping['parts']):
-			externalizer = interfaces.IQPartSolutionsExternalizer(question_part)
+			externalizer = IQPartSolutionsExternalizer(question_part)
 			external_part['solutions'] = externalizer.to_external_object()
 			external_part['explanation'] = to_external_object(question_part.explanation)
 
-@interface.implementer(ext_interfaces.IExternalObjectDecorator)
+@interface.implementer(IExternalObjectDecorator)
 class _QAssessmentObjectIContainedAdder(object):
 	"""
 	When an assignment or question set comes from a content package

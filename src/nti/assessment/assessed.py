@@ -12,11 +12,21 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
 from zope import component
-from zope.container import contained
+from zope.container.contained import Contained
 from zope.location.interfaces import ISublocations
 
 from persistent import Persistent
 from persistent.list import PersistentList
+
+# EWW...but we need to be IContained in order to be stored
+# in container data structures.
+# We also want to be ILastModified
+# so that we can cheaply store and access lastmodified times
+# without going through the expense of ZopeDublinCore (since we expect no other
+# annotations and no mutability)
+from nti.dataserver.interfaces import ICreated
+from nti.dataserver.interfaces import ILastModified
+from nti.dataserver.datastructures import ContainedMixin
 
 from nti.externalization.externalization import WithRepr
 
@@ -26,30 +36,27 @@ from nti.schema.fieldproperty import createDirectFieldProperties
 
 from nti.schema.schema import EqHash
 
-# EWW...but we need to be IContained in order to be stored
-# in container data structures.
-# We also want to be ILastModified
-# so that we can cheaply store and access lastmodified times
-# without going through the expense of ZopeDublinCore (since we expect no other
-# annotations and no mutability)
-from nti.dataserver import interfaces as nti_interfaces
-from nti.dataserver.datastructures import ContainedMixin
+from .interfaces import IQuestion
+from .interfaces import IQuestionSet
+from .interfaces import IQAssessedPart
+from .interfaces import IQAssessedQuestion
+from .interfaces import IQuestionSubmission
+from .interfaces import IQAssessedQuestionSet
 
-from . import interfaces
 from ._util import make_sublocations as _make_sublocations
 
-@interface.implementer(interfaces.IQAssessedPart,
+@interface.implementer(IQAssessedPart,
 					   ISublocations)
 @EqHash('assessedValue', 'submittedResponse',
 		superhash=True)
 @WithRepr
 class QAssessedPart(SchemaConfigured,
-					contained.Contained,
+					Contained,
 					Persistent):
 
 	submittedResponse = None
 
-	createDirectFieldProperties(interfaces.IQAssessedPart)
+	createDirectFieldProperties(IQAssessedPart)
 	__external_can_create__ = False
 
 	def sublocations(self):
@@ -94,9 +101,9 @@ def _dctimes_property_fallback(attrname, dcname):
 
 	return property(get, _set)
 
-@interface.implementer(interfaces.IQAssessedQuestion,
-					   nti_interfaces.ICreated,
-					   nti_interfaces.ILastModified,
+@interface.implementer(IQAssessedQuestion,
+					   ICreated,
+					   ILastModified,
 					   ISublocations)
 @EqHash('questionId', 'parts',
 		superhash=True)
@@ -104,15 +111,17 @@ def _dctimes_property_fallback(attrname, dcname):
 class QAssessedQuestion(SchemaConfigured,
 						ContainedMixin,
 						Persistent):
-	createDirectFieldProperties(interfaces.IQAssessedQuestion)
+	createDirectFieldProperties(IQAssessedQuestion)
 
 	__external_can_create__ = False
 
 	creator = None
 	createdTime = _dctimes_property_fallback('createdTime', 'Date.Modified')
 	lastModified = _dctimes_property_fallback('lastModified', 'Date.Created')
+	
 	def updateLastMod(self, t=None):
-		self.lastModified = (t if t is not None and t > self.lastModified else time.time())
+		_now = time.time()
+		self.lastModified = (t if t is not None and t > self.lastModified else _now)
 		return self.lastModified
 
 	def __init__(self, *args, **kwargs):
@@ -121,9 +130,9 @@ class QAssessedQuestion(SchemaConfigured,
 
 	sublocations = _make_sublocations()
 
-@interface.implementer(interfaces.IQAssessedQuestionSet,
-					   nti_interfaces.ICreated,
-					   nti_interfaces.ILastModified)
+@interface.implementer(IQAssessedQuestionSet,
+					   ICreated,
+					   ILastModified)
 @EqHash('questionSetId', 'questions',
 		superhash=True)
 @WithRepr
@@ -131,7 +140,7 @@ class QAssessedQuestionSet(SchemaConfigured,
 						   ContainedMixin,
 						   Persistent):
 
-	createDirectFieldProperties(interfaces.IQAssessedQuestionSet)
+	createDirectFieldProperties(IQAssessedQuestionSet)
 	__external_can_create__ = False
 
 	creator = None
@@ -139,7 +148,8 @@ class QAssessedQuestionSet(SchemaConfigured,
 	lastModified = _dctimes_property_fallback('lastModified', 'Date.Created')
 
 	def updateLastMod(self, t=None):
-		self.lastModified = (t if t is not None and t > self.lastModified else time.time())
+		_now = time.time()
+		self.lastModified = (t if t is not None and t > self.lastModified else _now)
 		return self.lastModified
 
 	def __init__(self, *args, **kwargs):
@@ -169,7 +179,7 @@ def assess_question_submission(submission, registry=component):
 		to be graded.
 	"""
 
-	question = registry.getUtility(interfaces.IQuestion, name=submission.questionId)
+	question = registry.getUtility(IQuestion, name=submission.questionId)
 	if len(question.parts) != len(submission.parts):
 		raise ValueError("Question (%s) and submission (%s) have different numbers of parts." %
 						 (len(question.parts), len(submission.parts)))
@@ -183,7 +193,7 @@ def assess_question_submission(submission, registry=component):
 		except (LookupError, ValueError):
 			# We couldn't grade the part because the submission was in the wrong
 			# format. Translate this error to something more useful.
-			raise InvalidValue(value=sub_part, field=interfaces.IQuestionSubmission['parts'])
+			raise InvalidValue(value=sub_part, field=IQuestionSubmission['parts'])
 		else:
 			assessed_parts.append(QAssessedPart(submittedResponse=sub_part, assessedValue=grade))
 
@@ -201,7 +211,7 @@ def assess_question_set_submission(set_submission, registry=component):
 	:raises LookupError: If no question can be found for the submission.
 	"""
 
-	question_set = registry.getUtility(interfaces.IQuestionSet,
+	question_set = registry.getUtility(IQuestionSet,
 									   name=set_submission.questionSetId)
 
 	questions_ntiids = {getattr(q, 'ntiid', None) for q in question_set.questions}
@@ -212,12 +222,12 @@ def assess_question_set_submission(set_submission, registry=component):
 
 	assessed = PersistentList()
 	for sub_question in set_submission.questions:
-		question = registry.getUtility( interfaces.IQuestion,
+		question = registry.getUtility( IQuestion,
 										name=sub_question.questionId )
 		# FIXME: Checking an 'ntiid' property that is not defined here is a hack
 		# because we have an equality bug. It should go away as soon as equality is fixed
 		if question in question_set.questions or getattr(question, 'ntiid', None) in questions_ntiids:
-			sub_assessed = interfaces.IQAssessedQuestion(sub_question)  # Raises ComponentLookupError
+			sub_assessed = IQAssessedQuestion(sub_question)  # Raises ComponentLookupError
 			assessed.append(sub_assessed)
 		else: # pragma: no cover
 			logger.debug("Bad input, question (%s) not in question set (%s) (kownn: %s)",

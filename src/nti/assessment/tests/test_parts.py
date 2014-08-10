@@ -8,6 +8,7 @@ __docformat__ = "restructuredtext en"
 # pylint: disable=W0212,R0904
 
 from hamcrest import is_
+from hamcrest import all_of
 from hamcrest import is_not
 from hamcrest import has_entry
 from hamcrest import assert_that
@@ -161,6 +162,59 @@ class TestMatchingPart(AssessmentTestCase):
 
 		assert_that( hash(part), is_( hash( part2 ) ) )
 
+class TestOrderingPart(AssessmentTestCase):
+
+	def test_grade(self):
+		labels = ("A","B")
+		values = ("X", "Y")
+		solution_nums = {0: 1, 1: 0}
+		solution_keys = {"A": "Y", "B": "X"}
+		
+		solution = solutions.QOrderingSolution( solution_keys )
+		part = parts.QOrderingPart( labels=labels, values=values, solutions=(solution,))
+		part2 = parts.QOrderingPart( labels=labels, values=values, solutions=(solution,))
+		assert_that(part, externalizes(all_of(has_entry('Class', 'OrderingPart'),
+											  has_entry('MimeType', 'application/vnd.nextthought.assessment.orderingpart'))))
+		assert_that(part, is_(part))
+		assert_that(part, is_(part2))
+		assert_that(hash(part), is_( hash(part) ) )
+
+		assert_that(part, grades_right(solution_keys))
+		assert_that(part, grades_right(solution_nums))
+
+		assert_that(part, grades_wrong({"A": "Y"}))
+
+		part = parts.QOrderingPart(labels=labels, 
+								   values=values, 
+								   solutions=(solutions.QOrderingSolution(solution_nums),))
+
+		assert_that(part, grades_right(solution_keys))
+		assert_that(part, grades_right(solution_nums))
+		assert_that(part, grades_wrong({"A": "Y"}))
+		assert_that(part, grades_wrong({"A": "Z"}))
+
+	def test_eq(self):
+		labels = ("A","B")
+		values = ("X", "Y")
+		solution_keys = {"A": "Y", "B": "X"}
+
+		solution = solutions.QOrderingSolution(solution_keys)
+		part = parts.QOrderingPart(labels=labels, values=values, solutions=(solution,))
+		part2 = parts.QOrderingPart(labels=labels, values=values, solutions=(solution,))
+
+		assert_that(part, is_(part))
+		assert_that(part, is_(part2))
+		assert_that(part, is_not(parts.QOrderingPart(labels=values, values=labels, solutions=(solution,))))
+		assert_that(part, is_not( parts.QNumericMathPart(solutions=(solution,))))
+		assert_that(parts.QNumericMathPart(solutions=(solution,)), is_not(part))
+
+		# Cover the AttributeError case
+		qnp = parts.QNumericMathPart(solutions=(solution,))
+		qnp.grader_interface = part.grader_interface
+		assert_that(part, is_not(qnp))
+
+		assert_that(hash(part), is_(hash(part2)))
+		
 class TestFillInTheBlackWithWordBankPart(AssessmentTestCase):
 
 	def test_grade(self):

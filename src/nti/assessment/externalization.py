@@ -15,10 +15,10 @@ from zope import component
 
 from zope.file.upload import nameFinder
 
-from nti.dataserver import links
-from nti.dataserver import interfaces as nti_interfaces
+from nti.dataserver.links import Link
+from nti.dataserver.interfaces import ILinkExternalHrefOnly
 
-from nti.externalization import interfaces as ext_interfaces
+from nti.externalization.interfaces import IInternalObjectIO
 from nti.externalization.externalization import to_external_object
 from nti.externalization.externalization import to_external_ntiid_oid
 from nti.externalization.datastructures import AbstractDynamicObjectIO
@@ -26,11 +26,12 @@ from nti.externalization.datastructures import AbstractDynamicObjectIO
 from nti.utils.schema import DataURI
 from nti.utils.dataurl import DataURL
 
-from . import interfaces
 from .response import QUploadedFile
 from .response import QUploadedImageFile
 
-@interface.implementer(ext_interfaces.IInternalObjectIO)
+from .interfaces import IQUploadedFile
+
+@interface.implementer(IInternalObjectIO)
 class _AssessmentInternalObjectIOBase(object):
 	"""
 	Base class to customize object IO. See zcml.
@@ -58,7 +59,7 @@ class _AssessmentInternalObjectIOBase(object):
 # submitted for assessment reasons.
 ##
 
-@component.adapter(interfaces.IQUploadedFile)
+@component.adapter(IQUploadedFile)
 class _QUploadedFileObjectIO(AbstractDynamicObjectIO):
 
 	def __init__( self, ext_self ):
@@ -112,11 +113,11 @@ class _QUploadedFileObjectIO(AbstractDynamicObjectIO):
 		target = to_external_ntiid_oid( the_file, add_to_connection=True )
 		if target:
 			for element, key in ('view','url'), ('download','download_url'):
-				link = links.Link( target=target,
-								   target_mime_type=the_file.contentType,
-								   elements=(element,),
-								   rel="data" )
-				interface.alsoProvides( link, nti_interfaces.ILinkExternalHrefOnly )
+				link = Link( target=target,
+							 target_mime_type=the_file.contentType,
+							 elements=(element,),
+							 rel="data" )
+				interface.alsoProvides( link, ILinkExternalHrefOnly )
 				ext_dict[key] = to_external_object( link )
 		else:
 			ext_dict['url'] = None

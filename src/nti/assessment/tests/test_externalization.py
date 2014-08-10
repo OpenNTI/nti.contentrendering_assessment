@@ -24,6 +24,7 @@ import os
 import json
 
 from nti.assessment.randomized.interfaces import IQuestionBank
+from nti.assessment.randomized.interfaces import IQuestionIndexRange
 from nti.assessment.question import QFillInTheBlankWithWordBankQuestion
 
 from nti.externalization import internalization
@@ -201,3 +202,10 @@ class TestExternalization(AssessmentTestCase):
 				
 		assert_that(internal, has_property('draw', is_(5)))
 		assert_that(internal, has_property('questions', has_length(20)))
+		
+		internal.draw = 2
+		internal.ranges = [IQuestionIndexRange([0,5]), IQuestionIndexRange([6, 10])]
+		
+		assert_that(internal, externalizes(all_of(	has_entry('draw', is_(2)),
+													has_entry('ranges', has_length(2)))))
+		
