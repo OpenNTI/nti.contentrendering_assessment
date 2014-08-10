@@ -187,7 +187,7 @@ class _QRandomizedQuestionSetDecorator(object):
 	def decorateExternalObject(self, context, result):
 		generator = randomize()
 		questions = result.get('questions', ())
-		if generator:
+		if generator and questions:
 			shuffle_list(generator, questions)
 
 @interface.implementer(IExternalObjectDecorator)
