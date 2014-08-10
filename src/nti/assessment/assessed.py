@@ -120,8 +120,7 @@ class QAssessedQuestion(SchemaConfigured,
 	lastModified = _dctimes_property_fallback('lastModified', 'Date.Created')
 	
 	def updateLastMod(self, t=None):
-		_now = time.time()
-		self.lastModified = (t if t is not None and t > self.lastModified else _now)
+		self.lastModified = (t if t is not None and t > self.lastModified else time.time())
 		return self.lastModified
 
 	def __init__(self, *args, **kwargs):
@@ -148,8 +147,7 @@ class QAssessedQuestionSet(SchemaConfigured,
 	lastModified = _dctimes_property_fallback('lastModified', 'Date.Created')
 
 	def updateLastMod(self, t=None):
-		_now = time.time()
-		self.lastModified = (t if t is not None and t > self.lastModified else _now)
+		self.lastModified = (t if t is not None and t > self.lastModified else time.time())
 		return self.lastModified
 
 	def __init__(self, *args, **kwargs):
