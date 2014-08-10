@@ -140,7 +140,7 @@ class TestRandomized(AssessmentTestCase):
 			\naquestionref{question1}
 			\naquestionref{question2}
 			\begin{naqindexranges}
-				\naqindexrange[0,1]
+				\naqindexrange{0}{1}
 			\end{naqindexranges}
 		\end{naquestionbank}
 
@@ -158,4 +158,10 @@ class TestRandomized(AssessmentTestCase):
 		assert_that(qset_object.questions, has_length(2) )
 		assert_that(qset_object, has_property('draw', is_(1)))
 		assert_that(qset_object.ntiid, contains_string('set'))
+		assert_that(qset_object, has_property('ranges', has_length(1)))
+		
+		idx_range = qset_object.ranges[0]
+		assert_that(idx_range, has_property('start', is_(0)))
+		assert_that(idx_range, has_property('end', is_(1)))
+		
 		assert_that(qset_object, verifiably_provides(IQuestionBank))
