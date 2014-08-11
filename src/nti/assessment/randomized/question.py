@@ -45,6 +45,7 @@ class QQuestionBank(QQuestionSet):
 		result.questions = questions
 		result.ranges = ranges
 		result.draw = self.draw
+		result.ntiid = getattr(self, 'ntiid', None)
 		return result
 
 @interface.implementer(IQuestionIndexRange)

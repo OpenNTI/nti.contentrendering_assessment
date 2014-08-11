@@ -197,7 +197,10 @@ class TestExternalization(AssessmentTestCase):
 
 		internal = factory()
 		internalization.update_from_external_object(internal, ext_obj, require_updater=True)
-
+		
+		ntiid = u"tag:nextthought.com,2011-10:OU-NAQ-BIOL2124_F_2014_Human_Physiology.naq.set.qset:intro_quiz1"
+		internal.ntiid = ntiid
+		
 		assert_that(internal, verifiably_provides(IQuestionBank) )
 				
 		assert_that(internal, has_property('draw', is_(5)))
@@ -207,8 +210,16 @@ class TestExternalization(AssessmentTestCase):
 		internal.ranges = [IQuestionIndexRange([0,5]), IQuestionIndexRange([6, 10])]
 		
 		assert_that(internal, externalizes(all_of(	has_entry('draw', is_(2)),
+													has_entry('NTIID', is_(ntiid)),
 													has_entry('Class', is_('QuestionSet')),
 													has_entry('MimeType', is_('application/vnd.nextthought.naquestionbank')),
 													has_entry('ranges', has_length(2)))))
+		
+		cp_bank = internal.copy()
+		assert_that(cp_bank, has_property('ntiid', is_(ntiid)))
+		
+		del internal.ntiid
+		cp_bank = internal.copy()
+		assert_that(cp_bank, has_property('ntiid', is_(none())))
 
 		
