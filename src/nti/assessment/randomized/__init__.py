@@ -44,3 +44,19 @@ def randomize(user=None):
 def shuffle_list(generator, target):
     generator.shuffle(target)
     return target
+
+def questionbank_question_chooser(context, questions=None, user=None):
+    generator = randomize(user=user)
+    questions = questions or context.questions
+    if generator and questions and context.draw:
+        ranges = context.ranges or ()
+        if not ranges and context.draw < len(questions):
+            questions = generator.sample(questions, context.draw)
+        elif context.draw == len(ranges) and context.draw == len(questions):
+            new_questions = []
+            for r in ranges:
+                idx = generator.randint(r.start, r.end)
+                new_questions.append(questions[idx])
+                generator = randomize()
+            questions = new_questions
+    return questions

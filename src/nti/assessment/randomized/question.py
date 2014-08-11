@@ -37,6 +37,13 @@ class QQuestionBank(QQuestionSet):
 	
 	__external_class_name__ = "QQuestionSet"
 	mimeType = mime_type = 'application/vnd.nextthought.naquestionbank'
+	
+	def copy(self):
+		result = self.__class__()
+		result.questions = list(self.questions or ())
+		result.ranges = list(self.ranges or ())
+		result.draw = self.draw
+		return result
 
 @interface.implementer(IQuestionIndexRange)
 @WithRepr
@@ -51,3 +58,4 @@ class QQuestionIndexRange(SchemaConfigured):
 def _range_adapter(sequence):
 	result = QQuestionIndexRange(start=int(sequence[0]), end=int(sequence[1]))
 	return result
+

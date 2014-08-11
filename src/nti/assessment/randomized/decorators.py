@@ -20,6 +20,7 @@ from nti.externalization.interfaces import IExternalObjectDecorator
 
 from . import randomize
 from . import shuffle_list
+from . import questionbank_question_chooser
 
 from .interfaces import IQuestionBank
 from .interfaces import IQRandomizedPart
@@ -197,20 +198,8 @@ class _QQuestionBankDecorator(object):
 	__metaclass__ = SingletonDecorator
 
 	def decorateExternalObject(self, context, result):
-		generator = randomize()
-		questions = result.get('questions', ())
-		if generator and questions and context.draw:
-			ranges = context.ranges or ()
-			if not ranges and context.draw < len(questions):
-				questions = generator.sample(questions, context.draw)
-				result['questions'] = questions 
-			elif context.draw == len(ranges) and context.draw == len(questions):
-				new_questions = []
-				for r in ranges:
-					idx = generator.randint(r.start, r.end)
-					new_questions.append(questions[idx])
-					generator = randomize()
-				result['questions'] = new_questions
+		questions = questionbank_question_chooser(context, result.get('questions', ()))
+		result['questions'] = questions
 					
 # === assessed part
 
