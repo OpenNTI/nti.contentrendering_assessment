@@ -38,10 +38,12 @@ class QQuestionBank(QQuestionSet):
 	__external_class_name__ = "QQuestionSet"
 	mimeType = mime_type = 'application/vnd.nextthought.naquestionbank'
 	
-	def copy(self):
+	def copy(self, questions=None, ranges=None):
 		result = self.__class__()
-		result.questions = list(self.questions or ())
-		result.ranges = list(self.ranges or ())
+		ranges = ranges or list(self.ranges or ())
+		questions = questions or list(self.questions or ())
+		result.questions = questions
+		result.ranges = ranges
 		result.draw = self.draw
 		return result
 

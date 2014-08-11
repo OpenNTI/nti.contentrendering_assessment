@@ -84,7 +84,7 @@ class IQuestionBank(IQuestionSet):
 	ranges = ListOrTuple(Object(IQuestionIndexRange), title="Question index ranges", 
 						 required=False, default=())
 
-	def copy():
+	def copy(questions=None, ranges=None):
 		"""
-		make a copy of this object
+		make a copy of this object w/ possibly new questions and/or ranges
 		"""

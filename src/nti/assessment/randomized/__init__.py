@@ -59,4 +59,6 @@ def questionbank_question_chooser(context, questions=None, user=None):
                 new_questions.append(questions[idx])
                 generator = randomize()
             questions = new_questions
+    else:
+        questions = list(questions)
     return questions
