@@ -71,9 +71,11 @@ import os
 from zope import schema
 from zope import interface
 from zope.cachedescriptors.method import cachedIn
+from zope.cachedescriptors.property import readproperty
 from zope.mimetype.interfaces import mimeTypeConstraint
 
 from plasTeX import Base
+from plasTeX.Base import Crossref
 from plasTeX.interfaces import IOptionAwarePythonPackage
 
 from nti.externalization.datetime import datetime_from_string
@@ -85,6 +87,7 @@ from nti.assessment.randomized import parts as randomized_parts
 from nti.assessment.randomized import interfaces as rand_interfaces
 
 from nti.contentrendering import plastexids
+from nti.contentrendering import interfaces as crd_interfaces
 from nti.contentrendering.plastexpackages.ntilatexmacros import ntiincludevideo
 
 from paste.deploy.converters import asbool
@@ -726,6 +729,7 @@ class naassignmentpart(_LocalContentMixin,
 										   auto_grade=asbool(self.attributes.get('options',{}).get('auto_grade')),
 										   title=self.attributes.get('title'))
 
+@interface.implementer(crd_interfaces.IEmbeddedContainer)
 class naassignment(_LocalContentMixin,
 				   Base.Environment,
 				   plastexids.NTIIDMixin):
@@ -759,6 +763,9 @@ class naassignment(_LocalContentMixin,
 	_ntiid_title_attr_name = 'ref' # Use our counter to generate IDs if no ID is given
 	_ntiid_type = as_interfaces.NTIID_TYPE
 
+	#: From IEmbeddedContainer
+	mimeType = u'application/vnd.nextthought.naassignment'
+	
 	@cachedIn('_v_assessment_object')
 	def assessment_object(self):
 		# FIXME: We want these to be relative, not absolute, so they
@@ -811,6 +818,15 @@ class naassignment(_LocalContentMixin,
 
 		result.ntiid = self.ntiid
 		return result
+
+class naassignmentref(Crossref.ref):
+	r"""
+	A reference to the label of a question set.
+	"""
+
+	@readproperty
+	def assignment(self):
+		return self.idref['label']
 
 ###
 # ProcessOptions

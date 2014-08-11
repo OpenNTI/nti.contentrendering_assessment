@@ -34,3 +34,19 @@ class _NAQuestionSetRefJSONTransformer(object):
 		output['Target-NTIID'] = self.el.questionset.ntiid
 		output['question-count'] = self.el.questionset.question_count
 		return output
+
+@interface.implementer(IJSONTransformer)
+class _NAAssignmentRefJSONTransformer(object):
+	
+	def __init__(self, element):
+		self.el = element
+
+	def transform(self):
+		title = self.el.assignment.title
+		print(title)
+		if not isinstance(title, six.string_types):
+			title = unicode(''.join(render_children(self.el.assignment.renderer, title)))
+		output = {'label': title}
+		output['MimeType'] = self.el.assignment.mimeType
+		output['Target-NTIID'] = self.el.assignment.ntiid
+		return output
