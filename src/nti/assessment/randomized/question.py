@@ -42,10 +42,9 @@ class QQuestionBank(QQuestionSet):
 		result = self.__class__()
 		ranges = ranges or list(self.ranges or ())
 		questions = questions or list(self.questions or ())
-		result.questions = questions
 		result.ranges = ranges
 		result.draw = self.draw
-		result.ntiid = getattr(self, 'ntiid', None)
+		result.questions = questions
 		return result
 
 @interface.implementer(IQuestionIndexRange)

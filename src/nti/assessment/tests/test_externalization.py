@@ -214,12 +214,6 @@ class TestExternalization(AssessmentTestCase):
 													has_entry('Class', is_('QuestionSet')),
 													has_entry('MimeType', is_('application/vnd.nextthought.naquestionbank')),
 													has_entry('ranges', has_length(2)))))
-		
-		cp_bank = internal.copy()
-		assert_that(cp_bank, has_property('ntiid', is_(ntiid)))
-		
-		del internal.ntiid
-		cp_bank = internal.copy()
-		assert_that(cp_bank, has_property('ntiid', is_(none())))
+
 
 		
