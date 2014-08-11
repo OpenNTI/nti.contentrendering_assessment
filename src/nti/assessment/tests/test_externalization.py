@@ -207,5 +207,8 @@ class TestExternalization(AssessmentTestCase):
 		internal.ranges = [IQuestionIndexRange([0,5]), IQuestionIndexRange([6, 10])]
 		
 		assert_that(internal, externalizes(all_of(	has_entry('draw', is_(2)),
+													has_entry('Class', is_('QuestionSet')),
+													has_entry('MimeType', is_('application/vnd.nextthought.naquestionbank')),
 													has_entry('ranges', has_length(2)))))
+
 		

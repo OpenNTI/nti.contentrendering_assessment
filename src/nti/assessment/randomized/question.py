@@ -27,7 +27,7 @@ from ..question import QQuestionSet
 class QRandomizedQuestionSet(QQuestionSet):
 	createDirectFieldProperties(IRandomizedQuestionSet)
 	
-	__external_class_name__ = "QQuestionSet"
+	__external_class_name__ = "QuestionSet"
 	mimeType = mime_type = 'application/vnd.nextthought.narandomizedquestionset'
 
 @interface.implementer(IQuestionBank)
@@ -35,7 +35,7 @@ class QRandomizedQuestionSet(QQuestionSet):
 class QQuestionBank(QQuestionSet):
 	createDirectFieldProperties(IQuestionBank)
 	
-	__external_class_name__ = "QQuestionSet"
+	__external_class_name__ = "QuestionSet"
 	mimeType = mime_type = 'application/vnd.nextthought.naquestionbank'
 	
 	def copy(self, questions=None, ranges=None):
@@ -53,7 +53,7 @@ class QQuestionBank(QQuestionSet):
 class QQuestionIndexRange(SchemaConfigured):
 	createDirectFieldProperties(IQuestionIndexRange)
 
-	__external_class_name__ = "QQuestionIndexRange"
+	__external_class_name__ = "QuestionIndexRange"
 	mimeType = mime_type = 'application/vnd.nextthought.naqindexrange'
 	
 @interface.implementer(IQuestionIndexRange)
