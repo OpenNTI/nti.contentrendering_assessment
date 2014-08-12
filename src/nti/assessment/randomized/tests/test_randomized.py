@@ -11,6 +11,7 @@ __docformat__ = "restructuredtext en"
 from hamcrest import is_
 from hamcrest import is_not
 from hamcrest import not_none
+from hamcrest import equal_to
 from hamcrest import has_length
 from hamcrest import assert_that
 does_not = is_not
@@ -52,7 +53,14 @@ class TestRandomized(AssessmentTestCase):
 		questions = questionbank_question_chooser(internal, user=user1)
 		assert_that(questions, has_length(internal.draw))
 		
+		user2 = self._create_user(username='user2@nti.com')
+		questions2 = questionbank_question_chooser(internal, user=user2)
+		assert_that(questions, is_not(equal_to(questions2)))
+		
 		internal.draw = 2
 		internal.ranges = [IQuestionIndexRange([0,5]), IQuestionIndexRange([6, 10])]
 		questions = questionbank_question_chooser(internal, user=user1)
 		assert_that(questions, has_length(internal.draw))
+
+		questions2 = questionbank_question_chooser(internal, user=user2)
+		assert_that(questions, is_not(equal_to(questions2)))
