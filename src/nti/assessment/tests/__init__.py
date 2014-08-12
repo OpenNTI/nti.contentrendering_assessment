@@ -24,6 +24,7 @@ class SharedConfiguringTestLayer(ZopeComponentLayer,
                                  DSInjectorMixin):
 
 	set_up_packages = (
+                       'nti.dataserver',
 					   'nti.contentrendering',
 					   'nti.assessment',
 					   'nti.externalization',

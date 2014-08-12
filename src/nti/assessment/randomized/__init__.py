@@ -49,18 +49,17 @@ def questionbank_question_chooser(context, questions=None, user=None):
     result = []
     generator = randomize(user=user)
     questions = questions or context.questions
-    if generator and questions and context.draw:
+    if generator and questions and context.draw and context.draw < len(questions):
         ranges = context.ranges or ()
-        if not ranges and context.draw < len(questions):
-            sample_idxs = generator.sample(range(0, len(questions)), context.draw)
+        if not ranges:
+            sample_idxs = generator.sample(xrange(0, len(questions)), context.draw)
             sample_idxs.sort() # keep order
-            for idx in sample_idxs:
-                result.append(questions[idx])
-        elif context.draw == len(ranges) and context.draw == len(questions):
+            result.extend(questions[idx] for idx in sample_idxs)
+        elif context.draw == len(ranges):
             for r in ranges:
                 idx = generator.randint(r.start, r.end)
                 result.append(questions[idx])
-                generator = randomize()
+                generator = randomize(user=user)
         else:
             result.extend(questions)
     else:
