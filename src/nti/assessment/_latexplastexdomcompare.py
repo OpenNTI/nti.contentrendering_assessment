@@ -3,7 +3,7 @@
 """
 Support functions for comparing latex Math DOMs using PlasTeX
 
-$Id$
+.. $Id$
 """
 from __future__ import print_function, unicode_literals, absolute_import, division
 __docformat__ = "restructuredtext en"
@@ -16,7 +16,8 @@ from zope.component.interfaces import ComponentLookupError
 
 from sympy.parsing import sympy_parser
 
-from . import interfaces
+from .interfaces import IQSymbolicMathGrader
+from .interfaces import IResponseToSymbolicMathConverter
 
 def _mathIsEqual( solution, response):
 	if solution is None or response is None:
@@ -105,11 +106,10 @@ def _mathChildIsEqual(child1, child2):
 
 	if child1.nodeType == child1.ELEMENT_NODE:
 		# Check that the arguments and the children are equal
-		return len(child1.arguments) == len(child2.arguments) and \
-		  all( (_mathChildIsEqual(child1.attributes[k.name],child2.attributes[k.name]) for k in child1.arguments) ) and \
-		  ((_all_text_children(child1) and _all_text_children(child2) and _text_content_equal(child1, child2)) or
-		   _mathChildrenAreEqual(child1.childNodes, child2.childNodes))
-
+		return	len(child1.arguments) == len(child2.arguments) and \
+				all( (_mathChildIsEqual(child1.attributes[k.name],child2.attributes[k.name]) for k in child1.arguments) ) and \
+				( (_all_text_children(child1) and _all_text_children(child2) and _text_content_equal(child1, child2)) or
+				  _mathChildrenAreEqual(child1.childNodes, child2.childNodes) )
 
 	if child1.nodeType == child1.DOCUMENT_FRAGMENT_NODE:
 		return _mathChildrenAreEqual(child1.childNodes, child2.childNodes)
@@ -131,7 +131,7 @@ def _sanitizeTextNodeContent(textNode):
 def grade( solution, response ):
 	__traceback_info__ = solution, response
 	try:
-		converter = component.getMultiAdapter( (solution,response), interfaces.IResponseToSymbolicMathConverter )
+		converter = component.getMultiAdapter( (solution,response), IResponseToSymbolicMathConverter )
 	except ComponentLookupError: # pragma: no cover
 		logger.warning( "Unable to grade math, assuming wrong", exc_info=True )
 		return False
@@ -175,7 +175,7 @@ def grade( solution, response ):
 	# and not given
 	return False
 
-@interface.implementer( interfaces.IQSymbolicMathGrader )
+@interface.implementer( IQSymbolicMathGrader )
 class Grader(object):
 
 	def __init__( self, part, solution, response ):

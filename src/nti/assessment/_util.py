@@ -10,8 +10,9 @@ logger = __import__('logging').getLogger(__name__)
 
 _marker = object()
 
-from nti.schema.schema import EqHash
 from nti.externalization.externalization import WithRepr
+
+from nti.schema.schema import EqHash
 
 @EqHash('value',
 		superhash=True)
@@ -41,7 +42,6 @@ class TrivialValuedMixin(object):
 
 	def __str__(self):
 		return str(self.value)
-
 
 def make_sublocations(child_attr='parts'):
 	def sublocations(self):
