@@ -17,7 +17,7 @@ from plasTeX.Renderers import render_children
 
 from nti.contentrendering.interfaces import IJSONTransformer
 
-from nti.assessment.interfaces import QUESTION_SET_MIME_TYPE
+from ..interfaces import QUESTION_SET_MIME_TYPE
 
 @interface.implementer(IJSONTransformer)
 class _NAQuestionSetRefJSONTransformer(object):
@@ -43,7 +43,6 @@ class _NAAssignmentRefJSONTransformer(object):
 
 	def transform(self):
 		title = self.el.assignment.title
-		print(title)
 		if not isinstance(title, six.string_types):
 			title = unicode(''.join(render_children(self.el.assignment.renderer, title)))
 		output = {'label': title}

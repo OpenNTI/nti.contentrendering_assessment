@@ -78,22 +78,23 @@ from plasTeX import Base
 from plasTeX.Base import Crossref
 from plasTeX.interfaces import IOptionAwarePythonPackage
 
-from nti.externalization.datetime import datetime_from_string
-
-from nti.assessment import parts
-from nti.assessment import assignment
-from nti.assessment import interfaces as as_interfaces
-from nti.assessment.randomized import parts as randomized_parts
-from nti.assessment.randomized import interfaces as rand_interfaces
+from paste.deploy.converters import asbool
 
 from nti.contentrendering import plastexids
 from nti.contentrendering import interfaces as crd_interfaces
 from nti.contentrendering.plastexpackages.ntilatexmacros import ntiincludevideo
 
-from paste.deploy.converters import asbool
+from nti.externalization.datetime import datetime_from_string
 
-from nti.assessment.contentrendering.ntibase import _AbstractNAQPart
-from nti.assessment.contentrendering.ntibase import _LocalContentMixin
+from .. import parts
+from .. import assignment
+from .. import interfaces as as_interfaces
+
+from ..randomized import parts as randomized_parts
+from ..randomized import interfaces as rand_interfaces
+
+from .ntibase import _AbstractNAQPart
+from .ntibase import _LocalContentMixin
 
 ###
 # Solutions
@@ -119,7 +120,7 @@ class naqsolutions(Base.List):
 		res = super(naqsolutions, self).invoke( tex )
 
 		if 'init' in self.attributes and self.attributes['init']:
-			self.ownerDocument.context.counters[self.counters[0]].setcounter( self.attributes['init'] )
+			self.ownerDocument.context.counters[self.counters[0]].setcounter(self.attributes['init'])
 		elif self.macroMode != Base.Environment.MODE_END:
 			self.ownerDocument.context.counters[self.counters[0]].setcounter(0)
 
@@ -348,6 +349,9 @@ class naqmultiplechoicemultipleanswerpart(_AbstractNAQPart):
 	part_interface = as_interfaces.IQMultipleChoiceMultipleAnswerPart
 	soln_interface = as_interfaces.IQMultipleChoiceMultipleAnswerSolution
 
+	part_randomized_factory = randomized_parts.QRandomizedMultipleChoiceMultipleAnswerPart
+	part_randomized_interface = rand_interfaces.IQRandomizedMultipleChoiceMultipleAnswerPart
+			
 	def _asm_choices(self):
 		return [x._asm_local_content for x in self.getElementsByTagName( 'naqchoice' )]
 
@@ -395,8 +399,8 @@ class naqmultiplechoicemultipleanswerpart(_AbstractNAQPart):
 	def invoke(self, tex):
 		token = super(naqmultiplechoicemultipleanswerpart, self).invoke(tex)
 		if self.randomize:
-			self.part_factory = randomized_parts.QRandomizedMultipleChoiceMultipleAnswerPart
-			self.part_interface = rand_interfaces.IQRandomizedMultipleChoiceMultipleAnswerPart
+			self.part_factory = self.part_randomized_factory
+			self.part_interface = self.part_randomized_interface
 		return token
 
 class naqfilepart(_AbstractNAQPart):
@@ -846,9 +850,9 @@ def ProcessOptions( options, document ):
 
 #: The directory in which to find our templates.
 #: Used by plasTeX because we implement IPythonPackage
-template_directory = os.path.abspath( os.path.dirname(__file__) )
+template_directory = os.path.abspath(os.path.dirname(__file__))
 
 #: The directory containing our style files
-texinputs_directory = os.path.abspath( os.path.dirname(__file__) )
+texinputs_directory = os.path.abspath(os.path.dirname(__file__))
 
 interface.moduleProvides(IOptionAwarePythonPackage)

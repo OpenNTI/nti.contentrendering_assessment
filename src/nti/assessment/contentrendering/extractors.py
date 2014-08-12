@@ -22,8 +22,8 @@ from plasTeX.Renderers import render_children
 
 from nti.contentrendering.interfaces import IRenderedBook
 
-from nti.externalization.externalization import toExternalObject
 from nti.externalization.internalization import find_factory_for
+from nti.externalization.externalization import toExternalObject
 from nti.externalization.internalization import update_from_external_object
 
 from .interfaces import IAssessmentExtractor
@@ -262,7 +262,7 @@ class _LessonQuestionSetExtractor(object):
 				title_el.ntiid in topic_map.keys():
 				topic_map[title_el.ntiid].setAttribute('suppressed', 'true')
 
-			mimeType = 'application/vnd.nextthought.nanosubmitassignment'
+			mimeType = u'application/vnd.nextthought.nanosubmitassignment'
 
 			toc_el = dom.createElement('object')
 			toc_el.setAttribute('label', el.title)
