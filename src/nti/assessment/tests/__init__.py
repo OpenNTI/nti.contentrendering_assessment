@@ -8,7 +8,6 @@ __docformat__ = "restructuredtext en"
 # pylint: disable=W0212,R0904
 
 from zope import component
-from zope.component.hooks import setHooks
 
 from nti.testing.layers import find_test
 from nti.testing.layers import GCLayerMixin
@@ -35,7 +34,6 @@ class SharedConfiguringTestLayer(ZopeComponentLayer,
 	@classmethod
 	def setUp(cls):
 		cls.setUpPackages()
-		setHooks()
 
 	@classmethod
 	def tearDown(cls):
@@ -44,7 +42,7 @@ class SharedConfiguringTestLayer(ZopeComponentLayer,
 
 	@classmethod
 	def testSetUp(cls):
-		setHooks()
+		pass
 
 	@classmethod
 	def testTearDown(cls):
