@@ -768,7 +768,7 @@ class naassignment(_LocalContentMixin,
 	_ntiid_type = as_interfaces.NTIID_TYPE
 
 	#: From IEmbeddedContainer
-	mimeType = u'application/vnd.nextthought.naassignment'
+	mimeType = u'application/vnd.nextthought.assessment.assignment'
 	
 	@cachedIn('_v_assessment_object')
 	def assessment_object(self):
@@ -822,6 +822,13 @@ class naassignment(_LocalContentMixin,
 
 		result.ntiid = self.ntiid
 		return result
+
+	@readproperty
+	def containerId(self):
+		parentNode = self.parentNode
+		while (not hasattr(parentNode, 'filename')) or (parentNode.filename is None):
+			parentNode = parentNode.parentNode
+		return parentNode.ntiid
 
 class naassignmentref(Crossref.ref):
 	r"""
