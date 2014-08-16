@@ -19,6 +19,13 @@ from nti.contentrendering.interfaces import IJSONTransformer
 
 from ..interfaces import QUESTION_SET_MIME_TYPE
 
+def _render_children(renderer, nodes, strip=True):
+	if not isinstance(nodes, six.string_types):
+		result = unicode(''.join(render_children(renderer, nodes)))
+	else:
+		result = nodes.decode("utf-8") if isinstance(nodes, bytes) else nodes
+	return result.strip() if strip and result else result
+
 @interface.implementer(IJSONTransformer)
 class _NAQuestionSetRefJSONTransformer(object):
 	
@@ -26,9 +33,7 @@ class _NAQuestionSetRefJSONTransformer(object):
 		self.el = element
 
 	def transform(self):
-		title = self.el.questionset.title
-		if not isinstance(title, six.string_types):
-			title = unicode(''.join(render_children(self.el.questionset.renderer, title)))
+		title = _render_children(self.el.questionset.renderer, self.el.questionset.title)
 		output = {'label': title}
 		output['MimeType'] = QUESTION_SET_MIME_TYPE
 		output['Target-NTIID'] = self.el.questionset.ntiid
@@ -43,8 +48,7 @@ class _NAAssignmentRefJSONTransformer(object):
 
 	def transform(self):
 		title = self.el.assignment.title
-		if not isinstance(title, six.string_types):
-			title = unicode(''.join(render_children(self.el.assignment.renderer, title)))
+		title = _render_children(self.el.assignment.renderer, title)
 		output = {'label': title, 'title': title}
 		output['MimeType'] = self.el.assignment.mimeType
 		output['Target-NTIID'] = self.el.assignment.ntiid

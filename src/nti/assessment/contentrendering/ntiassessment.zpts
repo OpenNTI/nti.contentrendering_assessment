@@ -129,7 +129,7 @@ name: naqaudio
 </object>
 
 # Things that shouldn't render, just be placeholders
-name: naqsolexplanation naqhints naqhint  naquestionset narandomizedquestionset naassignment
+name: naqsolexplanation naqhints naqhint naquestionset naquestionbank narandomizedquestionset naassignment
 <span tal:attributes="class string:${self/__class__/__name__} hidden" ></span>
 
 name: naqsolutions
@@ -137,7 +137,7 @@ name: naqsolutions
 	<span tal:repeat="item self" tal:attributes="class string:${item/__class__/__name__} hidden; data-nti-units item/units_to_html"></span>
 </span>
 
-name: naquestionsetref
+name: naquestionsetref narandomizedquestionsetref
 <object class="naquestionsetref" >
 	<param name="label" value="Question Set Title" tal:attributes="value self/questionset/title" />
 	<param name="type" value="Question Set MIME Type" tal:attributes="value self/questionset/mimeType" />
@@ -152,4 +152,3 @@ name: naquestionbankref
 	<param name="question-count" value="Number of questions in a Question Bank" tal:attributes="value self/questionbank/draw" />
 	<param name="target-ntiid" value="Question Bank NTIID" tal:attributes="value self/questionbank/ntiid" />
 </object>
-

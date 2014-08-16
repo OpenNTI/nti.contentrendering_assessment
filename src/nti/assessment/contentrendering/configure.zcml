@@ -17,6 +17,10 @@
 			 for=".ntiassessment.naquestionbankref"
 			 provides="nti.contentrendering.interfaces.IJSONTransformer" />
 
+	<adapter factory=".adapters._NAQuestionSetRefJSONTransformer"
+			 for=".ntiassessment.narandomizedquestionsetref"
+			 provides="nti.contentrendering.interfaces.IJSONTransformer" />
+                         
 	<adapter factory=".adapters._NAAssignmentRefJSONTransformer"
 			 for=".ntiassessment.naassignmentref"
 			 provides="nti.contentrendering.interfaces.IJSONTransformer" />

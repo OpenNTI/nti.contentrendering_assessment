@@ -653,6 +653,7 @@ from nti.assessment.contentrendering.ntiquestion import naquestionbank
 from nti.assessment.contentrendering.ntiquestion import naquestionsetref
 from nti.assessment.contentrendering.ntiquestion import naquestionbankref
 from nti.assessment.contentrendering.ntiquestion import narandomizedquestionset
+from nti.assessment.contentrendering.ntiquestion import narandomizedquestionsetref
 
 # avoid warning
 naquestion = naquestion
@@ -663,6 +664,7 @@ naquestionbank = naquestionbank
 naquestionsetref = naquestionsetref
 naquestionbankref = naquestionbankref
 narandomizedquestionset = narandomizedquestionset
+narandomizedquestionsetref = narandomizedquestionsetref
 
 ###
 # Alibra

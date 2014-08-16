@@ -344,13 +344,20 @@ class naquestionbank(naquestionset):
 		return result
 
 class naquestionsetref(Crossref.ref):
-	r"""
+	"""
 	A reference to the label of a question set.
 	"""
 
 	@readproperty
 	def questionset(self):
 		return self.idref['label']
+	
+class narandomizedquestionsetref(naquestionsetref):
+	"""
+	A reference to the label of a question set.
+	"""
+	
+	randomizedquestionset = naquestionsetref.questionset
 	
 class naquestionbankref(naquestionsetref):
 	"""
