@@ -89,8 +89,9 @@ class IQuestionBank(IQuestionSet):
 		"""
 		make a copy of this object w/ possibly new questions and/or ranges
 		"""
-		
-class INoRandomization(interface.Interface):
+
+class INonRandomizedQuestionBank(IQuestionBank):
 	"""
 	marker interface to avoid randomizing an obejct
 	"""
+	

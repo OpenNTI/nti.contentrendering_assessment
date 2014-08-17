@@ -23,11 +23,11 @@ from . import shuffle_list
 from . import questionbank_question_chooser
 
 from .interfaces import IQuestionBank
-from .interfaces import INoRandomization
 from .interfaces import IQRandomizedPart
 from .interfaces import IRandomizedQuestionSet
 from .interfaces import IQRandomizedMatchingPart
 from .interfaces import IQRandomizedOrderingPart
+from .interfaces import INonRandomizedQuestionBank
 from .interfaces import IQRandomizedMultipleChoicePart
 from .interfaces import IQRandomizedMultipleChoiceMultipleAnswerPart
 
@@ -57,8 +57,6 @@ class _RandomizedMatchingPartSolutionsExternalizer(object):
 		self.part = part
 
 	def to_external_object(self):
-		if INoRandomization.providedBy(self.part):
-			return
 		solutions = to_external_object(self.part.solutions)
 		generator = randomize()
 		if generator:
@@ -73,8 +71,6 @@ class _QRandomizedMatchingPartDecorator(object):
 	__metaclass__ = SingletonDecorator
 
 	def decorateExternalObject(self, context, result):
-		if INoRandomization.providedBy(context):
-			return
 		generator = randomize()
 		if generator:
 			values = list(result['values'])
@@ -113,8 +109,6 @@ class _RandomizedMultipleChoicePartSolutionsExternalizer(object):
 		self.part = part
 
 	def to_external_object(self):
-		if INoRandomization.providedBy(self.part):
-			return
 		solutions = to_external_object(self.part.solutions)
 		generator = randomize()
 		if generator:
@@ -129,8 +123,6 @@ class _QRandomizedMultipleChoicePartDecorator(object):
 	__metaclass__ = SingletonDecorator
 
 	def decorateExternalObject(self, context, result):
-		if INoRandomization.providedBy(context):
-			return
 		generator = randomize()
 		if generator:
 			choices = list(result['choices'])
@@ -162,8 +154,6 @@ class _RandomizedMultipleChoiceMultipleAnswerPartSolutionsExternalizer(object):
 		self.part = part
 
 	def to_external_object(self):
-		if INoRandomization.providedBy(self.part):
-			return
 		solutions = to_external_object(self.part.solutions)
 		generator = randomize()
 		if generator:
@@ -180,8 +170,6 @@ class _QRandomizedMultipleChoiceMultipleAnswerPartDecorator(object):
 	__metaclass__ = SingletonDecorator
 
 	def decorateExternalObject(self, context, result):
-		if INoRandomization.providedBy(context):
-			return
 		generator = randomize()
 		if generator:
 			choices = list(result['choices'])
@@ -199,8 +187,6 @@ class _QRandomizedQuestionSetDecorator(object):
 	__metaclass__ = SingletonDecorator
 
 	def decorateExternalObject(self, context, result):
-		if INoRandomization.providedBy(context):
-			return
 		generator = randomize()
 		questions = result.get('questions', ())
 		if generator and questions:
@@ -213,7 +199,7 @@ class _QQuestionBankDecorator(object):
 	__metaclass__ = SingletonDecorator
 
 	def decorateExternalObject(self, context, result):
-		if INoRandomization.providedBy(context):
+		if INonRandomizedQuestionBank.providedBy(context):
 			return
 		questions = result.get('questions', ())
 		questions = questionbank_question_chooser(context, questions)
@@ -228,9 +214,6 @@ class _QAssessedPartDecorator(object):
 	__metaclass__ = SingletonDecorator
 
 	def decorateExternalObject(self, context, result):
-		if INoRandomization.providedBy(context):
-			return
-		
 		assessed_question = context.__parent__
 		if assessed_question is None:
 			return
