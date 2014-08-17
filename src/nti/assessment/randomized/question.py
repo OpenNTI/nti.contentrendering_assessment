@@ -39,12 +39,10 @@ class QQuestionBank(QQuestionSet):
 	mimeType = mime_type = 'application/vnd.nextthought.naquestionbank'
 	
 	def copy(self, questions=None, ranges=None):
-		result = self.__class__()
-		ranges = ranges or list(self.ranges or ())
 		questions = questions or list(self.questions or ())
-		result.ranges = ranges
+		result = super(QQuestionBank, self).copy(questions=questions)
 		result.draw = self.draw
-		result.questions = questions
+		result.ranges = ranges or list(self.ranges or ())
 		return result
 
 @interface.implementer(IQuestionIndexRange)

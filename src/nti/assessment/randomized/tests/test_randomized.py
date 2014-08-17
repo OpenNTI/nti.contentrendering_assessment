@@ -14,6 +14,7 @@ from hamcrest import not_none
 from hamcrest import equal_to
 from hamcrest import has_length
 from hamcrest import assert_that
+from hamcrest import has_property
 does_not = is_not
 
 import os
@@ -49,6 +50,8 @@ class TestRandomized(AssessmentTestCase):
 		internal = factory()
 		internalization.update_from_external_object(internal, ext_obj, require_updater=True)
 		
+		all_questions = list(internal.questions)
+		
 		user1 = self._create_user(username='user1@nti.com')
 		questions = questionbank_question_chooser(internal, user=user1)
 		assert_that(questions, has_length(internal.draw))
@@ -64,3 +67,10 @@ class TestRandomized(AssessmentTestCase):
 
 		questions2 = questionbank_question_chooser(internal, user=user2)
 		assert_that(questions, is_not(equal_to(questions2)))
+		
+		new_internal = internal.copy(questions=all_questions)
+		assert_that(id(new_internal), is_not(id(internal)))
+		assert_that(new_internal, has_property('draw', is_(internal.draw)))
+		assert_that(new_internal, has_property('title', is_(internal.title)))
+		assert_that(new_internal, has_property('questions', is_(all_questions)))
+		
