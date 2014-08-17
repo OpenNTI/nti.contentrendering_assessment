@@ -33,9 +33,7 @@ class _NAQuestionSetRefJSONTransformer(object):
 		self.el = element
 
 	def transform(self):
-		title = getattr(self.el.questionset, 'title', u'')
-		if not title:
-			logger.warn("QuestionSet with no title")
+		title = self.el.questionset.title
 		title = _render_children(self.el.questionset.renderer, title)
 		output = {'label': title}
 		output['MimeType'] = QUESTION_SET_MIME_TYPE
@@ -50,9 +48,7 @@ class _NAAssignmentRefJSONTransformer(object):
 		self.el = element
 
 	def transform(self):
-		title = getattr(self.el.assignment, 'title', '')
-		if not title:
-			logger.warn("Assignment with no title")
+		title = self.el.assignment.title
 		title = _render_children(self.el.assignment.renderer, title)
 		output = {'label': title, 'title': title}
 		output['MimeType'] = self.el.assignment.mimeType
