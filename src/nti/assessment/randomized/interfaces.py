@@ -71,6 +71,7 @@ class IQuestionIndexRange(interface.Interface):
 	start = Int(title="start index range", min=0, required=True)
 	end = Int(title="end index range", min=0, required=True)
 	
+
 class IQuestionBank(IQuestionSet):
 	"""
 	An group of questions taken at random based on the taker.
@@ -88,3 +89,8 @@ class IQuestionBank(IQuestionSet):
 		"""
 		make a copy of this object w/ possibly new questions and/or ranges
 		"""
+		
+class INoRandomization(interface.Interface):
+	"""
+	marker interface to avoid randomizing an obejct
+	"""
