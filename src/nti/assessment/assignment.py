@@ -48,14 +48,6 @@ class QAssignmentPart(SchemaConfigured,
 
 	mime_type = 'application/vnd.nextthought.assessment.assignmentpart'
 
-	def copy(self):
-		result = self.__class__()
-		result.title = self.title
-		result.content = self.content
-		result.auto_grade = self.auto_grade
-		result.question_set = self.question_set.copy()
-		return result
-
 @interface.implementer(IQAssignment,
 					   IContentTypeAware,
 					   IAttributeAnnotatable)
@@ -72,17 +64,6 @@ class QAssignment(SchemaConfigured,
 
 	mime_type = 'application/vnd.nextthought.assessment.assignment'
 
-	def copy(self):
-		result = self.__class__()
-		result.title = self.title
-		result.content = self.content
-		result.category_name = self.category_name
-		result.is_non_public = self.is_non_public
-		result.parts = [part.copy() for part in self.parts]
-		result.available_for_submission_ending = self.available_for_submission_ending
-		result.available_for_submission_beginning = self.available_for_submission_beginning
-		return result
-	
 from zope.location.interfaces import ISublocations
 
 @interface.implementer(IQAssignmentSubmissionPendingAssessment,

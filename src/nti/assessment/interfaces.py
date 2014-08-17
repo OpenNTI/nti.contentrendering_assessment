@@ -449,11 +449,6 @@ class IQuestionSet(ITitledContent,IAnnotatable):
 								 min_length=1,
 								 value_type=Object( IQuestion, title="The questions" ),
 								 )
-	
-	def copy():
-		"""
-		make a copy if this question set
-		"""
 
 class IQAssignmentPart(ITitledContent):
 	"""
@@ -468,11 +463,6 @@ class IQAssignmentPart(ITitledContent):
 	
 	auto_grade = Bool(title="Should this part be run through the grading machinery?",
 					  default=False)
-	
-	def copy():
-		"""
-		make a copy if this part
-		"""
 
 class IQAssignment(ITitledContent,
 				   IAnnotatable):
@@ -564,11 +554,6 @@ class IQAssignment(ITitledContent,
 						  not be public""",
 						  default=True)
 	
-	def copy():
-		"""
-		make a copy if this assignment
-		"""
-
 	# A note on handling assignments that have an associated time limit
 	# (e.g., you have one hour to complete this assignment once you begin):
 	# That information will be encoded as a timedelta on the assignment.

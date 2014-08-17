@@ -73,12 +73,6 @@ class QQuestionSet(Contained,
 		Persistent.__init__(self)
 		SchemaConfigured.__init__(self, *args, **kwargs)
 
-	def copy(self, questions=()):
-		result = self.__class__()
-		result.title = self.title
-		result.questions = questions or list(self.questions or ())
-		return result
-	
 	def sublocations(self):
 		for question in self.questions or ():
 			yield question
