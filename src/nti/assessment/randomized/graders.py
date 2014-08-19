@@ -67,6 +67,7 @@ class RandomizedMultipleChoiceMultipleAnswerGrader(MultipleChoiceMultipleAnswerG
 	def _unshuffle(self, the_values):
 		generator = randomize()
 		if generator is not None:
+			the_values = list(the_values)
 			choices = list(self.part.choices)
 			original = {v:idx for idx, v in enumerate(choices)}
 			shuffled = {idx:v for idx, v in enumerate(shuffle_list(generator, choices))}
