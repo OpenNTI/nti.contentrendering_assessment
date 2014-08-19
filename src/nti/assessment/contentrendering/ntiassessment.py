@@ -735,6 +735,9 @@ class naassignmentpart(_LocalContentMixin,
 										   auto_grade=asbool(self.attributes.get('options',{}).get('auto_grade')),
 										   title=self.attributes.get('title'))
 
+class naassignmentname(Base.Command):
+	unicode = ''
+
 @interface.implementer(crd_interfaces.IEmbeddedContainer)
 class naassignment(_LocalContentMixin,
 				   Base.Environment,
@@ -762,7 +765,7 @@ class naassignment(_LocalContentMixin,
 	# Only classes with counters can be labeled, and \label sets the
 	# id property, which in turn is used as part of the NTIID (when no
 	# NTIID is set explicitly)
-	counter = 'naaassignment'
+	counter = 'naassignment'
 	_ntiid_cache_map_name = '_naassignment_ntiid_map'
 	_ntiid_allow_missing_title = True
 	_ntiid_suffix = 'naq.asg.'
