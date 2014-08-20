@@ -45,10 +45,14 @@ def shuffle_list(generator, target):
     generator.shuffle(target)
     return target
 
+def questionbank_random(context, user=None):
+    generator = random.Random() if context.srand else randomize(user=user)
+    return generator
+
 def questionbank_question_chooser(context, questions=None, user=None):
     result = []
-    generator = randomize(user=user)
     questions = questions or context.questions
+    generator = questionbank_random(context, user=user)
     if generator and questions and context.draw and context.draw < len(questions):
         ranges = context.ranges or ()
         if not ranges:
@@ -59,7 +63,7 @@ def questionbank_question_chooser(context, questions=None, user=None):
             for r in ranges:
                 idx = generator.randint(r.start, r.end)
                 result.append(questions[idx])
-                generator = randomize(user=user)
+                generator = questionbank_random(context, user=user)
         else:
             result.extend(questions)
     else:

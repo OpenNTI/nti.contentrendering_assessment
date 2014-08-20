@@ -9,6 +9,7 @@ __docformat__ = "restructuredtext en"
 from zope import interface
 
 from nti.schema.field import Int
+from nti.schema.field import Bool
 from nti.schema.field import Object
 from nti.schema.field import ListOrTuple
 
@@ -74,7 +75,7 @@ class IQuestionIndexRange(interface.Interface):
 
 class IQuestionBank(IQuestionSet):
 	"""
-	An group of questions taken at random based on the taker.
+	An group of questions taken at random
 
 	A maximum total of questions of the question set is drawn to be presented and evaluated. 
 	"""
@@ -85,7 +86,10 @@ class IQuestionBank(IQuestionSet):
 	ranges = ListOrTuple(Object(IQuestionIndexRange), title="Question index ranges", 
 						 required=False, default=())
 
-	def copy(questions=None, ranges=None):
+	srand = Bool(title="always use a differnet random seed", required=False,
+				 default=False)
+	
+	def copy(questions=None, ranges=None, srand=None):
 		"""
 		make a copy of this object w/ possibly new questions and/or ranges
 		"""

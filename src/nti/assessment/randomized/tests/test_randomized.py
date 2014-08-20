@@ -68,9 +68,16 @@ class TestRandomized(AssessmentTestCase):
 		questions2 = questionbank_question_chooser(internal, user=user2)
 		assert_that(questions, is_not(equal_to(questions2)))
 		
+		internal.srand = True
+		questions3 = questionbank_question_chooser(internal)
+		assert_that(questions, is_not(equal_to(questions3)))
+		
 		new_internal = internal.copy(questions=all_questions)
 		assert_that(id(new_internal), is_not(id(internal)))
+		assert_that(new_internal, has_property('srand', is_(True)))
 		assert_that(new_internal, has_property('draw', is_(internal.draw)))
+		assert_that(new_internal, has_property('srand', is_(internal.srand)))
 		assert_that(new_internal, has_property('title', is_(internal.title)))
 		assert_that(new_internal, has_property('questions', is_(all_questions)))
+
 		

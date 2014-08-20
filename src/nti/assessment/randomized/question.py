@@ -33,17 +33,19 @@ class QRandomizedQuestionSet(QQuestionSet):
 @interface.implementer(IQuestionBank)
 @EqHash('draw', include_super=True)
 class QQuestionBank(QQuestionSet):
+	srand = False
 	createDirectFieldProperties(IQuestionBank)
 	
 	__external_class_name__ = "QuestionSet"
 	mimeType = mime_type = 'application/vnd.nextthought.naquestionbank'
 	
-	def copy(self, questions=None, ranges=None):
+	def copy(self, questions=None, ranges=None, srand=None):
 		result = self.__class__()
 		result.draw = self.draw
 		result.title = self.title
 		result.ranges = ranges or list(self.ranges or ())
 		result.questions = questions or list(self.questions or ())
+		result.srand = self.srand if srand is None else bool(srand)
 		return result
 
 @interface.implementer(IQuestionIndexRange)
