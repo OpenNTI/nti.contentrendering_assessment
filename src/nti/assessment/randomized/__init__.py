@@ -10,6 +10,7 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 import random
+import hashlib
 
 from zope import component
 
@@ -37,7 +38,8 @@ def randomize(user=None):
     user = get_user(user)        
     if user is not None:
         uid = component.getUtility(IIntIds).getId(user)
-        generator = random.Random(uid)
+        hexdigest = hashlib.sha224(bytes(uid)).hexdigest()
+        generator = random.Random(long(hexdigest, 16))
         return generator
     return None
 

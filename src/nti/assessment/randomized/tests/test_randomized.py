@@ -20,6 +20,8 @@ does_not = is_not
 import os
 import json
 
+from nti.assessment.randomized import randomize
+from nti.assessment.randomized import shuffle_list
 from nti.assessment.randomized import questionbank_question_chooser
 from nti.assessment.randomized.interfaces import IQuestionIndexRange
 
@@ -36,7 +38,28 @@ class TestRandomized(AssessmentTestCase):
 	def _create_user(self, username='nt@nti.com', password='temp001'):
 		usr = User.create_user(username=username, password=password)
 		return usr
-
+	
+	@WithMockDSTrans
+	def test_randomize(self):
+		size = 20
+		ichigo = self._create_user(username='ichigo@nti.com')
+		numbers_1 = range(0, size)
+		generator = randomize(ichigo)
+		shuffle_list(generator, numbers_1)
+		
+		numbers_2 = range(0, size)
+		generator = randomize(ichigo)
+		shuffle_list(generator, numbers_2)
+		
+		assert_that(numbers_1, is_(numbers_2))
+		
+		aizen = self._create_user(username='aizen@nti.com')
+		numbers_3 = range(0, size)
+		generator = randomize(aizen)
+		shuffle_list(generator, numbers_3)
+		
+		assert_that(numbers_1, is_not(numbers_3))
+		
 	@WithMockDSTrans
 	def test_question_bank(self):
 
