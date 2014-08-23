@@ -85,11 +85,7 @@
 	<adapter factory=".decorators._RandomizedMultipleChoiceMultipleAnswerPartSolutionsExternalizer"
 			 for=".interfaces.IQRandomizedMultipleChoiceMultipleAnswerPart"
 			 provides="nti.assessment.interfaces.IQPartSolutionsExternalizer" />
-							 
-	<subscriber factory=".decorators._QAssessedPartDecorator"
-				provides="nti.externalization.interfaces.IExternalObjectDecorator"
-				for="..interfaces.IQAssessedPart"/>
-				 	  	 			 
+
 	<!-- Externalization -->
 	
 	<include package="nti.externalization" file="meta.zcml" />

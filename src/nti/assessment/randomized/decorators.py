@@ -11,9 +11,6 @@ logger = __import__('logging').getLogger(__name__)
 from zope import component
 from zope import interface
 
-from dolmen.builtins.interfaces import IList
-from dolmen.builtins.interfaces import ITuple
-
 from nti.externalization.singleton import SingletonDecorator
 from nti.externalization.externalization import to_external_object
 from nti.externalization.interfaces import IExternalObjectDecorator
@@ -23,7 +20,6 @@ from . import shuffle_list
 from . import questionbank_question_chooser
 
 from .interfaces import IQuestionBank
-from .interfaces import IQRandomizedPart
 from .interfaces import IRandomizedQuestionSet
 from .interfaces import IQRandomizedMatchingPart
 from .interfaces import IQRandomizedOrderingPart
@@ -31,8 +27,6 @@ from .interfaces import INonRandomizedQuestionBank
 from .interfaces import IQRandomizedMultipleChoicePart
 from .interfaces import IQRandomizedMultipleChoiceMultipleAnswerPart
 
-from ..interfaces import IQuestion
-from ..interfaces import IQAssessedPart
 from ..interfaces import IQPartSolutionsExternalizer
 
 # === matching
@@ -204,39 +198,3 @@ class _QQuestionBankDecorator(object):
 		questions = result.get('questions', ())
 		questions = questionbank_question_chooser(context, questions)
 		result['questions'] = questions
-					
-# === assessed part
-
-@interface.implementer(IExternalObjectDecorator)
-@component.adapter(IQAssessedPart)
-class _QAssessedPartDecorator(object):
-
-	__metaclass__ = SingletonDecorator
-
-	def decorateExternalObject(self, context, result):
-		assessed_question = context.__parent__
-		if assessed_question is None:
-			return
-
-		index = assessed_question.parts.index(context)
-
-		question_id = assessed_question.questionId
-		question = component.queryUtility(IQuestion, name=question_id)
-		if question is None:
-			return # old question?
-
-		try:
-			question_part = question.parts[index]
-		except IndexError:
-			return
-
-		if not IQRandomizedPart.providedBy(question_part):
-			return
-
-		generator = randomize()
-		if not generator:
-			return
-
-		response = context.submittedResponse
-		if ITuple.providedBy(response) or IList.providedBy(response):
-			generator.shuffle(result['submittedResponse'])
