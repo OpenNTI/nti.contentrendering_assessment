@@ -170,7 +170,19 @@
 	<adapter factory=".internalization._QFillInTheBlankWithWordBankSolutionUpdater"
 			 for=".interfaces.IQFillInTheBlankShortAnswerSolution"
 			 provides="nti.externalization.interfaces.IInternalObjectUpdater" />
-			 
+		
+	<adapter factory=".externalization._QAssessedPartExternalizer"
+			 for=".interfaces.IQAssessedPart"
+			 provides="nti.externalization.interfaces.IInternalObjectExternalizer" />
+	
+	<adapter factory=".externalization._QAssessedQuestionExternalizer"
+			 for=".interfaces.IQAssessedQuestion"
+			 provides="nti.externalization.interfaces.IInternalObjectExternalizer" />
+		
+	<adapter factory=".externalization._QAssessedQuestionSetExternalizer"
+			 for=".interfaces.IQAssessedQuestionSet"
+			 provides="nti.externalization.interfaces.IInternalObjectExternalizer" />
+			 	 		 	 
 	<!-- WordBank & Regex -->
 	<ext:registerAutoPackageIO
 		root_interfaces=".interfaces.IWordEntry

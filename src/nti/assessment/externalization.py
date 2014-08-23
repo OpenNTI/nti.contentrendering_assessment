@@ -19,8 +19,10 @@ from nti.dataserver.links import Link
 from nti.dataserver.interfaces import ILinkExternalHrefOnly
 
 from nti.externalization.interfaces import IInternalObjectIO
+from nti.externalization.datastructures import InterfaceObjectIO
 from nti.externalization.externalization import to_external_object
 from nti.externalization.externalization import to_external_ntiid_oid
+from nti.externalization.interfaces import IInternalObjectExternalizer
 from nti.externalization.datastructures import AbstractDynamicObjectIO
 
 from nti.utils.schema import DataURI
@@ -29,7 +31,10 @@ from nti.utils.dataurl import DataURL
 from .response import QUploadedFile
 from .response import QUploadedImageFile
 
+from .interfaces import IQAssessedPart
 from .interfaces import IQUploadedFile
+from .interfaces import IQAssessedQuestion
+from .interfaces import IQAssessedQuestionSet
 
 @interface.implementer(IInternalObjectIO)
 class _AssessmentInternalObjectIOBase(object):
@@ -52,6 +57,31 @@ class _AssessmentInternalObjectIOBase(object):
 		ext_class_name = k[1:] if not k.startswith('Question') else k
 		return ext_class_name
 
+@interface.implementer(IInternalObjectExternalizer)
+class _QAssessedObjectExternalizer(object):
+
+	interface = None
+	def __init__(self, assessed):
+		self.assessed = assessed
+
+	def toExternalObject(self, **kwargs):
+		## set sublocations
+		if hasattr(self.assessed, 'sublocations'):
+			tuple(self.assessed.sublocations())
+		return InterfaceObjectIO(self.assessed, self.interface).toExternalObject( **kwargs)
+
+@component.adapter(IQAssessedPart)	
+class _QAssessedPartExternalizer(_QAssessedObjectExternalizer):
+	interface = IQAssessedPart
+	
+@component.adapter(IQAssessedQuestion)	
+class _QAssessedQuestionExternalizer(_QAssessedObjectExternalizer):
+	interface = IQAssessedQuestion
+
+@component.adapter(IQAssessedQuestionSet)	
+class _QAssessedQuestionSetExternalizer(_QAssessedObjectExternalizer):
+	interface = IQAssessedQuestionSet
+	
 ##
 # File uploads
 # TODO: This can probably be generalized.

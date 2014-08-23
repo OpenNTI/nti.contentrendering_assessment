@@ -63,9 +63,8 @@ class QAssessedPart(SchemaConfigured,
 		part = self.submittedResponse
 		if hasattr(part, '__parent__'):
 			if part.__parent__ is None:
-				# XXX: HACK: Taking ownership because
-				# of cross-database issues.
-				logger.warn("XXX: HACK: Taking ownership of a sub-part")
+				# XXX: HACK: Taking ownership because of cross-database issues.
+				logger.debug("XXX: HACK: Taking ownership of a sub-part")
 				part.__parent__ = self
 			if part.__parent__ is self:
 				yield part
