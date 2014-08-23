@@ -20,6 +20,7 @@ from . import shuffle_list
 from . import questionbank_question_chooser
 
 from .interfaces import IQuestionBank
+from .interfaces import INonRandomizedQPart
 from .interfaces import IRandomizedQuestionSet
 from .interfaces import IQRandomizedMatchingPart
 from .interfaces import IQRandomizedOrderingPart
@@ -53,7 +54,7 @@ class _RandomizedMatchingPartSolutionsExternalizer(object):
 	def to_external_object(self):
 		solutions = to_external_object(self.part.solutions)
 		generator = randomize()
-		if generator:
+		if generator and not INonRandomizedQPart.providedBy(self.part):
 			values = to_external_object(self.part.values)
 			_shuffle_matching_part_solutions(generator, values, solutions)
 		return solutions
@@ -66,7 +67,7 @@ class _QRandomizedMatchingPartDecorator(object):
 
 	def decorateExternalObject(self, context, result):
 		generator = randomize()
-		if generator:
+		if generator and not INonRandomizedQPart.providedBy(context):
 			values = list(result['values'])
 			generator.shuffle(result['values'])
 			_shuffle_matching_part_solutions(generator, values, result['solutions'])
@@ -105,7 +106,7 @@ class _RandomizedMultipleChoicePartSolutionsExternalizer(object):
 	def to_external_object(self):
 		solutions = to_external_object(self.part.solutions)
 		generator = randomize()
-		if generator:
+		if generator and not INonRandomizedQPart.providedBy(self.part):
 			choices = to_external_object(self.part.choices)
 			_shuffle_multiple_choice_part_solutions(generator, choices, solutions)
 		return solutions
@@ -118,7 +119,7 @@ class _QRandomizedMultipleChoicePartDecorator(object):
 
 	def decorateExternalObject(self, context, result):
 		generator = randomize()
-		if generator:
+		if generator and not INonRandomizedQPart.providedBy(context):
 			choices = list(result['choices'])
 			generator.shuffle(result['choices'])
 			solutions = result['solutions']
@@ -150,7 +151,7 @@ class _RandomizedMultipleChoiceMultipleAnswerPartSolutionsExternalizer(object):
 	def to_external_object(self):
 		solutions = to_external_object(self.part.solutions)
 		generator = randomize()
-		if generator:
+		if generator and not INonRandomizedQPart.providedBy(self.part):
 			choices = to_external_object(self.part.choices)
 			_shuffle_multiple_choice_multiple_answer_part_solutions(generator,
 																	choices,
@@ -165,7 +166,7 @@ class _QRandomizedMultipleChoiceMultipleAnswerPartDecorator(object):
 
 	def decorateExternalObject(self, context, result):
 		generator = randomize()
-		if generator:
+		if generator and not INonRandomizedQPart.providedBy(context):
 			choices = list(result['choices'])
 			generator.shuffle(result['choices'])
 			_shuffle_multiple_choice_multiple_answer_part_solutions(generator,

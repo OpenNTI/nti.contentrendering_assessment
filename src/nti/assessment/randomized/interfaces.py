@@ -29,6 +29,11 @@ from ..interfaces import IQMultipleChoiceMultipleAnswerPartGrader
 class IQRandomizedPart(IQPart):
 	pass
 
+class INonRandomizedQPart(interface.Interface):
+	"""
+	Marker interface to avoid part randomization
+	"""
+
 # matching part
 
 class IQRandomizedMatchingPart(IQRandomizedPart, IQMatchingPart):
@@ -96,6 +101,6 @@ class IQuestionBank(IQuestionSet):
 
 class INonRandomizedQuestionBank(IQuestionBank):
 	"""
-	marker interface to avoid randomizing an obejct
+	Marker interface to avoid randomizing an question bank
 	"""
 	
