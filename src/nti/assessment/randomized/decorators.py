@@ -20,15 +20,17 @@ from . import shuffle_list
 from . import questionbank_question_chooser
 
 from .interfaces import IQuestionBank
-from .interfaces import INonRandomizedQPart
 from .interfaces import IRandomizedQuestionSet
 from .interfaces import IQRandomizedMatchingPart
 from .interfaces import IQRandomizedOrderingPart
-from .interfaces import INonRandomizedQuestionBank
 from .interfaces import IQRandomizedMultipleChoicePart
 from .interfaces import IQRandomizedMultipleChoiceMultipleAnswerPart
 
 from ..interfaces import IQPartSolutionsExternalizer
+
+def _must_randomized(context):
+	iface = getattr(context, 'nonrandomized_interface', None)
+	return iface is None or not iface.providedBy(context)
 
 # === matching
 
@@ -53,10 +55,11 @@ class _RandomizedMatchingPartSolutionsExternalizer(object):
 
 	def to_external_object(self):
 		solutions = to_external_object(self.part.solutions)
-		generator = randomize()
-		if generator and not INonRandomizedQPart.providedBy(self.part):
-			values = to_external_object(self.part.values)
-			_shuffle_matching_part_solutions(generator, values, solutions)
+		if _must_randomized(self.part):
+			generator = randomize()
+			if generator is not None:
+				values = to_external_object(self.part.values)
+				_shuffle_matching_part_solutions(generator, values, solutions)
 		return solutions
 
 @interface.implementer(IExternalObjectDecorator)
@@ -66,11 +69,12 @@ class _QRandomizedMatchingPartDecorator(object):
 	__metaclass__ = SingletonDecorator
 
 	def decorateExternalObject(self, context, result):
-		generator = randomize()
-		if generator and not INonRandomizedQPart.providedBy(context):
-			values = list(result['values'])
-			generator.shuffle(result['values'])
-			_shuffle_matching_part_solutions(generator, values, result['solutions'])
+		if _must_randomized(context):
+			generator = randomize()
+			if generator is not None:
+				values = list(result['values'])
+				generator.shuffle(result['values'])
+				_shuffle_matching_part_solutions(generator, values, result['solutions'])
 
 # === ordering
 
@@ -105,10 +109,11 @@ class _RandomizedMultipleChoicePartSolutionsExternalizer(object):
 
 	def to_external_object(self):
 		solutions = to_external_object(self.part.solutions)
-		generator = randomize()
-		if generator and not INonRandomizedQPart.providedBy(self.part):
-			choices = to_external_object(self.part.choices)
-			_shuffle_multiple_choice_part_solutions(generator, choices, solutions)
+		if _must_randomized(self.part):
+			generator = randomize()
+			if generator is not None:
+				choices = to_external_object(self.part.choices)
+				_shuffle_multiple_choice_part_solutions(generator, choices, solutions)
 		return solutions
 
 @interface.implementer(IExternalObjectDecorator)
@@ -118,12 +123,13 @@ class _QRandomizedMultipleChoicePartDecorator(object):
 	__metaclass__ = SingletonDecorator
 
 	def decorateExternalObject(self, context, result):
-		generator = randomize()
-		if generator and not INonRandomizedQPart.providedBy(context):
-			choices = list(result['choices'])
-			generator.shuffle(result['choices'])
-			solutions = result['solutions']
-			_shuffle_multiple_choice_part_solutions(generator, choices, solutions)
+		if _must_randomized(context):
+			generator = randomize()
+			if generator is not None:
+				choices = list(result['choices'])
+				generator.shuffle(result['choices'])
+				solutions = result['solutions']
+				_shuffle_multiple_choice_part_solutions(generator, choices, solutions)
 
 # === multiple choice, multiple answer part
 
@@ -150,12 +156,13 @@ class _RandomizedMultipleChoiceMultipleAnswerPartSolutionsExternalizer(object):
 
 	def to_external_object(self):
 		solutions = to_external_object(self.part.solutions)
-		generator = randomize()
-		if generator and not INonRandomizedQPart.providedBy(self.part):
-			choices = to_external_object(self.part.choices)
-			_shuffle_multiple_choice_multiple_answer_part_solutions(generator,
-																	choices,
-																	solutions)
+		if _must_randomized(self.part):
+			generator = randomize()
+			if generator is not None:
+				choices = to_external_object(self.part.choices)
+				_shuffle_multiple_choice_multiple_answer_part_solutions(generator,
+																		choices,
+																		solutions)
 		return solutions
 
 @interface.implementer(IExternalObjectDecorator)
@@ -165,13 +172,14 @@ class _QRandomizedMultipleChoiceMultipleAnswerPartDecorator(object):
 	__metaclass__ = SingletonDecorator
 
 	def decorateExternalObject(self, context, result):
-		generator = randomize()
-		if generator and not INonRandomizedQPart.providedBy(context):
-			choices = list(result['choices'])
-			generator.shuffle(result['choices'])
-			_shuffle_multiple_choice_multiple_answer_part_solutions(generator,
-																	choices,
-																	result['solutions'])
+		if _must_randomized(context):
+			generator = randomize()
+			if generator is not None:
+				choices = list(result['choices'])
+				generator.shuffle(result['choices'])
+				_shuffle_multiple_choice_multiple_answer_part_solutions(generator,
+																		choices,
+																		result['solutions'])
 
 # === question set
 
@@ -182,10 +190,11 @@ class _QRandomizedQuestionSetDecorator(object):
 	__metaclass__ = SingletonDecorator
 
 	def decorateExternalObject(self, context, result):
-		generator = randomize()
-		questions = result.get('questions', ())
-		if generator and questions:
-			shuffle_list(generator, questions)
+		if _must_randomized(context):
+			generator = randomize()
+			questions = result.get('questions', ())
+			if generator and questions:
+				shuffle_list(generator, questions)
 
 @interface.implementer(IExternalObjectDecorator)
 @component.adapter(IQuestionBank)
@@ -194,8 +203,7 @@ class _QQuestionBankDecorator(object):
 	__metaclass__ = SingletonDecorator
 
 	def decorateExternalObject(self, context, result):
-		if INonRandomizedQuestionBank.providedBy(context):
-			return
-		questions = result.get('questions', ())
-		questions = questionbank_question_chooser(context, questions)
-		result['questions'] = questions
+		if _must_randomized(context):
+			questions = result.get('questions', ())
+			questions = questionbank_question_chooser(context, questions)
+			result['questions'] = questions

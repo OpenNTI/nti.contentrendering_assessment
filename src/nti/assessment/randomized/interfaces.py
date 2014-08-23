@@ -29,11 +29,6 @@ from ..interfaces import IQMultipleChoiceMultipleAnswerPartGrader
 class IQRandomizedPart(IQPart):
 	pass
 
-class INonRandomizedQPart(interface.Interface):
-	"""
-	Marker interface to avoid part randomization
-	"""
-
 # matching part
 
 class IQRandomizedMatchingPart(IQRandomizedPart, IQMatchingPart):
@@ -42,12 +37,18 @@ class IQRandomizedMatchingPart(IQRandomizedPart, IQMatchingPart):
 class IQRandomizedMatchingPartGrader(IQMatchingPartGrader):
 	pass
 
+class INonRandomizedMatchingPart(IQRandomizedMatchingPart):
+	pass
+	
 # ordering
 
 class IQRandomizedOrderingPart(IQRandomizedPart, IQOrderingPart):
 	pass
 
 class IQRandomizedOrderingPartGrader(IQOrderingPartGrader):
+	pass
+
+class INonRandomizedOrderingPart(IQRandomizedOrderingPart):
 	pass
 
 # multiple choice
@@ -58,6 +59,8 @@ class IQRandomizedMultipleChoicePart(IQRandomizedPart, IQMultipleChoicePart):
 class IQRandomizedMultipleChoicePartGrader(IQMultipleChoicePartGrader):
 	pass
 
+class INonRandomizedMultipleChoicePart(IQRandomizedMultipleChoicePart):
+	pass
 
 # multiple choice, multiple answer
 
@@ -68,15 +71,22 @@ class IQRandomizedMultipleChoiceMultipleAnswerPart(IQRandomizedPart,
 class IQRandomizedMultipleChoiceMultipleAnswerPartGrader(IQMultipleChoiceMultipleAnswerPartGrader):
 	pass
 
+class INonRandomizedMultipleChoiceMultipleAnswerPart(IQRandomizedMultipleChoiceMultipleAnswerPart):
+	pass
+
 # question set
 
 class IRandomizedQuestionSet(IQuestionSet):
 	pass
 
+class INonRandomizedQuestionSet(IRandomizedQuestionSet):
+	pass
+
+# question bank
+
 class IQuestionIndexRange(interface.Interface):
 	start = Int(title="start index range", min=0, required=True)
 	end = Int(title="end index range", min=0, required=True)
-	
 
 class IQuestionBank(IQuestionSet):
 	"""

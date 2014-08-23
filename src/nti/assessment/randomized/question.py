@@ -20,6 +20,8 @@ from nti.schema.fieldproperty import createDirectFieldProperties
 from .interfaces import IQuestionBank
 from .interfaces import IQuestionIndexRange
 from .interfaces import IRandomizedQuestionSet
+from .interfaces import INonRandomizedQuestionSet
+from .interfaces import INonRandomizedQuestionBank
 
 from ..question import QQuestionSet
 
@@ -29,6 +31,8 @@ class QRandomizedQuestionSet(QQuestionSet):
 	
 	__external_class_name__ = "QuestionSet"
 	mimeType = mime_type = 'application/vnd.nextthought.narandomizedquestionset'
+	
+	nonrandomized_interface = INonRandomizedQuestionSet
 
 @interface.implementer(IQuestionBank)
 @EqHash('draw', include_super=True)
@@ -38,6 +42,8 @@ class QQuestionBank(QQuestionSet):
 	
 	__external_class_name__ = "QuestionSet"
 	mimeType = mime_type = 'application/vnd.nextthought.naquestionbank'
+	
+	nonrandomized_interface = INonRandomizedQuestionBank
 	
 	def copy(self, questions=None, ranges=None, srand=None):
 		result = self.__class__()

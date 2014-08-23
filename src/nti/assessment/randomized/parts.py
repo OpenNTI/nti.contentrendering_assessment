@@ -15,11 +15,15 @@ from ..parts import QMultipleChoicePart
 from ..parts import QMultipleChoiceMultipleAnswerPart
 
 from .interfaces import IQRandomizedMatchingPart
+from .interfaces import INonRandomizedMatchingPart
+from .interfaces import INonRandomizedOrderingPart
 from .interfaces import IQRandomizedMatchingPartGrader
 from .interfaces import IQRandomizedOrderingPartGrader
 from .interfaces import IQRandomizedMultipleChoicePart
+from .interfaces import INonRandomizedMultipleChoicePart
 from .interfaces import IQRandomizedMultipleChoicePartGrader
 from .interfaces import IQRandomizedMultipleChoiceMultipleAnswerPart
+from .interfaces import INonRandomizedMultipleChoiceMultipleAnswerPart
 from .interfaces import IQRandomizedMultipleChoiceMultipleAnswerPartGrader
 
 @interface.implementer(IQRandomizedMatchingPart)
@@ -31,7 +35,9 @@ class QRandomizedMatchingPart(QMatchingPart):
 	mimeType = mime_type = "application/vnd.nextthought.assessment.randomizedmatchingpart"
 
 	grader_interface = IQRandomizedMatchingPartGrader
-
+	
+	nonrandomized_interface = INonRandomizedMatchingPart
+	
 @interface.implementer(IQRandomizedMatchingPart)
 class QRandomizedOrderingPart(QRandomizedMatchingPart):
 
@@ -39,6 +45,8 @@ class QRandomizedOrderingPart(QRandomizedMatchingPart):
 	mimeType = mime_type = "application/vnd.nextthought.assessment.randomizedorderingpart"
 
 	grader_interface = IQRandomizedOrderingPartGrader
+	
+	nonrandomized_interface = INonRandomizedOrderingPart
 	
 @interface.implementer(IQRandomizedMultipleChoicePart)
 class QRandomizedMultipleChoicePart(QMultipleChoicePart):
@@ -49,6 +57,8 @@ class QRandomizedMultipleChoicePart(QMultipleChoicePart):
 	mimeType = mime_type = "application/vnd.nextthought.assessment.randomizedmultiplechoicepart"
 
 	grader_interface = IQRandomizedMultipleChoicePartGrader
+	
+	nonrandomized_interface = INonRandomizedMultipleChoicePart
 
 @interface.implementer(IQRandomizedMultipleChoiceMultipleAnswerPart)
 class QRandomizedMultipleChoiceMultipleAnswerPart(QMultipleChoiceMultipleAnswerPart):
@@ -59,3 +69,6 @@ class QRandomizedMultipleChoiceMultipleAnswerPart(QMultipleChoiceMultipleAnswerP
 	mimeType = mime_type = "application/vnd.nextthought.assessment.randomizedmultiplechoicemultipleanswerpart"
 
 	grader_interface = IQRandomizedMultipleChoiceMultipleAnswerPartGrader
+	
+	nonrandomized_interface = INonRandomizedMultipleChoiceMultipleAnswerPart
+
