@@ -74,6 +74,13 @@ def _check_old_dublin_core( qaq ):
 	assert_that( qaq.lastModified, is_( time.mktime( now.timetuple() ) ) )
 	assert_that( qaq.createdTime, is_( time.mktime( now.timetuple() ) ) )
 
+def lineage(resource):
+	while resource is not None:
+		yield resource
+		try:
+			resource = resource.__parent__
+		except AttributeError:
+			resource = None
 
 class TestAssessedPart(AssessmentTestCase):
 
@@ -296,11 +303,24 @@ class TestAssessedQuestionSet(AssessmentTestCase):
 											   has_property( 'parts', contains( assessed.QAssessedPart( submittedResponse='correct', assessedValue=1.0 ) ) ) ) ) )
 		# consistent hashing
 		assert_that( hash(result), is_(hash(result)))
-
+		
+		for question in result.questions:
+			parents = list(lineage(question))
+			assert_that(parents, has_length(1))
+		
 		ext_obj = toExternalObject( result )
 		assert_that( ext_obj, has_entry( 'questions', has_length( 1 ) ) )
 
 		_check_old_dublin_core( result )
+		
+		for question in result.questions:
+			parents = list(lineage(question))
+			assert_that(parents[-1], is_(result))
+			assert_that(parents, has_length(greater_than(1)))
+			for part in question.parts:
+				parents = list(lineage(part))
+				assert_that(parents, has_length(greater_than(2)))
+				assert_that(parents[-1], is_(result))
 
 	def test_assess_not_same_instance_question_but_id_matches(self):
 		part = parts.QFreeResponsePart(solutions=(solutions.QFreeResponseSolution(value='correct'),))
