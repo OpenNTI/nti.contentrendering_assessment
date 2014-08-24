@@ -14,6 +14,7 @@ from nti.schema.field import Object
 from nti.schema.field import ListOrTuple
 
 from ..interfaces import IQPart
+from ..interfaces import IQPartGrader
 from ..interfaces import IQuestionSet
 from ..interfaces import IQMatchingPart
 from ..interfaces import IQOrderingPart
@@ -29,12 +30,20 @@ from ..interfaces import IQMultipleChoiceMultipleAnswerPartGrader
 class IQRandomizedPart(IQPart):
 	pass
 
+class IQRandomizedPartGrader(IQPartGrader):
+
+	def unshuffle(value, user=None):
+		"""
+		unrandomize the specified value
+		"""
+		
+	
 # matching part
 
 class IQRandomizedMatchingPart(IQRandomizedPart, IQMatchingPart):
 	pass
 
-class IQRandomizedMatchingPartGrader(IQMatchingPartGrader):
+class IQRandomizedMatchingPartGrader(IQMatchingPartGrader, IQRandomizedPartGrader):
 	pass
 
 class INonRandomizedMatchingPart(IQRandomizedMatchingPart):
@@ -45,7 +54,7 @@ class INonRandomizedMatchingPart(IQRandomizedMatchingPart):
 class IQRandomizedOrderingPart(IQRandomizedPart, IQOrderingPart):
 	pass
 
-class IQRandomizedOrderingPartGrader(IQOrderingPartGrader):
+class IQRandomizedOrderingPartGrader(IQOrderingPartGrader, IQRandomizedPartGrader):
 	pass
 
 class INonRandomizedOrderingPart(IQRandomizedOrderingPart):
@@ -56,7 +65,7 @@ class INonRandomizedOrderingPart(IQRandomizedOrderingPart):
 class IQRandomizedMultipleChoicePart(IQRandomizedPart, IQMultipleChoicePart):
 	pass
 
-class IQRandomizedMultipleChoicePartGrader(IQMultipleChoicePartGrader):
+class IQRandomizedMultipleChoicePartGrader(IQMultipleChoicePartGrader, IQRandomizedPartGrader):
 	pass
 
 class INonRandomizedMultipleChoicePart(IQRandomizedMultipleChoicePart):
@@ -68,7 +77,8 @@ class IQRandomizedMultipleChoiceMultipleAnswerPart(IQRandomizedPart,
 												   IQMultipleChoiceMultipleAnswerPart):
 	pass
 
-class IQRandomizedMultipleChoiceMultipleAnswerPartGrader(IQMultipleChoiceMultipleAnswerPartGrader):
+class IQRandomizedMultipleChoiceMultipleAnswerPartGrader(IQMultipleChoiceMultipleAnswerPartGrader,
+														 IQRandomizedPartGrader):
 	pass
 
 class INonRandomizedMultipleChoiceMultipleAnswerPart(IQRandomizedMultipleChoiceMultipleAnswerPart):
