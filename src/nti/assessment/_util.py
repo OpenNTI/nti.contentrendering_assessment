@@ -10,7 +10,7 @@ logger = __import__('logging').getLogger(__name__)
 
 _marker = object()
 
-from nti.externalization.externalization import WithRepr
+from nti.externalization.representation import WithRepr
 
 from nti.schema.schema import EqHash
 

@@ -17,7 +17,7 @@ from zope.location.interfaces import ISublocations
 from nti.dataserver.datastructures import ContainedMixin
 from nti.dataserver.datastructures import PersistentCreatedModDateTrackingObject
 
-from nti.externalization.externalization import WithRepr
+from nti.externalization.representation import WithRepr
 
 from nti.schema.field import SchemaConfigured
 from nti.schema.fieldproperty import createDirectFieldProperties

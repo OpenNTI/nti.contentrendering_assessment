@@ -22,7 +22,7 @@ from persistent import Persistent
 
 from nti.contentfragments.interfaces import UnicodeContentFragment as _u
 
-from nti.externalization.externalization import WithRepr
+from nti.externalization.representation import WithRepr
 
 from nti.schema.schema import EqHash
 from nti.schema.field import SchemaConfigured

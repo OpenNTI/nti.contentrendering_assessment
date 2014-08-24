@@ -28,7 +28,7 @@ from nti.dataserver.interfaces import ICreated
 from nti.dataserver.interfaces import ILastModified
 from nti.dataserver.datastructures import ContainedMixin
 
-from nti.externalization.externalization import WithRepr
+from nti.externalization.representation import WithRepr
 
 from nti.schema.field import InvalidValue
 from nti.schema.field import SchemaConfigured
