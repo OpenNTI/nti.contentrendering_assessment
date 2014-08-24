@@ -50,6 +50,12 @@ class RandomizedMultipleChoiceGrader(EqualityGrader):
 	# MultipleChoiceGrader tries really hard to verify correctness,
 	# when we just need something simple. Thus, we inherit from EqualityGrader.
 
+	def __call__( self ):
+		if hasattr(self.response, 'value'):
+			return self._compare(self.solution.value, self.response.value)
+		else:
+			return self._compare(self.solution.value, self.response)
+
 	def unshuffle(self, the_value, user=None):
 		generator = randomize(user=user)
 		if generator is not None:

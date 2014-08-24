@@ -39,10 +39,10 @@ def assess(quiz, responses):
 	return result
 
 def grader_for_solution_and_response(part, solution, response):
-	grader = component.queryMultiAdapter((part, solution, response),
+	result = component.queryMultiAdapter((part, solution, response),
 										  part.grader_interface,
 										  name=part.grader_name)
-	return grader() if grader is not None else None
+	return result
 grader = grader_for_solution_and_response # alias BWC
 
 def grader_for_response(part, response):

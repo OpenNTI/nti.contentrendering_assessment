@@ -30,6 +30,18 @@
 			 	  nti.assessment.interfaces.IQTextResponse"
 			 provides=".interfaces.IQRandomizedMultipleChoicePartGrader" />
 	
+	<adapter factory=".graders.RandomizedMultipleChoiceGrader"
+			 for=".interfaces.IQRandomizedMultipleChoicePart 
+			 	  nti.assessment.interfaces.IQSingleValuedSolution
+			 	  int"
+			 provides=".interfaces.IQRandomizedMultipleChoicePartGrader" />
+			 
+	<adapter factory=".graders.RandomizedMultipleChoiceGrader"
+			 for=".interfaces.IQRandomizedMultipleChoicePart 
+			 	  nti.assessment.interfaces.IQSingleValuedSolution
+			 	  basestring"
+			 provides=".interfaces.IQRandomizedMultipleChoicePartGrader" />
+			 
 	<adapter factory=".graders.RandomizedMultipleChoiceMultipleAnswerGrader"
 			 for=".interfaces.IQRandomizedMultipleChoiceMultipleAnswerPart 
 			 	  nti.assessment.interfaces.IQMultiValuedSolution

@@ -118,11 +118,11 @@ class QPart(SchemaConfigured,Persistent):
 
 	def _grade(self, solution, response):
 		__traceback_info__ = solution, response, self.grader_name
-		result = grader_for_solution_and_response(self, solution, response)
-		if result is None:
+		grader = grader_for_solution_and_response(self, solution, response)
+		if grader is None:
 			objects = (self, solution, response)
 			raise ComponentLookupError(objects, self.grader_interface, self.grader_name)
-		return result
+		return grader()
 
 @interface.implementer(IQMathPart)
 @EqHash(include_super=True,
