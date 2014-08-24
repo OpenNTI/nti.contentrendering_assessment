@@ -8,6 +8,8 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+from zope import component
+
 from . import interfaces
 
 def grade_one_response(questionResponse, possible_answers):
@@ -35,3 +37,19 @@ def assess(quiz, responses):
 		result[questionId] = \
 			grade_one_response(questionResponse, quiz[questionId].answers)
 	return result
+
+def grader_for_solution_and_response(part, solution, response):
+	grader = component.queryMultiAdapter((part, solution, response),
+										  part.grader_interface,
+										  name=part.grader_name)
+	return grader() if grader is not None else None
+grader = grader_for_solution_and_response # alias BWC
+
+def grader_for_response(part, response):
+	for solution in part.solutions or ():
+		grader = grader_for_solution_and_response(part, solution, response)
+		if grader is not None:
+			return grader
+	return None
+
+		

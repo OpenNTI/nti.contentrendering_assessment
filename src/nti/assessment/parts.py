@@ -13,10 +13,10 @@ logger = __import__('logging').getLogger(__name__)
 import os.path
 
 from zope import interface
-from zope import component
-from zope.container import contained
+from zope.container.contained import Contained
 from zope.mimetype.interfaces import mimeTypeConstraint
 from zope.schema.interfaces import ConstraintNotSatisfied
+from zope.component.interfaces import ComponentLookupError
 
 from persistent import Persistent
 
@@ -24,15 +24,42 @@ from nti.contentfragments.interfaces import UnicodeContentFragment as _u
 
 from nti.externalization.externalization import WithRepr
 
-from nti.schema.field import SchemaConfigured
 from nti.schema.schema import EqHash
+from nti.schema.field import SchemaConfigured
 
-from . import interfaces
+from .interfaces import IQPart
+from .interfaces import IQFilePart
+from .interfaces import IQMathPart
+from .interfaces import IQPartGrader
+from .interfaces import IQDictResponse
+from .interfaces import IQFileResponse
+from .interfaces import IQMatchingPart
+from .interfaces import IQOrderingPart
+from .interfaces import IQNumericMathPart
+from .interfaces import IQFreeResponsePart
+from .interfaces import IQSymbolicMathPart
+from .interfaces import IQModeledContentPart
+from .interfaces import IQMultipleChoicePart
+from .interfaces import IQMatchingPartGrader
+from .interfaces import IQOrderingPartGrader
+from .interfaces import IQSymbolicMathGrader
+from .interfaces import IQModeledContentResponse
+from .interfaces import IQMultipleChoicePartGrader
+from .interfaces import IQFillInTheBlankShortAnswerPart
+from .interfaces import IQFillInTheBlankWithWordBankPart
+from .interfaces import IQFillInTheBlankShortAnswerGrader
+from .interfaces import IQFillInTheBlankWithWordBankGrader
+from .interfaces import IQMultipleChoiceMultipleAnswerPart
+from .interfaces import IQMultipleChoiceMultipleAnswerPartGrader
+
 from .interfaces import convert_response_for_solution
 
-@interface.implementer(interfaces.IQPart)
+from . import grader_for_solution_and_response
+
+@interface.implementer(IQPart)
 @WithRepr
-@EqHash('content', 'hints', 'solutions', 'explanation', 'grader_interface', 'grader_name',
+@EqHash('content', 'hints', 'solutions', 'explanation', 
+		'grader_interface', 'grader_name',
 		superhash=True,
 		include_type=True)
 class QPart(SchemaConfigured,Persistent):
@@ -47,7 +74,7 @@ class QPart(SchemaConfigured,Persistent):
 	#: solution and the response when grading. Should be a
 	#: class:`.IQPartGrader`. The response will have first been converted
 	#: for the solution.
-	grader_interface = interfaces.IQPartGrader
+	grader_interface = IQPartGrader
 
 	#: The name of the grader we will attempt to adapt to. Defaults to the default,
 	#: unnamed, adapter
@@ -91,12 +118,13 @@ class QPart(SchemaConfigured,Persistent):
 
 	def _grade(self, solution, response):
 		__traceback_info__ = solution, response, self.grader_name
-		grader = component.getMultiAdapter((self, solution, response),
-											self.grader_interface,
-											name=self.grader_name)
-		return grader()
+		result = grader_for_solution_and_response(self, solution, response)
+		if result is None:
+			objects = (self, solution, response)
+			raise ComponentLookupError(objects, self.grader_interface, self.grader_name)
+		return result
 
-@interface.implementer(interfaces.IQMathPart)
+@interface.implementer(IQMathPart)
 @EqHash(include_super=True,
 		include_type=True)
 class QMathPart(QPart):
@@ -104,65 +132,64 @@ class QMathPart(QPart):
 	def _eq_instance( self, other ):
 		return isinstance(other, QMathPart)
 
-@interface.implementer(interfaces.IQSymbolicMathPart)
+@interface.implementer(IQSymbolicMathPart)
 @EqHash(include_super=True,
 		include_type=True)
 class QSymbolicMathPart(QMathPart):
 
-	grader_interface = interfaces.IQSymbolicMathGrader
+	grader_interface = IQSymbolicMathGrader
 
-@interface.implementer(interfaces.IQNumericMathPart)
+@interface.implementer(IQNumericMathPart)
 @EqHash(include_super=True,
 		include_type=True)
 class QNumericMathPart(QMathPart):
 	pass
 
-@interface.implementer(interfaces.IQMultipleChoicePart)
+@interface.implementer(IQMultipleChoicePart)
 @EqHash('choices',
 		include_super=True,
 		include_type=True,
 		superhash=True)
 class QMultipleChoicePart(QPart):
 
-	grader_interface = interfaces.IQMultipleChoicePartGrader
+	grader_interface = IQMultipleChoicePartGrader
 	choices = ()
 
-
-@interface.implementer(interfaces.IQMultipleChoiceMultipleAnswerPart)
+@interface.implementer(IQMultipleChoiceMultipleAnswerPart)
 class QMultipleChoiceMultipleAnswerPart(QMultipleChoicePart):
 
-	grader_interface = interfaces.IQMultipleChoiceMultipleAnswerPartGrader
+	grader_interface = IQMultipleChoiceMultipleAnswerPartGrader
 
-@interface.implementer(interfaces.IQMatchingPart)
+@interface.implementer(IQMatchingPart)
 @EqHash('labels', 'values',
 		include_super=True,
 		superhash=True)
 class QMatchingPart(QPart):
 	
-	grader_interface = interfaces.IQMatchingPartGrader
+	grader_interface = IQMatchingPartGrader
 
 	labels = ()
 	values = ()
 
-@interface.implementer(interfaces.IQOrderingPart)
+@interface.implementer(IQOrderingPart)
 class QOrderingPart(QMatchingPart):
 
-	grader_interface = interfaces.IQOrderingPartGrader
+	grader_interface = IQOrderingPartGrader
 	
-@interface.implementer(interfaces.IQFreeResponsePart)
+@interface.implementer(IQFreeResponsePart)
 @EqHash(include_super=True,
 		include_type=True)
 class QFreeResponsePart(QPart):
 
 	grader_name = 'LowerQuoteNormalizedStringEqualityGrader'
 
-@interface.implementer(interfaces.IQFilePart)
+@interface.implementer(IQFilePart)
 @EqHash('allowed_mime_types', 'allowed_extensions', 'max_file_size',
 		include_super=True,
 		superhash=True)
 class QFilePart(QPart):
 
-	response_interface = interfaces.IQFileResponse
+	response_interface = IQFileResponse
 
 	allowed_mime_types = ()
 	allowed_extensions = ()
@@ -215,23 +242,23 @@ class QFilePart(QPart):
 				 and (os.path.splitext(filename.lower())[1] in self.allowed_extensions
 					  or '*' in self.allowed_extensions))
 
-@interface.implementer(interfaces.IQModeledContentPart)
+@interface.implementer(IQModeledContentPart)
 @EqHash(include_super=True,
 		include_type=True)
 class QModeledContentPart(QPart):
 
-	response_interface = interfaces.IQModeledContentResponse
+	response_interface = IQModeledContentResponse
 
-@interface.implementer(interfaces.IQFillInTheBlankShortAnswerPart)
+@interface.implementer(IQFillInTheBlankShortAnswerPart)
 class QFillInTheBlankShortAnswerPart(QPart):
-	response_interface = interfaces.IQDictResponse
-	grader_interface = interfaces.IQFillInTheBlankShortAnswerGrader
+	response_interface = IQDictResponse
+	grader_interface = IQFillInTheBlankShortAnswerGrader
 
-@interface.implementer(interfaces.IQFillInTheBlankWithWordBankPart)
-class QFillInTheBlankWithWordBankPart(QPart, contained.Contained):
+@interface.implementer(IQFillInTheBlankWithWordBankPart)
+class QFillInTheBlankWithWordBankPart(QPart, Contained):
 
-	response_interface = interfaces.IQDictResponse
-	grader_interface = interfaces.IQFillInTheBlankWithWordBankGrader
+	response_interface = IQDictResponse
+	grader_interface = IQFillInTheBlankWithWordBankGrader
 
 	def _weight(self, result, solution):
 		return result * solution.weight
