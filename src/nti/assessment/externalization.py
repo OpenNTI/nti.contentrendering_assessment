@@ -65,8 +65,11 @@ class _QAssessedObjectExternalizer(object):
 		self.assessed = assessed
 
 	def toExternalObject(self, **kwargs):
-		## set sublocations
 		if hasattr(self.assessed, 'sublocations'):
+			## the sublocations method for asseed parts/questions/questionsets
+			## sets the full parent lineage for these objects. 
+			## we wrapp the execution of it in a tuple in case it
+			## returns a generator
 			tuple(self.assessed.sublocations())
 		return InterfaceObjectIO(self.assessed, self.interface).toExternalObject( **kwargs)
 
