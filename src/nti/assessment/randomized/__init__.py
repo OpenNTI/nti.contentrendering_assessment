@@ -34,7 +34,7 @@ def get_user(user=None):
         user = User.get_user(str(user))
     return user
 
-def randomize(user=None, use_sha224=False):
+def randomize(user=None, use_sha224=False, context=None):
     user = get_user(user)        
     if user is not None:
         uid = component.getUtility(IIntIds).getId(user)
