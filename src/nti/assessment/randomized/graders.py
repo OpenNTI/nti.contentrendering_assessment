@@ -57,7 +57,7 @@ class RandomizedMultipleChoiceGrader(EqualityGrader):
 			return self._compare(self.solution.value, self.response)
 
 	def unshuffle(self, the_value, user=None, context=None):
-		generator = randomize(user=user, contex=context)
+		generator = randomize(user=user, context=context)
 		if generator is not None:
 			the_value = int(the_value)
 			choices = list(self.part.choices)
