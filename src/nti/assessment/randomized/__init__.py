@@ -10,6 +10,7 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 import random
+import hashlib
 
 from zope import component
 
@@ -33,11 +34,15 @@ def get_user(user=None):
         user = User.get_user(str(user))
     return user
 
-def randomize(user=None):
+def randomize(user=None, use_sha224=False):
     user = get_user(user)        
     if user is not None:
         uid = component.getUtility(IIntIds).getId(user)
-        generator = random.Random(uid)
+        if use_sha224:
+            hexdigest = hashlib.sha224(bytes(uid)).hexdigest()
+            generator = random.Random(long(hexdigest, 16))
+        else:
+            generator = random.Random(uid)
         return generator
     return None
 
@@ -45,14 +50,15 @@ def shuffle_list(generator, target):
     generator.shuffle(target)
     return target
 
-def questionbank_random(context, user=None):
-    generator = random.Random() if context.srand else randomize(user=user)
+def questionbank_random(context, user=None, generator=None):
+    if generator is None:
+        generator = random.Random() if context.srand else randomize(user=user)
     return generator
 
-def questionbank_question_chooser(context, questions=None, user=None):
+def questionbank_question_chooser(context, questions=None, user=None, generator=None):
     result = []
     questions = questions or context.questions
-    generator = questionbank_random(context, user=user)
+    generator = questionbank_random(context, user=user, generator=generator)
     if generator and questions and context.draw and context.draw < len(questions):
         ranges = context.ranges or ()
         if not ranges:
