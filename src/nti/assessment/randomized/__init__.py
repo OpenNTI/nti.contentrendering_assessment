@@ -21,6 +21,8 @@ from zope.security.management import queryInteraction
 from nti.dataserver.users import User
 from nti.dataserver.interfaces import IUser
 
+from .interfaces import ISha224Randomized
+
 def get_current_user():
     interaction = queryInteraction()
     participations = list(getattr(interaction, 'participations', None) or ())
@@ -34,10 +36,11 @@ def get_user(user=None):
         user = User.get_user(str(user))
     return user
 
-def randomize(user=None, use_sha224=False, context=None):
+def randomize(user=None, context=None):
     user = get_user(user)        
     if user is not None:
         uid = component.getUtility(IIntIds).getId(user)
+        use_sha224 = context is not None and ISha224Randomized.providedBy(context)
         if use_sha224:
             hexdigest = hashlib.sha224(bytes(uid)).hexdigest()
             generator = random.Random(long(hexdigest, 16))

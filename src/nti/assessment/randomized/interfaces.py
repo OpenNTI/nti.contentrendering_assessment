@@ -25,9 +25,24 @@ from ..interfaces import IQMultipleChoicePartGrader
 from ..interfaces import IQMultipleChoiceMultipleAnswerPart
 from ..interfaces import IQMultipleChoiceMultipleAnswerPartGrader
 
+# marker
+
+class ISha224Randomized(interface.Interface):
+	"""
+	marker interface to use the following generator
+	
+	hexdigest = hashlib.sha224(bytes(uid)).hexdigest()
+    generator = random.Random(long(hexdigest, 16))
+    
+    where uid is the user int id
+    """
+
 # parts
 
 class IQRandomizedPart(IQPart):
+	pass
+
+class ISha224RandomizedPart(IQRandomizedPart, ISha224Randomized):
 	pass
 
 class IQRandomizedPartGrader(IQPartGrader):
@@ -36,7 +51,6 @@ class IQRandomizedPartGrader(IQPartGrader):
 		"""
 		unrandomize the specified value
 		"""
-		
 	
 # matching part
 
@@ -47,6 +61,9 @@ class IQRandomizedMatchingPartGrader(IQMatchingPartGrader, IQRandomizedPartGrade
 	pass
 
 class INonRandomizedMatchingPart(IQRandomizedMatchingPart):
+	pass
+
+class ISha224RandomizedMatchingPart(IQRandomizedMatchingPart, ISha224RandomizedPart):
 	pass
 	
 # ordering
@@ -60,6 +77,9 @@ class IQRandomizedOrderingPartGrader(IQOrderingPartGrader, IQRandomizedPartGrade
 class INonRandomizedOrderingPart(IQRandomizedOrderingPart):
 	pass
 
+class ISha224RandomizedOrderingPart(IQRandomizedOrderingPart, ISha224RandomizedPart):
+	pass
+
 # multiple choice
 
 class IQRandomizedMultipleChoicePart(IQRandomizedPart, IQMultipleChoicePart):
@@ -69,6 +89,9 @@ class IQRandomizedMultipleChoicePartGrader(IQMultipleChoicePartGrader, IQRandomi
 	pass
 
 class INonRandomizedMultipleChoicePart(IQRandomizedMultipleChoicePart):
+	pass
+
+class ISha224RandomizedMultipleChoicePart(IQRandomizedMultipleChoicePart, ISha224RandomizedPart):
 	pass
 
 # multiple choice, multiple answer
@@ -84,12 +107,19 @@ class IQRandomizedMultipleChoiceMultipleAnswerPartGrader(IQMultipleChoiceMultipl
 class INonRandomizedMultipleChoiceMultipleAnswerPart(IQRandomizedMultipleChoiceMultipleAnswerPart):
 	pass
 
+class ISha224RandomizedMultipleChoiceMultipleAnswerPart(IQRandomizedMultipleChoiceMultipleAnswerPart,
+														ISha224RandomizedPart):
+	pass
+
 # question set
 
 class IRandomizedQuestionSet(IQuestionSet):
 	pass
 
 class INonRandomizedQuestionSet(IRandomizedQuestionSet):
+	pass
+
+class ISha224RandomizedQuestionSet(IRandomizedQuestionSet, ISha224Randomized):
 	pass
 
 # question bank
@@ -124,3 +154,5 @@ class INonRandomizedQuestionBank(IQuestionBank):
 	Marker interface to avoid randomizing an question bank
 	"""
 	
+class ISha224RandomizedQuestionBank(IQuestionBank, ISha224Randomized):
+	pass
