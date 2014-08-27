@@ -53,15 +53,14 @@ def shuffle_list(generator, target):
     generator.shuffle(target)
     return target
 
-def questionbank_random(context, user=None, generator=None):
-    if generator is None:
-        generator = random.Random() if context.srand else randomize(user=user)
+def questionbank_random(context, user=None):
+    generator = random.Random() if context.srand else randomize(user=user, context=context)
     return generator
 
-def questionbank_question_chooser(context, questions=None, user=None, generator=None):
+def questionbank_question_chooser(context, questions=None, user=None):
     result = []
     questions = questions or context.questions
-    generator = questionbank_random(context, user=user, generator=generator)
+    generator = questionbank_random(context, user=user)
     if generator and questions and context.draw and context.draw < len(questions):
         ranges = context.ranges or ()
         if not ranges:
