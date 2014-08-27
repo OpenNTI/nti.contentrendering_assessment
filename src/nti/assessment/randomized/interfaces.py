@@ -47,7 +47,7 @@ class ISha224RandomizedPart(IQRandomizedPart, ISha224Randomized):
 
 class IQRandomizedPartGrader(IQPartGrader):
 
-	def unshuffle(value, user=None):
+	def unshuffle(value, user=None, context=None):
 		"""
 		unrandomize the specified value
 		"""

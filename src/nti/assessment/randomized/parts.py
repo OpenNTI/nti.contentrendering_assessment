@@ -26,6 +26,11 @@ from .interfaces import IQRandomizedMultipleChoiceMultipleAnswerPart
 from .interfaces import INonRandomizedMultipleChoiceMultipleAnswerPart
 from .interfaces import IQRandomizedMultipleChoiceMultipleAnswerPartGrader
 
+from .interfaces import ISha224RandomizedMatchingPart
+from .interfaces import ISha224RandomizedOrderingPart
+from .interfaces import ISha224RandomizedMultipleChoicePart
+from .interfaces import ISha224RandomizedMultipleChoiceMultipleAnswerPart
+
 @interface.implementer(IQRandomizedMatchingPart)
 class QRandomizedMatchingPart(QMatchingPart):
 
@@ -37,6 +42,7 @@ class QRandomizedMatchingPart(QMatchingPart):
 	grader_interface = IQRandomizedMatchingPartGrader
 	
 	nonrandomized_interface = INonRandomizedMatchingPart
+	sha224randomized_interface = ISha224RandomizedMatchingPart
 	
 @interface.implementer(IQRandomizedMatchingPart)
 class QRandomizedOrderingPart(QRandomizedMatchingPart):
@@ -47,6 +53,7 @@ class QRandomizedOrderingPart(QRandomizedMatchingPart):
 	grader_interface = IQRandomizedOrderingPartGrader
 	
 	nonrandomized_interface = INonRandomizedOrderingPart
+	sha224randomized_interface = ISha224RandomizedOrderingPart
 	
 @interface.implementer(IQRandomizedMultipleChoicePart)
 class QRandomizedMultipleChoicePart(QMultipleChoicePart):
@@ -59,6 +66,7 @@ class QRandomizedMultipleChoicePart(QMultipleChoicePart):
 	grader_interface = IQRandomizedMultipleChoicePartGrader
 	
 	nonrandomized_interface = INonRandomizedMultipleChoicePart
+	sha224randomized_interface = ISha224RandomizedMultipleChoicePart
 
 @interface.implementer(IQRandomizedMultipleChoiceMultipleAnswerPart)
 class QRandomizedMultipleChoiceMultipleAnswerPart(QMultipleChoiceMultipleAnswerPart):
@@ -71,4 +79,4 @@ class QRandomizedMultipleChoiceMultipleAnswerPart(QMultipleChoiceMultipleAnswerP
 	grader_interface = IQRandomizedMultipleChoiceMultipleAnswerPartGrader
 	
 	nonrandomized_interface = INonRandomizedMultipleChoiceMultipleAnswerPart
-
+	sha224randomized_interface = ISha224RandomizedMultipleChoiceMultipleAnswerPart

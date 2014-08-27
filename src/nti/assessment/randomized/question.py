@@ -22,6 +22,8 @@ from .interfaces import IQuestionIndexRange
 from .interfaces import IRandomizedQuestionSet
 from .interfaces import INonRandomizedQuestionSet
 from .interfaces import INonRandomizedQuestionBank
+from .interfaces import ISha224RandomizedQuestionSet
+from .interfaces import ISha224RandomizedQuestionBank
 
 from ..question import QQuestionSet
 
@@ -33,7 +35,8 @@ class QRandomizedQuestionSet(QQuestionSet):
 	mimeType = mime_type = 'application/vnd.nextthought.narandomizedquestionset'
 	
 	nonrandomized_interface = INonRandomizedQuestionSet
-
+	sha224randomized_interface = ISha224RandomizedQuestionSet
+		
 @interface.implementer(IQuestionBank)
 @EqHash('draw', include_super=True)
 class QQuestionBank(QQuestionSet):
@@ -44,6 +47,7 @@ class QQuestionBank(QQuestionSet):
 	mimeType = mime_type = 'application/vnd.nextthought.naquestionbank'
 	
 	nonrandomized_interface = INonRandomizedQuestionBank
+	sha224randomized_interface = ISha224RandomizedQuestionBank
 	
 	def copy(self, questions=None, ranges=None, srand=None):
 		result = self.__class__()

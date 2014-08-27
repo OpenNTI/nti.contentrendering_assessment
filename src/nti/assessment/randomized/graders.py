@@ -25,9 +25,9 @@ from .interfaces import IQRandomizedMultipleChoiceMultipleAnswerPartGrader
 @interface.implementer(IQRandomizedMatchingPartGrader)
 class RandomizedMatchingPartGrader(MatchingPartGrader):
 
-	def unshuffle(self, the_dict, user=None):
+	def unshuffle(self, the_dict, user=None, context=None):
 		the_dict = MatchingPartGrader._to_int_dict(self, the_dict)
-		generator = randomize(user=user)
+		generator = randomize(user=user, context=context)
 		if generator is not None:
 			values = list(self.part.values)
 			original = {v:idx for idx, v in enumerate(values)}
@@ -56,8 +56,8 @@ class RandomizedMultipleChoiceGrader(EqualityGrader):
 		else:
 			return self._compare(self.solution.value, self.response)
 
-	def unshuffle(self, the_value, user=None):
-		generator = randomize(user=user)
+	def unshuffle(self, the_value, user=None, context=None):
+		generator = randomize(user=user, contex=context)
 		if generator is not None:
 			the_value = int(the_value)
 			choices = list(self.part.choices)
@@ -71,8 +71,8 @@ class RandomizedMultipleChoiceGrader(EqualityGrader):
 @interface.implementer(IQRandomizedMultipleChoiceMultipleAnswerPartGrader)
 class RandomizedMultipleChoiceMultipleAnswerGrader(MultipleChoiceMultipleAnswerGrader):
 
-	def unshuffle(self, the_values, user=None):
-		generator = randomize(user=user)
+	def unshuffle(self, the_values, user=None, context=None):
+		generator = randomize(user=user, context=context)
 		if generator is not None:
 			the_values = list(the_values)
 			choices = list(self.part.choices)
