@@ -16,7 +16,6 @@ from hamcrest import contains
 from hamcrest import none
 from hamcrest import is_not
 from hamcrest import has_length
-from hamcrest import has_item
 from hamcrest import greater_than
 from hamcrest import calling
 from hamcrest import raises
@@ -110,7 +109,6 @@ class TestAssessedPart(AssessmentTestCase):
 
 class TestAssessedQuestion(AssessmentTestCase):
 
-
 	def test_externalizes(self):
 		assert_that( assessed.QAssessedQuestion(), verifiably_provides( interfaces.IQAssessedQuestion ) )
 		assert_that( assessed.QAssessedQuestion(), verifiably_provides( nti_interfaces.ILastModified ) )
@@ -132,14 +130,6 @@ class TestAssessedQuestion(AssessmentTestCase):
 		assert_that( result, has_property( 'parts', contains( assessed.QAssessedPart( submittedResponse='correct', assessedValue=1.0 ) ) ) )
 
 		_check_old_dublin_core( result )
-
-
-		assert_that( result,
-					 externalizes( has_entry( 'parts',
-											  has_item(
-												  has_entry( 'solutions',
-															 has_item( has_entry( 'value',
-																				  'correct' ))) ) ) ) )
 
 	def test_assess_with_null_part(self):
 		# A null part means no answer was provided

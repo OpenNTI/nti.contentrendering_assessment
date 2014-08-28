@@ -223,10 +223,6 @@
 			 for="tuple"/>
 			  
 	<!-- Decorators -->
-	<subscriber
-		factory=".decorators._QAssessedQuestionExplanationSolutionAdder"
-		for=".interfaces.IQAssessedQuestion"
-		provides="nti.externalization.interfaces.IExternalObjectDecorator" />
 
 	<adapter factory=".decorators._DefaultPartSolutionsExternalizer"
 			 for=".interfaces.IQPart"

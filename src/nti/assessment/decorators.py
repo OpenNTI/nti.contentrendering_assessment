@@ -22,8 +22,6 @@ from nti.externalization.interfaces import IExternalObjectDecorator
 
 from .interfaces import IRegEx
 from .interfaces import IQPart
-from .interfaces import IQuestion
-from .interfaces import IQAssessedQuestion
 from .interfaces import IQPartSolutionsExternalizer
 from .interfaces import IQFillInTheBlankShortAnswerPart
 from .interfaces import IQFillInTheBlankWithWordBankPart
@@ -80,33 +78,6 @@ class _FillInTheBlankWithWordBankPartSolutionsExternalizer(object):
 						value[k] = v[0]  # pick first one always
 			result.append(ext)
 		return result
-
-@interface.implementer(IExternalObjectDecorator)
-@component.adapter(IQAssessedQuestion)
-class _QAssessedQuestionExplanationSolutionAdder(object):
-	"""
-	Because we don't generally want to provide solutions and explanations
-	until after a student has submitted, we place them on the assessed object.
-
-	.. note:: In the future this may be registered/unregistered on a site
-		by site basis (where a Course is a site) so that instructor preferences
-		on whether or not to provide solutions can be respected.
-	"""
-
-	__metaclass__ = SingletonDecorator
-
-	def decorateExternalObject( self, context, mapping ):
-		question_id = context.questionId
-		question = component.queryUtility(IQuestion, name=question_id)
-		if question is None:
-			# In case of old answers to questions
-			# that no longer exist mostly
-			return
-
-		for question_part, external_part in zip(question.parts, mapping['parts']):
-			externalizer = IQPartSolutionsExternalizer(question_part)
-			external_part['solutions'] = externalizer.to_external_object()
-			external_part['explanation'] = to_external_object(question_part.explanation)
 
 @interface.implementer(IExternalObjectDecorator)
 class _QAssessmentObjectIContainedAdder(object):
