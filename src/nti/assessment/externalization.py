@@ -34,7 +34,9 @@ from .response import QUploadedImageFile
 from .interfaces import IQAssessedPart
 from .interfaces import IQUploadedFile
 from .interfaces import IQAssessedQuestion
+from .interfaces import IQuestionSubmission
 from .interfaces import IQAssessedQuestionSet
+from .interfaces import IQuestionSetSubmission
 
 @interface.implementer(IInternalObjectIO)
 class _AssessmentInternalObjectIOBase(object):
@@ -61,6 +63,7 @@ class _AssessmentInternalObjectIOBase(object):
 class _QAssessedObjectExternalizer(object):
 
 	interface = None
+	
 	def __init__(self, assessed):
 		self.assessed = assessed
 
@@ -84,6 +87,14 @@ class _QAssessedQuestionExternalizer(_QAssessedObjectExternalizer):
 @component.adapter(IQAssessedQuestionSet)	
 class _QAssessedQuestionSetExternalizer(_QAssessedObjectExternalizer):
 	interface = IQAssessedQuestionSet
+	
+@component.adapter(IQuestionSubmission)	
+class _QuestionSubmissionExternalizer(_QAssessedObjectExternalizer):
+	interface = IQuestionSubmission
+	
+@component.adapter(IQuestionSetSubmission)	
+class _QuestionSetSubmissionExternalizer(_QAssessedObjectExternalizer):
+	interface = IQuestionSetSubmission
 	
 ##
 # File uploads

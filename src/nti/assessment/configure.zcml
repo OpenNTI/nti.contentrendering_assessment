@@ -183,6 +183,14 @@
 			 for=".interfaces.IQAssessedQuestionSet"
 			 provides="nti.externalization.interfaces.IInternalObjectExternalizer" />
 			 	 		 	 
+	<adapter factory=".externalization._QuestionSubmissionExternalizer"
+			 for=".interfaces.IQuestionSubmission"
+			 provides="nti.externalization.interfaces.IInternalObjectExternalizer" />
+		
+	<adapter factory=".externalization._QuestionSetSubmissionExternalizer"
+			 for=".interfaces.IQuestionSetSubmission"
+			 provides="nti.externalization.interfaces.IInternalObjectExternalizer" />
+			 
 	<!-- WordBank & Regex -->
 	<ext:registerAutoPackageIO
 		root_interfaces=".interfaces.IWordEntry
