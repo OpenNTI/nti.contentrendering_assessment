@@ -141,7 +141,7 @@ class IQuestionBank(IQuestionSet):
 	ranges = ListOrTuple(Object(IQuestionIndexRange), title="Question index ranges", 
 						 required=False, default=())
 
-	srand = Bool(title="always use a differnet random seed", required=False,
+	srand = Bool(title="always use a different random seed.", required=False,
 				 default=False)
 	
 	def copy(questions=None, ranges=None, srand=None):
