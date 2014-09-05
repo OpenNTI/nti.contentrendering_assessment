@@ -8,6 +8,7 @@ __docformat__ = "restructuredtext en"
 # pylint: disable=W0212,R0904
 
 from hamcrest import is_
+from hamcrest import none
 from hamcrest import is_not
 from hamcrest import equal_to
 from hamcrest import has_length
@@ -23,7 +24,7 @@ from nti.externalization.tests import externalizes
 
 from nti.testing.matchers import verifiably_provides
 
-from . import AssessmentTestCase
+from nti.assessment.tests import AssessmentTestCase
 
 class TestWordBank(AssessmentTestCase):
 
@@ -95,3 +96,20 @@ class TestWordBank(AssessmentTestCase):
 		assert_that(bank, has_length(1))
 		assert_that('1' in bank, is_(True))
 		assert_that('2' in bank, is_(False))
+		
+	def test_biology_words(self):
+		entries = [WordEntry(wid='1', word=u"Phospholipase A\u2082"),
+				   WordEntry(wid='2', word='Cyclooxygenase'),
+				   WordEntry(wid='3', word='Lipoxygenase')]
+		bank = WordBank(entries=entries, unique=True)
+		assert_that(bank.get('1'), is_not(none()))
+			
+		assert_that(bank.idOf('xx'), is_(none()))
+		assert_that(bank.idOf('Lipoxygenase'), is_not(none()))
+		assert_that(bank.idOf(u'Phospholipase'), is_(none()))
+		assert_that(bank.idOf(u'Phospholipase A\u2082'), is_not(none()))
+	
+		assert_that(bank, externalizes(has_entries('Class', 'WordBank',
+												   'unique', True,
+												   'entries', has_length(3))))
+
