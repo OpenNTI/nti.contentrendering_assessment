@@ -8,6 +8,7 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+import six
 import functools
 
 from zope import interface
@@ -16,7 +17,7 @@ from zope.location.interfaces import ISublocations
 
 from persistent import Persistent
 
-from nti.contentfragments import interfaces as cfg_interfaces
+from nti.contentfragments.interfaces import HTMLContentFragment
 
 from nti.externalization.representation import WithRepr
 
@@ -30,6 +31,19 @@ from nti.utils.maps import CaseInsensitiveDict
 
 from .interfaces import IWordBank
 from .interfaces import IWordEntry
+
+def safestr(s):
+	s = s.decode("utf-8") if isinstance(s, bytes) else s
+	return unicode(s) if s is not None else None
+
+def safe_encode(word, encoding="UTF-8"):
+	if not isinstance(word, six.string_types):
+		word = str(word)
+	try:
+		word = word.encode(encoding)
+	except:
+		word = repr(word)
+	return word
 
 @functools.total_ordering
 @interface.implementer(IWordEntry)
@@ -91,7 +105,7 @@ class WordBank(Contained, SchemaConfigured, Persistent):
 		return sorted(self.entries)
 
 	def idOf(self, word):
-		return self._word_map.get(str(word), None) if word is not None else None
+		return self._word_map.get(safe_encode(word), None) if word is not None else None
 
 	def contains_word(self, word):
 		return self.idOf(word) != None
@@ -134,15 +148,15 @@ class WordBank(Contained, SchemaConfigured, Persistent):
 	@Lazy
 	def _word_map(self):
 		result = CaseInsensitiveDict()
-		result.update({x.word: x.wid for x in self.entries})
+		result.update({safe_encode(x.word): x.wid for x in self.entries})
 		return result
 
 @interface.implementer(IWordEntry)
 def _wordentry_adapter(sequence):
-	result = WordEntry(wid=unicode(sequence[0]), word=unicode(sequence[1]))
-	result.lang = unicode(sequence[2]) if len(sequence) > 2 and sequence[2] else u'en'
-	content = unicode(sequence[3]) if len(sequence) > 3 and sequence[3] else result.word
-	result.content = cfg_interfaces.HTMLContentFragment(content)
+	result = WordEntry(wid=safestr(sequence[0]), word=safestr(sequence[1]))
+	result.lang = safestr(sequence[2]) if len(sequence) > 2 and sequence[2] else u'en'
+	content = safestr(sequence[3]) if len(sequence) > 3 and sequence[3] else result.word
+	result.content = HTMLContentFragment(content)
 	return result
 
 @interface.implementer(IWordBank)
