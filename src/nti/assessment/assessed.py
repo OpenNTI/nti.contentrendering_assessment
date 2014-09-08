@@ -190,6 +190,7 @@ def assess_question_submission(submission, registry=component):
 		except (LookupError, ValueError):
 			# We couldn't grade the part because the submission was in the wrong
 			# format. Translate this error to something more useful.
+			__traceback_info__ = sub_part, q_part
 			raise InvalidValue(value=sub_part, field=IQuestionSubmission['parts'])
 		else:
 			assessed_parts.append(QAssessedPart(submittedResponse=sub_part, assessedValue=grade))
