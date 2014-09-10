@@ -37,18 +37,20 @@ from .ntibase import _LocalContentMixin
 class _WordBankMixIn(object):
 
 	def _asm_entries(self):
-		result = []
 		_naqwordbank = self.getElementsByTagName('naqwordbank')
-		if _naqwordbank:
-			_naqwordbank = _naqwordbank[0]
-			for x in _naqwordbank.getElementsByTagName('naqwordentry'):
-				if 'wid' in x.attributes:
-					data = [x.attributes['wid'],
-							x.attributes['word'],
-							x.attributes.get('lang'),
-							x._asm_local_content]
-					we = IWordEntry(data)
-					result.append(we)
+		if not _naqwordbank or _naqwordbank[0].parentNode != self:
+			return None, ()
+		
+		result = []
+		_naqwordbank = _naqwordbank[0]		
+		for x in _naqwordbank.getElementsByTagName('naqwordentry'):
+			if 'wid' in x.attributes:
+				data = [x.attributes['wid'],
+						x.attributes['word'],
+						x.attributes.get('lang'),
+						x._asm_local_content]
+				we = IWordEntry(data)
+				result.append(we)
 		return _naqwordbank, result
 
 	def _asm_wordbank(self):
@@ -59,7 +61,7 @@ class _WordBankMixIn(object):
 			result.unique = _naqwordbank.attributes.get('unique', 'true') == 'true'
 		return result
 
-class naqfillintheblankwithwordbankpart(_AbstractNAQPart, _WordBankMixIn):
+class naqfillintheblankwithwordbankpart(_WordBankMixIn, _AbstractNAQPart):
 	r"""
 	A fill in the blank with word bank part.
 
@@ -89,8 +91,8 @@ class naqfillintheblankwithwordbankpart(_AbstractNAQPart, _WordBankMixIn):
 		\end{naquestion}
 	"""
 
-	part_factory = parts.QFillInTheBlankWithWordBankPart
 	part_interface = IQFillInTheBlankWithWordBankPart
+	part_factory = parts.QFillInTheBlankWithWordBankPart
 	soln_interface = IQFillInTheBlankWithWordBankSolution
 
 	def _asm_object_kwargs(self):
@@ -181,8 +183,8 @@ class naqfillintheblankshortanswerpart(_AbstractNAQPart):
 		\end{naquestion}
 	"""
 
-	part_factory = parts.QFillInTheBlankShortAnswerPart
 	part_interface = IQFillInTheBlankShortAnswerPart
+	part_factory = parts.QFillInTheBlankShortAnswerPart
 	soln_interface = IQFillInTheBlankShortAnswerSolution
 
 	def _asm_object_kwargs(self):
@@ -322,7 +324,7 @@ def _remove_parts_after_render(self, rendered):
 	output = HTMLContentFragment(''.join(output).strip())
 	return output
 
-class naquestionfillintheblankwordbank(naquestion, _WordBankMixIn):
+class naquestionfillintheblankwordbank(_WordBankMixIn, naquestion):
 
 	def _after_render(self, rendered):
 		self._asm_local_content = _remove_parts_after_render(self, rendered)
