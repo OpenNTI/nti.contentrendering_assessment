@@ -65,8 +65,11 @@ class QDictResponse(TrivialValuedMixin,QResponse):
 @interface.implementer(interfaces.IQUploadedFile)
 class QUploadedFile(PersistentCreatedModDateTrackingObject, # Order matters
 					NamedBlobFile):
-	pass
-
+	
+	def __str__(self):
+		return "%s(%s)" % (self.__class__.__name__, self.filename)
+	__repr__ = __str__
+	
 @interface.implementer(interfaces.IQUploadedFile)
 class QUploadedImageFile(PersistentCreatedModDateTrackingObject, # Order matters
 						 NamedBlobImage):

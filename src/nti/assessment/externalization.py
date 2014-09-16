@@ -25,6 +25,8 @@ from nti.externalization.externalization import to_external_ntiid_oid
 from nti.externalization.interfaces import IInternalObjectExternalizer
 from nti.externalization.datastructures import AbstractDynamicObjectIO
 
+from nti.ntiids.ntiids import find_object_with_ntiid 
+
 from nti.utils.schema import DataURI
 from nti.utils.dataurl import DataURL
 
@@ -120,8 +122,17 @@ class _QUploadedFileObjectIO(AbstractDynamicObjectIO):
 	# we accept either 'url' or 'value'
 
 	def updateFromExternalObject( self, parsed, *args, **kwargs ):
-		if parsed.get('download_url') or parsed.get('NTIID') or parsed.get('OID'):
-			# trying to update an existing object. ignore all
+		if parsed.get('download_url') and (parsed.get('NTIID') or parsed.get('OID')):
+			## when updating from an external source and NTIID/OID is provided
+			## simply copy the source data to the new object.
+			ext_self = self._ext_replacement()
+			oid = parsed.get('NTIID') or parsed.get('OID')
+			internal_source = find_object_with_ntiid(oid)
+			if IQUploadedFile.providedBy(internal_source) and internal_source != ext_self:
+				ext_self.data = internal_source.data
+				ext_self.filename = internal_source.filename
+				ext_self.contentType = internal_source.contentType
+				return True
 			return False
 		else:
 			updated = super(_QUploadedFileObjectIO, self).updateFromExternalObject( parsed, *args, **kwargs )
