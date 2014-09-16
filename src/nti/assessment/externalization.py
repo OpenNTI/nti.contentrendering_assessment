@@ -120,25 +120,29 @@ class _QUploadedFileObjectIO(AbstractDynamicObjectIO):
 	# we accept either 'url' or 'value'
 
 	def updateFromExternalObject( self, parsed, *args, **kwargs ):
-		updated = super(_QUploadedFileObjectIO,self).updateFromExternalObject( parsed, *args, **kwargs )
-		ext_self = self._ext_replacement()
-		url = parsed.get( 'url' ) or parsed.get('value')
-		if url:
-			data_url = DataURI(__name__='url').fromUnicode( url )
-			ext_self.contentType = data_url.mimeType
-			ext_self.data = data_url.data
-			updated = True
-		if 'filename' in parsed:
-			ext_self.filename = parsed['filename']
-			# some times we get full paths
-			name = nameFinder( ext_self )
-			if name:
-				ext_self.filename = name
-			updated = True
-		if 'FileMimeType' in parsed:
-			ext_self.contentType = bytes(parsed['FileMimeType'])
-			updated = True
-		return updated
+		if parsed.get('download_url') or parsed.get('NTIID') or parsed.get('OID'):
+			# trying to update an existing object. ignore all
+			return False
+		else:
+			updated = super(_QUploadedFileObjectIO, self).updateFromExternalObject( parsed, *args, **kwargs )
+			ext_self = self._ext_replacement()
+			url = parsed.get('url') or parsed.get('value')
+			if url:
+				data_url = DataURI(__name__='url').fromUnicode( url )
+				ext_self.contentType = data_url.mimeType
+				ext_self.data = data_url.data
+				updated = True
+			if 'filename' in parsed:
+				ext_self.filename = parsed['filename']
+				# some times we get full paths
+				name = nameFinder( ext_self )
+				if name:
+					ext_self.filename = name
+				updated = True
+			if 'FileMimeType' in parsed:
+				ext_self.contentType = bytes(parsed['FileMimeType'])
+				updated = True
+			return updated
 
 	def toExternalObject( self, mergeFrom=None, **kwargs ):
 		ext_dict = super(_QUploadedFileObjectIO,self).toExternalObject(**kwargs)
