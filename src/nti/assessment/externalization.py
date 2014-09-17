@@ -15,6 +15,8 @@ from zope import component
 
 from zope.file.upload import nameFinder
 
+from plone.namedfile.interfaces import INamedBlobFile
+
 from nti.dataserver.links import Link
 from nti.dataserver.interfaces import ILinkExternalHrefOnly
 
@@ -128,7 +130,7 @@ class _QUploadedFileObjectIO(AbstractDynamicObjectIO):
 			ext_self = self._ext_replacement()
 			oid = parsed.get('NTIID') or parsed.get('OID')
 			internal_source = find_object_with_ntiid(oid)
-			if IQUploadedFile.providedBy(internal_source) and internal_source != ext_self:
+			if INamedBlobFile.providedBy(internal_source) and internal_source != ext_self:
 				ext_self.data = internal_source.data
 				ext_self.filename = internal_source.filename
 				ext_self.contentType = internal_source.contentType
