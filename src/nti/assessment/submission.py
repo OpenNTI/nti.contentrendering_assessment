@@ -10,9 +10,11 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from zope import interface
-from zope.container import contained
+from zope import interface 
+from zope.container.contained import Contained
 from zope.location.interfaces import ISublocations
+from zope.interface.common.mapping import IReadMapping
+from zope.interface.common.sequence import IMinimalSequence
 
 from nti.dataserver.datastructures import ContainedMixin
 from nti.dataserver.datastructures import PersistentCreatedModDateTrackingObject
@@ -22,7 +24,11 @@ from nti.externalization.representation import WithRepr
 from nti.schema.field import SchemaConfigured
 from nti.schema.fieldproperty import createDirectFieldProperties
 
-from . import interfaces
+from .interfaces import IQBaseSubmission
+from .interfaces import IQuestionSubmission
+from .interfaces import IQuestionSetSubmission
+from .interfaces import IQAssignmentSubmission
+
 from ._util import make_sublocations as _make_sublocations
 
 # NOTE that these objects are not Persistent. Originally this is
@@ -42,26 +48,50 @@ from ._util import make_sublocations as _make_sublocations
 # transformed; the transformed object may or may not
 # be directly added.
 
-@interface.implementer(interfaces.IQuestionSubmission,
-					   ISublocations)
+@interface.implementer(IQuestionSubmission, ISublocations, IMinimalSequence)
 @WithRepr
-class QuestionSubmission(SchemaConfigured, contained.Contained):
-	createDirectFieldProperties(interfaces.IQBaseSubmission)
-	createDirectFieldProperties(interfaces.IQuestionSubmission)
+class QuestionSubmission(SchemaConfigured, Contained):
+	createDirectFieldProperties(IQBaseSubmission)
+	createDirectFieldProperties(IQuestionSubmission)
 
 	sublocations = _make_sublocations()
 
-@interface.implementer(interfaces.IQuestionSetSubmission,
-					   ISublocations)
+	def __getitem__(self, idx):
+		return self.parts[idx]
+
+	def __setitem__(self, idx, value):
+		self.parts[idx] = value
+	
+	def __len__(self):
+		return len(self.parts)
+	
+@interface.implementer(IQuestionSetSubmission, ISublocations, IReadMapping)
 @WithRepr
-class QuestionSetSubmission(SchemaConfigured, contained.Contained):
-	createDirectFieldProperties(interfaces.IQBaseSubmission)
-	createDirectFieldProperties(interfaces.IQuestionSetSubmission)
+class QuestionSetSubmission(SchemaConfigured, Contained):
+	createDirectFieldProperties(IQBaseSubmission)
+	createDirectFieldProperties(IQuestionSetSubmission)
 
 	sublocations = _make_sublocations('questions')
+	
+	def get(self, key, default=None):
+		try:
+			return self[key]
+		except KeyError:
+			return default
+		
+	def __getitem__(self, key):
+		for question in self.questions or ():
+			if question.questionId == key:
+				return question
+		raise KeyError(key)
 
-@interface.implementer(interfaces.IQAssignmentSubmission,
-					   ISublocations)
+	def __contains__(self, key):
+		return self.get(key) is not None
+		
+	def __len__(self):
+		return len(self.questions)
+
+@interface.implementer(IQAssignmentSubmission, ISublocations, IReadMapping)
 @WithRepr
 class AssignmentSubmission(ContainedMixin,
 						   SchemaConfigured,
@@ -75,8 +105,8 @@ class AssignmentSubmission(ContainedMixin,
 	that will still result in a partial data copy of the QuestionSetSubmission
 	objects as they are not persistent).
 	"""
-	createDirectFieldProperties(interfaces.IQBaseSubmission)
-	createDirectFieldProperties(interfaces.IQAssignmentSubmission)
+	createDirectFieldProperties(IQBaseSubmission)
+	createDirectFieldProperties(IQAssignmentSubmission)
 
 	mime_type = 'application/vnd.nextthought.assessment.assignmentsubmission'
 
@@ -86,3 +116,21 @@ class AssignmentSubmission(ContainedMixin,
 		# schema configured is not cooperative
 		ContainedMixin.__init__(self, *args, **kwargs)
 		PersistentCreatedModDateTrackingObject.__init__(self)
+	
+	def get(self, key, default=None):
+		try:
+			return self[key]
+		except KeyError:
+			return default
+
+	def __getitem__(self, key):
+		for question_set in self.parts or ():
+			if question_set.questionSetId == key:
+				return question_set
+		raise KeyError(key)
+	
+	def __contains__(self, key):
+		return self.get(key) is not None
+	
+	def __len__(self):
+		return len(self.parts)

@@ -20,14 +20,25 @@ from persistent import Persistent
 from plone.namedfile.file import NamedBlobFile
 from plone.namedfile.file import NamedBlobImage
 
+from nti.dataserver.contenttypes.note import BodyFieldProperty
 from nti.dataserver.datastructures import PersistentCreatedModDateTrackingObject
 
-from . import interfaces
+from nti.schema.fieldproperty import AdaptingFieldProperty
+
+from nti.utils.property import alias
+
+from .interfaces import IQResponse
+from .interfaces import IQDictResponse
+from .interfaces import IQFileResponse
+from .interfaces import IQListResponse
+from .interfaces import IQTextResponse
+from .interfaces import IQUploadedFile
+from .interfaces import IQModeledContentResponse
+
 from ._util import TrivialValuedMixin
 
-@interface.implementer(interfaces.IQResponse)
-class QResponse(Persistent,
-				Contained):
+@interface.implementer(IQResponse)
+class QResponse(Persistent, Contained):
 	"""
 	Base class for responses.
 
@@ -36,8 +47,8 @@ class QResponse(Persistent,
 	"""
 	__external_can_create__ = False
 
-@interface.implementer(interfaces.IQTextResponse)
-class QTextResponse(TrivialValuedMixin,QResponse):
+@interface.implementer(IQTextResponse)
+class QTextResponse(TrivialValuedMixin, QResponse):
 	"""
 	A text response.
 	"""
@@ -51,50 +62,48 @@ class QTextResponse(TrivialValuedMixin,QResponse):
 			# Decode incoming byte strings to text
 			self.value = text_type(self.value, 'utf-8')
 
-@interface.implementer(interfaces.IQListResponse)
-class QListResponse(TrivialValuedMixin,QResponse):
+@interface.implementer(IQListResponse)
+class QListResponse(TrivialValuedMixin, QResponse):
 	"""
 	A list response.
 	"""
 
-@interface.implementer(interfaces.IQDictResponse)
-class QDictResponse(TrivialValuedMixin,QResponse):
+@interface.implementer(IQDictResponse)
+class QDictResponse(TrivialValuedMixin, QResponse):
 	"""
 	A dictionary response.
 	"""
 
-@interface.implementer(interfaces.IQUploadedFile, IContained)
+@interface.implementer(IQUploadedFile, IContained)
 class QUploadedFile(PersistentCreatedModDateTrackingObject, # Order matters
 					NamedBlobFile):
 	
-	__parent__ = __name__ = None
+	__parent__ = None
+	__name__ = alias('filename')
 	
 	def __str__(self):
 		return "%s(%s)" % (self.__class__.__name__, self.filename)
 	__repr__ = __str__
 	
-@interface.implementer(interfaces.IQUploadedFile, IContained)
+@interface.implementer(IQUploadedFile, IContained)
 class QUploadedImageFile(PersistentCreatedModDateTrackingObject, # Order matters
 						 NamedBlobImage):
 	
-	__parent__ = __name__ = None
+	__parent__ =  None
+	__name__ = alias('filename')
 	
 	def __str__(self):
 		return "%s(%s)" % (self.__class__.__name__, self.filename)
 	__repr__ = __str__
 
-@interface.implementer(interfaces.IQFileResponse)
+@interface.implementer(IQFileResponse)
 class QFileResponse(TrivialValuedMixin, QResponse):
 	"""
 	An uploaded file response.
 	"""
 
-from nti.schema.fieldproperty import AdaptingFieldProperty
-from nti.dataserver.contenttypes.note import BodyFieldProperty
-
-@interface.implementer(interfaces.IQModeledContentResponse)
-class QModeledContentResponse(TrivialValuedMixin,
-							  QResponse):
+@interface.implementer(IQModeledContentResponse)
+class QModeledContentResponse(TrivialValuedMixin, QResponse):
 	"""
 	A modeled content response, intended to be created
 	from external objects.
@@ -102,5 +111,5 @@ class QModeledContentResponse(TrivialValuedMixin,
 
 	__external_can_create__ = True
 
-	value = BodyFieldProperty(interfaces.IQModeledContentResponse['value'])
-	title = AdaptingFieldProperty(interfaces.IQModeledContentResponse['title'])
+	value = BodyFieldProperty(IQModeledContentResponse['value'])
+	title = AdaptingFieldProperty(IQModeledContentResponse['title'])
