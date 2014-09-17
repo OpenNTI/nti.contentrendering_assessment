@@ -15,8 +15,6 @@ from zope import component
 
 from zope.file.upload import nameFinder
 
-from plone.namedfile.interfaces import INamedBlobFile
-
 from nti.dataserver.links import Link
 from nti.dataserver.interfaces import ILinkExternalHrefOnly
 
@@ -26,8 +24,6 @@ from nti.externalization.externalization import to_external_object
 from nti.externalization.externalization import to_external_ntiid_oid
 from nti.externalization.interfaces import IInternalObjectExternalizer
 from nti.externalization.datastructures import AbstractDynamicObjectIO
-
-from nti.ntiids.ntiids import find_object_with_ntiid 
 
 from nti.utils.schema import DataURI
 from nti.utils.dataurl import DataURL
@@ -124,17 +120,9 @@ class _QUploadedFileObjectIO(AbstractDynamicObjectIO):
 	# we accept either 'url' or 'value'
 
 	def updateFromExternalObject( self, parsed, *args, **kwargs ):
-		if parsed.get('download_url') and (parsed.get('NTIID') or parsed.get('OID')):
-			## when updating from an external source and NTIID/OID is provided
-			## simply copy the source data to the new object.
-			ext_self = self._ext_replacement()
-			oid = parsed.get('NTIID') or parsed.get('OID')
-			internal_source = find_object_with_ntiid(oid)
-			if INamedBlobFile.providedBy(internal_source) and internal_source != ext_self:
-				ext_self.data = internal_source.data
-				ext_self.filename = internal_source.filename
-				ext_self.contentType = internal_source.contentType
-				return True
+		if parsed.get('download_url') or parsed.get('NTIID') or parsed.get('OID'):
+			## when updating from an external source and either download_url or 
+			## NTIID/OID is provided then ignore
 			return False
 		else:
 			updated = super(_QUploadedFileObjectIO, self).updateFromExternalObject( parsed, *args, **kwargs )
