@@ -19,10 +19,13 @@ from nti.dataserver.links import Link
 from nti.dataserver.interfaces import ILinkExternalHrefOnly
 
 from nti.externalization.interfaces import IInternalObjectIO
-from nti.externalization.datastructures import InterfaceObjectIO
+from nti.externalization.interfaces import StandardExternalFields
+from nti.externalization.interfaces import IInternalObjectExternalizer
+
 from nti.externalization.externalization import to_external_object
 from nti.externalization.externalization import to_external_ntiid_oid
-from nti.externalization.interfaces import IInternalObjectExternalizer
+
+from nti.externalization.datastructures import InterfaceObjectIO
 from nti.externalization.datastructures import AbstractDynamicObjectIO
 
 from nti.utils.schema import DataURI
@@ -37,6 +40,9 @@ from .interfaces import IQAssessedQuestion
 from .interfaces import IQuestionSubmission
 from .interfaces import IQAssessedQuestionSet
 from .interfaces import IQuestionSetSubmission
+
+OID = StandardExternalFields.OID
+NTIID = StandardExternalFields.NTIID
 
 @interface.implementer(IInternalObjectIO)
 class _AssessmentInternalObjectIOBase(object):
@@ -120,46 +126,42 @@ class _QUploadedFileObjectIO(AbstractDynamicObjectIO):
 	# we accept either 'url' or 'value'
 
 	def updateFromExternalObject( self, parsed, *args, **kwargs ):
-		if parsed.get('download_url') or parsed.get('NTIID') or parsed.get('OID'):
+		if parsed.get('download_url') or parsed.get(OID) or parsed.get(NTIID):
 			## when updating from an external source and either download_url or 
-			## NTIID/OID is provided then ignore
-			return False
-		else:
-			updated = super(_QUploadedFileObjectIO, self).updateFromExternalObject( parsed, *args, **kwargs )
-			ext_self = self._ext_replacement()
-			url = parsed.get('url') or parsed.get('value')
-			if url:
-				data_url = DataURI(__name__='url').fromUnicode( url )
-				ext_self.contentType = data_url.mimeType
-				ext_self.data = data_url.data
-				updated = True
-			if 'filename' in parsed:
-				ext_self.filename = parsed['filename']
-				# some times we get full paths
-				name = nameFinder( ext_self )
-				if name:
-					ext_self.filename = name
-				updated = True
-			if 'FileMimeType' in parsed:
-				ext_self.contentType = bytes(parsed['FileMimeType'])
-				updated = True
-			return updated
+			## NTIID/OID is provided remove those fields to avoid any hit of a copy
+			for name in (OID, NTIID, 'download_url', 'url', 'value', 'filename'):
+				parsed.pop(name, None)
+		# start update
+		updated = super(_QUploadedFileObjectIO, self).updateFromExternalObject(parsed, *args, **kwargs)
+		ext_self = self._ext_replacement()
+		url = parsed.get('url') or parsed.get('value')
+		if url:
+			data_url = DataURI(__name__='url').fromUnicode( url )
+			ext_self.contentType = data_url.mimeType
+			ext_self.data = data_url.data
+			updated = True
+		if 'filename' in parsed:
+			ext_self.filename = parsed['filename']
+			# some times we get full paths
+			name = nameFinder( ext_self )
+			if name:
+				ext_self.filename = name
+			updated = True
+		if 'FileMimeType' in parsed:
+			ext_self.contentType = bytes(parsed['FileMimeType'])
+			updated = True
+		return updated
 
 	def toExternalObject( self, mergeFrom=None, **kwargs ):
 		ext_dict = super(_QUploadedFileObjectIO,self).toExternalObject(**kwargs)
-
-		# TODO: View name. Coupled to the app layer. And this is now in three
-		# places.
+		# TODO: View name. Coupled to the app layer. And this is now in three places.
 		# It's not quite possible to fully traverse to the file sometimes
-		# (TODO: verify this in this case)
-		# so we go directly to the file address
+		# (TODO: verify this in this case) so we go directly to the file address
 		the_file = self._ext_replacement()
 		ext_dict['FileMimeType'] = the_file.mimeType or None
 		ext_dict['filename'] = the_file.filename or None
 		ext_dict['MimeType'] = 'application/vnd.nextthought.assessment.uploadedfile'
-		# We should probably register an externalizer on
-		# i
-		target = to_external_ntiid_oid( the_file, add_to_connection=True )
+		target = to_external_ntiid_oid(the_file, add_to_connection=True)
 		if target:
 			for element, key in ('view','url'), ('download','download_url'):
 				link = Link( target=target,
