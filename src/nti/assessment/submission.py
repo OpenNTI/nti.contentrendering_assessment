@@ -14,7 +14,7 @@ from zope import interface
 from zope.container.contained import Contained
 from zope.location.interfaces import ISublocations
 from zope.interface.common.mapping import IReadMapping
-from zope.interface.common.sequence import IMinimalSequence
+from zope.interface.common.sequence import IFiniteSequence
 
 from nti.dataserver.datastructures import ContainedMixin
 from nti.dataserver.datastructures import PersistentCreatedModDateTrackingObject
@@ -48,7 +48,7 @@ from ._util import make_sublocations as _make_sublocations
 # transformed; the transformed object may or may not
 # be directly added.
 
-@interface.implementer(IQuestionSubmission, ISublocations, IMinimalSequence)
+@interface.implementer(IQuestionSubmission, ISublocations, IFiniteSequence)
 @WithRepr
 class QuestionSubmission(SchemaConfigured, Contained):
 	createDirectFieldProperties(IQBaseSubmission)
@@ -61,6 +61,9 @@ class QuestionSubmission(SchemaConfigured, Contained):
 
 	def __setitem__(self, idx, value):
 		self.parts[idx] = value
+		
+	def __delitem__(self, idx):
+		del self.parts[idx]
 	
 	def __len__(self):
 		return len(self.parts)
