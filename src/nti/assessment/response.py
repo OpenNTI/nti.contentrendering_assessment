@@ -24,8 +24,6 @@ from nti.dataserver.datastructures import PersistentCreatedModDateTrackingObject
 
 from nti.schema.fieldproperty import AdaptingFieldProperty
 
-from nti.utils.property import alias
-
 from .interfaces import IQResponse
 from .interfaces import IQDictResponse
 from .interfaces import IQFileResponse
@@ -77,9 +75,6 @@ class QDictResponse(TrivialValuedMixin, QResponse):
 class QUploadedFile(PersistentCreatedModDateTrackingObject, # Order matters
 					NamedBlobFile):
 	
-	__parent__ = None
-	__name__ = alias('filename')
-	
 	def __str__(self):
 		return "%s(%s)" % (self.__class__.__name__, self.filename)
 	__repr__ = __str__
@@ -87,10 +82,7 @@ class QUploadedFile(PersistentCreatedModDateTrackingObject, # Order matters
 @interface.implementer(IQUploadedFile)
 class QUploadedImageFile(PersistentCreatedModDateTrackingObject, # Order matters
 						 NamedBlobImage):
-	
-	__parent__ =  None
-	__name__ = alias('filename')
-	
+		
 	def __str__(self):
 		return "%s(%s)" % (self.__class__.__name__, self.filename)
 	__repr__ = __str__
