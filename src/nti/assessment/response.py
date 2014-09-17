@@ -13,7 +13,6 @@ from six import string_types
 
 from zope import interface
 from zope.container.contained import Contained
-from zope.location.interfaces import IContained
 
 from persistent import Persistent
 
@@ -74,7 +73,7 @@ class QDictResponse(TrivialValuedMixin, QResponse):
 	A dictionary response.
 	"""
 
-@interface.implementer(IQUploadedFile, IContained)
+@interface.implementer(IQUploadedFile)
 class QUploadedFile(PersistentCreatedModDateTrackingObject, # Order matters
 					NamedBlobFile):
 	
@@ -85,7 +84,7 @@ class QUploadedFile(PersistentCreatedModDateTrackingObject, # Order matters
 		return "%s(%s)" % (self.__class__.__name__, self.filename)
 	__repr__ = __str__
 	
-@interface.implementer(IQUploadedFile, IContained)
+@interface.implementer(IQUploadedFile)
 class QUploadedImageFile(PersistentCreatedModDateTrackingObject, # Order matters
 						 NamedBlobImage):
 	

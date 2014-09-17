@@ -645,9 +645,9 @@ class IQModeledContentResponse(IQResponse,
 	value.__name__ = 'value'
 
 
-import plone.namedfile.interfaces
+from plone.namedfile.interfaces import INamedFile
 
-class IQUploadedFile(plone.namedfile.interfaces.INamedFile, ILastModified):
+class IQUploadedFile(INamedFile, ILastModified, IContained):
 	pass
 
 class IQFileResponse(IQResponse):
