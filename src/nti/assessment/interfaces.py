@@ -31,7 +31,7 @@ from nti.dataserver.interfaces import ITitledContent
 from nti.dataserver.interfaces import CompoundModeledContentBody
 from nti.dataserver.interfaces import INeverStoredInSharedStream
 
-from nti.schema.field import Int
+from nti.schema.field import Int, ValidTextLine
 from nti.schema.field import Bool
 from nti.schema.field import Dict
 from nti.schema.field import List
@@ -644,12 +644,17 @@ class IQModeledContentResponse(IQResponse,
 	value.required = True
 	value.__name__ = 'value'
 
-
 from plone.namedfile.interfaces import INamedFile
 
 class IQUploadedFile(INamedFile, ILastModified):
 	pass
 
+class IInternalUploadedFileRef(interface.Interface):
+	"""
+	Marker interface for reference to to other uploaded file
+	"""
+	reference = ValidTextLine("the ntiid/oid", required=False)
+	
 class IQFileResponse(IQResponse):
 	"""
 	A response containing a file and associated metadata.

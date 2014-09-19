@@ -40,6 +40,7 @@ from .interfaces import IQAssessedQuestion
 from .interfaces import IQuestionSubmission
 from .interfaces import IQAssessedQuestionSet
 from .interfaces import IQuestionSetSubmission
+from .interfaces import IInternalUploadedFileRef
 
 OID = StandardExternalFields.OID
 NTIID = StandardExternalFields.NTIID
@@ -126,9 +127,13 @@ class _QUploadedFileObjectIO(AbstractDynamicObjectIO):
 	# we accept either 'url' or 'value'
 
 	def updateFromExternalObject( self, parsed, *args, **kwargs ):
+		ext_self = self._ext_replacement()
 		if parsed.get('download_url') or parsed.get(OID) or parsed.get(NTIID):
 			## when updating from an external source and either download_url or 
-			## NTIID/OID is provided remove those fields to avoid any hit of a copy
+			## NTIID/OID is provided save the reference
+			interface.alsoProvides(ext_self, IInternalUploadedFileRef)
+			ext_self.reference = parsed.get(OID) or parsed.get(NTIID)
+			# then remove those fields to avoid any hint of a copy
 			for name in (OID, NTIID, 'download_url', 'url', 'value', 'filename'):
 				parsed.pop(name, None)
 		# start update
