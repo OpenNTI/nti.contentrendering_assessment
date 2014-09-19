@@ -625,8 +625,8 @@ class IQDictResponse(IQResponse):
 	A response submitted as a mapping between keys and values.
 	"""
 	value = Dict(title="The response dictionary",
-				  key_type=TextLine(title="The key"),
-				  value_type=TextLine(title="The value"))
+				 key_type=TextLine(title="The key"),
+				 value_type=TextLine(title="The value"))
 
 
 class IQModeledContentResponse(IQResponse,
@@ -653,7 +653,7 @@ class IInternalUploadedFileRef(interface.Interface):
 	"""
 	Marker interface for reference to to other uploaded file
 	"""
-	reference = ValidTextLine("the ntiid/oid", required=False)
+	reference = ValidTextLine(title="the ntiid/oid", required=False)
 	
 class IQFileResponse(IQResponse):
 	"""
