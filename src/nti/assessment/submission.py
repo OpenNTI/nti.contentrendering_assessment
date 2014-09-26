@@ -98,9 +98,10 @@ class QuestionSetSubmission(SchemaConfigured, Contained):
 		idx = self.index(key)
 		if idx == -1:
 			raise KeyError(key)
-		del self.questions[key]
+		del self.questions[idx]
 		
 	def __setitem__(self, key, value):
+		assert key == value.questionId
 		idx = self.index(key)
 		if idx == -1:
 			self.questions.append(value)
@@ -161,9 +162,10 @@ class AssignmentSubmission(ContainedMixin,
 		idx = self.index(key)
 		if idx == -1:
 			raise KeyError(key)
-		del self.parts[key]
+		del self.parts[idx]
 		
 	def __setitem__(self, key, value):
+		assert key == value.questionSetId
 		idx = self.index(key)
 		if idx == -1:
 			self.parts.append(value)
