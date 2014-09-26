@@ -13,7 +13,7 @@ logger = __import__('logging').getLogger(__name__)
 from zope import interface 
 from zope.container.contained import Contained
 from zope.location.interfaces import ISublocations
-from zope.interface.common.mapping import IReadMapping
+from zope.interface.common.mapping import IWriteMapping
 from zope.interface.common.sequence import IFiniteSequence
 
 from nti.dataserver.datastructures import ContainedMixin
@@ -68,7 +68,7 @@ class QuestionSubmission(SchemaConfigured, Contained):
 	def __len__(self):
 		return len(self.parts)
 	
-@interface.implementer(IQuestionSetSubmission, ISublocations, IReadMapping)
+@interface.implementer(IQuestionSetSubmission, ISublocations, IWriteMapping)
 @WithRepr
 class QuestionSetSubmission(SchemaConfigured, Contained):
 	createDirectFieldProperties(IQBaseSubmission)
@@ -82,19 +82,38 @@ class QuestionSetSubmission(SchemaConfigured, Contained):
 		except KeyError:
 			return default
 		
-	def __getitem__(self, key):
-		for question in self.questions or ():
+	def index(self, key):
+		for idx, question in enumerate(self.questions or ()):
 			if question.questionId == key:
-				return question
-		raise KeyError(key)
+				return idx
+		return -1
+
+	def __getitem__(self, key):
+		idx = self.index(key)
+		if idx == -1:
+			raise KeyError(key)
+		return self.questions[idx]
+	
+	def __delitem__(self, key):
+		idx = self.index(key)
+		if idx == -1:
+			raise KeyError(key)
+		del self.questions[key]
+		
+	def __setitem__(self, key, value):
+		idx = self.index(key)
+		if idx == -1:
+			self.questions.append(value)
+		else:
+			self.questions[idx] = value
 
 	def __contains__(self, key):
-		return self.get(key) is not None
+		return self.index(key) != -1
 		
 	def __len__(self):
 		return len(self.questions)
 
-@interface.implementer(IQAssignmentSubmission, ISublocations, IReadMapping)
+@interface.implementer(IQAssignmentSubmission, ISublocations, IWriteMapping)
 @WithRepr
 class AssignmentSubmission(ContainedMixin,
 						   SchemaConfigured,
@@ -120,6 +139,12 @@ class AssignmentSubmission(ContainedMixin,
 		ContainedMixin.__init__(self, *args, **kwargs)
 		PersistentCreatedModDateTrackingObject.__init__(self)
 	
+	def index(self, key):
+		for idx, question_set in enumerate(self.parts or ()):
+			if question_set.questionSetId == key:
+				return idx
+		return -1
+
 	def get(self, key, default=None):
 		try:
 			return self[key]
@@ -127,13 +152,26 @@ class AssignmentSubmission(ContainedMixin,
 			return default
 
 	def __getitem__(self, key):
-		for question_set in self.parts or ():
-			if question_set.questionSetId == key:
-				return question_set
-		raise KeyError(key)
+		idx = self.index(key)
+		if idx == -1:
+			raise KeyError(key)
+		return self.parts[idx]
 	
+	def __delitem__(self, key):
+		idx = self.index(key)
+		if idx == -1:
+			raise KeyError(key)
+		del self.parts[key]
+		
+	def __setitem__(self, key, value):
+		idx = self.index(key)
+		if idx == -1:
+			self.parts.append(value)
+		else:
+			self.parts[idx] = value
+
 	def __contains__(self, key):
-		return self.get(key) is not None
+		return self.index(key) != -1
 	
 	def __len__(self):
 		return len(self.parts)
