@@ -18,6 +18,7 @@ from ..interfaces import IQPartGrader
 from ..interfaces import IQuestionSet
 from ..interfaces import IQMatchingPart
 from ..interfaces import IQOrderingPart
+from ..interfaces import IQConnectingPart
 from ..interfaces import IQMatchingPartGrader
 from ..interfaces import IQOrderingPartGrader
 from ..interfaces import IQMultipleChoicePart
@@ -52,9 +53,20 @@ class IQRandomizedPartGrader(IQPartGrader):
 		unrandomize the specified value
 		"""
 	
+# connecting part
+
+class IQRandomizedConnectingPart(IQRandomizedPart, IQConnectingPart):
+	pass
+
+class INonRandomizedConnectingPart(IQRandomizedConnectingPart):
+	pass
+
+class ISha224RandomizedConnectingPart(IQRandomizedConnectingPart, ISha224Randomized):
+	pass
+
 # matching part
 
-class IQRandomizedMatchingPart(IQRandomizedPart, IQMatchingPart):
+class IQRandomizedMatchingPart(IQRandomizedConnectingPart, IQMatchingPart):
 	pass
 
 class IQRandomizedMatchingPartGrader(IQMatchingPartGrader, IQRandomizedPartGrader):
@@ -68,7 +80,7 @@ class ISha224RandomizedMatchingPart(IQRandomizedMatchingPart, ISha224RandomizedP
 	
 # ordering
 
-class IQRandomizedOrderingPart(IQRandomizedPart, IQOrderingPart):
+class IQRandomizedOrderingPart(IQRandomizedConnectingPart, IQOrderingPart):
 	pass
 
 class IQRandomizedOrderingPartGrader(IQOrderingPartGrader, IQRandomizedPartGrader):

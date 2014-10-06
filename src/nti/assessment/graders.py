@@ -224,12 +224,7 @@ class MultipleChoiceMultipleAnswerGrader(EqualityGrader):
 	to be a key).
 	"""
 
-@interface.implementer(IQMatchingPartGrader)
-class MatchingPartGrader(EqualityGrader):
-	"""
-	Grader that deals with matching. Handles all combinations of int and key solutions
-	and int and key dicts.
-	"""
+class ConnectingPartGrader(EqualityGrader):
 
 	def _to_int_dict(self, the_dict):
 		result = the_dict
@@ -249,9 +244,16 @@ class MatchingPartGrader(EqualityGrader):
 
 	solution_converter = _to_int_dict
 	response_converter = _to_int_dict
+	
+@interface.implementer(IQMatchingPartGrader)
+class MatchingPartGrader(ConnectingPartGrader):
+	"""
+	Grader that deals with matching. Handles all combinations of int and key solutions
+	and int and key dicts.
+	"""
 
 @interface.implementer(IQOrderingPartGrader)
-class OrderingPartGrader(MatchingPartGrader):
+class OrderingPartGrader(ConnectingPartGrader):
 	pass
 	
 @repoze.lru.lru_cache(200)

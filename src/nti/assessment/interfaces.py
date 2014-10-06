@@ -323,10 +323,11 @@ class IQMatchingSolution(IQSolution):
 
 	value = Dict( title="The correct mapping." )
 	
-class IQOrderingSolution(IQMatchingSolution):
-	pass
+class IQOrderingSolution(IQSolution):
+	
+	value = Dict( title="The correct mapping." )
 
-class IQMatchingPart(IQPart):
+class IQConnectingPart(IQPart):
 	"""
 	A question part that asks the student to connect items from one
 	column (labels) with items in another column (values) forming a
@@ -344,21 +345,25 @@ class IQMatchingPart(IQPart):
 	values = List( title="The list of values",
 				   min_length=2,
 				   value_type=_ContentFragment( title="A value-column value" ) )
+	
+class IQMatchingPart(IQConnectingPart):
+	
 	solutions = IndexedIterable( title="The matching solution",
 								 min_length=1,
-								 value_type=Object( IQMatchingSolution, title="Matching solution" ) )
+								 value_type=Object(IQMatchingSolution, title="Matching solution" ) )
 
-class IQOrderingPart(IQMatchingPart):
-	"""
-	Subclass to let clients render the these questions parts differently"
-	"""
+class IQOrderingPart(IQConnectingPart):
+
+	solutions = IndexedIterable( title="The matching solution",
+								 min_length=1,
+								 value_type=Object(IQOrderingSolution, title="Ordering solution" ) )
 
 class IQMatchingPartGrader(IQPartGrader):
 	"""
 	A grader for matching questions.
 	"""
 	
-class IQOrderingPartGrader(IQMatchingPartGrader):
+class IQOrderingPartGrader(IQPartGrader):
 	"""
 	A grader for ordering questions.
 	"""

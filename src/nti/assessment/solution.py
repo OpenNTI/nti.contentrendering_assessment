@@ -50,7 +50,6 @@ class QSolution(Persistent):
 	will attempt to transform the input based on the interfaces
 	this object implements and then call the :meth:`.QPart.grade` method.
 	"""
-
 	#: Defines the factory used by the :meth:`grade` method to construct
 	#: a :class:`.IQPart` object. Also, instances are only equal if this value
 	#: is equal
@@ -70,7 +69,6 @@ class QMathSolution(QSolution):
 	"""
 	Base class for the math hierarchy.
 	"""
-
 	allowed_units = None # No defined unit handling
 
 	def __init__( self, *args, **kwargs ):
@@ -92,7 +90,6 @@ class QNumericMathSolution(_EqualityValuedMixin, QMathSolution):
 	.. todo:: This grading mechanism is pretty poorly handled and compares
 		by exact equality.
 	"""
-
 	_part_type = QNumericMathPart
 
 @interface.implementer(IQFreeResponseSolution)
@@ -100,7 +97,6 @@ class QFreeResponseSolution(_EqualityValuedMixin, QSolution):
 	"""
 	Simple free-response solution.
 	"""
-
 	_part_type = QFreeResponsePart
 
 @interface.implementer(IQSymbolicMathSolution)
@@ -109,7 +105,6 @@ class QSymbolicMathSolution(QMathSolution):
 	Symbolic math grading is redirected through
 	grading components for extensibility.
 	"""
-
 	_part_type = QSymbolicMathPart
 
 @interface.implementer(IQLatexSymbolicMathSolution)
@@ -117,22 +112,21 @@ class QLatexSymbolicMathSolution(_EqualityValuedMixin, QSymbolicMathSolution):
 	"""
 	The answer is defined to be in latex.
 	"""
-
 	# TODO: Verification of the value? Minor transforms like adding $$?
 
-@interface.implementer(IQMatchingSolution)
-class QMatchingSolution(_EqualityValuedMixin, QSolution):
+class QConenctionSolution(_EqualityValuedMixin, QSolution):
+	pass
 
+@interface.implementer(IQMatchingSolution)
+class QMatchingSolution(QConenctionSolution):
 	_part_type = QMatchingPart
 
 @interface.implementer(IQOrderingSolution)
-class QOrderingSolution(QMatchingSolution):
-
+class QOrderingSolution(QConenctionSolution):
 	_part_type = QOrderingPart
 	
 @interface.implementer(IQMultipleChoiceSolution)
 class QMultipleChoiceSolution(_EqualityValuedMixin, QSolution):
-
 	_part_type = QMultipleChoicePart
 
 @interface.implementer(IQMultipleChoiceMultipleAnswerSolution)
@@ -141,15 +135,12 @@ class QMultipleChoiceMultipleAnswerSolution(_EqualityValuedMixin, QSolution):
 	The answer is defined as a list of selections which best represent
 	the correct answer.
 	"""
-
 	_part_type = QMultipleChoiceMultipleAnswerPart
 
 @interface.implementer(IQFillInTheBlankShortAnswerSolution)
 class QFillInTheBlankShortAnswerSolution(_EqualityValuedMixin, QSolution):
-
 	_part_type = QFillInTheBlankShortAnswerPart
 
 @interface.implementer(IQFillInTheBlankWithWordBankSolution)
 class QFillInTheBlankWithWordBankSolution(_EqualityValuedMixin, QSolution):
-
 	_part_type = QFillInTheBlankWithWordBankPart

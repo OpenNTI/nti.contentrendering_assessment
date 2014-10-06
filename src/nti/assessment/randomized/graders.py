@@ -14,7 +14,7 @@ from . import randomize
 from . import shuffle_list
 
 from ..graders import EqualityGrader
-from ..graders import MatchingPartGrader
+from ..graders import ConnectingPartGrader
 from ..graders import MultipleChoiceMultipleAnswerGrader
 
 from .interfaces import IQRandomizedMatchingPartGrader
@@ -22,11 +22,10 @@ from .interfaces import IQRandomizedOrderingPartGrader
 from .interfaces import IQRandomizedMultipleChoicePartGrader
 from .interfaces import IQRandomizedMultipleChoiceMultipleAnswerPartGrader
 
-@interface.implementer(IQRandomizedMatchingPartGrader)
-class RandomizedMatchingPartGrader(MatchingPartGrader):
+class RandomizedConnectingPartGrader(ConnectingPartGrader):
 
 	def unshuffle(self, the_dict, user=None, context=None):
-		the_dict = MatchingPartGrader._to_int_dict(self, the_dict)
+		the_dict = ConnectingPartGrader._to_int_dict(self, the_dict)
 		generator = randomize(user=user, context=context)
 		if generator is not None:
 			values = list(self.part.values)
@@ -39,9 +38,13 @@ class RandomizedMatchingPartGrader(MatchingPartGrader):
 		return the_dict
 
 	response_converter = _to_response_dict = unshuffle
+	
+@interface.implementer(IQRandomizedMatchingPartGrader)
+class RandomizedMatchingPartGrader(RandomizedConnectingPartGrader):
+	pass
 
 @interface.implementer(IQRandomizedOrderingPartGrader)
-class RandomizedOrderingPartGrader(RandomizedMatchingPartGrader):
+class RandomizedOrderingPartGrader(RandomizedConnectingPartGrader):
 	pass
 
 @interface.implementer(IQRandomizedMultipleChoicePartGrader)

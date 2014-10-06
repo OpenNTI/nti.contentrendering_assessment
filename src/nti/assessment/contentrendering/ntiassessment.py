@@ -498,8 +498,6 @@ class naqmatchingpart(_AbstractNAQPart):
 	part_factory = parts.QMatchingPart
 	part_interface = as_interfaces.IQMatchingPart
 	soln_interface = as_interfaces.IQMatchingSolution
-
-	# randomized
 	
 	randomized_part_factory = randomized_parts.QRandomizedMatchingPart
 	randomized_part_interface = rand_interfaces.IQRandomizedMatchingPart

@@ -11,6 +11,8 @@ logger = __import__('logging').getLogger(__name__)
 from zope import interface
 
 from ..parts import QMatchingPart
+from ..parts import QOrderingPart
+from ..parts import QConenctingPart
 from ..parts import QMultipleChoicePart
 from ..parts import QMultipleChoiceMultipleAnswerPart
 
@@ -18,6 +20,7 @@ from .interfaces import IQRandomizedMatchingPart
 from .interfaces import IQRandomizedOrderingPart
 from .interfaces import INonRandomizedMatchingPart
 from .interfaces import INonRandomizedOrderingPart
+from .interfaces import IQRandomizedConnectingPart
 from .interfaces import IQRandomizedMatchingPartGrader
 from .interfaces import IQRandomizedOrderingPartGrader
 from .interfaces import IQRandomizedMultipleChoicePart
@@ -32,8 +35,12 @@ from .interfaces import ISha224RandomizedOrderingPart
 from .interfaces import ISha224RandomizedMultipleChoicePart
 from .interfaces import ISha224RandomizedMultipleChoiceMultipleAnswerPart
 
+@interface.implementer(IQRandomizedConnectingPart)
+class QRandomizedConnectingPart(QConenctingPart):
+	response_interface = None
+		
 @interface.implementer(IQRandomizedMatchingPart)
-class QRandomizedMatchingPart(QMatchingPart):
+class QRandomizedMatchingPart(QRandomizedConnectingPart, QMatchingPart):
 
 	response_interface = None
 
@@ -46,7 +53,7 @@ class QRandomizedMatchingPart(QMatchingPart):
 	sha224randomized_interface = ISha224RandomizedMatchingPart
 	
 @interface.implementer(IQRandomizedOrderingPart)
-class QRandomizedOrderingPart(QRandomizedMatchingPart):
+class QRandomizedOrderingPart(QRandomizedConnectingPart, QOrderingPart):
 
 	__external_class_name__ = "OrderingPart"
 	mimeType = mime_type = "application/vnd.nextthought.assessment.randomizedorderingpart"

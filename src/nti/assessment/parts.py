@@ -35,6 +35,7 @@ from .interfaces import IQDictResponse
 from .interfaces import IQFileResponse
 from .interfaces import IQMatchingPart
 from .interfaces import IQOrderingPart
+from .interfaces import IQConnectingPart
 from .interfaces import IQNumericMathPart
 from .interfaces import IQFreeResponsePart
 from .interfaces import IQSymbolicMathPart
@@ -136,7 +137,6 @@ class QMathPart(QPart):
 @EqHash(include_super=True,
 		include_type=True)
 class QSymbolicMathPart(QMathPart):
-
 	grader_interface = IQSymbolicMathGrader
 
 @interface.implementer(IQNumericMathPart)
@@ -151,36 +151,34 @@ class QNumericMathPart(QMathPart):
 		include_type=True,
 		superhash=True)
 class QMultipleChoicePart(QPart):
-
 	grader_interface = IQMultipleChoicePartGrader
 	choices = ()
 
 @interface.implementer(IQMultipleChoiceMultipleAnswerPart)
 class QMultipleChoiceMultipleAnswerPart(QMultipleChoicePart):
-
 	grader_interface = IQMultipleChoiceMultipleAnswerPartGrader
 
-@interface.implementer(IQMatchingPart)
+
+@interface.implementer(IQConnectingPart)
 @EqHash('labels', 'values',
 		include_super=True,
 		superhash=True)
-class QMatchingPart(QPart):
-	
-	grader_interface = IQMatchingPartGrader
-
+class QConenctingPart(QPart):
 	labels = ()
 	values = ()
 
-@interface.implementer(IQOrderingPart)
-class QOrderingPart(QMatchingPart):
+@interface.implementer(IQMatchingPart)
+class QMatchingPart(QConenctingPart):	
+	grader_interface = IQMatchingPartGrader
 
+@interface.implementer(IQOrderingPart)
+class QOrderingPart(QConenctingPart):
 	grader_interface = IQOrderingPartGrader
 	
 @interface.implementer(IQFreeResponsePart)
 @EqHash(include_super=True,
 		include_type=True)
 class QFreeResponsePart(QPart):
-
 	grader_name = 'LowerQuoteNormalizedStringEqualityGrader'
 
 @interface.implementer(IQFilePart)
@@ -246,7 +244,6 @@ class QFilePart(QPart):
 @EqHash(include_super=True,
 		include_type=True)
 class QModeledContentPart(QPart):
-
 	response_interface = IQModeledContentResponse
 
 @interface.implementer(IQFillInTheBlankShortAnswerPart)
@@ -256,7 +253,6 @@ class QFillInTheBlankShortAnswerPart(QPart):
 
 @interface.implementer(IQFillInTheBlankWithWordBankPart)
 class QFillInTheBlankWithWordBankPart(QPart, Contained):
-
 	response_interface = IQDictResponse
 	grader_interface = IQFillInTheBlankWithWordBankGrader
 
