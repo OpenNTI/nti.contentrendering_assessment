@@ -19,6 +19,8 @@ from nti.assessment.contentrendering.ntiassessment import narandomizedquestionse
 
 from nti.assessment.randomized.interfaces import IQuestionBank
 from nti.assessment.randomized.interfaces import IRandomizedQuestionSet
+from nti.assessment.randomized.interfaces import IQRandomizedMatchingPart
+from nti.assessment.randomized.interfaces import IQRandomizedOrderingPart
 from nti.assessment.randomized.interfaces import IQRandomizedMultipleChoicePart
 
 from nti.testing.matchers import verifiably_provides
@@ -30,6 +32,80 @@ from nti.contentrendering.tests import buildDomFromString as _buildDomFromString
 
 class TestRandomized(AssessmentTestCase):
 
+	def test_matchingpart_macros(self):
+		example = br"""
+			\begin{naquestion}
+			\label{qid.7_2_Quiz.1}
+				1. Sequencing. Place the following events in the order that they occurred, from earliest (1) to latest (7).
+				\begin{naqmatchingpart}[randomize=true]
+					\begin{naqmlabels}
+						\naqmlabel[1] 2
+						\naqmlabel[0] 1
+					\end{naqmlabels}
+					\begin{naqmvalues}
+						\naqmvalue "Black Thursday"
+						\naqmvalue Battle of Anacostia Flats
+					\end{naqmvalues}
+				\end{naqmatchingpart}
+			\end{naquestion}
+			"""
+		dom = _buildDomFromString(_simpleLatexDocument((example,)))
+		assert_that(dom.getElementsByTagName('naquestion'), has_length(1))
+		assert_that(dom.getElementsByTagName('naquestion')[0], is_(naquestion))
+
+		assert_that(dom.getElementsByTagName('naqmlabel'), has_length(2))
+		assert_that(dom.getElementsByTagName('naqmvalue'), has_length(2))
+
+		naq = dom.getElementsByTagName('naquestion')[0]
+		part_el = naq.getElementsByTagName('naqmatchingpart')[0]
+		assert_that(part_el, has_property('randomize', is_(True)))
+
+		part = part_el.assessment_object()
+		assert_that(part, verifiably_provides(part_el.part_interface))
+		assert_that(part_el.part_interface, is_(IQRandomizedMatchingPart))
+		
+	def test_orderingpart_macros(self):
+		example = br"""
+			\begin{naquestion}
+			\label{qid.7_2_Quiz.1}
+				1. Sequencing. Place the following events in the order that they occurred, from earliest (1) to latest (7).
+				\begin{naqorderingpart}[randomize=true]
+					\begin{naqmlabels}
+						\naqmlabel[4] 1
+						\naqmlabel[0] 2
+						\naqmlabel[3] 3
+						\naqmlabel[1] 4
+						\naqmlabel[6] 5
+						\naqmlabel[5] 6
+						\naqmlabel[2] 7
+					\end{naqmlabels}
+					\begin{naqmvalues}
+						\naqmvalue "Black Thursday"
+						\naqmvalue Battle of Anacostia Flats
+						\naqmvalue Jesse Owens wins four gold medals
+						\naqmvalue "Scottsboro Boys" trial
+						\naqmvalue Election of Herbert Hoover
+						\naqmvalue "the Hundred Days"
+						\naqmvalue Election of Franklin D. Roosevelt
+					\end{naqmvalues}
+				\end{naqorderingpart}
+			\end{naquestion}
+			"""
+		dom = _buildDomFromString(_simpleLatexDocument((example,)))
+		assert_that(dom.getElementsByTagName('naquestion'), has_length(1))
+		assert_that(dom.getElementsByTagName('naquestion')[0], is_(naquestion))
+
+		assert_that(dom.getElementsByTagName('naqmlabel'), has_length(7))
+		assert_that(dom.getElementsByTagName('naqmvalue'), has_length(7))
+
+		naq = dom.getElementsByTagName('naquestion')[0]
+		part_el = naq.getElementsByTagName('naqorderingpart')[0]
+		assert_that(part_el, has_property('randomize', is_(True)))
+
+		part = part_el.assessment_object()
+		assert_that(part, verifiably_provides(part_el.part_interface))
+		assert_that(part_el.part_interface, is_(IQRandomizedOrderingPart))
+		
 	def test_multiple_choice_macros(self):
 		example = br"""
 			\begin{naquestion}

@@ -15,6 +15,7 @@ from ..parts import QMultipleChoicePart
 from ..parts import QMultipleChoiceMultipleAnswerPart
 
 from .interfaces import IQRandomizedMatchingPart
+from .interfaces import IQRandomizedOrderingPart
 from .interfaces import INonRandomizedMatchingPart
 from .interfaces import INonRandomizedOrderingPart
 from .interfaces import IQRandomizedMatchingPartGrader
@@ -44,7 +45,7 @@ class QRandomizedMatchingPart(QMatchingPart):
 	nonrandomized_interface = INonRandomizedMatchingPart
 	sha224randomized_interface = ISha224RandomizedMatchingPart
 	
-@interface.implementer(IQRandomizedMatchingPart)
+@interface.implementer(IQRandomizedOrderingPart)
 class QRandomizedOrderingPart(QRandomizedMatchingPart):
 
 	__external_class_name__ = "OrderingPart"
