@@ -31,6 +31,7 @@ from .interfaces import IQSolution
 from .interfaces import IQMathSolution
 from .interfaces import IQMatchingSolution
 from .interfaces import IQOrderingSolution
+from .interfaces import IQConnectingSolution
 from .interfaces import IQNumericMathSolution
 from .interfaces import IQFreeResponseSolution
 from .interfaces import IQSymbolicMathSolution
@@ -114,6 +115,7 @@ class QLatexSymbolicMathSolution(_EqualityValuedMixin, QSymbolicMathSolution):
 	"""
 	# TODO: Verification of the value? Minor transforms like adding $$?
 
+@interface.implementer(IQConnectingSolution)
 class QConenctionSolution(_EqualityValuedMixin, QSolution):
 	pass
 

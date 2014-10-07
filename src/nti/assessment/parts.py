@@ -158,7 +158,6 @@ class QMultipleChoicePart(QPart):
 class QMultipleChoiceMultipleAnswerPart(QMultipleChoicePart):
 	grader_interface = IQMultipleChoiceMultipleAnswerPartGrader
 
-
 @interface.implementer(IQConnectingPart)
 @EqHash('labels', 'values',
 		include_super=True,
@@ -197,7 +196,7 @@ class QFilePart(QPart):
 		response = self.response_interface(response)
 		# We first check our own constraints for submission
 		# and refuse to even grade if they are not met
-		if not self.is_mime_type_allowed( response.value.contentType ):
+		if not self.is_mime_type_allowed(response.value.contentType):
 			raise ConstraintNotSatisfied(response.value.contentType, 'mimeType')
 		if not self.is_filename_allowed( response.value.filename ):
 			raise ConstraintNotSatisfied(response.value.filename, 'filename')

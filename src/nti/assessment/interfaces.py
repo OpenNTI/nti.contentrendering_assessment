@@ -31,7 +31,7 @@ from nti.dataserver.interfaces import ITitledContent
 from nti.dataserver.interfaces import CompoundModeledContentBody
 from nti.dataserver.interfaces import INeverStoredInSharedStream
 
-from nti.schema.field import Int, ValidTextLine
+from nti.schema.field import Int
 from nti.schema.field import Bool
 from nti.schema.field import Dict
 from nti.schema.field import List
@@ -40,6 +40,7 @@ from nti.schema.field import Object
 from nti.schema.field import Number
 from nti.schema.field import Variant
 from nti.schema.field import ListOrTuple
+from nti.schema.field import ValidTextLine
 from nti.schema.field import IndexedIterable
 from nti.schema.field import ValidText as Text
 from nti.schema.field import ValidTextLine as TextLine
@@ -148,7 +149,6 @@ class IQSingleValuedSolution(IQSolution):
 	A solution consisting of a single value.
 	"""
 	value = interface.Attribute( "The correct value" )
-
 
 class IQMultiValuedSolution(IQSolution):
 	"""
@@ -266,7 +266,6 @@ class IQMultipleChoicePartGrader(IQPartGrader):
 	Specialized interface for grading multiple choice questions.
 	"""
 
-
 class IQMultipleChoiceMultipleAnswerSolution(IQSolution,IQMultiValuedSolution):
 	"""
 	A solution whose correct answer is drawn from a fixed list
@@ -280,7 +279,6 @@ class IQMultipleChoiceMultipleAnswerSolution(IQSolution,IQMultiValuedSolution):
 				  value_type=Int( title="The value",
 								  min=0) )
 
-
 class IQMultipleChoiceMultipleAnswerPart(IQMultipleChoicePart):
 	"""
 	A question part that asks the student to choose between a fixed set
@@ -292,12 +290,10 @@ class IQMultipleChoiceMultipleAnswerPart(IQMultipleChoicePart):
 								 value_type=Object(IQMultipleChoiceMultipleAnswerSolution,
 												   title="Multiple choice / multiple answer solution" ) )
 
-
 class IQMultipleChoiceMultipleAnswerPartGrader(IQPartGrader):
 	"""
 	Specialized interface for grading multiple choice questions.
 	"""
-
 
 class IQFreeResponseSolution(IQSolution,IQSingleValuedSolution):
 	"""
@@ -313,19 +309,21 @@ class IQFreeResponsePart(IQPart):
 	These parts are intended for very short submissions.
 	"""
 
-class IQMatchingSolution(IQSolution):
+class IQConnectingSolution(IQSolution):
 	"""
-	Matching solutions are the correct mapping from keys to values.
+	Connecting solutions are the correct mapping from keys to values.
 	Generally this will be a mapping of integer locations, but it may
 	also be a mapping of actual keys and values. The response is an
 	IDictResponse of ints or key/values.
 	"""
-
-	value = Dict( title="The correct mapping." )
-	
-class IQOrderingSolution(IQSolution):
 	
 	value = Dict( title="The correct mapping." )
+	
+class IQMatchingSolution(IQConnectingSolution):
+	pass
+	
+class IQOrderingSolution(IQConnectingSolution):
+	pass
 
 class IQConnectingPart(IQPart):
 	"""
@@ -358,12 +356,15 @@ class IQOrderingPart(IQConnectingPart):
 								 min_length=1,
 								 value_type=Object(IQOrderingSolution, title="Ordering solution" ) )
 
-class IQMatchingPartGrader(IQPartGrader):
+class IQConnectingPartGrader(IQPartGrader):
+	pass
+
+class IQMatchingPartGrader(IQConnectingPartGrader):
 	"""
 	A grader for matching questions.
 	"""
 	
-class IQOrderingPartGrader(IQPartGrader):
+class IQOrderingPartGrader(IQConnectingPartGrader):
 	"""
 	A grader for ordering questions.
 	"""
@@ -439,7 +440,7 @@ class IQuestion(IAnnotatable):
 							 value_type=Object( IQPart, title="A question part" ),
 							 )
 
-class IQuestionSet(ITitledContent,IAnnotatable):
+class IQuestionSet(ITitledContent, IAnnotatable):
 	"""
 	An ordered group of related questions generally intended to be
 	completed as a unit (aka, a Quiz or worksheet).
@@ -469,8 +470,7 @@ class IQAssignmentPart(ITitledContent):
 	auto_grade = Bool(title="Should this part be run through the grading machinery?",
 					  default=False)
 
-class IQAssignment(ITitledContent,
-				   IAnnotatable):
+class IQAssignment(ITitledContent, IAnnotatable):
 	"""
 	An assignment differs from either plain questions or question sets
 	in that there is an expectation that it must be completed,
@@ -602,9 +602,7 @@ class IQAssignmentPolicies(interface.Interface):
 		Are there any policies registered? If no, return False.
 		"""
 
-
-class IQResponse(IContained,
-				 INeverStoredInSharedStream):
+class IQResponse(IContained, INeverStoredInSharedStream):
 	"""
 	A response submitted by the student.
 	"""
@@ -632,7 +630,6 @@ class IQDictResponse(IQResponse):
 	value = Dict(title="The response dictionary",
 				 key_type=TextLine(title="The key"),
 				 value_type=TextLine(title="The value"))
-
 
 class IQModeledContentResponse(IQResponse,
 							   ITitledContent):
@@ -744,7 +741,6 @@ class IQuestionSubmission(IQBaseSubmission):
 							 default=(),
 							 description="""The length must match the length of the questions. Each object must be
 							 adaptable into the proper :class:`IQResponse` object (e.g., a string or dict).""" )
-
 
 class IQAssessedPart(IContained):
 	"""
