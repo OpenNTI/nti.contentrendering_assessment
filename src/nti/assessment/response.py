@@ -75,6 +75,8 @@ class QDictResponse(TrivialValuedMixin, QResponse):
 class QUploadedFile(PersistentCreatedModDateTrackingObject, # Order matters
 					NamedBlobFile):
 	
+	name = None
+	
 	def __str__(self):
 		return "%s(%s)" % (self.__class__.__name__, self.filename)
 	__repr__ = __str__
@@ -83,6 +85,8 @@ class QUploadedFile(PersistentCreatedModDateTrackingObject, # Order matters
 class QUploadedImageFile(PersistentCreatedModDateTrackingObject, # Order matters
 						 NamedBlobImage):
 		
+	name = None
+	
 	def __str__(self):
 		return "%s(%s)" % (self.__class__.__name__, self.filename)
 	__repr__ = __str__

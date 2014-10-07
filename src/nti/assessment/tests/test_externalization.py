@@ -7,7 +7,6 @@ __docformat__ = "restructuredtext en"
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
 
-
 from hamcrest import is_
 from hamcrest import none
 from hamcrest import is_not
@@ -43,7 +42,8 @@ class TestExternalization(AssessmentTestCase):
 		ext_obj = {
 			'MimeType': 'application/vnd.nextthought.assessment.uploadedfile',
 			'value': GIF_DATAURL,
-			'filename': r'c:\dir\file.gif'
+			'filename': r'c:\dir\file.gif',
+			'name':'ichigo'
 		}
 
 		assert_that(internalization.find_factory_for(ext_obj),
@@ -63,9 +63,11 @@ class TestExternalization(AssessmentTestCase):
 		# with the right content time and filename
 		assert_that(internal, has_property('mimeType', 'image/gif'))
 		assert_that(internal, has_property('filename', 'file.gif'))
+		assert_that(internal, has_property('name', 'ichigo'))
 
 		assert_that(internal, externalizes(all_of(	has_key('FileMimeType'),
 													has_key('filename'),
+													has_key('name'),
 													has_entry('url', none()),
 													has_key('CreatedTime'),
 													has_key('Last Modified'))))

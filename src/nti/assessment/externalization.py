@@ -140,6 +140,7 @@ class _QUploadedFileObjectIO(AbstractDynamicObjectIO):
 		updated = super(_QUploadedFileObjectIO, self).updateFromExternalObject(parsed, *args, **kwargs)
 		ext_self = self._ext_replacement()
 		url = parsed.get('url') or parsed.get('value')
+		name = parsed.get('name') or parsed.get('Name')
 		if url:
 			data_url = DataURI(__name__='url').fromUnicode( url )
 			ext_self.contentType = data_url.mimeType
@@ -148,13 +149,15 @@ class _QUploadedFileObjectIO(AbstractDynamicObjectIO):
 		if 'filename' in parsed:
 			ext_self.filename = parsed['filename']
 			# some times we get full paths
-			name = nameFinder( ext_self )
-			if name:
-				ext_self.filename = name
+			name_found = nameFinder( ext_self )
+			if name_found:
+				ext_self.filename = name_found
 			updated = True
 		if 'FileMimeType' in parsed:
 			ext_self.contentType = bytes(parsed['FileMimeType'])
 			updated = True
+		if name is not None:
+			ext_self.name = name
 		return updated
 
 	def toExternalObject( self, mergeFrom=None, **kwargs ):
@@ -163,8 +166,9 @@ class _QUploadedFileObjectIO(AbstractDynamicObjectIO):
 		# It's not quite possible to fully traverse to the file sometimes
 		# (TODO: verify this in this case) so we go directly to the file address
 		the_file = self._ext_replacement()
-		ext_dict['FileMimeType'] = the_file.mimeType or None
+		ext_dict['name'] = the_file.name or None
 		ext_dict['filename'] = the_file.filename or None
+		ext_dict['FileMimeType'] = the_file.mimeType or None
 		ext_dict['MimeType'] = 'application/vnd.nextthought.assessment.uploadedfile'
 		target = to_external_ntiid_oid(the_file, add_to_connection=True)
 		if target:

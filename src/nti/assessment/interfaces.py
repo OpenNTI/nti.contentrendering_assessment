@@ -649,7 +649,7 @@ class IQModeledContentResponse(IQResponse,
 from plone.namedfile.interfaces import INamedFile
 
 class IQUploadedFile(INamedFile, ILastModified):
-	pass
+	name = ValidTextLine(title="Identifier for the file", required=False, default=None)
 
 class IInternalUploadedFileRef(interface.Interface):
 	"""
