@@ -467,42 +467,14 @@ class naqfilepart(_AbstractNAQPart):
 					raise ValueError("Type is not MIME, extension, or wild", mime_or_ext )
 		return res
 
-class naqmatchingpart(_AbstractNAQPart):
-	r"""
-	A matching part (usually used as the sole part to a question).
-	It must have two children, one listing the possible labels, with the
-	correct solution's index in brackets, and the other listing the possible
-	values::
-
-		\begin{naquestion}
-			Arbitrary prefix content goes here.
-			\begin{naqmatchingpart}
-			   Arbitrary content for this part goes here.
-			   \begin{naqmlabels}
-			   		\naqmlabel[2] What is three times two?
-					\naqmlabel[0] What is four times three?
-					\naqmlabel[1] What is five times two thousand?
-				\end{naqmlabels}
-				\begin{naqmvalues}
-					\naqmvalue Twelve
-					\naqmvalue Ten thousand
-					\naqmvalue Six
-				\end{naqmvalues}
-				\begin{naqsolexplanation}
-					Arbitrary content explaining how the correct solution is arrived at.
-				\end{naqsolexplanation}
-			\end{naqmatchingpart}
-		\end{naquestion}
-	"""
-
-	part_factory = parts.QMatchingPart
-	part_interface = as_interfaces.IQMatchingPart
-	soln_interface = as_interfaces.IQMatchingSolution
+class naqconnectingpart(_AbstractNAQPart):
 	
-	randomized_part_factory = randomized_parts.QRandomizedMatchingPart
-	randomized_part_interface = rand_interfaces.IQRandomizedMatchingPart
-			
-	#forcePars = True
+	part_factory = parts.QConenctingPart
+	part_interface = as_interfaces.IQConnectingPart
+	soln_interface = as_interfaces.IQConnectingSolution
+	
+	randomized_part_factory = randomized_parts.QRandomizedConnectingPart
+	randomized_part_interface = rand_interfaces.IQRandomizedConnectingPart
 
 	def _asm_labels(self):
 		return [x._asm_local_content for x in self.getElementsByTagName( 'naqmlabel' )]
@@ -526,7 +498,7 @@ class naqmatchingpart(_AbstractNAQPart):
 		return solutions
 
 	def digest( self, tokens ):
-		res = super(naqmatchingpart,self).digest( tokens )
+		res = super(naqconnectingpart,self).digest( tokens )
 		# Validate the document structure: we have a naqlabels child with
 		# at least two of its own children, an naqvalues child of equal length
 		# and a proper matching between the two
@@ -563,13 +535,48 @@ class naqmatchingpart(_AbstractNAQPart):
 		return res
 
 	def invoke(self, tex):
-		token = super(naqmatchingpart, self).invoke(tex)
+		token = super(naqconnectingpart, self).invoke(tex)
 		if self.randomize:
 			self.part_factory = self.randomized_part_factory
 			self.part_interface = self.randomized_part_interface
 		return token
 
-class naqorderingpart(naqmatchingpart):
+class naqmatchingpart(naqconnectingpart):
+	r"""
+	A matching part (usually used as the sole part to a question).
+	It must have two children, one listing the possible labels, with the
+	correct solution's index in brackets, and the other listing the possible
+	values::
+
+		\begin{naquestion}
+			Arbitrary prefix content goes here.
+			\begin{naqmatchingpart}
+			   Arbitrary content for this part goes here.
+			   \begin{naqmlabels}
+			   		\naqmlabel[2] What is three times two?
+					\naqmlabel[0] What is four times three?
+					\naqmlabel[1] What is five times two thousand?
+				\end{naqmlabels}
+				\begin{naqmvalues}
+					\naqmvalue Twelve
+					\naqmvalue Ten thousand
+					\naqmvalue Six
+				\end{naqmvalues}
+				\begin{naqsolexplanation}
+					Arbitrary content explaining how the correct solution is arrived at.
+				\end{naqsolexplanation}
+			\end{naqmatchingpart}
+		\end{naquestion}
+	"""
+
+	part_factory = parts.QMatchingPart
+	part_interface = as_interfaces.IQMatchingPart
+	soln_interface = as_interfaces.IQMatchingSolution
+	
+	randomized_part_factory = randomized_parts.QRandomizedMatchingPart
+	randomized_part_interface = rand_interfaces.IQRandomizedMatchingPart
+
+class naqorderingpart(naqconnectingpart):
 	r"""
 	\begin{naquestion}
 		Arbitrary prefix content goes here.
