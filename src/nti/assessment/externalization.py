@@ -152,6 +152,7 @@ class _QUploadedFileObjectIO(AbstractDynamicObjectIO):
 			name_found = nameFinder( ext_self )
 			if name_found:
 				ext_self.filename = name_found
+			name = ext_self.filename if not name else name
 			updated = True
 		if 'FileMimeType' in parsed:
 			ext_self.contentType = bytes(parsed['FileMimeType'])
@@ -182,13 +183,12 @@ class _QUploadedFileObjectIO(AbstractDynamicObjectIO):
 		else:
 			ext_dict['url'] = None
 			ext_dict['download_url'] = None
-
 		ext_dict['value'] = ext_dict['url']
 		return ext_dict
 
 def _QUploadedFileFactory(ext_obj):
 	factory = QUploadedFile
-	url = ext_obj.get( 'url', ext_obj.get('value') )
+	url = ext_obj.get('url', ext_obj.get('value'))
 	if url and url.startswith(b'data:'):
 		ext_obj['url'] = DataURL(url)
 		ext_obj.pop('value', None)
