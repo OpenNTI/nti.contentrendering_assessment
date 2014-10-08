@@ -188,10 +188,13 @@ class _QUploadedFileObjectIO(AbstractDynamicObjectIO):
 
 def _QUploadedFileFactory(ext_obj):
 	factory = QUploadedFile
-	url = ext_obj.get('url', ext_obj.get('value'))
+	url = ext_obj.get('url') or ext_obj.get('value')
+	contentType = ext_obj.get('FileMimeType')
 	if url and url.startswith(b'data:'):
 		ext_obj['url'] = DataURL(url)
 		ext_obj.pop('value', None)
 		if ext_obj['url'].mimeType.startswith('image/'):
 			factory = QUploadedImageFile
+	elif contentType and contentType.lower().startswith('image/'):
+		factory = QUploadedImageFile
 	return factory
