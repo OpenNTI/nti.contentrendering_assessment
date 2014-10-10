@@ -77,8 +77,12 @@ class _QModeledContentResponseUpdater(object):
 
 	def updateFromExternalObject(self, parsed, *args, **kwargs):
 		value = parsed.get('value', None)
-		for idx in xrange(value or ()):
-			value[idx] =  filter(lambda c: not isctrl(c), value[idx]) 	
+		if value is not None:
+			if isinstance(value, six.string_types):
+				value = [value]
+			for idx in xrange(len(value)):
+				value[idx] = filter(lambda c: not isctrl(c), value[idx])
+			parsed['value'] = value
 		result = InterfaceObjectIO(
 					self.obj, 
 					IQModeledContentResponse).updateFromExternalObject(parsed)

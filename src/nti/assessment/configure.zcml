@@ -198,6 +198,12 @@
 						 .interfaces.IRegEx"
 		modules=".wordbank .regex" />
 
+	<configure zcml:condition="have devmode">
+		<adapter factory=".internalization._QModeledContentResponseUpdater"
+			 	 for=".interfaces.IQModeledContentResponse"
+			 	 provides="nti.externalization.interfaces.IInternalObjectUpdater" />
+	</configure>
+	
 	<adapter factory="list .wordbank._wordbank_adapter"
 			 provides=".interfaces.IWordBank"
 			 for="list"/>
