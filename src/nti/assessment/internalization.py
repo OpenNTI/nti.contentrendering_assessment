@@ -10,6 +10,7 @@ logger = __import__('logging').getLogger(__name__)
 
 import six
 import collections
+from curses.ascii import isctrl
 
 from zope import interface
 from zope import component
@@ -21,45 +22,64 @@ from nti.externalization.internalization import update_from_external_object
 
 from .interfaces import IRegEx
 from .interfaces import IWordEntry
+from .interfaces import IQModeledContentResponse
 from .interfaces import IQFillInTheBlankShortAnswerSolution
 
 @interface.implementer(IInternalObjectUpdater)
 @component.adapter(IWordEntry)
 class _WordEntryUpdater(object):
 
-    __slots__ = ('obj',)
+	__slots__ = ('obj',)
 
-    def __init__(self, obj):
-        self.obj = obj
+	def __init__(self, obj):
+		self.obj = obj
 
-    def updateFromExternalObject(self, parsed, *args, **kwargs):
-        if 'content' not in parsed or not parsed['content']:
-            parsed['content'] = parsed['word']
-        result = InterfaceObjectIO(self.obj, IWordEntry).updateFromExternalObject(parsed)
-        return result
+	def updateFromExternalObject(self, parsed, *args, **kwargs):
+		if 'content' not in parsed or not parsed['content']:
+			parsed['content'] = parsed['word']
+		result = InterfaceObjectIO(self.obj, IWordEntry).updateFromExternalObject(parsed)
+		return result
 
 @interface.implementer(IInternalObjectUpdater)
 @component.adapter(IQFillInTheBlankShortAnswerSolution)
 class _QFillInTheBlankWithWordBankSolutionUpdater(object):
 
-    __slots__ = ('obj',)
+	__slots__ = ('obj',)
 
-    def __init__(self, obj):
-        self.obj = obj
+	def __init__(self, obj):
+		self.obj = obj
 
-    def updateFromExternalObject(self, parsed, *args, **kwargs):
-        value = parsed.get('value', {})
-        for key in value.keys():
-            regex = value.get(key)
-            if isinstance(regex, six.string_types):
-                regex = IRegEx(regex)
-            elif isinstance(regex, collections.Mapping):
-                ext_obj = regex
-                regex = find_factory_for(ext_obj)()
-                update_from_external_object(regex, ext_obj)
-            value[key] = regex
-            
-        result = InterfaceObjectIO(
-                    self.obj,
-                    IQFillInTheBlankShortAnswerSolution).updateFromExternalObject(parsed)
-        return result
+	def updateFromExternalObject(self, parsed, *args, **kwargs):
+		value = parsed.get('value', {})
+		for key in value.keys():
+			regex = value.get(key)
+			if isinstance(regex, six.string_types):
+				regex = IRegEx(regex)
+			elif isinstance(regex, collections.Mapping):
+				ext_obj = regex
+				regex = find_factory_for(ext_obj)()
+				update_from_external_object(regex, ext_obj)
+			value[key] = regex
+			
+		result = InterfaceObjectIO(
+					self.obj,
+					IQFillInTheBlankShortAnswerSolution).updateFromExternalObject(parsed)
+		return result
+
+@component.adapter(IQModeledContentResponse)
+@interface.implementer(IInternalObjectUpdater)
+class _QModeledContentResponseUpdater(object):
+
+	__slots__ = ('obj',)
+
+	def __init__(self, obj):
+		self.obj = obj
+
+	def updateFromExternalObject(self, parsed, *args, **kwargs):
+		value = parsed.get('value', None)
+		for idx in xrange(value or ()):
+			value[idx] =  filter(lambda c: not isctrl(c), value[idx]) 	
+		result = InterfaceObjectIO(
+					self.obj, 
+					IQModeledContentResponse).updateFromExternalObject(parsed)
+		return result
