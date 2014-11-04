@@ -61,8 +61,6 @@ class naqsolutions(Base.List):
 
 		return res
 
-_LocalContentMixin._asm_ignorable_renderables += (naqsolutions,)
-
 class naqsolution(Base.List.item):
 
 	args = '[weight:float] <units>'
@@ -100,8 +98,6 @@ class naqsolution(Base.List.item):
 		if units:
 			return ','.join( units )
 
-_LocalContentMixin._asm_ignorable_renderables += (naqsolution,)
-
 ###
 # Explanations
 ###
@@ -109,4 +105,3 @@ _LocalContentMixin._asm_ignorable_renderables += (naqsolution,)
 class naqsolexplanation(_LocalContentMixin, Base.Environment):
 	pass
 
-_LocalContentMixin._asm_ignorable_renderables += (naqsolexplanation,)

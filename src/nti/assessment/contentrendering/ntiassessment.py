@@ -103,6 +103,10 @@ naquestionsetname = naquestionsetname
 naqsolexplanation = naqsolexplanation
 naqsolutionnumname = naqsolutionnumname
 
+_LocalContentMixin._asm_ignorable_renderables += (naqsolutions,
+												  naqsolution,
+												  naqsolexplanation)
+
 ###
 # Parts
 ###
