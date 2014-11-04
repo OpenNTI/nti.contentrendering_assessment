@@ -19,8 +19,8 @@ import anyjson as json
 from zope import component
 from zope import interface
 
+from nti.contentrendering.interfaces import IRenderedBook
 from nti.contentrendering.resources import ResourceRenderer
-from nti.contentrendering import interfaces as cdr_interfaces
 
 from nti.assessment.contentrendering.interfaces import IAssessmentExtractor
 
@@ -29,14 +29,15 @@ from nti.contentrendering.tests import RenderContext
 from nti.assessment.tests import AssessmentTestCase
 from nti.assessment.tests import _simpleLatexDocument
 
-@interface.implementer(cdr_interfaces.IRenderedBook)
+@interface.implementer(IRenderedBook)
 class _MockRenderedBook(object):
 	document = None
 	contentLocation = None
 
-class TestRenderableSymMathPart(AssessmentTestCase):
+class TestRenderables(AssessmentTestCase):
 
-	def _do_test_render( self, label, ntiid, filename='index.html', units='', units_html=None, input_encoding=None ):
+	def _do_test_render(self, label, ntiid, filename='index.html', units='',
+						 units_html=None, input_encoding=None ):
 
 		example = br"""
 		\begin{naquestion}[individual=true]%s
@@ -50,7 +51,8 @@ class TestRenderableSymMathPart(AssessmentTestCase):
 		\end{naquestion}
 		""" % (label,units)
 
-		with RenderContext(_simpleLatexDocument( (example,) ), output_encoding='utf-8', input_encoding=input_encoding) as ctx:
+		with RenderContext(_simpleLatexDocument( (example,) ), output_encoding='utf-8', 
+						   input_encoding=input_encoding) as ctx:
 			dom  = ctx.dom
 			dom.getElementsByTagName( 'document' )[0].filenameoverride = 'index'
 			render = ResourceRenderer.createResourceRenderer('XHTML', None)
@@ -364,3 +366,35 @@ class TestRenderableSymMathPart(AssessmentTestCase):
 						 'href': 'index.html'}
 
 			assert_that( obj, is_( exp_value ) )
+			
+	def test_freeresponse(self):
+		example = br"""
+			\begin{naquestion}
+			\label{qid.prelab_scientific_method.03}
+				\begin{naqfreeresponsepart}
+					3. \$40 + \$5
+					\begin{naqsolutions}
+						\naqsolution[1] \$45
+					\end{naqsolutions}
+				\end{naqfreeresponsepart}
+			\end{naquestion}
+			"""
+
+		with RenderContext(_simpleLatexDocument( (example,) )) as ctx:
+			dom  = ctx.dom
+			dom.getElementsByTagName( 'document' )[0].filenameoverride = 'index'
+			render = ResourceRenderer.createResourceRenderer( 'XHTML', None )
+			dom.renderer = render
+			render.importDirectory( os.path.join( os.path.dirname(__file__), '..' ) )
+			render.render( dom )
+
+			rendered_book = _MockRenderedBook()
+			rendered_book.document = dom
+			rendered_book.contentLocation = ctx.docdir
+
+			extractor = component.getAdapter(rendered_book, IAssessmentExtractor)
+			extractor.transform( rendered_book )
+
+			jsons = open(os.path.join( ctx.docdir, 'assessment_index.json' ), 'rU' ).read()
+			jsons = jsons.decode('utf-8')
+			json.loads( jsons )

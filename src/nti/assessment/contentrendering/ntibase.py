@@ -17,9 +17,11 @@ from zope.cachedescriptors.property import readproperty
 
 from plasTeX import Base
 
-from nti.assessment import interfaces as as_interfaces
+from nti.assessment.interfaces import IQHTMLHint
+from nti.assessment.interfaces import IQMathSolution
 
-from nti.contentfragments import interfaces as cfg_interfaces
+from nti.contentfragments.interfaces import LatexContentFragment
+from nti.contentfragments.interfaces import ILatexContentFragment
 
 from nti.contentrendering.plastexpackages._util import LocalContentMixin as _BaseLocalContentMixin
 
@@ -41,7 +43,7 @@ class _AbstractNAQPart(_LocalContentMixin, Base.Environment):
 	soln_interface = None
 
 	part_factory = None
-	hint_interface = as_interfaces.IQHTMLHint
+	hint_interface = IQHTMLHint
 
 	args = '[randomize:str]'
 
@@ -55,8 +57,8 @@ class _AbstractNAQPart(_LocalContentMixin, Base.Environment):
 		solutions = []
 		solution_els = self.getElementsByTagName( 'naqsolution' )
 		for solution_el in solution_els:
-			#  If the textContent is taken instead of the source of the child element, the
-			#  code fails on Latex solutions like $\frac{1}{2}$
+			# If the textContent is taken instead of the source of the child element, the
+			# code fails on Latex solutions like $\frac{1}{2}$
 			# TODO: Should this be rendered? In some cases yes, in some cases no?
 			content = ' '.join([c.source.strip() for c in solution_el.childNodes]).strip()
 			if len(content) >= 2 and content.startswith( '$' ) and content.endswith( '$' ):
@@ -66,12 +68,12 @@ class _AbstractNAQPart(_LocalContentMixin, Base.Environment):
 			# to adapt it with the interfaces. If we do, a content string like "75\%" becomes
 			# "75\\\\%\\", which is clearly wrong
 			sol_text = unicode(content).strip()
-			solution = self.soln_interface(cfg_interfaces.LatexContentFragment(sol_text))
+			solution = self.soln_interface(LatexContentFragment(sol_text))
 			weight = solution_el.attributes['weight']
 			if weight is not None:
 				solution.weight = weight
 
-			if self.soln_interface.isOrExtends( as_interfaces.IQMathSolution ):
+			if self.soln_interface.isOrExtends(IQMathSolution):
 				# Units given? We currently always make units optional, given or not
 				# This can easily be changed or configured
 				allowed_units = solution_el.units_to_text_list()
@@ -90,7 +92,7 @@ class _AbstractNAQPart(_LocalContentMixin, Base.Environment):
 		assert len(exp_els) <= 1
 		if exp_els:
 			return exp_els[0]._asm_local_content
-		return cfg_interfaces.ILatexContentFragment( '' )
+		return ILatexContentFragment( '' )
 
 	def _asm_hints(self):
 		"""
@@ -156,4 +158,4 @@ class naqvalue(_LocalContentMixin, Base.List.item):
 
 	@readproperty
 	def _asm_local_content(self):
-		return cfg_interfaces.ILatexContentFragment(unicode(self.textContent).strip())
+		return ILatexContentFragment(unicode(self.textContent).strip())
