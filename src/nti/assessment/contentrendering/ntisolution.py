@@ -15,12 +15,6 @@ from .ntibase import _LocalContentMixin
 
 # Handle custom counter names
 
-class naquestionsetname(Base.Command):
-	unicode = ''
-
-class naquestionname(Base.Command):
-	unicode = ''
-
 class naqsolutionnumname(Base.Command):
 	unicode = ''
 

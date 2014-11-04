@@ -91,15 +91,11 @@ from .ntibase import _LocalContentMixin
 
 from nti.assessment.contentrendering.ntisolution import naqsolution 
 from nti.assessment.contentrendering.ntisolution import naqsolutions 
-from nti.assessment.contentrendering.ntisolution import naquestionname
-from nti.assessment.contentrendering.ntisolution import naquestionsetname
 from nti.assessment.contentrendering.ntisolution import naqsolexplanation
 from nti.assessment.contentrendering.ntisolution import naqsolutionnumname 
 
 naqsolution = naqsolution
 naqsolutions = naqsolutions
-naquestionname = naquestionname
-naquestionsetname = naquestionsetname
 naqsolexplanation = naqsolexplanation
 naqsolutionnumname = naqsolutionnumname
 
@@ -563,18 +559,22 @@ from nti.assessment.contentrendering.ntiquestion import naquestionref
 from nti.assessment.contentrendering.ntiquestion import naquestionset
 from nti.assessment.contentrendering.ntiquestion import naqindexranges
 from nti.assessment.contentrendering.ntiquestion import naquestionbank
+from nti.assessment.contentrendering.ntiquestion import naquestionname
 from nti.assessment.contentrendering.ntiquestion import naquestionsetref
 from nti.assessment.contentrendering.ntiquestion import naquestionbankref
+from nti.assessment.contentrendering.ntiquestion import naquestionsetname
 from nti.assessment.contentrendering.ntiquestion import narandomizedquestionset
 from nti.assessment.contentrendering.ntiquestion import narandomizedquestionsetref
 
 naquestion = naquestion
 naquestionref = naquestionref
 naquestionset = naquestionset
+naquestionname = naquestionname
 naqindexranges = naqindexranges
 naquestionbank = naquestionbank
 naquestionsetref = naquestionsetref
 naquestionbankref = naquestionbankref
+naquestionsetname = naquestionsetname
 narandomizedquestionset = narandomizedquestionset
 narandomizedquestionsetref = narandomizedquestionsetref
 

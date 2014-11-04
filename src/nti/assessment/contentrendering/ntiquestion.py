@@ -43,6 +43,12 @@ from ..randomized.interfaces import IRandomizedQuestionSet
 
 from .ntibase import _LocalContentMixin
 
+class naquestionname(Base.Command):
+	unicode = ''
+
+class naquestionsetname(Base.Command):
+	unicode = ''
+
 class naquestion(_LocalContentMixin, Base.Environment, plastexids.NTIIDMixin):
 	args = '[individual:str]'
 
