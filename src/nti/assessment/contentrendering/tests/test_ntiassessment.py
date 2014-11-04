@@ -14,6 +14,7 @@ from hamcrest import has_item
 from hamcrest import has_entry
 from hamcrest import has_length
 from hamcrest import assert_that
+from hamcrest import has_entries
 from hamcrest import has_property
 from hamcrest import same_instance
 from hamcrest import contains_string
@@ -412,8 +413,8 @@ class TestMisc(AssessmentTestCase):
 				\begin{naqfillintheblankshortanswerpart}
 					Arbitrary content for this part goes here. \naqblankfield{001}[2] \naqblankfield{002}[2]
 					\begin{naqregexes}
-						\naqregex{001}{^yes\\s*[\,|\\s]\\s*I will\$} Yes, I will.
-						\naqregex{002}{^1\$} Only 1.
+						\naqregex{001}{^yes\\s*[\,|\\s]\\s*I will} Yes, I will.
+						\naqregex{002}{\\s*\\\$?\\s?945.20} 945.20
 					\end{naqregexes}
 					\begin{naqsolexplanation}
 						Arbitrary content explaining how the correct solution is arrived at.
@@ -433,8 +434,11 @@ class TestMisc(AssessmentTestCase):
 		naq = dom.getElementsByTagName('naquestion')[0]
 		part_el = naq.getElementsByTagName('naqfillintheblankshortanswerpart')[0]
 		solns = getattr(part_el, '_asm_solutions')()
+		
 		assert_that(solns, has_length(1))
-		assert_that(solns[0], has_property('value', has_entry('001', has_property('pattern', '^yes\\s*[,|\\s]\\s*I will$'))))
+		assert_that(solns[0], has_property('value', 
+										  has_entries('001', has_property('pattern', '^yes\\s*[,|\\s]\\s*I will'), 
+													  '002', has_property('pattern', '\\s*\\$?\\s?945.20') )))
 
 		assert_that(solns[0], verifiably_provides(part_el.soln_interface))
 		assert_that(solns[0], has_property('weight', 1.0))
