@@ -16,21 +16,25 @@ from zope.cachedescriptors.property import readproperty
 from plasTeX import Base
 from plasTeX.Renderers import render_children
 
-from nti.assessment import parts
-from nti.assessment import question
-from nti.assessment.interfaces import IRegEx
-from nti.assessment.interfaces import IWordBank
-from nti.assessment.interfaces import IWordEntry
-from nti.assessment.interfaces import IQFillInTheBlankShortAnswerPart
-from nti.assessment.interfaces import IQFillInTheBlankWithWordBankPart
-from nti.assessment.interfaces import IQFillInTheBlankShortAnswerSolution
-from nti.assessment.interfaces import IQFillInTheBlankWithWordBankSolution
-
 from nti.contentfragments.interfaces import HTMLContentFragment
+
+from ..parts import QFillInTheBlankShortAnswerPart
+from ..parts import QFillInTheBlankWithWordBankPart
+from ..question import QFillInTheBlankWithWordBankQuestion
+
+from ..interfaces import IRegEx
+from ..interfaces import IWordBank
+from ..interfaces import IWordEntry
+from ..interfaces import IQFillInTheBlankShortAnswerPart
+from ..interfaces import IQFillInTheBlankWithWordBankPart
+from ..interfaces import IQFillInTheBlankShortAnswerSolution
+from ..interfaces import IQFillInTheBlankWithWordBankSolution
 
 from .ntibase import naqvalue
 from .ntibase import _AbstractNAQPart
 from .ntibase import _LocalContentMixin
+
+from .ntiquestion import naquestion
 
 ###
 # Parts
@@ -93,8 +97,8 @@ class naqfillintheblankwithwordbankpart(_WordBankMixIn, _AbstractNAQPart):
 		\end{naquestion}
 	"""
 
+	part_factory = QFillInTheBlankWithWordBankPart
 	part_interface = IQFillInTheBlankWithWordBankPart
-	part_factory = parts.QFillInTheBlankWithWordBankPart
 	soln_interface = IQFillInTheBlankWithWordBankSolution
 
 	def _asm_object_kwargs(self):
@@ -185,8 +189,8 @@ class naqfillintheblankshortanswerpart(_AbstractNAQPart):
 		\end{naquestion}
 	"""
 
+	part_factory = QFillInTheBlankShortAnswerPart
 	part_interface = IQFillInTheBlankShortAnswerPart
-	part_factory = parts.QFillInTheBlankShortAnswerPart
 	soln_interface = IQFillInTheBlankShortAnswerSolution
 
 	def _asm_object_kwargs(self):
@@ -312,19 +316,17 @@ class naqinput(_LocalContentMixin, Base.Environment):
 # Questions
 ###
 
-from .ntiquestion import naquestion
-
 def _remove_parts_after_render(self, rendered):
-	# CS: Make sure we only render the children that do not contain any 'question' part,
-	# since those will be rendereds when the part is so.
+	## CS: Make sure we only render the children that do not contain any 'question' part,
+	## since those will be rendereds when the part is so.
 	def _check(node):
 		f = lambda x :isinstance(x, (_AbstractNAQPart,))
 		found = any(map(f, node.childNodes)) or f(node)
 		return not found
 
-	# each node in self.childNodes is a plasTeX.Base.TeX.Primitives.par
-	# check its children to see if they contain any question 'part' objects.
-	# do not include them in the asm_local_content
+	## each node in self.childNodes is a plasTeX.Base.TeX.Primitives.par
+	## check its children to see if they contain any question 'part' objects.
+	## do not include them in the asm_local_content
 	selected = [n for n in self.childNodes if _check(n)]
 	output = render_children(self.renderer, selected)
 	output = HTMLContentFragment(''.join(output).strip())
@@ -337,7 +339,7 @@ class naquestionfillintheblankwordbank(_WordBankMixIn, naquestion):
 
 	def _createQuestion(self):
 		wordbank = self._asm_wordbank()
-		result = question.QFillInTheBlankWithWordBankQuestion(content=self._asm_local_content,
-															  parts=self._asm_question_parts(),
-															  wordbank=wordbank)
+		result = QFillInTheBlankWithWordBankQuestion(content=self._asm_local_content,
+													 parts=self._asm_question_parts(),
+													 wordbank=wordbank)
 		return result
