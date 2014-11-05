@@ -11,6 +11,8 @@ logger = __import__('logging').getLogger(__name__)
 
 import six
 
+from zope.cachedescriptors.property import readproperty
+
 from plasTeX import Base
 from plasTeX.Renderers import render_children
 
@@ -246,6 +248,10 @@ class naqregex(naqvalue):
 		tok = super(naqregex, self).invoke(tex)
 		return tok
 
+	@readproperty
+	def _asm_local_content(self):
+		return unicode(self.textContent).strip()
+	
 	def _after_render(self, rendered):
 		self._asm_local_content = rendered
 

@@ -8,7 +8,12 @@ __docformat__ = "restructuredtext en"
 # pylint: disable=W0212,R0904
 
 from hamcrest import is_
+from hamcrest import none
+from hamcrest import is_not
+from hamcrest import has_entry
+from hamcrest import has_length
 from hamcrest import assert_that
+from hamcrest import has_entries
 from hamcrest import contains_string
 from hamcrest import is_not as does_not
 
@@ -18,6 +23,7 @@ import anyjson as json
 
 from zope import component
 from zope import interface
+from zope.traversing.api import traverse
 
 from nti.contentrendering.interfaces import IRenderedBook
 from nti.contentrendering.resources import ResourceRenderer
@@ -367,16 +373,19 @@ class TestRenderables(AssessmentTestCase):
 
 			assert_that( obj, is_( exp_value ) )
 			
-	def test_freeresponse(self):
+	def test_fill_in_the_blank_short_answer_part(self):
 		example = br"""
-			\begin{naquestion}
-			\label{qid.prelab_scientific_method.03}
-				\begin{naqfreeresponsepart}
-					3. \$40 + \$5
-					\begin{naqsolutions}
-						\naqsolution[1] \$45
-					\end{naqsolutions}
-				\end{naqfreeresponsepart}
+				\begin{naquestion}
+				Arbitrary prefix content goes here.
+				\begin{naqfillintheblankshortanswerpart}
+					Arbitrary content for this part goes here. \naqblankfield{001}[2]
+					\begin{naqregexes}
+						\naqregex{001}{\\s*\\\$?\\s?945.20} \$945.20
+					\end{naqregexes}
+					\begin{naqsolexplanation}
+						Arbitrary content explaining how the correct solution is arrived at.
+					\end{naqsolexplanation}
+				\end{naqfillintheblankshortanswerpart}
 			\end{naquestion}
 			"""
 
@@ -395,6 +404,19 @@ class TestRenderables(AssessmentTestCase):
 			extractor = component.getAdapter(rendered_book, IAssessmentExtractor)
 			extractor.transform( rendered_book )
 
-			jsons = open(os.path.join( ctx.docdir, 'assessment_index.json' ), 'rU' ).read()
+			jsons = open(os.path.join(ctx.docdir, 'assessment_index.json' ), 'rU' ).read()
 			jsons = jsons.decode('utf-8')
-			json.loads( jsons )
+			obj = json.loads( jsons )
+			
+			parts_key = 'Items/tag:nextthought.com,2011-10:testing-HTML-temp.0/AssessmentItems/tag:nextthought.com,2011-10:testing-NAQ-temp.naq.1/parts'
+			parts = traverse(obj, parts_key, default=None)
+			assert_that(parts, is_not(none()))
+			assert_that(parts, has_length(1))
+			
+			solutions = traverse(parts[0], 'solutions', default=None)
+			assert_that(solutions, is_not(none()))
+			assert_that(solutions, has_length(1))
+			
+			assert_that(solutions[0], has_entry('value', 
+												has_entry('001', has_entries(u'pattern', u'\\s*\\$?\\s?945.20',
+																			 u'solution', u'$945.20'))))
