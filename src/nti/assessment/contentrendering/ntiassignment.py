@@ -30,6 +30,7 @@ from ..assignment import QAssignmentPart
 from ..interfaces import NTIID_TYPE
 from ..interfaces import IQAssignment
 
+from .ntibase import aspveint
 from .ntibase import _LocalContentMixin
 
 class naassignmentpart(_LocalContentMixin,
@@ -115,12 +116,11 @@ class naassignment(_LocalContentMixin,
 				if 'T' not in val:
 					val += default_time
 
+				local_tzname = self.ownerDocument.userdata.get('document_timezone_name')
 				# Now parse it, assuming that any missing timezone should be treated
 				# as local timezone
-				dt = datetime_from_string(
-							val,
-							assume_local=True,
-							local_tzname=self.ownerDocument.userdata.get('document_timezone_name'))
+				dt = datetime_from_string(val, assume_local=True,
+										  local_tzname=local_tzname)
 				return dt
 
 		# If they give no timestamp, make it midnight
@@ -136,6 +136,10 @@ class naassignment(_LocalContentMixin,
 		if 'public' in options and asbool(options['public']):
 			is_non_public = False
 
+		maximum_time_allowed = None
+		if 'maximum_time_allowed' in options:
+			maximum_time_allowed = aspveint(options['maximum_time_allowed'])
+		
 		parts = [part.assessment_object() for part in
 				 self.getElementsByTagName('naassignmentpart')]
 
@@ -144,10 +148,11 @@ class naassignment(_LocalContentMixin,
 							 available_for_submission_ending=not_after,
 							 parts=parts,
 							 title=self.attributes.get('title'),
-							 is_non_public=is_non_public)
+							 is_non_public=is_non_public,
+							 maximum_time_allowed=maximum_time_allowed)
 		if 'category' in options:
-			result.category_name = \
-				IQAssignment['category_name'].fromUnicode( options['category'] )
+			value = options['category'] 
+			result.category_name = IQAssignment['category_name'].fromUnicode(value)
 
 		errors = schema.getValidationErrors(IQAssignment, result )
 		if errors: # pragma: no cover

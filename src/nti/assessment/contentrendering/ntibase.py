@@ -17,13 +17,19 @@ from zope.cachedescriptors.property import readproperty
 
 from plasTeX import Base
 
-from nti.assessment.interfaces import IQHTMLHint
-from nti.assessment.interfaces import IQMathSolution
-
 from nti.contentfragments.interfaces import LatexContentFragment
 from nti.contentfragments.interfaces import ILatexContentFragment
 
 from nti.contentrendering.plastexpackages._util import LocalContentMixin as _BaseLocalContentMixin
+
+from ..interfaces import IQHTMLHint
+from ..interfaces import IQMathSolution
+
+def aspveint(obj):
+	try:
+		return int(obj) > 0
+	except (TypeError, ValueError):
+		raise ValueError("Bad postive integer value: %r" % obj)
 
 class _LocalContentMixin(_BaseLocalContentMixin):
 	# SAJ: HACK. Something about naqvideo and _LocalContentMixin? ALl the parts

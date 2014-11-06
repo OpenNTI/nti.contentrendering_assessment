@@ -14,8 +14,9 @@ from zope import interface
 from zope.container.contained import Contained
 from zope.mimetype.interfaces import IContentTypeAware
 from zope.annotation.interfaces import IAttributeAnnotatable
+from zope.schema.fieldproperty import FieldPropertyStoredThroughField as FP
 
-from persistent import Persistent # Why are these persistent exactly?
+from persistent import Persistent
 
 from nti.dataserver.datastructures import ContainedMixin
 from nti.dataserver.datastructures import PersistentCreatedModDateTrackingObject
@@ -42,10 +43,10 @@ from ._util import make_sublocations as _make_sublocations
 class QAssignmentPart(SchemaConfigured,
 					  Contained,
 					  Persistent):
-
-	title = AdaptingFieldProperty(IQAssignmentPart['title'])
 	createDirectFieldProperties(IQAssignmentPart)
 
+	title = AdaptingFieldProperty(IQAssignmentPart['title'])
+	
 	mime_type = 'application/vnd.nextthought.assessment.assignmentpart'
 
 @interface.implementer(IQAssignment,
@@ -55,13 +56,15 @@ class QAssignmentPart(SchemaConfigured,
 class QAssignment(SchemaConfigured,
 				  Contained,
 				  Persistent):
-
-	title = AdaptingFieldProperty(IQAssignment['title'])
 	createDirectFieldProperties(IQAssignment)
 
+	title = AdaptingFieldProperty(IQAssignment['title'])
+	
 	available_for_submission_ending = AdaptingFieldProperty(IQAssignment['available_for_submission_ending'])
 	available_for_submission_beginning = AdaptingFieldProperty(IQAssignment['available_for_submission_beginning'])
 
+	maximum_time_allowed = FP(IQAssignment['maximum_time_allowed'])
+	
 	mime_type = 'application/vnd.nextthought.assessment.assignment'
 
 from zope.location.interfaces import ISublocations
@@ -76,16 +79,17 @@ class QAssignmentSubmissionPendingAssessment(ContainedMixin,
 											 PersistentCreatedModDateTrackingObject):
 	createDirectFieldProperties(IQBaseSubmission)
 	createDirectFieldProperties(IQAssignmentSubmissionPendingAssessment)
+	
 	# We get nti.dataserver.interfaces.IContained from ContainedMixin (containerId, id)
 	# However, because these objects are new and not seen before, we can
 	# safely cause name and id to be aliases
 	__name__ = alias('id')
 
 	mime_type = 'application/vnd.nextthought.assessment.assignmentsubmissionpendingassessment'
+	
 	__external_can_create__ = False
 
 	sublocations = _make_sublocations()
-
 
 	def __init__(self, *args, **kwargs):
 		# schema configured is not cooperative

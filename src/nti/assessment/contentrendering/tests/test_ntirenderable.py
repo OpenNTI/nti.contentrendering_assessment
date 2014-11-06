@@ -338,6 +338,7 @@ class TestRenderables(AssessmentTestCase):
 																	 {'Class': 'Assignment',
 																	  'is_non_public': True,
 																	  'category_name': 'default',
+																	  'maximum_time_allowed': None,
 																	  'MimeType': 'application/vnd.nextthought.assessment.assignment',
 																	  'NTIID': 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.asg.assignment',
 																	  'available_for_submission_beginning': '2014-01-13T06:00:00Z',

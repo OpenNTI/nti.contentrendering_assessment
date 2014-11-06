@@ -559,6 +559,11 @@ class IQAssignment(ITitledContent, IAnnotatable):
 						  not be public""",
 						  default=True)
 	
+	maximum_time_allowed = Int( title="Maximum Time Allowed (Minutes)",
+						 		description="""When present, this specifies the maximum time allowed (in 
+								minutes) students have to submit the assignments""",
+								required=False)
+
 	# A note on handling assignments that have an associated time limit
 	# (e.g., you have one hour to complete this assignment once you begin):
 	# That information will be encoded as a timedelta on the assignment.
