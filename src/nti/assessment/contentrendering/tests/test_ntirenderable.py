@@ -25,8 +25,11 @@ from zope import component
 from zope import interface
 from zope.traversing.api import traverse
 
+from nti.contentrendering import nti_render
+from nti.contentrendering import transforms
 from nti.contentrendering.interfaces import IRenderedBook
 from nti.contentrendering.resources import ResourceRenderer
+from nti.contentrendering.resources.ResourceDB import ResourceDB
 
 from nti.assessment.contentrendering.interfaces import IAssessmentExtractor
 
@@ -373,7 +376,48 @@ class TestRenderables(AssessmentTestCase):
 						 'href': 'index.html'}
 
 			assert_that( obj, is_( exp_value ) )
+		
+	def test_cs_encapsulation_brianna(self):
+		example = """
+		\section{Turingscraft: Encapsulation (10 points)}
+
+		Complete the Turingscraft exercises on encapsulation (first exercise, 20725)  
+		\href{https://codelab3.turingscraft.com/codelab/jsp/codelink/codelink.jsp?sac=OKLA-16038-VXTF-22&exssn=00000-20725}{here}.
+
+		\begin{naassignment}[category=no_submit,not_after_date=2014-12-01,public=true]<Turingscraft: Encapsulation (10 points)>
+   			 \label{assignment:Turingscraft_C__Encapsulation}
+		\end{naassignment}
+		"""
+		text = _simpleLatexDocument( (example,))
+
+		# Our default rendering process with default output encodings
+		with RenderContext(text) as ctx:
+			transforms.performTransforms(ctx.dom)
+			rdb = ResourceDB( ctx.dom )
+			rdb.generateResourceSets()
 			
+			nti_render.render(ctx.dom, 'XHTML', rdb)
+			
+			fname = os.path.join(ctx.docdir, 'tag_nextthought_com_2011-10_testing-HTML-temp_0.html')
+			with open(fname, 'r') as f:
+				contents = f.read()
+
+			assert_that( contents,
+						 contains_string('<link rel="next" href="tag_nextthought_com_2011-10_testing-HTML-temp_assignment_Turingscraft_C__Encapsulation.html" title="Turingscraft: Encapsulation (10 points)" />') )
+			
+			fname = os.path.join(ctx.docdir, 'tag_nextthought_com_2011-10_testing-HTML-temp_assignment_Turingscraft_C__Encapsulation.html')
+			with open(fname, 'r') as f:
+				contents = f.read()
+				
+			assert_that( contents,
+						 contains_string('<span class="naassignment hidden" ></span>') )
+			
+			assert_that( contents,
+						 contains_string('<div class="chapter title">Turingscraft: Encapsulation (10 points)</div>') )
+			
+			assert_that( contents,
+						 does_not(contains_string('V </p> </div>') ))
+	
 	def test_fill_in_the_blank_short_answer_part(self):
 		example = br"""
 				\begin{naquestion}
