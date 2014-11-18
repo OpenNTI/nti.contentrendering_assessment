@@ -26,6 +26,7 @@ from nti.externalization.datetime import datetime_from_string
 
 from ..assignment import QAssignment
 from ..assignment import QAssignmentPart
+from ..assignment import QTimedAssignment
 
 from ..interfaces import NTIID_TYPE
 from ..interfaces import IQAssignment
@@ -136,20 +137,25 @@ class naassignment(_LocalContentMixin,
 		if 'public' in options and asbool(options['public']):
 			is_non_public = False
 
+		factory = QAssignment
 		maximum_time_allowed = None
-		if 'maximum_time_allowed' in options:
-			maximum_time_allowed = aspveint(options['maximum_time_allowed'])
-		
+		if 'maximum_time_allowed' in options and \
+			aspveint(options['maximum_time_allowed']):
+			factory = QTimedAssignment
+			maximum_time_allowed = int(options['maximum_time_allowed'])
+			
 		parts = [part.assessment_object() for part in
 				 self.getElementsByTagName('naassignmentpart')]
 
-		result = QAssignment(content=self._asm_local_content,
-							 available_for_submission_beginning=not_before,
-							 available_for_submission_ending=not_after,
-							 parts=parts,
-							 title=self.attributes.get('title'),
-							 is_non_public=is_non_public,
-							 maximum_time_allowed=maximum_time_allowed)
+		result = factory(content=self._asm_local_content,
+						 available_for_submission_beginning=not_before,
+						 available_for_submission_ending=not_after,
+						 parts=parts,
+						 title=self.attributes.get('title'),
+						 is_non_public=is_non_public)
+		if maximum_time_allowed is not None:
+			result.maximum_time_allowed=maximum_time_allowed
+			
 		if 'category' in options:
 			value = options['category'] 
 			result.category_name = IQAssignment['category_name'].fromUnicode(value)

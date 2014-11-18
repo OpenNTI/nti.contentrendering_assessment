@@ -152,6 +152,7 @@
 						 .interfaces.IQuestion 
 						 .interfaces.IQSolution
 						 .interfaces.IQAssignment
+						 .interfaces.IQTimedAssignment
 						 .interfaces.IQAssignmentPart 
 						 .interfaces.IQAssignmentSubmissionPendingAssessment
 						 .interfaces.IQuestionSubmission 

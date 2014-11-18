@@ -32,6 +32,7 @@ from nti.utils.property import alias
 from .interfaces import IQAssignment
 from .interfaces import IQAssignmentPart
 from .interfaces import IQBaseSubmission
+from .interfaces import IQTimedAssignment
 from .interfaces import IQAssignmentSubmissionPendingAssessment
 
 from ._util import make_sublocations as _make_sublocations
@@ -62,10 +63,19 @@ class QAssignment(SchemaConfigured,
 	
 	available_for_submission_ending = AdaptingFieldProperty(IQAssignment['available_for_submission_ending'])
 	available_for_submission_beginning = AdaptingFieldProperty(IQAssignment['available_for_submission_beginning'])
-
-	maximum_time_allowed = FP(IQAssignment['maximum_time_allowed'])
 	
 	mime_type = 'application/vnd.nextthought.assessment.assignment'
+
+@interface.implementer(IQTimedAssignment)
+@WithRepr
+class QTimedAssignment(QAssignment):
+	createDirectFieldProperties(IQTimedAssignment)
+
+	__external_class_name__ = 'Assignment'
+	
+	maximum_time_allowed = FP(IQTimedAssignment['maximum_time_allowed'])
+	
+	mime_type = 'application/vnd.nextthought.assessment.timedassignment'
 
 from zope.location.interfaces import ISublocations
 

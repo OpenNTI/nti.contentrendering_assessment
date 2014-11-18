@@ -289,7 +289,7 @@ class TestRenderables(AssessmentTestCase):
 		\end{naquestionset}
 
 
-		\begin{naassignment}[not_before_date=2014-01-13]<Main Title>
+		\begin{naassignment}[not_before_date=2014-01-13,maximum_time_allowed=50]<Main Title>
 		\label{assignment}
 		Assignment content.
 		\begin{naassignmentpart}[auto_grade=true]<Part Title>{set}
@@ -341,8 +341,8 @@ class TestRenderables(AssessmentTestCase):
 																	 {'Class': 'Assignment',
 																	  'is_non_public': True,
 																	  'category_name': 'default',
-																	  'maximum_time_allowed': None,
-																	  'MimeType': 'application/vnd.nextthought.assessment.assignment',
+																	  'maximum_time_allowed': 50,
+																	  'MimeType': 'application/vnd.nextthought.assessment.timedassignment',
 																	  'NTIID': 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.asg.assignment',
 																	  'available_for_submission_beginning': '2014-01-13T06:00:00Z',
 																	  'available_for_submission_ending': None,

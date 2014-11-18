@@ -56,7 +56,7 @@ class _AssessmentInternalObjectIOBase(object):
 		result = getattr(impl, '__external_class_name__', None)
 		if not result:
 			# Strip off 'IQ' if it's not 'IQuestionXYZ'
-			result = iface.__name__[2:] if not iface.__name__.startswith('IQuestion')\
+			result = iface.__name__[2:] if not iface.__name__.startswith('IQuestion') \
 					 else iface.__name__[1:]
 		return result
 
