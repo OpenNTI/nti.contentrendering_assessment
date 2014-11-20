@@ -70,8 +70,6 @@ class QAssignment(SchemaConfigured,
 @WithRepr
 class QTimedAssignment(QAssignment):
 	createDirectFieldProperties(IQTimedAssignment)
-
-	__external_class_name__ = 'Assignment'
 	
 	maximum_time_allowed = FP(IQTimedAssignment['maximum_time_allowed'])
 	
