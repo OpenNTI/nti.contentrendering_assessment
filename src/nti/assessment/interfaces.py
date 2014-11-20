@@ -570,9 +570,9 @@ class IQAssignment(ITitledContent, IAnnotatable):
 
 class IQTimedAssignment(IQAssignment):
 	
-	maximum_time_allowed = Int( title="Maximum Time Allowed (Minutes)",
+	maximum_time_allowed = Int( title="Maximum Time Allowed (Seconds)",
 						 		description="""When present, this specifies the maximum time allowed (in 
-								minutes) students have to submit the assignments""",
+								seconds) students have to submit the assignments""",
 								required=True)
 
 class IQAssignmentDateContext(interface.Interface):
