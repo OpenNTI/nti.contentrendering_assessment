@@ -27,8 +27,10 @@ from ..interfaces import IQMathSolution
 
 def aspveint(obj):
 	try:
-		return int(obj) > 0
-	except (TypeError, ValueError):
+		result = int(obj)
+		assert result > 0
+		return result
+	except (AssertionError, TypeError, ValueError):
 		raise ValueError("Bad postive integer value: %r" % obj)
 
 class _LocalContentMixin(_BaseLocalContentMixin):

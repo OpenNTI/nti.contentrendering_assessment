@@ -104,6 +104,17 @@ class naassignment(_LocalContentMixin,
 	#: From IEmbeddedContainer
 	mimeType = u'application/vnd.nextthought.assessment.assignment'
 	
+	def _secs_converter(self, s):
+		if s.endswith('m') or s.endswith('M'):
+			s = s[:-1]
+			result = aspveint(s) * 60
+		elif s.endswith('h') or s.endswith('H'):
+			s = s[:-1]
+			result = aspveint(s) * 3600
+		else:
+			result = aspveint(s)
+		return result
+
 	@cachedIn('_v_assessment_object')
 	def assessment_object(self):
 		# FIXME: We want these to be relative, not absolute, so they
@@ -139,10 +150,10 @@ class naassignment(_LocalContentMixin,
 
 		factory = QAssignment
 		maximum_time_allowed = None
-		if 'maximum_time_allowed' in options and \
-			aspveint(options['maximum_time_allowed']):
+		if 'maximum_time_allowed' in options:
 			factory = QTimedAssignment
-			maximum_time_allowed = int(options['maximum_time_allowed'])
+			opt_val = options['maximum_time_allowed']
+			maximum_time_allowed = self._secs_converter(opt_val)
 			
 		parts = [part.assessment_object() for part in
 				 self.getElementsByTagName('naassignmentpart')]
