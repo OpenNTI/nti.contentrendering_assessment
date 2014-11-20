@@ -338,7 +338,7 @@ class TestRenderables(AssessmentTestCase):
 									 {'AssessmentItems': {},
 									  'Items': {'tag:nextthought.com,2011-10:testing-HTML-temp.section_one':
 												{'AssessmentItems': {'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.asg.assignment':
-																	 {'Class': 'Assignment',
+																	 {'Class': 'TimedAssignment',
 																	  'is_non_public': True,
 																	  'category_name': 'default',
 																	  'maximum_time_allowed': 50,
