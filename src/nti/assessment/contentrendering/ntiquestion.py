@@ -305,14 +305,9 @@ class naquestionbank(naquestionset):
 		errors = schema.getValidationErrors(IQuestionBank, questionset)
 		if errors: # pragma: no cover
 			raise errors[0][1]
+		questionset.validate()
 		return questionset
 	
-	def _test_range(self, new_range, yielded):
-		for t in yielded:
-			if new_range[0] >= t[0] and new_range[1] <= t[1]:
-				return False
-		return True
-
 	def digest(self, tokens):
 		res = super(naquestionbank, self).digest(tokens)
 		if self.macroMode != Base.Environment.MODE_END:
@@ -331,23 +326,18 @@ class naquestionbank(naquestionset):
 								 int(_range.attributes['end'])
 					assert start <= end, "invalid range"
 					assert end < _max_index, "index ouside of range"
-					_indexranges.append((start, end))
 					
-				# validate ranges
-				_yielded = []
+					draw = int(_range.attributes.get('draw',1))
+					assert draw <= (end - start + 1), "Invalid draw in range"
+					_indexranges.append((start, end, draw))
+					
+				# get ranges
+				_indexranges = [IQuestionIndexRange(x) for x in _indexranges]
 				_indexranges.sort()
-				for index_range in _indexranges:
-					if self._test_range(index_range, _yielded):
-						_yielded.append(index_range)
-					else:
-						raise AssertionError("range is subsumed")
-					
+				
 				draw = self.draw
 				assert draw, "no draw attribute was specified"
-				assert draw == len(_indexranges), \
-					   "number of ranges is not equal to draw attributes"
 				
-				_indexranges = [IQuestionIndexRange(x) for x in _indexranges]
 				naqindexranges.ranges = _indexranges
 		return res
 	

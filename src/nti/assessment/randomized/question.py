@@ -9,6 +9,8 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+from functools import total_ordering
+
 from zope import interface
 
 from nti.externalization.representation import WithRepr
@@ -58,9 +60,33 @@ class QQuestionBank(QQuestionSet):
 		result.srand = self.srand if srand is None else bool(srand)
 		return result
 
+	def summRangeDraw(self):
+		if not self.ranges:
+			result = self.draw
+		else:
+			result = sum([x.draw for x in self.ranges])
+		return result
+		
+	def validate(self):
+		if self.draw != self.summRangeDraw():
+			raise ValueError("Sum of range draws is not equal to bank draw")
+		elif self.ranges:
+			# validate ranges
+			sorted_ranges = sorted(self.ranges)
+			for r in sorted_ranges:
+				r.validate()
+			
+			# check disjoined ranges
+			for idx in range(len(sorted_ranges)-1):
+				one = sorted_ranges[idx]
+				two = sorted_ranges[idx+1]
+				if one.start == two.start or one.end >= two.start:
+					raise ValueError("A range subsumes another")
+
 @interface.implementer(IQuestionIndexRange)
 @WithRepr
 @EqHash('start', 'end')
+@total_ordering
 class QQuestionIndexRange(SchemaConfigured):
 	createDirectFieldProperties(IQuestionIndexRange)
 	
@@ -69,8 +95,30 @@ class QQuestionIndexRange(SchemaConfigured):
 	__external_class_name__ = "QuestionIndexRange"
 	mimeType = mime_type = 'application/vnd.nextthought.naqindexrange'
 	
+	
+	def __lt__(self, other):
+		try:
+			return (self.start, self.end) < (other.start, other.end)
+		except AttributeError: # pragma: no cover
+			return NotImplemented
+
+	def __gt__(self, other):
+		try:
+			return (self.start, self.end) > (other.start, other.end)
+		except AttributeError: # pragma: no cover
+			return NotImplemented
+		
+	def validate(self):
+		if self.start > self.end:
+			raise ValueError("Start index cannot be greater than end index")
+		
+		if self.draw > (self.end - self.start + 1):
+			raise ValueError("Invalid draw in range")
+	
 @interface.implementer(IQuestionIndexRange)
 def _range_adapter(sequence):
-	result = QQuestionIndexRange(start=int(sequence[0]), end=int(sequence[1]))
+	draw = 1 if len(sequence) < 3 else sequence[2]
+	result = QQuestionIndexRange(start=int(sequence[0]), 
+								 end=int(sequence[1]),
+								 draw=int(draw))
 	return result
-
