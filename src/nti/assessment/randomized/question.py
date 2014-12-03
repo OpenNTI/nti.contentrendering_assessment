@@ -63,7 +63,9 @@ class QQuestionBank(QQuestionSet):
 @EqHash('start', 'end')
 class QQuestionIndexRange(SchemaConfigured):
 	createDirectFieldProperties(IQuestionIndexRange)
-
+	
+	draw = 1
+	
 	__external_class_name__ = "QuestionIndexRange"
 	mimeType = mime_type = 'application/vnd.nextthought.naqindexrange'
 	

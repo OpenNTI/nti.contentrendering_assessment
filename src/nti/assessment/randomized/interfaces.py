@@ -4,7 +4,6 @@
 .. $Id$
 """
 from __future__ import unicode_literals, print_function, absolute_import, division
-from bson.json_util import default
 __docformat__ = "restructuredtext en"
 
 from zope import interface
@@ -140,7 +139,7 @@ class ISha224RandomizedQuestionSet(IRandomizedQuestionSet, ISha224Randomized):
 class IQuestionIndexRange(interface.Interface):
 	start = Int(title="start index range", min=0, required=True)
 	end = Int(title="end index range", min=0, required=True)
-	draw = Int(title="number of questions to draw in range", min=1, required=False,
+	draw = Int(title="number of questions to draw in range", min=1, required=True,
 			   default=1)
 
 class IQuestionBank(IQuestionSet):
