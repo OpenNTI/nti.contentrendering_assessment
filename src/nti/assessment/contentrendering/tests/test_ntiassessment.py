@@ -590,7 +590,6 @@ class TestMisc(AssessmentTestCase):
 		for _naqchoice in dom.getElementsByTagName('naqchoice'):
 			assert_that( dict(_naqchoice.attributes), has_key('weight'))
 
-
 		naq = dom.getElementsByTagName('naquestion')[0]
 		part_el = naq.getElementsByTagName( 'naqmultiplechoicemultipleanswerpart' )[0]
 		solns = getattr( part_el, '_asm_solutions' )()

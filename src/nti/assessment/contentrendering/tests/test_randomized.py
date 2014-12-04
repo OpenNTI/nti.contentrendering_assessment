@@ -241,3 +241,4 @@ class TestRandomized(AssessmentTestCase):
 		assert_that(idx_range, has_property('end', is_(1)))
 		
 		assert_that(qset_object, verifiably_provides(IQuestionBank))
+	

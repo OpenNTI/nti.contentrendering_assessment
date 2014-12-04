@@ -465,3 +465,35 @@ class TestRenderables(AssessmentTestCase):
 			assert_that(solutions[0], has_entry('value', 
 												has_entry('001', has_entries(u'pattern', u'\\s*\\$?\\s?945.20',
 																			 u'solution', u'$945.20'))))
+
+	def test_question_bank(self):
+		path = os.path.join(os.path.dirname(__file__), 'questionbank_ranges.tex')
+		with open(path, "r") as f:
+			source = f.read()
+		
+		with RenderContext(_simpleLatexDocument( (source,) )) as ctx:
+			dom  = ctx.dom
+			dom.getElementsByTagName( 'document' )[0].filenameoverride = 'index'
+			render = ResourceRenderer.createResourceRenderer( 'XHTML', None )
+			dom.renderer = render
+			render.importDirectory( os.path.join( os.path.dirname(__file__), '..' ) )
+			render.render( dom )
+
+			rendered_book = _MockRenderedBook()
+			rendered_book.document = dom
+			rendered_book.contentLocation = ctx.docdir
+			
+			extractor = component.getAdapter(rendered_book, IAssessmentExtractor)
+			extractor.transform( rendered_book )
+
+			
+			jsons = open(os.path.join(ctx.docdir, 'assessment_index.json' ), 'rU' ).read()
+			jsons = jsons.decode('utf-8')
+			obj = json.loads( jsons )
+			
+			key = 'Items/tag:nextthought.com,2011-10:testing-HTML-temp.0/AssessmentItems/tag:nextthought.com,2011-10:testing-NAQ-temp.naq.set.qset:GEOG_Unit4_quiz'
+			quiz = traverse(obj, key, default=None)
+			assert_that(quiz, has_entry('questions', has_length(9)))
+			assert_that(quiz, has_entry('draw', is_(4)))
+			assert_that(quiz, has_entry('ranges', has_length(2)))
+			
