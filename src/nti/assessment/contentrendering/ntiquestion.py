@@ -245,13 +245,17 @@ class naqindexranges(Base.List):
 	pass
 		
 class naqindexrange(Base.List.item):
-	args = 'start:int end:int'
+	args = 'start:int end:int draw:int'
 	
 	def digest(self, tokens):
 		res = super(naqindexrange, self).digest(tokens)
 		start = self.attributes.get('start')
 		end = self.attributes.get('end')
 		assert start >= 0 and end>=0 and start<=end
+
+		draw = self.attributes.get('draw', 1)
+		assert draw <= (end - start + 1)
+		
 		return res
 	
 	def _after_render(self, rendered):

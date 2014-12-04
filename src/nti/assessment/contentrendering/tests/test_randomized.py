@@ -216,7 +216,7 @@ class TestRandomized(AssessmentTestCase):
 			\naquestionref{question1}
 			\naquestionref{question2}
 			\begin{naqindexranges}
-				\naqindexrange{0}{1}
+				\naqindexrange{0}{1}{1}
 			\end{naqindexranges}
 		\end{naquestionbank}
 
