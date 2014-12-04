@@ -15,6 +15,7 @@ from hamcrest import equal_to
 from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import has_property
+from hamcrest import same_instance
 does_not = is_not
 
 import os
@@ -61,9 +62,9 @@ class TestRandomized(AssessmentTestCase):
 		assert_that(numbers_1, is_not(numbers_3))
 		
 	@WithMockDSTrans
-	def test_question_bank(self):
+	def test_question_bank_1(self):
 
-		path = os.path.join(os.path.dirname(__file__), "questionbank.json")
+		path = os.path.join(os.path.dirname(__file__), "question_bank_1.json")
 		with open(path, "r") as fp:
 			ext_obj = json.load(fp)
 			
@@ -71,7 +72,8 @@ class TestRandomized(AssessmentTestCase):
 		assert_that(factory, is_(not_none()))
 
 		internal = factory()
-		internalization.update_from_external_object(internal, ext_obj, require_updater=True)
+		internalization.update_from_external_object(internal, ext_obj,
+													require_updater=True)
 		
 		all_questions = list(internal.questions)
 		
@@ -103,4 +105,27 @@ class TestRandomized(AssessmentTestCase):
 		assert_that(new_internal, has_property('title', is_(internal.title)))
 		assert_that(new_internal, has_property('questions', is_(all_questions)))
 
+	@WithMockDSTrans
+	def test_question_bank_2(self):
+
+		path = os.path.join(os.path.dirname(__file__), "question_bank_2.json")
+		with open(path, "r") as fp:
+			ext_obj = json.load(fp)
+			
+		factory = internalization.find_factory_for(ext_obj)
+		assert_that(factory, is_(not_none()))
+
+		internal = factory()
+		internalization.update_from_external_object(internal, ext_obj,
+													require_updater=True)
+				
+		user1 = self._create_user(username='user1@nti.com')
+		questions_1 = questionbank_question_chooser(internal, user=user1)
+		assert_that(questions_1, has_length(internal.draw))
 		
+		user2 = self._create_user(username='user2@nti.com')
+		questions_2 = questionbank_question_chooser(internal, user=user2)
+		assert_that(questions_2, has_length(internal.draw))
+		
+		assert_that(questions_1[-1], is_(same_instance(questions_2[-1])))
+		assert_that(questions_1[0:-1], is_not(equal_to(questions_2[0:-1])))
