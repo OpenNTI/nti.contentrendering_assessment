@@ -48,6 +48,12 @@
 			 	  nti.assessment.interfaces.IQListResponse"
 			 provides=".interfaces.IQRandomizedMultipleChoiceMultipleAnswerPartGrader" />
 			 
+	<adapter factory=".graders.RandomizedMultipleChoiceMultipleAnswerGrader"
+			 for=".interfaces.IQRandomizedMultipleChoiceMultipleAnswerPart 
+			 	  nti.assessment.interfaces.IQMultiValuedSolution
+			 	  list"
+			 provides=".interfaces.IQRandomizedMultipleChoiceMultipleAnswerPartGrader" />
+
 	<adapter factory="list .question._range_adapter"
 			 provides=".interfaces.IQuestionIndexRange"
 			 for="list"/>
