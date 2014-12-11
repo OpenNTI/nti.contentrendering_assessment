@@ -583,6 +583,11 @@ class IQAssignmentDateContext(interface.Interface):
 	This package provides no implementations of this interface.
 	"""
 
+	def assignments():
+		"""
+		return the list of assigments ids in this context
+		"""
+
 	def of(assignment):
 		"""
 		Given an assignment, return an object having the same date
@@ -604,6 +609,11 @@ class IQAssignmentPolicies(interface.Interface):
 		Return a policy object for the assignment.
 		"""
 
+	def assignments():
+		"""
+		return the list of assigments ids in this object
+		"""
+	
 	def __bool__():
 		"""
 		Are there any policies registered? If no, return False.
