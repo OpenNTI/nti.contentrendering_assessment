@@ -619,6 +619,16 @@ class IQAssignmentPolicies(interface.Interface):
 		Are there any policies registered? If no, return False.
 		"""
 
+class IQAssignmentPolicyValidator(interface.Interface):
+	"""
+	An object that can be validate an assignent policy
+	"""
+
+	def validate(assignment_ntiid, policy):
+		"""
+		validates the specfied policy. 
+		"""
+		
 class IQResponse(IContained, INeverStoredInSharedStream):
 	"""
 	A response submitted by the student.
