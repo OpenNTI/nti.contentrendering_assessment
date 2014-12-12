@@ -6,45 +6,38 @@
 name: naqfilepart
 <div class="naquestionpart naqfilepart" tal:attributes="id self/id" >
 	 <a tal:attributes="name self/id"></a>
-	 <span tal:content="self" ></span>
 	 <input type="file" name="content" tal:attributes="accept self/allowed_mime_types"></input>
 </div>
 
 name: naqsymmathpart
 <div class="naquestionpart naqsymmathpart" tal:attributes="id self/id" >
 	 <a tal:attributes="name self/id"></a>
-	 <span tal:content="self" ></span>
 </div>
 
 name: naqnumericmathpart
 <div class="naquestionpart naqnumericmathpart" tal:attributes="name self/id" >
 	 <a tal:attributes="name self/id"></a>
-	 <span tal:content="self"></span>
 </div>
 
 name: naqfreeresponsepart
 <div class="naquestionpart naqfreeresponsepart" tal:attributes="name self/id" >
 	 <a tal:attributes="name self/id"></a>
-	 <span tal:content="self"></span>
 </div>
 
 name: naqessaypart
 <div class="naquestionpart naqessaypart" tal:attributes="name self/id" >
 	 <a tal:attributes="name self/id"></a>
-	 <span tal:content="self"></span>
 </div>
 
 # These and the contained naqchoices should probably be radio buttuns
 name: naqmultiplechoicepart
 <div class="naquestionpart naqmultiplechoicepart" tal:attributes="name self/id" >
 	 <a tal:attributes="name self/id"></a>
-	 <span tal:content="self"></span>
 </div>
 
 name: naqmultiplechoicemultipleanswerpart
 <div class="naquestionpart naqmultiplechoicemultipleanswerpart" tal:attributes="id self/id" >
 	 <a tal:attributes="name self/id"></a>
-	 <span tal:content="self"></span>
 </div>
 
 name: naqchoices
@@ -55,25 +48,21 @@ name: naqchoices
 name: naqmatchingpart
 <div class="naquestionpart naqmatchingpart" tal:attributes="name self/id" >
 	 <a tal:attributes="name self/id"></a>
-	 <span tal:content="self"></span>
 </div>
 
 name: naqorderingpart
 <div class="naquestionpart naqorderingpart" tal:attributes="name self/id" >
 	 <a tal:attributes="name self/id"></a>
-	 <span tal:content="self"></span>
 </div>
 
 name: naqfillintheblankshortanswerpart
 <div class="naquestionpart naqfillintheblankshortanswerpart" tal:attributes="name self/id" >
 	 <a tal:attributes="name self/id"></a>
-	 <span tal:content="self"></span>
 </div>
 
 name: naqfillintheblankwithwordbankpart
 <div class="naquestionpart naqfillintheblankwithwordbankpart" tal:attributes="name self/id" >
 	 <a tal:attributes="name self/id"></a>
-	 <span tal:content="self"></span>
 </div>
 
 name: naqblankfield
