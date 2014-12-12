@@ -169,7 +169,7 @@ class TestOrderingPart(AssessmentTestCase):
 		values = ("X", "Y")
 		solution_nums = {0: 1, 1: 0}
 		solution_keys = {"A": "Y", "B": "X"}
-		
+
 		solution = solutions.QOrderingSolution( solution_keys )
 		part = parts.QOrderingPart( labels=labels, values=values, solutions=(solution,))
 		part2 = parts.QOrderingPart( labels=labels, values=values, solutions=(solution,))
@@ -184,8 +184,8 @@ class TestOrderingPart(AssessmentTestCase):
 
 		assert_that(part, grades_wrong({"A": "Y"}))
 
-		part = parts.QOrderingPart(labels=labels, 
-								   values=values, 
+		part = parts.QOrderingPart(labels=labels,
+								   values=values,
 								   solutions=(solutions.QOrderingSolution(solution_nums),))
 
 		assert_that(part, grades_right(solution_keys))
@@ -214,7 +214,7 @@ class TestOrderingPart(AssessmentTestCase):
 		assert_that(part, is_not(qnp))
 
 		assert_that(hash(part), is_(hash(part2)))
-		
+
 class TestFillInTheBlackWithWordBankPart(AssessmentTestCase):
 
 	def test_grade(self):
@@ -269,7 +269,9 @@ class TestFreeResponsePart(AssessmentTestCase):
 class TestMathPart(AssessmentTestCase):
 
 	def test_eq(self):
-		part = parts.QMathPart()
+		solution = solutions.QMathSolution( solutions=[1,2], allowed_units=['times'])
+		solution2 = solutions.QMathSolution( solutions=[3])
+		part = parts.QMathPart( solutions=[solution, solution2] )
 		part2 = parts.QSymbolicMathPart()
 
 		assert_that(part, is_(part))
@@ -280,6 +282,9 @@ class TestMathPart(AssessmentTestCase):
 		assert_that(part, is_not(part2))  # Except that the subclass implementation is always called??
 		del part2.grader_interface
 		assert_that(part2, is_not(part))
+
+		assert_that( part, externalizes( has_entry( 'allowed_units', [['times'], None] )) )
+		assert_that( part2, externalizes() )
 
 class TestFilePart(AssessmentTestCase):
 

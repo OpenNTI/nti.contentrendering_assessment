@@ -19,6 +19,7 @@ from zope import component
 from nti.externalization.singleton import SingletonDecorator
 from nti.externalization.externalization import to_external_object
 from nti.externalization.interfaces import IExternalObjectDecorator
+from nti.externalization.interfaces import IExternalMappingDecorator
 
 from .interfaces import IRegEx
 from .interfaces import IQPart
@@ -27,6 +28,7 @@ from .interfaces import IQFillInTheBlankShortAnswerPart
 from .interfaces import IQFillInTheBlankWithWordBankPart
 from .interfaces import IQFillInTheBlankShortAnswerSolution
 from .interfaces import IQFillInTheBlankWithWordBankSolution
+from .interfaces import IQMathPart
 
 @interface.implementer(IQPartSolutionsExternalizer)
 @component.adapter(IQPart)
@@ -55,7 +57,6 @@ class _FillInTheBlankShortAnswerPartSolutionsExternalizer(object):
 					txt = v.solution if IRegEx.providedBy(v) else v
 					value[k] = txt
 				ext['value'] = value
-			result.append(ext)
 		return result
 
 @interface.implementer(IQPartSolutionsExternalizer)
@@ -78,6 +79,29 @@ class _FillInTheBlankWithWordBankPartSolutionsExternalizer(object):
 						value[k] = v[0]  # pick first one always
 			result.append(ext)
 		return result
+
+@interface.implementer(IExternalMappingDecorator)
+@component.adapter(IQMathPart)
+class _MathPartDecorator(object):
+	"""
+	Display the allowed_units sans solutions in the math part.
+	"""
+
+	def __init__(self, part):
+		self.part = part
+
+	def decorateExternalMapping(self, original, external):
+		all_allowed_units = []
+		for solution in self.part.solutions:
+			allowed_units = getattr( solution, 'allowed_units', None )
+			if allowed_units is not None:
+				ext = to_external_object(allowed_units)
+				all_allowed_units.append( ext )
+			else:
+				all_allowed_units.append( None )
+
+		external['allowed_units'] = all_allowed_units
+		return external
 
 @interface.implementer(IExternalObjectDecorator)
 class _QAssessmentObjectIContainedAdder(object):

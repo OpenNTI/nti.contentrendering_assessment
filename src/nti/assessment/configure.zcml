@@ -10,7 +10,7 @@
 	<include package="zope.component" />
 	<include package="zope.location" />
 	<include package="zope.annotation" />
-	
+
 	<include package="nti.contentfragments" />
 
 	<include package="plone.namedfile" file="z3c-blobfile.zcml" />
@@ -126,7 +126,7 @@
 	<adapter factory=".graders.OrderingPartGrader"
 			 for=".interfaces.IQOrderingPart .interfaces.IQOrderingSolution .interfaces.IQDictResponse"
 			 provides=".interfaces.IQOrderingPartGrader" />
-			 
+
 	<adapter factory=".graders.FillInTheBlankShortAnswerGrader"
 			 for=".interfaces.IQFillInTheBlankShortAnswerPart .interfaces.IQFillInTheBlankShortAnswerSolution .interfaces.IQDictResponse"
 			 provides=".interfaces.IQFillInTheBlankShortAnswerGrader" />
@@ -148,21 +148,21 @@
 	<include package="nti.externalization" file="meta.zcml" />
 	<include package="nti.externalization" />
 	<ext:registerAutoPackageIO
-		root_interfaces=".interfaces.IQPart 
-						 .interfaces.IQuestion 
+		root_interfaces=".interfaces.IQPart
+						 .interfaces.IQuestion
 						 .interfaces.IQSolution
 						 .interfaces.IQAssignment
 						 .interfaces.IQTimedAssignment
-						 .interfaces.IQAssignmentPart 
+						 .interfaces.IQAssignmentPart
 						 .interfaces.IQAssignmentSubmissionPendingAssessment
-						 .interfaces.IQuestionSubmission 
-						 .interfaces.IQAssessedPart 
+						 .interfaces.IQuestionSubmission
+						 .interfaces.IQAssessedPart
 						 .interfaces.IQAssessedQuestion
-						 .interfaces.IQuestionSetSubmission 
+						 .interfaces.IQuestionSetSubmission
 						 .interfaces.IQAssessedQuestionSet
 						 .interfaces.IQAssignmentSubmission
 						 .interfaces.IQResponse
-						 .interfaces.IQHint 
+						 .interfaces.IQHint
 						 .interfaces.IQuestionSet"
 		modules=".hint .assessed .parts .question .response .solution .submission .assignment"
 		factory_modules=".submission .question .response"
@@ -171,27 +171,27 @@
 	<adapter factory=".internalization._QFillInTheBlankWithWordBankSolutionUpdater"
 			 for=".interfaces.IQFillInTheBlankShortAnswerSolution"
 			 provides="nti.externalization.interfaces.IInternalObjectUpdater" />
-		
+
 	<adapter factory=".externalization._QAssessedPartExternalizer"
 			 for=".interfaces.IQAssessedPart"
 			 provides="nti.externalization.interfaces.IInternalObjectExternalizer" />
-	
+
 	<adapter factory=".externalization._QAssessedQuestionExternalizer"
 			 for=".interfaces.IQAssessedQuestion"
 			 provides="nti.externalization.interfaces.IInternalObjectExternalizer" />
-		
+
 	<adapter factory=".externalization._QAssessedQuestionSetExternalizer"
 			 for=".interfaces.IQAssessedQuestionSet"
 			 provides="nti.externalization.interfaces.IInternalObjectExternalizer" />
-			 	 		 	 
+
 	<adapter factory=".externalization._QuestionSubmissionExternalizer"
 			 for=".interfaces.IQuestionSubmission"
 			 provides="nti.externalization.interfaces.IInternalObjectExternalizer" />
-		
+
 	<adapter factory=".externalization._QuestionSetSubmissionExternalizer"
 			 for=".interfaces.IQuestionSetSubmission"
 			 provides="nti.externalization.interfaces.IInternalObjectExternalizer" />
-			 
+
 	<!-- WordBank & Regex -->
 	<ext:registerAutoPackageIO
 		root_interfaces=".interfaces.IWordEntry
@@ -204,7 +204,7 @@
 			 	 for=".interfaces.IQModeledContentResponse"
 			 	 provides="nti.externalization.interfaces.IInternalObjectUpdater" />
 	</configure>
-	
+
 	<adapter factory="list .wordbank._wordbank_adapter"
 			 provides=".interfaces.IWordBank"
 			 for="list"/>
@@ -212,7 +212,7 @@
 	<adapter factory="list .wordbank._wordbank_adapter"
 			 provides=".interfaces.IWordBank"
 			 for="tuple"/>
-			 
+
 	<adapter factory="list .wordbank._wordentry_adapter"
 			 provides=".interfaces.IWordEntry"
 			 for="list"/>
@@ -220,11 +220,11 @@
 	<adapter factory="list .wordbank._wordentry_adapter"
 			 provides=".interfaces.IWordEntry"
 			 for="tuple"/>
-			 
+
 	<adapter factory=".internalization._WordEntryUpdater"
 			 for=".interfaces.IWordEntry"
 			 provides="nti.externalization.interfaces.IInternalObjectUpdater" />
-			 
+
 	<adapter factory=".regex._regex_str_adapter"
 			 provides=".interfaces.IRegEx"
 			 for="basestring" />
@@ -232,25 +232,31 @@
 	<adapter factory="list .regex._regex_collection_adapter"
 			 provides=".interfaces.IRegEx"
 			 for="list"/>
-			
+
 	<adapter factory="tuple .regex._regex_collection_adapter"
 			 provides=".interfaces.IRegEx"
 			 for="tuple"/>
-			  
+
 	<!-- Decorators -->
 
 	<adapter factory=".decorators._DefaultPartSolutionsExternalizer"
 			 for=".interfaces.IQPart"
 			 provides=".interfaces.IQPartSolutionsExternalizer" />
-			
+
 	<adapter factory=".decorators._FillInTheBlankShortAnswerPartSolutionsExternalizer"
 			 for=".interfaces.IQFillInTheBlankShortAnswerPart"
 			 provides=".interfaces.IQPartSolutionsExternalizer" />
-			  
+
 	<adapter factory=".decorators._FillInTheBlankWithWordBankPartSolutionsExternalizer"
 			 for=".interfaces.IQFillInTheBlankWithWordBankPart"
 			 provides=".interfaces.IQPartSolutionsExternalizer" />
-			 
+
+	<!-- Display units on math parts -->
+	<subscriber
+		factory=".decorators._MathPartDecorator"
+		for=".interfaces.IQMathPart"
+		provides="nti.externalization.interfaces.IExternalMappingDecorator" />
+
 	<!-- Give assignments a containerId -->
 	<subscriber
 		factory=".decorators._QAssessmentObjectIContainedAdder"
