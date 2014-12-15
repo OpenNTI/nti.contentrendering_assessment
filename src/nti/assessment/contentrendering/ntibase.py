@@ -31,7 +31,7 @@ def aspveint(obj):
 		assert result > 0
 		return result
 	except (AssertionError, TypeError, ValueError):
-		raise ValueError("Bad postive integer value: %r" % obj)
+		raise ValueError("Bad positive integer value: %r" % obj)
 
 class _LocalContentMixin(_BaseLocalContentMixin):
 	# SAJ: HACK. Something about naqvideo and _LocalContentMixin? ALl the parts

@@ -270,7 +270,7 @@ class TestMathPart(AssessmentTestCase):
 
 	def test_eq(self):
 		solution = solutions.QMathSolution( solutions=[1,2], allowed_units=['times'])
-		solution2 = solutions.QMathSolution( solutions=[3])
+		solution2 = solutions.QMathSolution( solutions=[3] )
 		part = parts.QMathPart( solutions=[solution, solution2] )
 		part2 = parts.QSymbolicMathPart()
 
@@ -283,7 +283,7 @@ class TestMathPart(AssessmentTestCase):
 		del part2.grader_interface
 		assert_that(part2, is_not(part))
 
-		assert_that( part, externalizes( has_entry( 'allowed_units', [['times'], None] )) )
+		assert_that( part, externalizes( has_entry( 'allowed_units', [ 'times' ] )) )
 		assert_that( part2, externalizes() )
 
 class TestFilePart(AssessmentTestCase):

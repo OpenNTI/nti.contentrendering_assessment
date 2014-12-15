@@ -91,14 +91,13 @@ class _MathPartDecorator(object):
 		self.part = part
 
 	def decorateExternalMapping(self, original, external):
+		# For this use-case, the client just wants to display *some*
+		# units.  So we just give them the flattened units.
 		all_allowed_units = []
 		for solution in self.part.solutions:
 			allowed_units = getattr( solution, 'allowed_units', None )
-			if allowed_units is not None:
-				ext = to_external_object(allowed_units)
-				all_allowed_units.append( ext )
-			else:
-				all_allowed_units.append( None )
+			if allowed_units:
+				all_allowed_units.extend( [x for x in allowed_units] )
 
 		external['allowed_units'] = all_allowed_units
 		return external
