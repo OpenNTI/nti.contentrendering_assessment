@@ -20,8 +20,9 @@ from plasTeX import Base
 from nti.contentfragments.interfaces import LatexContentFragment
 from nti.contentfragments.interfaces import ILatexContentFragment
 
-from nti.contentrendering.plastexpackages._util import LocalContentMixin as _BaseLocalContentMixin
+from nti.contentrendering.plastexpackages._util import _is_renderable
 from nti.contentrendering.plastexpackages._util import _htmlcontent_rendered_elements
+from nti.contentrendering.plastexpackages._util import LocalContentMixin as _BaseLocalContentMixin
 
 from ..interfaces import IQHTMLHint
 from ..interfaces import IQMathSolution
@@ -167,8 +168,8 @@ class naqvalue(_LocalContentMixin, Base.List.item):
 
 	@readproperty
 	def _asm_local_content(self):
-		try:
+		if _is_renderable(self.renderer, self.childNodes):
 			result = _htmlcontent_rendered_elements(self.renderer, self.childNodes)
-		except AttributeError:
+		else:
 			result = ILatexContentFragment(unicode(self.textContent).strip())
 		return result
