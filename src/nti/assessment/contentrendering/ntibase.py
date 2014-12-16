@@ -167,4 +167,8 @@ class naqvalue(_LocalContentMixin, Base.List.item):
 
 	@readproperty
 	def _asm_local_content(self):
-		return _htmlcontent_rendered_elements(self.renderer, self.childNodes)
+		try:
+			result = _htmlcontent_rendered_elements(self.renderer, self.childNodes)
+		except AttributeError:
+			result = ILatexContentFragment(unicode(self.textContent).strip())
+		return result
