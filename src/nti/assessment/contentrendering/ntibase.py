@@ -21,6 +21,7 @@ from nti.contentfragments.interfaces import LatexContentFragment
 from nti.contentfragments.interfaces import ILatexContentFragment
 
 from nti.contentrendering.plastexpackages._util import LocalContentMixin as _BaseLocalContentMixin
+from nti.contentrendering.plastexpackages._util import _htmlcontent_rendered_elements
 
 from ..interfaces import IQHTMLHint
 from ..interfaces import IQMathSolution
@@ -166,4 +167,4 @@ class naqvalue(_LocalContentMixin, Base.List.item):
 
 	@readproperty
 	def _asm_local_content(self):
-		return ILatexContentFragment(unicode(self.textContent).strip())
+		return _htmlcontent_rendered_elements(self.renderer, self.childNodes)
