@@ -601,6 +601,8 @@ naqregexref = naqregexref
 naqblankfield = naqblankfield
 naqwordbankref = naqwordbankref
 naquestionfillintheblankwordbank = naquestionfillintheblankwordbank
+naqfillintheblankshortanswerpart = naqfillintheblankshortanswerpart
+naqfillintheblankwithwordbankpart = naqfillintheblankwithwordbankpart
 
 _LocalContentMixin._asm_ignorable_renderables += (_WordBankMixIn,
 												  naqinput,
@@ -611,9 +613,7 @@ _LocalContentMixin._asm_ignorable_renderables += (_WordBankMixIn,
 												  naqindexrange,
 												  naqpaireditem,
 												  naqpaireditems,
-												  naqindexranges,
-												  naqfillintheblankwithwordbankpart,
-												  naqfillintheblankshortanswerpart)
+												  naqindexranges)
 
 ###
 # Assignments
