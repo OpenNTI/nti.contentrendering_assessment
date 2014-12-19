@@ -17,6 +17,8 @@ from plasTeX import Base
 from plasTeX.Renderers import render_children
 
 from nti.contentfragments.interfaces import HTMLContentFragment
+from nti.contentrendering.plastexpackages._util import _is_renderable
+from nti.contentrendering.plastexpackages._util import _htmlcontent_rendered_elements
 
 from ..parts import QFillInTheBlankShortAnswerPart
 from ..parts import QFillInTheBlankWithWordBankPart
@@ -44,7 +46,7 @@ class _WordBankMixIn(object):
 
 	def _asm_entries(self):
 		_naqwordbank = self.getElementsByTagName('naqwordbank')
-		if not _naqwordbank or _naqwordbank[0].parentNode != self:
+		if not _naqwordbank or (_naqwordbank[0].parentNode != self and _naqwordbank[0].parentNode.parentNode != self):
 			return None, ()
 		
 		result = []
@@ -309,8 +311,13 @@ class naqregexref(Base.Crossref.ref):
 
 class naqinput(_LocalContentMixin, Base.Environment):
 
-	def _after_render(self, rendered):
-		self._asm_local_content = rendered
+	@readproperty
+	def _asm_local_content(self):
+		if _is_renderable(self.renderer, self.childNodes):
+			result = _htmlcontent_rendered_elements(self.renderer, self.childNodes)
+		else:
+			result = ILatexContentFragment(unicode(self.textContent).strip())
+		return result
 
 ###
 # Questions
