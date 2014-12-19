@@ -17,6 +17,8 @@ from plasTeX import Base
 from plasTeX.Renderers import render_children
 
 from nti.contentfragments.interfaces import HTMLContentFragment
+from nti.contentfragments.interfaces import ILatexContentFragment
+
 from nti.contentrendering.plastexpackages._util import _is_renderable
 from nti.contentrendering.plastexpackages._util import _htmlcontent_rendered_elements
 
@@ -46,7 +48,7 @@ class _WordBankMixIn(object):
 
 	def _asm_entries(self):
 		_naqwordbank = self.getElementsByTagName('naqwordbank')
-		if not _naqwordbank or (_naqwordbank[0].parentNode != self and _naqwordbank[0].parentNode.parentNode != self):
+		if not _naqwordbank or _naqwordbank[0].parentNode != self:
 			return None, ()
 		
 		result = []
