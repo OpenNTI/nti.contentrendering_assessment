@@ -48,11 +48,13 @@ class _WordBankMixIn(object):
 
 	def _asm_entries(self):
 		_naqwordbank = self.getElementsByTagName('naqwordbank')
-		if not _naqwordbank or _naqwordbank[0].parentNode != self:
+		if not _naqwordbank \
+				or (hasattr(_naqwordbank[0].parentNode, '_asm_entries') and _naqwordbank[0].parentNode != self) \
+				or (not hasattr(_naqwordbank[0].parentNode, '_asm_entries') and _naqwordbank[0].parentNode.parentNode != self):
 			return None, ()
 		
 		result = []
-		_naqwordbank = _naqwordbank[0]		
+		_naqwordbank = _naqwordbank[0]
 		for x in _naqwordbank.getElementsByTagName('naqwordentry'):
 			if 'wid' in x.attributes:
 				data = [x.attributes['wid'],
