@@ -283,6 +283,12 @@
 			 provides="nti.externalization.interfaces.IMimeObjectFactory"
 			 name="application/vnd.nextthought.assessment.uploadedfile" />
 
+	<!-- Temporary workaround for iPad bug JZ - 01.02.2015 -->
+	<adapter factory=".externalization._QUploadedFileFactory"
+			 for="dolmen.builtins.IDict"
+			 provides="nti.externalization.interfaces.IMimeObjectFactory"
+			 name="application/vnd.nextthought.assessment.quploadedfile" />
+
 	<adapter factory=".externalization._QUploadedFileObjectIO"
 			 for=".interfaces.IQUploadedFile"  />
 

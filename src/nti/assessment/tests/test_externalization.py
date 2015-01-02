@@ -73,6 +73,42 @@ class TestExternalization(AssessmentTestCase):
 													has_key('Last Modified'))))
 		# But we have no URL because we're not in a connection anywhere
 
+	def test_file_upload2(self):
+		# Temporary workaround for iPad bug.
+		ext_obj = {
+			'MimeType': 'application/vnd.nextthought.assessment.quploadedfile',
+			'value': GIF_DATAURL,
+			'filename': r'c:\dir\file.gif',
+			'name':'ichigo'
+		}
+
+		assert_that(internalization.find_factory_for(ext_obj),
+					 is_(not_none()))
+
+		internal = internalization.find_factory_for(ext_obj)()
+		internalization.update_from_external_object(internal,
+													 ext_obj,
+													 require_updater=True)
+
+		# value changed to URI
+		assert_that(ext_obj, does_not(has_key('value')))
+		assert_that(ext_obj, has_key('url'))
+
+		# We produced an image file, not a plain file
+		assert_that(internal.getImageSize(), is_((11, 11)))
+		# with the right content time and filename
+		assert_that(internal, has_property('mimeType', 'image/gif'))
+		assert_that(internal, has_property('filename', 'file.gif'))
+		assert_that(internal, has_property('name', 'ichigo'))
+
+		assert_that(internal, externalizes(all_of(	has_key('FileMimeType'),
+													has_key('filename'),
+													has_key('name'),
+													has_entry('url', none()),
+													has_key('CreatedTime'),
+													has_key('Last Modified'))))
+		# But we have no URL because we're not in a connection anywhere
+
 	def test_modeled_response_uploaded(self):
 		ext_obj = {
 			'MimeType': 'application/vnd.nextthought.assessment.modeledcontentresponse',
@@ -187,30 +223,30 @@ class TestExternalization(AssessmentTestCase):
 		assert_that(internal, has_property('solutions', has_length(1)))
 		sol = internal.solutions[0]
 		assert_that(sol, has_property('value', has_entry('001', has_property('solution', 'yes, I will'))))
-		
+
 	def test_question_bank(self):
 
 		path = os.path.join(os.path.dirname(__file__), "questionbank.json")
 		with open(path, "r") as fp:
 			ext_obj = json.load(fp)
-			
+
 		factory = internalization.find_factory_for(ext_obj)
 		assert_that(factory, is_(not_none()))
 
 		internal = factory()
 		internalization.update_from_external_object(internal, ext_obj, require_updater=True)
-		
+
 		ntiid = u"tag:nextthought.com,2011-10:OU-NAQ-BIOL2124_F_2014_Human_Physiology.naq.set.qset:intro_quiz1"
 		internal.ntiid = ntiid
-		
+
 		assert_that(internal, verifiably_provides(IQuestionBank) )
-				
+
 		assert_that(internal, has_property('draw', is_(5)))
 		assert_that(internal, has_property('questions', has_length(20)))
-		
+
 		internal.draw = 2
 		internal.ranges = [IQuestionIndexRange([0,5]), IQuestionIndexRange([6, 10])]
-		
+
 		assert_that(internal, externalizes(all_of(	has_entry('draw', is_(2)),
 													has_entry('NTIID', is_(ntiid)),
 													has_entry('Class', is_('QuestionSet')),
@@ -218,4 +254,4 @@ class TestExternalization(AssessmentTestCase):
 													has_entry('ranges', has_length(2)))))
 
 
-		
+
