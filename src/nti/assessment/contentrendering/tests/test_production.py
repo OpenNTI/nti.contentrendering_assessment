@@ -31,9 +31,9 @@ from nti.assessment.tests import _simpleLatexDocument
 class TestProduction(AssessmentTestCase):
 
 	def test_biology(self):
-		name = 'question_fillintheblankwordbank_bio.tex'
+		name = 'question_assignment_bio.tex'
 		with open(os.path.join( os.path.dirname(__file__), name)) as fp:
-				example = fp.read()
+			example = fp.read()
 		
 		dom = _buildDomFromString( _simpleLatexDocument( (example,) ) )
 		assert_that( dom.getElementsByTagName('naquestionfillintheblankwordbank'), has_length( 1 ) )
@@ -61,3 +61,9 @@ class TestProduction(AssessmentTestCase):
 # 		assert_that( asg_object, has_property( 'available_for_submission_beginning',
 # 											   datetime( 2014, 01, 13, 6, 0)))
 
+	def test_ucol(self):
+		name = 'question_assignment_ucol.tex'
+		with open(os.path.join( os.path.dirname(__file__), name)) as fp:
+			example = fp.read()
+		
+		_buildDomFromString( _simpleLatexDocument( (example,) ) )
