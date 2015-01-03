@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Book extractors
-
 .. $Id$
 """
+
 from __future__ import print_function, unicode_literals, absolute_import, division
 __docformat__ = "restructuredtext en"
 
@@ -54,11 +53,19 @@ class _AssessmentExtractor(object):
 	def __init__(self, book=None):
 		pass
 
-	def transform(self, book):
+	def transform(self, book, savetoc=True, outpath=None):
+		outpath = outpath or book.contentLocation
+		outpath = os.path.expanduser(outpath)
+		target = os.path.join(outpath, 'assessment_index.json')
+		
 		index = {'Items': {}}
-		self._build_index(book.document.getElementsByTagName('document')[0], index['Items'])
+		documents = book.document.getElementsByTagName('document')
+		if not documents:
+			return
+		
+		self._build_index(documents[0], index['Items'])
 		index['href'] = index.get('href', 'index.html')
-		target = os.path.join(book.contentLocation, 'assessment_index.json')
+
 		logger.info("extracting assessments to %s" , target)
 		with codecs.open(target, 'w', encoding='utf-8') as fp:
 			# sort_keys for repeatability. Do force ensure_ascii because even though
@@ -76,9 +83,9 @@ class _AssessmentExtractor(object):
 		"""
 		if self._is_uninteresting(element):
 			# It's important to identify uninteresting nodes because
-			# some uninteresting nodes that would never make it into the TOC or otherwise be noticed
-			# actually can present with hard-coded duplicate NTIIDs, which would
-			# cause us to fail.
+			# some uninteresting nodes that would never make it into the TOC or
+			# otherwise be noticed actually can present with hard-coded duplicate 
+			# NTIIDs, which would cause us to fail.
 			return
 
 		ntiid = getattr(element, 'ntiid', None)
@@ -93,10 +100,13 @@ class _AssessmentExtractor(object):
 
 			element_index['NTIID'] = ntiid
 			element_index['filename'] = getattr(element, 'filename', None)
-			if not element_index['filename'] and getattr(element, 'filenameoverride', None):
-				# FIXME: XXX: We are assuming the filename extension. Why aren't we finding
-				# these at filename? See EclipseHelp.zpts for comparison
-				element_index['filename'] = getattr(element, 'filenameoverride') + '.html'
+			if 	not element_index['filename'] and \
+				getattr(element, 'filenameoverride', None):
+				# FIXME: XXX: We are assuming the filename extension. 
+				# Why aren't we finding these at filename? See EclipseHelp.zpts for 
+				# comparison
+				element_index['filename'] = \
+						getattr(element, 'filenameoverride') + '.html'
 			element_index['href'] = getattr(element, 'url', element_index['filename'])
 
 		__traceback_info__ = element_index
@@ -106,29 +116,36 @@ class _AssessmentExtractor(object):
 			ass_obj = getattr(child, 'assessment_object', None)
 			if callable(ass_obj):
 				int_obj = ass_obj()
-				self._ensure_roundtrips(int_obj, provenance=child)  # Verify that we can round-trip this object
+				# Verify that we can round-trip this object
+				self._ensure_roundtrips(int_obj, provenance=child)  
 				assessment_objects[child.ntiid] = toExternalObject(int_obj)
 				# assessment_objects are leafs, never have children to worry about
 			elif child.hasChildNodes():  # Recurse for children if needed
 				if getattr(child, 'ntiid', None):
-					# we have a child with an NTIID; make sure we have a container for it
+					# we have a child with an NTIID; make sure we have a 
+					# container for it
 					containing_index = element_index.setdefault('Items', {})
 				else:
-					# an unnamed thing; wrap it up with us; should only have AssessmentItems
+					# an unnamed thing; wrap it up with us; should only 
+					# have AssessmentItems
 					containing_index = element_index
 				self._build_index(child, containing_index)
 
 	def _ensure_roundtrips(self, assm_obj, provenance=None):
-		ext_obj = toExternalObject(assm_obj)  # No need to go into its children, like parts.
+		# No need to go into its children, like parts.	
+		ext_obj = toExternalObject(assm_obj)  
 		__traceback_info__ = provenance, assm_obj, ext_obj
-		raw_int_obj = type(assm_obj)()  # Use the class of the object returned as a factory.
-		update_from_external_object(raw_int_obj, ext_obj, require_updater=True, notify=False)
+		
+		# Use the class of the object returned as a factory.
+		raw_int_obj = type(assm_obj)() 
+		update_from_external_object(raw_int_obj, ext_obj, require_updater=True, 
+									notify=False)
 
 		# Also be sure factories can be found
 		factory = find_factory_for(toExternalObject(assm_obj))
 		assert factory is not None
-		# The ext_obj was mutated by the internalization process, so we need to externalize
-		# again. Or run a deep copy (?)
+		# The ext_obj was mutated by the internalization process, 
+		# so we need to externalize again. Or run a deep copy (?)
 
 	def _is_uninteresting(self, element):
 		"""
@@ -162,7 +179,10 @@ class _LessonQuestionSetExtractor(object):
 	def __init__(self, book=None):
 		pass
 
-	def transform( self, book ):
+	def transform(self, book, savetoc=True, outpath=None):
+		outpath = outpath or book.contentLocation
+		outpath = os.path.expanduser(outpath)
+
 		found_sets = False
 		dom = book.toc.dom
 		topic_map = self._get_topic_map(dom)
@@ -175,7 +195,8 @@ class _LessonQuestionSetExtractor(object):
 		
 		if found_sets:
 			self._process_assignments(dom, assignment_els, topic_map)
-			book.toc.save()
+			if savetoc:
+				book.toc.save()
 
 	def _get_topic_map(self, dom):
 		result = {}
@@ -191,14 +212,15 @@ class _LessonQuestionSetExtractor(object):
 				continue
 
 			# Discover the nearest topic in the toc that is a 'course' node
-			parent_el = el.parentNode
 			lesson_el = None
+			parent_el = el.parentNode
 			if hasattr(parent_el, 'ntiid') and parent_el.tagName.startswith('course'):
 				lesson_el = topic_map.get(parent_el.ntiid)
 			
 			while lesson_el is None and parent_el.parentNode is not None:
 				parent_el = parent_el.parentNode
-				if hasattr(parent_el, 'ntiid') and parent_el.tagName.startswith('course'):
+				if 	hasattr(parent_el, 'ntiid') and \
+					parent_el.tagName.startswith('course'):
 					lesson_el = topic_map.get(parent_el.ntiid)
 
 			# SAJ: Hack to prevent question set sections from appearing on
@@ -227,10 +249,10 @@ class _LessonQuestionSetExtractor(object):
 				lesson_el.appendChild(toc_el)
 				lesson_el.appendChild(dom.createTextNode(u'\n'))
 
-	# SAJ: This method is a HACK to mark the parent topic of an assignment as 'suppressed'.
-	# In practice, this is only needed for 'no_submit' assignments since they have no
-	# associated question set to otherwise trigger the marking. This should move into its
-	# own extractor, but for now it is here.
+	# SAJ: This method is a HACK to mark the parent topic of an assignment as
+	# 'suppressed'. In practice, this is only needed for 'no_submit' assignments 
+	# since they have no associated question set to otherwise trigger the marking.
+	# This should move into its  own extractor, but for now it is here.
 	def _process_assignments(self, dom, els, topic_map):
 		for el in els:
 			if not el.parentNode:
@@ -248,7 +270,8 @@ class _LessonQuestionSetExtractor(object):
 
 			while lesson_el is None and parent_el.parentNode is not None:
 				parent_el = parent_el.parentNode
-				if hasattr(parent_el, 'ntiid') and parent_el.tagName.startswith('course'):
+				if 	hasattr(parent_el, 'ntiid') and \
+					parent_el.tagName.startswith('course'):
 					lesson_el = topic_map.get(parent_el.ntiid)
 
 			# SAJ: Hack to prevent no_submit assignment sections from appearing on
