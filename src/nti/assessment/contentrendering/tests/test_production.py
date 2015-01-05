@@ -8,6 +8,8 @@ __docformat__ = "restructuredtext en"
 # pylint: disable=W0212,R0904
 
 from hamcrest import is_
+from hamcrest import none
+from hamcrest import not_none
 from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import has_property
@@ -15,8 +17,6 @@ from hamcrest import same_instance
 from hamcrest import contains_string
 
 import os
-
-#from nti.externalization.externalization import to_external_object
 
 from nti.assessment.contentrendering.ntiassessment import naquestionbank
 from nti.assessment.contentrendering.ntiassessment import naquestionfillintheblankwordbank
@@ -44,6 +44,7 @@ class TestProduction(AssessmentTestCase):
 		assert_that( dom.getElementsByTagName('naquestionbank')[0], is_( naquestionbank ) )
 
 		qset_object = dom.getElementsByTagName( 'naquestionbank' )[0].assessment_object()
+		assert_that( qset_object, has_length( 1 ) )
 		assert_that( qset_object.questions, has_length( 1 ) )
 		assert_that( qset_object.ntiid, contains_string( 'set' ) )
 
@@ -51,15 +52,14 @@ class TestProduction(AssessmentTestCase):
 		assert_that( asg_object, has_property( 'parts', has_length( 1 )))
 		assert_that( asg_object.parts[0], has_property( 'question_set', same_instance(qset_object)))
 		assert_that( asg_object.parts[0], has_property( 'auto_grade', is_true()))
-# 		assert_that( asg_object.parts[0], has_property( 'content', 'Some content.'))
-# 		assert_that( asg_object.parts[0], has_property( 'title', 'Part Title'))
-# 		assert_that( asg_object, has_property('content', "Assignment content."))
-# 		assert_that( asg_object.ntiid, contains_string('assignment'))
-# 		assert_that( asg_object, has_property('title', 'Main Title'))
-# 		assert_that( asg_object, has_property('is_non_public', False))
-# 		assert_that( asg_object, has_property('category_name', 'quizzes'))
-# 		assert_that( asg_object, has_property( 'available_for_submission_beginning',
-# 											   datetime( 2014, 01, 13, 6, 0)))
+		
+		question = qset_object[0]
+		assert_that( question, has_length( 1 ) )
+		assert_that( question.parts, has_length( 1 ) )
+		assert_that( question.wordbank, is_( none() ) )
+		
+		question_part = question[0]
+		assert_that( question_part.wordbank, is_( not_none() ) )
 
 	def test_ucol(self):
 		name = 'question_assignment_ucol.tex'

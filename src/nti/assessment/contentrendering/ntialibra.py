@@ -45,17 +45,10 @@ from .ntiquestion import naquestion
 ###
 
 class _WordBankMixIn(object):
-
-	def _asm_entries(self):
-		_naqwordbank = self.getElementsByTagName('naqwordbank')
-		if not _naqwordbank \
-				or (hasattr(_naqwordbank[0].parentNode, '_asm_entries') and _naqwordbank[0].parentNode != self) \
-				or (not hasattr(_naqwordbank[0].parentNode, '_asm_entries') and _naqwordbank[0].parentNode.parentNode != self):
-			return None, ()
-		
+	
+	def _parse_wordentries(self, naqwordbank):
 		result = []
-		_naqwordbank = _naqwordbank[0]
-		for x in _naqwordbank.getElementsByTagName('naqwordentry'):
+		for x in naqwordbank.getElementsByTagName('naqwordentry'):
 			if 'wid' in x.attributes:
 				data = [x.attributes['wid'],
 						x.attributes['word'],
@@ -63,6 +56,17 @@ class _WordBankMixIn(object):
 						x._asm_local_content]
 				we = IWordEntry(data)
 				result.append(we)
+		return result
+	
+	def _asm_entries(self):
+		_naqwordbank = self.getElementsByTagName('naqwordbank')
+		if not _naqwordbank \
+				or (hasattr(_naqwordbank[0].parentNode, '_asm_entries') and _naqwordbank[0].parentNode != self) \
+				or (not hasattr(_naqwordbank[0].parentNode, '_asm_entries') and _naqwordbank[0].parentNode.parentNode != self):
+			return None, ()
+		
+		_naqwordbank = _naqwordbank[0]
+		result = self._parse_wordentries(_naqwordbank)
 		return _naqwordbank, result
 
 	def _asm_wordbank(self):
@@ -107,6 +111,16 @@ class naqfillintheblankwithwordbankpart(_WordBankMixIn, _AbstractNAQPart):
 	part_interface = IQFillInTheBlankWithWordBankPart
 	soln_interface = IQFillInTheBlankWithWordBankSolution
 
+	def _asm_entries(self):
+		_naqwordbank = self.getElementsByTagName('naqwordbank')
+		if not _naqwordbank:
+			result = None, ()
+		else:
+			_naqwordbank = _naqwordbank[0]
+			entries = self._parse_wordentries(_naqwordbank)
+			result = _naqwordbank, entries
+		return result
+	
 	def _asm_object_kwargs(self):
 		return { 'wordbank': self._asm_wordbank(),
 				 'input': self._asm_input() }
