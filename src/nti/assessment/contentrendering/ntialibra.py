@@ -59,15 +59,7 @@ class _WordBankMixIn(object):
 		return result
 	
 	def _asm_entries(self):
-		_naqwordbank = self.getElementsByTagName('naqwordbank')
-		if not _naqwordbank \
-				or (hasattr(_naqwordbank[0].parentNode, '_asm_entries') and _naqwordbank[0].parentNode != self) \
-				or (not hasattr(_naqwordbank[0].parentNode, '_asm_entries') and _naqwordbank[0].parentNode.parentNode != self):
-			return None, ()
-		
-		_naqwordbank = _naqwordbank[0]
-		result = self._parse_wordentries(_naqwordbank)
-		return _naqwordbank, result
+		raise NotImplementedError()
 
 	def _asm_wordbank(self):
 		result = None
@@ -106,7 +98,7 @@ class naqfillintheblankwithwordbankpart(_WordBankMixIn, _AbstractNAQPart):
 			\end{naqfillintheblankwithwordbankpart}
 		\end{naquestion}
 	"""
-
+	
 	part_factory = QFillInTheBlankWithWordBankPart
 	part_interface = IQFillInTheBlankWithWordBankPart
 	soln_interface = IQFillInTheBlankWithWordBankSolution
@@ -358,6 +350,26 @@ def _remove_parts_after_render(self, rendered):
 	return output
 
 class naquestionfillintheblankwordbank(_WordBankMixIn, naquestion):
+		
+	def _get_parent(self, element):
+		try:
+			parent = element.parentNode
+			while (parent is not None and not isinstance(parent, _WordBankMixIn)):
+				parent = parent.parentNode 
+			result = parent
+		except AttributeError:
+			result = None
+		return result
+		
+	def _asm_entries(self):
+		_naqwordbank = self.getElementsByTagName('naqwordbank')
+		if not _naqwordbank or self._get_parent(_naqwordbank[0]) != self:
+			result = None, ()
+		else:
+			_naqwordbank = _naqwordbank[0]
+			entries = self._parse_wordentries(_naqwordbank)
+			result = _naqwordbank, entries
+		return result
 
 	def _after_render(self, rendered):
 		self._asm_local_content = _remove_parts_after_render(self, rendered)

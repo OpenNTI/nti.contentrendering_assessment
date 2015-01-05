@@ -18,6 +18,7 @@ from hamcrest import contains_string
 
 import os
 
+from nti.assessment.contentrendering.ntiassessment import naquestionset
 from nti.assessment.contentrendering.ntiassessment import naquestionbank
 from nti.assessment.contentrendering.ntiassessment import naquestionfillintheblankwordbank
 
@@ -45,25 +46,42 @@ class TestProduction(AssessmentTestCase):
 
 		qset_object = dom.getElementsByTagName( 'naquestionbank' )[0].assessment_object()
 		assert_that( qset_object, has_length( 1 ) )
-		assert_that( qset_object.questions, has_length( 1 ) )
-		assert_that( qset_object.ntiid, contains_string( 'set' ) )
+		assert_that( qset_object, has_property('questions', has_length( 1 ) ))
+		assert_that( qset_object, has_property('ntiid', contains_string( 'set' ) ))
 
 		asg_object = dom.getElementsByTagName( 'naassignment' )[0].assessment_object()
 		assert_that( asg_object, has_property( 'parts', has_length( 1 )))
-		assert_that( asg_object.parts[0], has_property( 'question_set', same_instance(qset_object)))
 		assert_that( asg_object.parts[0], has_property( 'auto_grade', is_true()))
-		
+		assert_that( asg_object.parts[0], has_property( 'question_set', same_instance(qset_object)))
+				
 		question = qset_object[0]
 		assert_that( question, has_length( 1 ) )
-		assert_that( question.parts, has_length( 1 ) )
-		assert_that( question.wordbank, is_( none() ) )
+		assert_that( question, has_property('parts', has_length( 1 ) ))
+		assert_that( question, has_property('wordbank', is_( none() ) ))
 		
 		question_part = question[0]
-		assert_that( question_part.wordbank, is_( not_none() ) )
+		assert_that( question_part, has_property('wordbank', is_( not_none() ) ))
 
 	def test_ucol(self):
 		name = 'question_assignment_ucol.tex'
 		with open(os.path.join( os.path.dirname(__file__), name)) as fp:
 			example = fp.read()
 		
-		_buildDomFromString( _simpleLatexDocument( (example,) ) )
+		dom = _buildDomFromString( _simpleLatexDocument( (example,) ) )
+		assert_that( dom.getElementsByTagName('naquestionset'), has_length( 1 ) )
+		assert_that( dom.getElementsByTagName('naquestionset')[0], is_( naquestionset ) )
+
+		qset_object = dom.getElementsByTagName( 'naquestionset' )[0].assessment_object()
+		asg_object = dom.getElementsByTagName( 'naassignment' )[0].assessment_object()
+		
+		assert_that( asg_object, has_property( 'parts', has_length( 1 )))
+		assert_that( asg_object.parts[0], has_property( 'question_set', same_instance(qset_object)))
+		
+		assert_that( qset_object, has_length( 5 ) )
+		for idx in xrange(len(qset_object)):
+			question = qset_object[idx]
+			assert_that( question, has_length( 1 ) )
+			assert_that( question, has_property('parts', has_length( 1 ) ))
+			assert_that( question, has_property('wordbank', is_( not_none() ) ))
+			question_part = question[0]
+			assert_that( question_part, has_property('wordbank', is_( none() ) ))
