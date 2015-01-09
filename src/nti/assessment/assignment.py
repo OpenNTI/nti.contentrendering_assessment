@@ -27,7 +27,7 @@ from nti.schema.field import SchemaConfigured
 from nti.schema.fieldproperty import AdaptingFieldProperty
 from nti.schema.fieldproperty import createDirectFieldProperties
 
-from nti.utils.property import alias
+from nti.utils.property import alias, readproperty
 
 from .interfaces import IQAssignment
 from .interfaces import IQAssignmentPart
@@ -65,7 +65,11 @@ class QAssignment(SchemaConfigured,
 	available_for_submission_beginning = AdaptingFieldProperty(IQAssignment['available_for_submission_beginning'])
 	
 	mime_type = 'application/vnd.nextthought.assessment.assignment'
-
+	
+	@readproperty
+	def no_submit(self):
+		return self.category_name == 'no_submit'
+	
 @interface.implementer(IQTimedAssignment)
 @WithRepr
 class QTimedAssignment(QAssignment):

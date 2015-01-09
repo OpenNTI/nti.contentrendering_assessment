@@ -559,6 +559,9 @@ class IQAssignment(ITitledContent, IAnnotatable):
 						  not be public""",
 						  default=True)
 	
+	no_submit = Bool( title="Whether this assignment accept submissions",
+					  default=True)
+	
 	# A note on handling assignments that have an associated time limit
 	# (e.g., you have one hour to complete this assignment once you begin):
 	# That information will be encoded as a timedelta on the assignment.

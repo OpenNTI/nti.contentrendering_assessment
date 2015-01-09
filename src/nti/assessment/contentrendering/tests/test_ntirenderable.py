@@ -67,9 +67,7 @@ class TestRenderables(AssessmentTestCase):
 			render = ResourceRenderer.createResourceRenderer('XHTML', None)
 			render.importDirectory( os.path.join( os.path.dirname(__file__), '..' ) )
 			render.render( dom )
-			# TODO: Actual validation of the rendering
-
-
+			
 			index = io.open(os.path.join(ctx.docdir, filename), 'rU', encoding='utf-8' ).read()
 			content = """<object type="application/vnd.nextthought.naquestion" data-ntiid="%(ntiid)s" data="%(ntiid)s""" % { 'ntiid': ntiid }
 			content2 = """<param name="ntiid" value="%(ntiid)s" """ % { 'ntiid': ntiid }
@@ -496,4 +494,3 @@ class TestRenderables(AssessmentTestCase):
 			assert_that(quiz, has_entry('questions', has_length(9)))
 			assert_that(quiz, has_entry('draw', is_(4)))
 			assert_that(quiz, has_entry('ranges', has_length(2)))
-			

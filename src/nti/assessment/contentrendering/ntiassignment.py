@@ -77,7 +77,7 @@ class naassignment(_LocalContentMixin,
 
 	Example::
 
-		\begin{naassignment}[not_before_date=2014-01-13,category=homework,public=true]<Homework>
+		\begin{naassignment}[not_before_date=2014-01-13,category=homework,public=true,no_submit=true]<Homework>
 			\label{assignment}
 			Some introductory content.
 
@@ -170,6 +170,10 @@ class naassignment(_LocalContentMixin,
 		if 'category' in options:
 			value = options['category'] 
 			result.category_name = IQAssignment['category_name'].fromUnicode(value)
+			
+		if 'no_submit' in options:
+			value = options['no_submit'] 
+			result.no_submit = IQAssignment['no_submit'].fromUnicode(value)
 
 		errors = schema.getValidationErrors(IQAssignment, result )
 		if errors: # pragma: no cover

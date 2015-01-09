@@ -24,7 +24,7 @@ from nti.assessment.contentrendering.ntiassessment import naquestionfillinthebla
 
 from nti.contentrendering.tests import buildDomFromString as _buildDomFromString
 
-from nti.testing.matchers import is_true
+from nti.testing.matchers import is_true, is_false
 
 from nti.assessment.tests import AssessmentTestCase
 from nti.assessment.tests import _simpleLatexDocument
@@ -51,6 +51,8 @@ class TestProduction(AssessmentTestCase):
 
 		asg_object = dom.getElementsByTagName( 'naassignment' )[0].assessment_object()
 		assert_that( asg_object, has_property( 'parts', has_length( 1 )))
+		assert_that( asg_object, has_property( 'no_submit', is_false()))
+		assert_that( asg_object, has_property( 'category_name', is_('no_submit')))
 		assert_that( asg_object.parts[0], has_property( 'auto_grade', is_true()))
 		assert_that( asg_object.parts[0], has_property( 'question_set', same_instance(qset_object)))
 				
@@ -73,6 +75,8 @@ class TestProduction(AssessmentTestCase):
 
 		qset_object = dom.getElementsByTagName( 'naquestionset' )[0].assessment_object()
 		asg_object = dom.getElementsByTagName( 'naassignment' )[0].assessment_object()
+		assert_that( asg_object, has_property( 'category_name', is_('no_submit')))
+		assert_that( asg_object, has_property( 'no_submit', is_true()))
 		
 		assert_that( asg_object, has_property( 'parts', has_length( 1 )))
 		assert_that( asg_object.parts[0], has_property( 'question_set', same_instance(qset_object)))
