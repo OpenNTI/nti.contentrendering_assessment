@@ -174,6 +174,9 @@ class naassignment(_LocalContentMixin,
 		if 'no_submit' in options:
 			value = options['no_submit'] 
 			result.no_submit = IQAssignment['no_submit'].fromUnicode(value)
+		
+		if not result.category_name and result.no_submit:
+			result.category_name = u'no_submit'
 
 		errors = schema.getValidationErrors(IQAssignment, result )
 		if errors: # pragma: no cover
