@@ -5,6 +5,7 @@ Decorators for assessment objects.
 
 .. $Id$
 """
+
 from __future__ import unicode_literals, print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
@@ -21,14 +22,14 @@ from nti.externalization.externalization import to_external_object
 from nti.externalization.interfaces import IExternalObjectDecorator
 from nti.externalization.interfaces import IExternalMappingDecorator
 
-from .interfaces import IRegEx
 from .interfaces import IQPart
+from .interfaces import IRegEx
+from .interfaces import IQMathPart
 from .interfaces import IQPartSolutionsExternalizer
 from .interfaces import IQFillInTheBlankShortAnswerPart
 from .interfaces import IQFillInTheBlankWithWordBankPart
 from .interfaces import IQFillInTheBlankShortAnswerSolution
 from .interfaces import IQFillInTheBlankWithWordBankSolution
-from .interfaces import IQMathPart
 
 @interface.implementer(IQPartSolutionsExternalizer)
 @component.adapter(IQPart)
@@ -98,7 +99,6 @@ class _MathPartDecorator(object):
 			allowed_units = getattr( solution, 'allowed_units', None )
 			if allowed_units:
 				all_allowed_units.extend( [x for x in allowed_units] )
-
 		external['allowed_units'] = all_allowed_units
 		return external
 
@@ -129,6 +129,6 @@ class _QAssessmentObjectIContainedAdder(object):
 			# Be careful not to write this out at rendering time
 			# with a None value, but if it does happen overwrite it
 			containerId = None
-			containerId = getattr( context.__parent__, 'ntiid', None )
+			containerId = getattr(context.__parent__, 'ntiid', None )
 			if containerId:
 				mapping['containerId'] = containerId
