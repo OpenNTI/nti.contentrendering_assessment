@@ -132,3 +132,12 @@ class _QAssessmentObjectIContainedAdder(object):
 			containerId = getattr(context.__parent__, 'ntiid', None )
 			if containerId:
 				mapping['containerId'] = containerId
+
+@interface.implementer(IExternalObjectDecorator)
+class _QAssessmentObjectDecorator(object):
+	
+	__metaclass__ = SingletonDecorator
+
+	def decorateExternalObject( self, context, mapping ):
+		mapping['NoSubmit'] = bool(context.no_submit)
+		mapping['CategoryName'] = context.category_name

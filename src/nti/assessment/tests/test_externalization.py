@@ -149,7 +149,6 @@ class TestExternalization(AssessmentTestCase):
 		assert_that(internal, has_property('content', is_('at')))
 
 	def test_wordbank(self):
-
 		ext_obj = {
 			u'Class': 'WordBank',
 			u'MimeType': u'application/vnd.nextthought.naqwordbank',
@@ -225,7 +224,6 @@ class TestExternalization(AssessmentTestCase):
 		assert_that(sol, has_property('value', has_entry('001', has_property('solution', 'yes, I will'))))
 
 	def test_question_bank(self):
-
 		path = os.path.join(os.path.dirname(__file__), "questionbank.json")
 		with open(path, "r") as fp:
 			ext_obj = json.load(fp)
@@ -252,6 +250,3 @@ class TestExternalization(AssessmentTestCase):
 													has_entry('Class', is_('QuestionSet')),
 													has_entry('MimeType', is_('application/vnd.nextthought.naquestionbank')),
 													has_entry('ranges', has_length(2)))))
-
-
-

@@ -18,10 +18,10 @@ from nti.testing.matchers import verifiably_provides
 
 from nti.externalization.tests import externalizes
 
-from .. import parts
-from .. import question
-from .. import assignment
-from .. import interfaces
+from nti.assessment import parts
+from nti.assessment import question
+from nti.assessment import assignment
+from nti.assessment import interfaces
 
 from nti.assessment.tests import AssessmentTestCase
 
@@ -43,7 +43,10 @@ class TestAssignment(AssessmentTestCase):
 		# But it's not valid, it's missing parts
 		assert_that( assignment.QAssignment(), does_not( validly_provides( interfaces.IQAssignment ) ) )
 		assert_that( assignment.QAssignment(), externalizes( has_entries( 'Class', 'Assignment',
-																		  'category_name', 'default') ) )
+																		  'category_name', 'default',
+																		  'CategoryName', 'default',
+																		  'no_submit', False,
+																		  'NoSubmit', False) ) )
 
 		assert_that( assignment.QAssignment(parts=[part]),
 					 validly_provides(interfaces.IQAssignment) )

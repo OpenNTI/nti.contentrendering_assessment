@@ -274,6 +274,11 @@
 		for=".interfaces.IQuestion"
 		provides="nti.externalization.interfaces.IExternalObjectDecorator" />
 
+	<subscriber
+		factory=".decorators._QAssessmentObjectDecorator"
+		for=".interfaces.IQAssignment"
+		provides="nti.externalization.interfaces.IExternalObjectDecorator" />
+		
 	<!--
 	File uploads, which are handled manually because
 	they deviate from the pattern.
