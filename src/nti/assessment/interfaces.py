@@ -9,10 +9,11 @@ __docformat__ = "restructuredtext en"
 
 from zope import interface
 from zope.interface.common.mapping import IReadMapping
-from zope.interface.common.sequence import IReadSequence
+
+from zope.annotation.interfaces import IAnnotatable
 
 from zope.container.interfaces import IContained
-from zope.annotation.interfaces import IAnnotatable
+
 from zope.mimetype.interfaces import mimeTypeConstraint
 
 from dolmen.builtins.interfaces import IDict
@@ -878,7 +879,7 @@ class IQAssignmentSubmissionPendingAssessment(IQBaseSubmission):
 	#parts.setTaggedValue( '_ext_excluded_out', True ) # Internal use only
 
 
-class IQAssessmentItemContainer(IReadSequence):
+class IQAssessmentItemContainer(interface.Interface):
 	"""
 	Something that is an unordered bag of assessment items (such as
 	questions, question sets, and assignments).
