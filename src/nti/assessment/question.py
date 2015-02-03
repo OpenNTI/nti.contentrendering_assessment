@@ -5,6 +5,7 @@ Code related to the question interfaces.
 
 .. $Id$
 """
+
 from __future__ import unicode_literals, print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
@@ -18,13 +19,13 @@ from zope.annotation.interfaces import IAttributeAnnotatable
 
 from persistent import Persistent
 
+from nti.common.property import alias
+
 from nti.schema.field import SchemaConfigured
 from nti.schema.fieldproperty import AdaptingFieldProperty
 from nti.schema.fieldproperty import createDirectFieldProperties
 
 from nti.schema.schema import EqHash
-
-from nti.utils.property import alias
 
 from .interfaces import IQuestion
 from .interfaces import IQuestionSet

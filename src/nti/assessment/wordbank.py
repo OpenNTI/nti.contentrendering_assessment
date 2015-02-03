@@ -17,6 +17,10 @@ from zope.location.interfaces import ISublocations
 
 from persistent import Persistent
 
+from nti.common.property import Lazy
+from nti.common.property import CachedProperty
+from nti.common.maps import CaseInsensitiveDict
+
 from nti.contentfragments.interfaces import HTMLContentFragment
 
 from nti.externalization.representation import WithRepr
@@ -24,10 +28,6 @@ from nti.externalization.representation import WithRepr
 from nti.schema.schema import EqHash
 from nti.schema.field import SchemaConfigured
 from nti.schema.fieldproperty import createDirectFieldProperties
-
-from nti.utils.property import Lazy
-from nti.utils.property import CachedProperty
-from nti.utils.maps import CaseInsensitiveDict
 
 from .interfaces import IWordBank
 from .interfaces import IWordEntry

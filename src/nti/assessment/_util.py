@@ -3,16 +3,17 @@
 """
 .. $Id$
 """
+
 from __future__ import unicode_literals, print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-_marker = object()
-
 from nti.externalization.representation import WithRepr
 
 from nti.schema.schema import EqHash
+
+_marker = object()
 
 @EqHash('value',
 		superhash=True)

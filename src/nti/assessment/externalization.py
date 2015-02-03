@@ -5,6 +5,7 @@ Externalization for assessment objects.
 
 .. $Id$
 """
+
 from __future__ import unicode_literals, print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
@@ -14,6 +15,8 @@ from zope import interface
 from zope import component
 
 from zope.file.upload import nameFinder
+
+from nti.common.dataurl import DataURL
 
 from nti.dataserver.links import Link
 from nti.dataserver.interfaces import ILinkExternalHrefOnly
@@ -29,7 +32,6 @@ from nti.externalization.datastructures import InterfaceObjectIO
 from nti.externalization.datastructures import AbstractDynamicObjectIO
 
 from nti.utils.schema import DataURI
-from nti.utils.dataurl import DataURL
 
 from .response import QUploadedFile
 from .response import QUploadedImageFile
