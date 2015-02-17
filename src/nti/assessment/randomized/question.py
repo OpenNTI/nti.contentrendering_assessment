@@ -51,13 +51,20 @@ class QQuestionBank(QQuestionSet):
 	nonrandomized_interface = INonRandomizedQuestionBank
 	sha224randomized_interface = ISha224RandomizedQuestionBank
 	
-	def copy(self, questions=None, ranges=None, srand=None):
-		result = self.__class__()
+	def _copy(self, result, questions=None, ranges=None, srand=None):
 		result.draw = self.draw
 		result.title = self.title
 		result.ranges = ranges or list(self.ranges or ())
 		result.questions = questions or list(self.questions or ())
 		result.srand = self.srand if srand is None else bool(srand)
+		return result
+	
+	def copy(self, questions=None, ranges=None, srand=None):
+		result = self._copy(self.__class__(), questions, ranges, srand)
+		return result
+	
+	def copyTo(self, target, questions=None, ranges=None, srand=None):
+		result = self._copy(target, questions, ranges, srand)
 		return result
 
 	def summRangeDraw(self):

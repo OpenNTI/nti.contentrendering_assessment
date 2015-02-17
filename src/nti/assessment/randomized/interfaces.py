@@ -164,6 +164,12 @@ class IQuestionBank(IQuestionSet):
 		make a copy of this object w/ possibly new questions and/or ranges
 		"""
 
+	def copyTo(target, questions=None, ranges=None, srand=None, ):
+		"""
+		make a copy of this object w/ possibly new questions and/or ranges to 
+		target
+		"""
+		
 class INonRandomizedQuestionBank(IQuestionBank):
 	"""
 	Marker interface to avoid randomizing an question bank
