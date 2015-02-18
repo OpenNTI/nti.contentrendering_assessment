@@ -9,9 +9,16 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+import hashlib
+from collections import Mapping
+
+import simplejson as json
+
 from zope import component
 
-from . import interfaces
+from nti.externalization.externalization import toExternalObject
+
+from .interfaces import IQLatexSymbolicMathSolution
 
 def grade_one_response(questionResponse, possible_answers):
 	"""
@@ -22,7 +29,7 @@ def grade_one_response(questionResponse, possible_answers):
 		`questionResponse` with.
 	"""
 
-	answers = [interfaces.IQLatexSymbolicMathSolution(t) for t in possible_answers]
+	answers = [IQLatexSymbolicMathSolution(t) for t in possible_answers]
 
 	match = False
 	for answer in answers:
@@ -53,4 +60,8 @@ def grader_for_response(part, response):
 			return grader
 	return None
 
-		
+def signature(data, decorate=False):
+	if not isinstance(data, Mapping):
+		data = toExternalObject(data, decorate=decorate)
+	result = hashlib.md5(json.dumps(data, sort_keys=True)).hexdigest()
+	return result

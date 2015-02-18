@@ -25,6 +25,8 @@ from nti.externalization.internalization import find_factory_for
 from nti.externalization.externalization import toExternalObject
 from nti.externalization.internalization import update_from_external_object
 
+from .. import signature
+
 from .interfaces import IAssessmentExtractor
 from .interfaces import ILessonQuestionSetExtractor
 
@@ -58,12 +60,12 @@ class _AssessmentExtractor(object):
 		outpath = os.path.expanduser(outpath)
 		target = os.path.join(outpath, 'assessment_index.json')
 		
-		index = {'Items': {}}
+		index = {'Items': {}, 'Signatures':{}}
 		documents = book.document.getElementsByTagName('document')
 		if not documents:
 			return
 		
-		self._build_index(documents[0], index['Items'])
+		self._build_index(documents[0], index['Items'], index['Signatures'])
 		index['href'] = index.get('href', 'index.html')
 
 		logger.info("extracting assessments to %s" , target)
@@ -73,7 +75,7 @@ class _AssessmentExtractor(object):
 			json.dump(index, fp, indent='\t', sort_keys=True, ensure_ascii=True)
 		return index
 
-	def _build_index(self, element, index):
+	def _build_index(self, element, index, signatures):
 		"""
 		Recurse through the element adding assessment objects to the index,
 		keyed off of NTIIDs.
@@ -118,7 +120,9 @@ class _AssessmentExtractor(object):
 				int_obj = ass_obj()
 				# Verify that we can round-trip this object
 				self._ensure_roundtrips(int_obj, provenance=child)  
-				assessment_objects[child.ntiid] = toExternalObject(int_obj)
+				ext_obj = toExternalObject(int_obj)
+				assessment_objects[child.ntiid] = ext_obj
+				signatures[child.ntiid] = self._signature(ext_obj)
 				# assessment_objects are leafs, never have children to worry about
 			elif child.hasChildNodes():  # Recurse for children if needed
 				if getattr(child, 'ntiid', None):
@@ -129,7 +133,7 @@ class _AssessmentExtractor(object):
 					# an unnamed thing; wrap it up with us; should only 
 					# have AssessmentItems
 					containing_index = element_index
-				self._build_index(child, containing_index)
+				self._build_index(child, containing_index, signatures)
 
 	def _ensure_roundtrips(self, assm_obj, provenance=None):
 		# No need to go into its children, like parts.	
@@ -147,6 +151,9 @@ class _AssessmentExtractor(object):
 		# The ext_obj was mutated by the internalization process, 
 		# so we need to externalize again. Or run a deep copy (?)
 
+	def _signature(self, data):
+		return signature(data)
+		
 	def _is_uninteresting(self, element):
 		"""
 		Uninteresting elements do not get an entry in the index. These are
