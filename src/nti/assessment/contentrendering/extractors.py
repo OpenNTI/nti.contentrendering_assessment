@@ -83,6 +83,9 @@ class _AssessmentExtractor(object):
 			fp.write(sha256)
 		return index
 
+	def _to_external_object(self, obj):
+		return toExternalObject(obj, decorate=False)
+	
 	def _build_index(self, element, index, signatures):
 		"""
 		Recurse through the element adding assessment objects to the index,
@@ -128,7 +131,7 @@ class _AssessmentExtractor(object):
 				int_obj = ass_obj()
 				# Verify that we can round-trip this object
 				self._ensure_roundtrips(int_obj, provenance=child)  
-				ext_obj = toExternalObject(int_obj)
+				ext_obj = self._to_external_object(int_obj)
 				assessment_objects[child.ntiid] = ext_obj
 				signatures[child.ntiid] = self._signature(ext_obj)
 				# assessment_objects are leafs, never have children to worry about
@@ -145,7 +148,7 @@ class _AssessmentExtractor(object):
 
 	def _ensure_roundtrips(self, assm_obj, provenance=None):
 		# No need to go into its children, like parts.	
-		ext_obj = toExternalObject(assm_obj)  
+		ext_obj = self._to_external_object(assm_obj)  
 		__traceback_info__ = provenance, assm_obj, ext_obj
 		
 		# Use the class of the object returned as a factory.
@@ -154,7 +157,7 @@ class _AssessmentExtractor(object):
 									notify=False)
 
 		# Also be sure factories can be found
-		factory = find_factory_for(toExternalObject(assm_obj))
+		factory = find_factory_for(self._to_external_object(assm_obj))
 		assert factory is not None
 		# The ext_obj was mutated by the internalization process, 
 		# so we need to externalize again. Or run a deep copy (?)
