@@ -63,5 +63,13 @@ def grader_for_response(part, response):
 def signature(data, decorate=False):
 	if not isinstance(data, Mapping):
 		data = toExternalObject(data, decorate=decorate)
-	result = hashlib.md5(json.dumps(data, sort_keys=True)).hexdigest()
+	result = hashlib.sha256(json.dumps(data, sort_keys=True)).hexdigest()
 	return result
+
+def hashfile(afile, hasher=None, blocksize=65536):
+	hasher = hashlib.sha256() if hasher is None else hasher
+	buf = afile.read(blocksize)
+	while len(buf) > 0:
+		hasher.update(buf)
+		buf = afile.read(blocksize)
+	return hasher.hexdigest()
