@@ -60,10 +60,16 @@ def grader_for_response(part, response):
 			return grader
 	return None
 
+def hexdigest(data, hasher=None):
+	hasher = hashlib.sha256() if hasher is None else hasher	
+	hasher.update(data)
+	result = hasher.hexdigest()
+	return result
+
 def signature(data, decorate=False):
 	if not isinstance(data, Mapping):
 		data = toExternalObject(data, decorate=decorate)
-	result = hashlib.sha256(json.dumps(data, sort_keys=True)).hexdigest()
+	result = hexdigest(json.dumps(data, sort_keys=True))
 	return result
 
 def hashfile(afile, hasher=None, blocksize=65536):

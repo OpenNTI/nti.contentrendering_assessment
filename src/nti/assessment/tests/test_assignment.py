@@ -7,23 +7,28 @@ __docformat__ = "restructuredtext en"
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
 
+from hamcrest import is_
 from hamcrest import is_not
 from hamcrest import has_entry
 from hamcrest import has_entries
 from hamcrest import assert_that
 does_not = is_not
 
-from nti.testing.matchers import validly_provides
-from nti.testing.matchers import verifiably_provides
-
-from nti.externalization.tests import externalizes
+import os
 
 from nti.assessment import parts
+from nti.assessment import hashfile
 from nti.assessment import question
+from nti.assessment import signature
 from nti.assessment import assignment
 from nti.assessment import interfaces
 
 from nti.assessment.tests import AssessmentTestCase
+
+from nti.testing.matchers import validly_provides
+from nti.testing.matchers import verifiably_provides
+
+from nti.externalization.tests import externalizes
 
 class TestAssignment(AssessmentTestCase):
 
@@ -55,3 +60,12 @@ class TestAssignment(AssessmentTestCase):
 					 verifiably_provides( interfaces.IQAssignmentSubmissionPendingAssessment ))
 		assert_that( assignment.QAssignmentSubmissionPendingAssessment(),
 					 externalizes( has_entry( 'Class', 'AssignmentSubmissionPendingAssessment' )))
+		
+	def test_signature(self):
+		assert_that(signature(assignment.QAssignment()), 
+					is_('3d23ee3296126c4860be5f6f16bc775be359563d417970feceea59f8446c7427') )
+
+		path = os.path.join(os.path.dirname(__file__), "questionbank.json")
+		with open(path, "rb") as fp:
+			assert_that(hashfile(fp), 
+						is_('711d848c5536cfcd7a5aae4b638aa71fb94ead061be996fe784aa18e1aadffd5') )
