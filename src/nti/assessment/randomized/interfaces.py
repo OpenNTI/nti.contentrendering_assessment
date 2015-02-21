@@ -177,3 +177,15 @@ class INonRandomizedQuestionBank(IQuestionBank):
 	
 class ISha224RandomizedQuestionBank(IQuestionBank, ISha224Randomized):
 	pass
+
+# Principal utility
+
+class IPrincipalSeedSelector(interface.Interface):
+	"""
+	Defines a utility function to return a random seed for a pricipal
+	"""
+
+	def __call__(principal):
+		"""
+		return a random seed for the specified principal
+		"""

@@ -7,7 +7,6 @@ __docformat__ = "restructuredtext en"
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
 
-
 from hamcrest import is_
 from hamcrest import is_not
 from hamcrest import not_none
@@ -20,30 +19,25 @@ does_not = is_not
 
 import os
 import json
+import fudge
 
 from nti.assessment.randomized import randomize
 from nti.assessment.randomized import shuffle_list
 from nti.assessment.randomized import questionbank_question_chooser
 from nti.assessment.randomized.interfaces import IQuestionIndexRange
 
-from nti.dataserver.users import User
-
 from nti.externalization import internalization
-
-from nti.dataserver.tests.mock_dataserver import WithMockDSTrans
 
 from nti.assessment.tests import AssessmentTestCase
 
 class TestRandomized(AssessmentTestCase):
 	
-	def _create_user(self, username='nt@nti.com', password='temp001'):
-		usr = User.create_user(username=username, password=password)
-		return usr
-	
-	@WithMockDSTrans
-	def test_randomize(self):
+	@fudge.patch('nti.assessment.randomized.get_seed')
+	def test_randomize(self, mock_gs):
+		mock_gs.is_callable().with_args().returns(100)
+		
 		size = 20
-		ichigo = self._create_user(username='ichigo@nti.com')
+		ichigo = 'ichigo@nti.com'
 		numbers_1 = range(0, size)
 		generator = randomize(ichigo)
 		shuffle_list(generator, numbers_1)
@@ -54,15 +48,16 @@ class TestRandomized(AssessmentTestCase):
 		
 		assert_that(numbers_1, is_(numbers_2))
 		
-		aizen = self._create_user(username='aizen@nti.com')
+		mock_gs.is_callable().with_args().returns(500)
+		aizen = 'aizen@nti.com'
 		numbers_3 = range(0, size)
 		generator = randomize(aizen)
 		shuffle_list(generator, numbers_3)
 		
 		assert_that(numbers_1, is_not(numbers_3))
 		
-	@WithMockDSTrans
-	def test_question_bank_1(self):
+	@fudge.patch('nti.assessment.randomized.get_seed')
+	def test_question_bank_1(self, mock_gs):
 
 		path = os.path.join(os.path.dirname(__file__), "question_bank_1.json")
 		with open(path, "r") as fp:
@@ -77,19 +72,23 @@ class TestRandomized(AssessmentTestCase):
 		
 		all_questions = list(internal.questions)
 		
-		user1 = self._create_user(username='user1@nti.com')
+		user1 = 'user1@nti.com'
+		mock_gs.is_callable().with_args().returns(100)
 		questions = questionbank_question_chooser(internal, user=user1)
 		assert_that(questions, has_length(internal.draw))
 		
-		user2 = self._create_user(username='user2@nti.com')
+		user2 = 'user2@nti.com'
+		mock_gs.is_callable().with_args().returns(500)
 		questions2 = questionbank_question_chooser(internal, user=user2)
 		assert_that(questions, is_not(equal_to(questions2)))
 		
 		internal.draw = 2
+		mock_gs.is_callable().with_args().returns(100)
 		internal.ranges = [IQuestionIndexRange([0,5]), IQuestionIndexRange([6, 10])]
 		questions = questionbank_question_chooser(internal, user=user1)
 		assert_that(questions, has_length(internal.draw))
 
+		mock_gs.is_callable().with_args().returns(500)
 		questions2 = questionbank_question_chooser(internal, user=user2)
 		assert_that(questions, is_not(equal_to(questions2)))
 		
@@ -105,8 +104,8 @@ class TestRandomized(AssessmentTestCase):
 		assert_that(new_internal, has_property('title', is_(internal.title)))
 		assert_that(new_internal, has_property('questions', is_(all_questions)))
 
-	@WithMockDSTrans
-	def test_question_bank_2(self):
+	@fudge.patch('nti.assessment.randomized.get_seed')
+	def test_question_bank_2(self, mock_gs):
 
 		path = os.path.join(os.path.dirname(__file__), "question_bank_2.json")
 		with open(path, "r") as fp:
@@ -119,11 +118,13 @@ class TestRandomized(AssessmentTestCase):
 		internalization.update_from_external_object(internal, ext_obj,
 													require_updater=True)
 				
-		user1 = self._create_user(username='user1@nti.com')
+		user1 = 'user1@nti.com'
+		mock_gs.is_callable().with_args().returns(100)
 		questions_1 = questionbank_question_chooser(internal, user=user1)
 		assert_that(questions_1, has_length(internal.draw))
 		
-		user2 = self._create_user(username='user2@nti.com')
+		user2 = 'user2@nti.com'
+		mock_gs.is_callable().with_args().returns(500)
 		questions_2 = questionbank_question_chooser(internal, user=user2)
 		assert_that(questions_2, has_length(internal.draw))
 		

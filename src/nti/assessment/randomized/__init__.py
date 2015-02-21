@@ -14,38 +14,23 @@ import hashlib
 
 from zope import component
 
-from zc.intid import IIntIds
-
-from zope.security.management import queryInteraction
-
-from nti.dataserver.users import User
-from nti.dataserver.interfaces import IUser
-
 from .interfaces import ISha224Randomized
+from .interfaces import IPrincipalSeedSelector
 
-def get_current_user():
-	interaction = queryInteraction()
-	participations = list(getattr(interaction, 'participations', None) or ())
-	participation = participations[0] if participations else None
-	principal = getattr(participation, 'principal', None)
-	return principal.id if principal is not None else None
-
-def get_user(user=None):
-	user = get_current_user() if user is None else user
-	if user is not None and not IUser.providedBy(user):
-		user = User.get_user(str(user))
-	return user
+def get_seed(context=None):
+	selector = component.queryUtility(IPrincipalSeedSelector)
+	result = selector(context) if selector is not None else None
+	return result
 
 def randomize(user=None, context=None):
-	user = get_user(user)		
-	if user is not None:
-		uid = component.getUtility(IIntIds).getId(user)
+	seed = get_seed(user)	
+	if seed is not None:
 		use_sha224 = context is not None and ISha224Randomized.providedBy(context)
 		if use_sha224:
-			hexdigest = hashlib.sha224(bytes(uid)).hexdigest()
+			hexdigest = hashlib.sha224(bytes(seed)).hexdigest()
 			generator = random.Random(long(hexdigest, 16))
 		else:
-			generator = random.Random(uid)
+			generator = random.Random(seed)
 		return generator
 	return None
 
