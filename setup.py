@@ -51,7 +51,7 @@ setup(
 		'zope.interface',
 		'zope.datetime',
 		'nti.contentfragments',
-		# 'nti.externalization',
+		'nti.externalization',
 		'nti.ntiids',
 		'nti.openmath',
 		'nti.plasTeX',
@@ -67,3 +67,4 @@ setup(
 	],
 	entry_points=entry_points
 )
+
