@@ -13,7 +13,9 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
 from zope import component
+
 from zope.container.contained import Contained
+
 from zope.location.interfaces import ISublocations
 
 from persistent import Persistent
@@ -26,8 +28,9 @@ from persistent.list import PersistentList
 # without going through the expense of ZopeDublinCore (since we expect no other
 # annotations and no mutability)
 from nti.dataserver.interfaces import ICreated
-from nti.dataserver.interfaces import ILastModified
 from nti.dataserver.datastructures import ContainedMixin
+
+from nti.dublincore.interfaces import ILastModified
 
 from nti.externalization.representation import WithRepr
 

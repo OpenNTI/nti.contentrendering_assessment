@@ -11,13 +11,14 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import component
 from zope import interface
+
 from zope.container.contained import Contained
 
 from dolmen.builtins.interfaces import IString
 
 from persistent import Persistent
 
-from nti.contentfragments import interfaces as cfg_interfaces
+from nti.contentfragments.interfaces import HTMLContentFragment
 
 from nti.externalization.representation import WithRepr
 
@@ -47,7 +48,7 @@ class RegEx(Contained, SchemaConfigured, Persistent):
 @interface.implementer(IRegEx)
 def _regex_str_adapter(pattern, solution=None):
 	result = RegEx(pattern=pattern)
-	result.solution = cfg_interfaces.HTMLContentFragment(solution) if solution else None
+	result.solution = HTMLContentFragment(solution) if solution else None
 	return result
 
 @interface.implementer(IRegEx)
