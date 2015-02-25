@@ -14,10 +14,14 @@ logger = __import__('logging').getLogger(__name__)
 import os.path
 
 from zope import interface
-from zope.container.contained import Contained
-from zope.mimetype.interfaces import mimeTypeConstraint
-from zope.schema.interfaces import ConstraintNotSatisfied
+
 from zope.component.interfaces import ComponentLookupError
+
+from zope.container.contained import Contained
+
+from zope.mimetype.interfaces import mimeTypeConstraint
+
+from zope.schema.interfaces import ConstraintNotSatisfied
 
 from persistent import Persistent
 

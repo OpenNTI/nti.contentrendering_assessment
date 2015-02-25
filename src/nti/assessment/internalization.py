@@ -16,9 +16,11 @@ from curses.ascii import isctrl
 from zope import interface
 from zope import component
 
-from nti.externalization.internalization import find_factory_for
 from nti.externalization.datastructures import InterfaceObjectIO
+
 from nti.externalization.interfaces import IInternalObjectUpdater
+
+from nti.externalization.internalization import find_factory_for
 from nti.externalization.internalization import update_from_external_object
 
 from .interfaces import IRegEx

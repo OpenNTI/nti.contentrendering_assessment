@@ -13,6 +13,7 @@ from six import text_type
 from six import string_types
 
 from zope import interface
+
 from zope.container.contained import Contained
 
 from persistent import Persistent
@@ -21,7 +22,8 @@ from plone.namedfile.file import NamedBlobFile
 from plone.namedfile.file import NamedBlobImage
 
 from nti.dataserver.contenttypes.note import BodyFieldProperty
-from nti.dataserver.datastructures import PersistentCreatedModDateTrackingObject
+
+from nti.dublincore.datastructures import PersistentCreatedModDateTrackingObject
 
 from nti.schema.fieldproperty import AdaptingFieldProperty
 

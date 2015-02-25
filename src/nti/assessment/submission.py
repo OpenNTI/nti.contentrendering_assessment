@@ -12,13 +12,17 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 from zope import interface 
+
 from zope.container.contained import Contained
-from zope.location.interfaces import ISublocations
+
 from zope.interface.common.mapping import IWriteMapping
 from zope.interface.common.sequence import IFiniteSequence
 
+from zope.location.interfaces import ISublocations
+
 from nti.dataserver.datastructures import ContainedMixin
-from nti.dataserver.datastructures import PersistentCreatedModDateTrackingObject
+
+from nti.dublincore.datastructures import PersistentCreatedModDateTrackingObject
 
 from nti.externalization.representation import WithRepr
 

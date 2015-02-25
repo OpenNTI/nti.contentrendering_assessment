@@ -12,10 +12,14 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
-from zope.container.contained import Contained
-from zope.location.interfaces import ISublocations
-from zope.mimetype.interfaces import IContentTypeAware
+
 from zope.annotation.interfaces import IAttributeAnnotatable
+
+from zope.container.contained import Contained
+
+from zope.location.interfaces import ISublocations
+
+from zope.mimetype.interfaces import IContentTypeAware
 
 from persistent import Persistent
 

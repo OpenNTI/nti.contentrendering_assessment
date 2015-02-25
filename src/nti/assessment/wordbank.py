@@ -12,7 +12,9 @@ import six
 import functools
 
 from zope import interface
+
 from zope.container.contained import Contained
+
 from zope.location.interfaces import ISublocations
 
 from persistent import Persistent
