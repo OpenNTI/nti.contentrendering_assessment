@@ -16,6 +16,7 @@ TESTS_REQUIRE = [
 	'nose-progressive',
 	'nose2[coverage_plugin]',
 	'pyhamcrest',
+	'nti.nose_traceback_info',
 	'nti.testing'
 ]
 
@@ -71,8 +72,7 @@ setup(
 		'nti.openmath',
 		'nti.plasTeX',
 		'nti.schema',
-		'nti.utils',
-		'nti.nose_traceback_info',
+		'nti.utils'
 	],
 	extras_require={
 		'test': TESTS_REQUIRE,
