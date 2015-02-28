@@ -21,16 +21,9 @@ from zope.location.interfaces import ISublocations
 from persistent import Persistent
 from persistent.list import PersistentList
 
-# EWW...but we need to be IContained in order to be stored
-# in container data structures.
-# We also want to be ILastModified
-# so that we can cheaply store and access lastmodified times
-# without going through the expense of ZopeDublinCore (since we expect no other
-# annotations and no mutability)
-from nti.dataserver.interfaces import ICreated
-from nti.dataserver.datastructures import ContainedMixin
-
-from nti.dublincore.interfaces import ILastModified
+from nti.dataserver.core.interfaces import ICreated
+from nti.dataserver.core.mixins import ContainedMixin
+from nti.dataserver.core.interfaces import ILastModified
 
 from nti.externalization.representation import WithRepr
 

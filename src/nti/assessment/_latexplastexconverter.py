@@ -22,7 +22,7 @@ from plasTeX.TeX import TeX
 
 import nti.openmath as openmath
 
-from . import interfaces
+from .interfaces import IResponseToSymbolicMathConverter
 
 _counter = 0
 
@@ -102,7 +102,7 @@ def convert(response):
 			setattr(response, cache_attr, cached_value)
 	return cached_value[1] if cached_value else None
 
-@interface.provider(interfaces.IResponseToSymbolicMathConverter)
+@interface.provider(IResponseToSymbolicMathConverter)
 class EmptyResponseConverter(object):
 	"""
 	A converter for empty responses. Returns None, which should then grade out
@@ -116,4 +116,4 @@ class EmptyResponseConverter(object):
 def factory(solution, response):
 	return sys.modules[__name__] if response.value else EmptyResponseConverter
 
-interface.moduleProvides(interfaces.IResponseToSymbolicMathConverter)
+interface.moduleProvides(IResponseToSymbolicMathConverter)

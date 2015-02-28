@@ -13,6 +13,7 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
 from zope import component
+
 from zope.component.interfaces import ComponentLookupError
 
 from sympy.parsing import sympy_parser
@@ -185,7 +186,8 @@ class Grader(object):
 
 	def __call__( self ):
 		result = grade( self.solution, self.response )
-		if not result and not self.response.value.startswith( '<' ) and self.solution.allowed_units is None:
+		if 	not result and not self.response.value.startswith( '<' ) and \
+			self.solution.allowed_units is None:
 			# Hmm. Is there some trailing text we should brush away from the response?
 			# Only try if it's not OpenMath XML (which only comes up in test cases now)
 			# NOTE: We now only do this if "default" handling of units is specified; otherwise,
@@ -206,7 +208,8 @@ class Grader(object):
 			# since this is a legacy code path. https://trello.com/c/4qdjExxV
 			elif self.response.value.endswith( '\\%' ):
 				result = _regrade( self.response.value[:-2] )
-			elif self.response.value.endswith( '\\%$' ) and self.response.value.startswith( '$' ):
+			elif self.response.value.endswith( '\\%$' ) and \
+				 self.response.value.startswith( '$' ):
 				result = _regrade( self.response.value[1:-3] )
 
 		return result

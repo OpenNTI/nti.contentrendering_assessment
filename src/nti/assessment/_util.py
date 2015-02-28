@@ -15,9 +15,8 @@ from nti.schema.schema import EqHash
 
 _marker = object()
 
-@EqHash('value',
-		superhash=True)
 @WithRepr
+@EqHash('value', superhash=True)
 class TrivialValuedMixin(object):
 
 	value = None

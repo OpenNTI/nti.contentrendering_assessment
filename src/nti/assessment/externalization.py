@@ -19,7 +19,9 @@ from zope.file.upload import nameFinder
 from nti.common.dataurl import DataURL
 
 from nti.dataserver.links import Link
-from nti.dataserver.interfaces import ILinkExternalHrefOnly
+
+from nti.dataserver.core.schema import DataURI
+from nti.dataserver.core.interfaces import ILinkExternalHrefOnly
 
 from nti.externalization.interfaces import IInternalObjectIO
 from nti.externalization.interfaces import StandardExternalFields
@@ -30,8 +32,6 @@ from nti.externalization.externalization import to_external_ntiid_oid
 
 from nti.externalization.datastructures import InterfaceObjectIO
 from nti.externalization.datastructures import AbstractDynamicObjectIO
-
-from nti.utils.schema import DataURI
 
 from .response import QUploadedFile
 from .response import QUploadedImageFile

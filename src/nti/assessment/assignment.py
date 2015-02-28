@@ -25,7 +25,7 @@ from persistent import Persistent
 
 from nti.common.property import alias, readproperty
 
-from nti.dataserver.datastructures import ContainedMixin
+from nti.dataserver.core.mixins import ContainedMixin
 
 from nti.dublincore.datastructures import PersistentCreatedModDateTrackingObject
 

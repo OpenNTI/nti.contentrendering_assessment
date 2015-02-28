@@ -36,7 +36,6 @@ def grade_one_response(questionResponse, possible_answers):
 		match = answer.grade(questionResponse)
 		if match:
 			return match
-
 	return False
 
 def assess(quiz, responses):
