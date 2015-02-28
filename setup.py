@@ -65,6 +65,7 @@ setup(
 		'nti.common',
 		'nti.contentfragments',
 		'nti.dataserver.core',
+		'nti.dataserver.fragments',
 		'nti.dublincore',
 		'nti.externalization',
 		'nti.ntiids',
