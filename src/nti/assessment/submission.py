@@ -20,7 +20,7 @@ from zope.interface.common.sequence import IFiniteSequence
 
 from zope.location.interfaces import ISublocations
 
-from nti.dataserver.datastructures import ContainedMixin
+from nti.dataserver.core.mixins import ContainedMixin
 
 from nti.dublincore.datastructures import PersistentCreatedModDateTrackingObject
 

@@ -21,7 +21,7 @@ from persistent import Persistent
 from plone.namedfile.file import NamedBlobFile
 from plone.namedfile.file import NamedBlobImage
 
-from nti.dataserver.contenttypes.note import BodyFieldProperty
+from nti.dataserver.core.schema import BodyFieldProperty
 
 from nti.dublincore.datastructures import PersistentCreatedModDateTrackingObject
 
