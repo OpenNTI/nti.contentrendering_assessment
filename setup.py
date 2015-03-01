@@ -54,6 +54,7 @@ setup(
 		'six',
 		'sympy',
 		'zope.annotation',
+		'zope.app.file',
 		'zope.component',
 		'zope.container',
 		'zope.interface',
