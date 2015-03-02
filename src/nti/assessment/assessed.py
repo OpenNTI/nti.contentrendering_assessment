@@ -21,9 +21,10 @@ from zope.location.interfaces import ISublocations
 from persistent import Persistent
 from persistent.list import PersistentList
 
-from nti.dataserver.core.interfaces import ICreated
+from nti.coremetadata.interfaces import ICreated
+from nti.coremetadata.interfaces import ILastModified
+
 from nti.dataserver.core.mixins import ContainedMixin
-from nti.dataserver.core.interfaces import ILastModified
 
 from nti.externalization.representation import WithRepr
 

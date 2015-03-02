@@ -23,12 +23,13 @@ from dolmen.builtins.interfaces import INumeric
 from dolmen.builtins.interfaces import IUnicode
 from dolmen.builtins.interfaces import IIterable
 
+from nti.coremetadata.interfaces import ILastModified
+
 from nti.contentfragments.schema import Tag
 from nti.contentfragments.schema import LatexFragmentTextLine as _LatexTextLine
 from nti.contentfragments.schema import HTMLContentFragment as _HTMLContentFragment
 from nti.contentfragments.schema import TextUnicodeContentFragment as _ContentFragment
 
-from nti.dataserver.core.interfaces import ILastModified
 from nti.dataserver.core.interfaces import INeverStoredInSharedStream
 
 from nti.dataserver.fragments.interfaces import ITitledContent
