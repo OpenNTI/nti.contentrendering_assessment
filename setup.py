@@ -28,7 +28,7 @@ setup(
 	description = "Support for automated assessments",
 	long_description = codecs.open('README.rst', encoding='utf-8').read(),
 	license = 'Proprietary',
-	keywords = 'pyramid preference',
+	keywords = 'Assessments',
 	classifiers = [
 		'Intended Audience :: Developers',
 		'Natural Language :: English',
