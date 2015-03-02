@@ -15,6 +15,12 @@ from nti.schema.schema import EqHash
 
 _marker = object()
 
+from .interfaces import IQPart
+from .interfaces import IQuestion
+from .interfaces import IQuestionSet
+from .interfaces import IQAssignment
+from .interfaces import IQTimedAssignment
+
 @WithRepr
 @EqHash('value', superhash=True)
 class TrivialValuedMixin(object):
@@ -52,3 +58,15 @@ def make_sublocations(child_attr='parts'):
 				if part.__parent__ is self:
 					yield part
 	return sublocations
+
+def iface_of_assessment(thing):
+	iface = IQuestion
+	if IQuestionSet.providedBy(thing):
+		iface = IQuestionSet
+	elif IQTimedAssignment.providedBy(thing):
+		iface = IQTimedAssignment
+	elif IQAssignment.providedBy(thing):
+		iface = IQAssignment
+	elif IQPart.providedBy(thing):
+		iface = IQPart
+	return iface
