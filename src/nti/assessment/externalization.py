@@ -18,7 +18,7 @@ from zope.file.upload import nameFinder
 
 from nti.common.dataurl import DataURL
 
-from nti.dataserver.links import Link
+from nti.links.links import Link
 
 from nti.dataserver.core.schema import DataURI
 from nti.dataserver.core.interfaces import ILinkExternalHrefOnly

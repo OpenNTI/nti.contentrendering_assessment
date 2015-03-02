@@ -18,7 +18,6 @@
 	<include package=".contentrendering" file="configure.zcml" />
 
 	<!-- Response types -->
-
 	<adapter factory=".response.QTextResponse"
 			 provides=".interfaces.IQTextResponse"
 			 for="basestring"/>
@@ -238,7 +237,6 @@
 			 for="tuple"/>
 
 	<!-- Decorators -->
-
 	<adapter factory=".decorators._DefaultPartSolutionsExternalizer"
 			 for=".interfaces.IQPart"
 			 provides=".interfaces.IQPartSolutionsExternalizer" />
