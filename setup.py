@@ -7,6 +7,9 @@ entry_points = {
 	"z3c.autoinclude.plugin": [
 		'target = nti.contentrendering',
 	],
+	"console_scripts": [
+		"nti_extract_assessments = nti.assessment.scripts.nti_task_policy_extractor:main"
+	],
 }
 
 TESTS_REQUIRE = [

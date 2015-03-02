@@ -201,6 +201,10 @@ class QuestionIndex(object):
 		registered =  {x.ntiid for x in things_to_register}
 		return registered
 
+# We usually get two or more copies, one at the top-level, one embedded
+# in a question set, and possibly in an assignment. Although we get the
+# most reuse within a single index, we get some reuse across indexes,
+# especially in tests
 _fragment_cache = {}
 
 def _load_question_map_json(asm_index_text):
