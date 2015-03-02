@@ -82,6 +82,21 @@ class QuestionIndex(object):
 		for thing_to_register in things_to_register:
 			iface = _iface_to_register(thing_to_register)
 
+			# Previously, we were very careful not to re-register things
+			# that we could find utilities for.
+			# This is wrong, because we currently don't support multiple
+			# definitions, and everything that we find in this content
+			# we do need to register, in this registry.
+
+			# We would like to cut down an churn a bit by checking for
+			# equality, but because of the hierarchy that's hard to do
+			# (if content exists both in a parent and a child, we'd find
+			# the parent, but we really need the registration to be local; this
+			# is especially an issue if the parent is global but we're persistent)
+			# ex_utility = registry.queryUtility(iface, name=thing_to_register.ntiid)
+			# if ex_utility == thing_to_register:
+			#	continue
+			
 			registry.registerUtility( thing_to_register,
 									  provided=iface,
 									  name=thing_to_register.ntiid,
