@@ -9,9 +9,14 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+import six
+import simplejson
+
 from zope.interface.registry import Components
 
 from nti.contentfragments.interfaces import LatexContentFragment
+from nti.contentfragments.interfaces import PlainTextContentFragment
+from nti.contentfragments.interfaces import SanitizedHTMLContentFragment
 
 from nti.externalization.internalization import find_factory_for
 from nti.externalization.internalization import update_from_external_object
@@ -195,3 +200,64 @@ class QuestionIndex(object):
 
 		registered =  {x.ntiid for x in things_to_register}
 		return registered
+
+_fragment_cache = {}
+
+def _load_question_map_json(asm_index_text):
+
+	if not asm_index_text:
+		return
+
+	asm_index_text = unicode(asm_index_text, 'utf-8') \
+					 if isinstance(asm_index_text, bytes) else asm_index_text
+
+	# In this one specific case, we know that these are already
+	# content fragments (probably HTML content fragments)
+	# If we go through the normal adapter process from string to
+	# fragment, we will wind up with sanitized HTML, which is not what
+	# we want, in this case
+
+	# TODO: Needs specific test cases
+	# NOTE: This breaks certain assumptions that assume that there are no
+	# subclasses of str or unicode, notably pyramid.traversal. See assessment_views.py
+	# for more details.
+
+	def _as_fragment(v):
+		# We also assume that HTML has already been sanitized and can
+		# be trusted.
+		if v in _fragment_cache:
+			return _fragment_cache[v]
+
+		factory = PlainTextContentFragment
+		if '<' in v:
+			factory = SanitizedHTMLContentFragment
+		result = factory(v)
+		_fragment_cache[v] = result
+		return result
+
+	_PLAIN_KEYS = {'NTIID', 'filename', 'href', 'Class', 'MimeType'}
+
+	def _tx(v, k=None):
+		if isinstance(v, list):
+			v = [_tx(x, k) for x in v]
+		elif isinstance(v, dict):
+			v = hook(v.iteritems())
+		elif isinstance(v, six.string_types):
+			if k not in _PLAIN_KEYS:
+				v = _as_fragment(v)
+			else:
+				if v not in _fragment_cache:
+					_fragment_cache[v] = v
+				v = _fragment_cache[v]
+
+		return v
+
+	def hook(o):
+		result = dict()
+		for k, v in o:
+			result[k] = _tx(v, k)
+		return result
+
+	index = simplejson.loads( asm_index_text,
+							  object_pairs_hook=hook )
+	return index
