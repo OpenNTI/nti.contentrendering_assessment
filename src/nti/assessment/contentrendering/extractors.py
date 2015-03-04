@@ -21,8 +21,8 @@ from plasTeX.Renderers import render_children
 
 from nti.contentrendering.interfaces import IRenderedBook
 
-from nti.assessment import hashfile
-from nti.assessment import signature
+from nti.assessment.common import hashfile
+from nti.assessment.common import signature
 
 from nti.externalization.internalization import find_factory_for
 from nti.externalization.externalization import toExternalObject

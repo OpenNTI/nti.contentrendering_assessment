@@ -23,7 +23,7 @@ class SharedConfiguringTestLayer(ZopeComponentLayer,
     set_up_packages =   (
                             'nti.contentrendering',
                             'nti.assessment',
-                            'nti.assessment_contentrendering'
+                            'nti.assessment.contentrendering',
                             'nti.externalization',
                             'nti.mimetype',
                         )
