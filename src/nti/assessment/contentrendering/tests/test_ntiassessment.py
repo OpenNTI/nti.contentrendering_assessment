@@ -30,14 +30,15 @@ from nti.assessment.contentrendering.ntiassessment import naquestionfillinthebla
 
 from nti.contentrendering.tests import buildDomFromString as _buildDomFromString
 
-from nti.testing.matchers import is_true
+from nti.assessment.contentrendering.tests import _simpleLatexDocument
+from nti.assessment.contentrendering.tests import AssessmentRenderingTestCase
+
 from nti.externalization.tests import externalizes
+
+from nti.testing.matchers import is_true
 from nti.testing.matchers import verifiably_provides
 
-from nti.assessment.tests import AssessmentTestCase
-from nti.assessment.tests import _simpleLatexDocument
-
-class TestMisc(AssessmentTestCase):
+class TestMisc(AssessmentRenderingTestCase):
 
 	def test_generic_macros(self):
 		example = br"""
@@ -353,7 +354,6 @@ class TestMisc(AssessmentTestCase):
 		assert_that( part, verifiably_provides( part_el.part_interface ) )
 		assert_that( part.content, is_( "Arbitrary content goes here." ) )
 		assert_that( part.solutions[0], has_property( "value", "This is a solution. It may require multiple lines. It may span paragraphs." ) )
-
 
 	def test_multiple_choice_macros(self):
 		example = br"""

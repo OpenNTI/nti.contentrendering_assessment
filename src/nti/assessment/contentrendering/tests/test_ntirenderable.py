@@ -35,15 +35,15 @@ from nti.assessment.contentrendering.interfaces import IAssessmentExtractor
 
 from nti.contentrendering.tests import RenderContext
 
-from nti.assessment.tests import AssessmentTestCase
-from nti.assessment.tests import _simpleLatexDocument
+from nti.assessment.contentrendering.tests import _simpleLatexDocument
+from nti.assessment.contentrendering.tests import AssessmentRenderingTestCase
 
 @interface.implementer(IRenderedBook)
 class _MockRenderedBook(object):
 	document = None
 	contentLocation = None
 
-class TestRenderables(AssessmentTestCase):
+class TestRenderables(AssessmentRenderingTestCase):
 
 	def _do_test_render(self, label, ntiid, filename='index.html', units='',
 						 units_html=None, input_encoding=None ):

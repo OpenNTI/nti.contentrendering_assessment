@@ -24,12 +24,12 @@ from nti.assessment.contentrendering.ntiassessment import naquestionfillinthebla
 
 from nti.contentrendering.tests import buildDomFromString as _buildDomFromString
 
+from nti.assessment.contentrendering.tests import _simpleLatexDocument
+from nti.assessment.contentrendering.tests import AssessmentRenderingTestCase
+
 from nti.testing.matchers import is_true, is_false
 
-from nti.assessment.tests import AssessmentTestCase
-from nti.assessment.tests import _simpleLatexDocument
-
-class TestProduction(AssessmentTestCase):
+class TestProduction(AssessmentRenderingTestCase):
 
 	def test_biology(self):
 		name = 'question_assignment_bio.tex'

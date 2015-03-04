@@ -23,14 +23,14 @@ from nti.assessment.randomized.interfaces import IQRandomizedMatchingPart
 from nti.assessment.randomized.interfaces import IQRandomizedOrderingPart
 from nti.assessment.randomized.interfaces import IQRandomizedMultipleChoicePart
 
-from nti.testing.matchers import verifiably_provides
-
-from nti.assessment.tests import AssessmentTestCase
-from nti.assessment.tests import _simpleLatexDocument
-
 from nti.contentrendering.tests import buildDomFromString as _buildDomFromString
 
-class TestRandomized(AssessmentTestCase):
+from nti.assessment.contentrendering.tests import _simpleLatexDocument
+from nti.assessment.contentrendering.tests import AssessmentRenderingTestCase
+
+from nti.testing.matchers import verifiably_provides
+
+class TestRandomized(AssessmentRenderingTestCase):
 
 	def test_matchingpart_macros(self):
 		example = br"""
