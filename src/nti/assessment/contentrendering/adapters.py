@@ -16,9 +16,9 @@ from zope import interface
 
 from plasTeX.Renderers import render_children
 
-from nti.contentrendering.interfaces import IJSONTransformer
+from nti.assessment.interfaces import QUESTION_SET_MIME_TYPE
 
-from ..interfaces import QUESTION_SET_MIME_TYPE
+from nti.contentrendering.interfaces import IJSONTransformer
 
 def _render_children(renderer, nodes, strip=True):
 	if not isinstance(nodes, six.string_types):

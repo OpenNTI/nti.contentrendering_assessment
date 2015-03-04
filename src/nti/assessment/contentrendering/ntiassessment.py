@@ -76,11 +76,11 @@ from plasTeX.interfaces import IOptionAwarePythonPackage
 
 from nti.contentrendering.plastexpackages.ntilatexmacros import ntiincludevideo
 
-from .. import parts
-from .. import interfaces as as_interfaces
+from nti.assessment import parts
+from nti.assessment import interfaces as as_interfaces
 
-from ..randomized import parts as randomized_parts
-from ..randomized import interfaces as rand_interfaces
+from nti.assessment.randomized import parts as randomized_parts
+from nti.assessment.randomized import interfaces as rand_interfaces
 
 from .ntibase import _AbstractNAQPart
 from .ntibase import _LocalContentMixin

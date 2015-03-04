@@ -25,8 +25,8 @@ from nti.contentrendering.plastexpackages._util import _asm_rendered_textcontent
 from nti.contentrendering.plastexpackages._util import _htmlcontent_rendered_elements
 from nti.contentrendering.plastexpackages._util import LocalContentMixin as _BaseLocalContentMixin
 
-from ..interfaces import IQHTMLHint
-from ..interfaces import IQMathSolution
+from nti.assessment.interfaces import IQHTMLHint
+from nti.assessment.interfaces import IQMathSolution
 
 def aspveint(obj):
 	try:

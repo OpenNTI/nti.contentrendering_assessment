@@ -22,17 +22,17 @@ from nti.contentfragments.interfaces import ILatexContentFragment
 from nti.contentrendering.plastexpackages._util import _is_renderable
 from nti.contentrendering.plastexpackages._util import _htmlcontent_rendered_elements
 
-from ..parts import QFillInTheBlankShortAnswerPart
-from ..parts import QFillInTheBlankWithWordBankPart
-from ..question import QFillInTheBlankWithWordBankQuestion
+from nti.assessment.parts import QFillInTheBlankShortAnswerPart
+from nti.assessment.parts import QFillInTheBlankWithWordBankPart
+from nti.assessment.question import QFillInTheBlankWithWordBankQuestion
 
-from ..interfaces import IRegEx
-from ..interfaces import IWordBank
-from ..interfaces import IWordEntry
-from ..interfaces import IQFillInTheBlankShortAnswerPart
-from ..interfaces import IQFillInTheBlankWithWordBankPart
-from ..interfaces import IQFillInTheBlankShortAnswerSolution
-from ..interfaces import IQFillInTheBlankWithWordBankSolution
+from nti.assessment.interfaces import IRegEx
+from nti.assessment.interfaces import IWordBank
+from nti.assessment.interfaces import IWordEntry
+from nti.assessment.interfaces import IQFillInTheBlankShortAnswerPart
+from nti.assessment.interfaces import IQFillInTheBlankWithWordBankPart
+from nti.assessment.interfaces import IQFillInTheBlankShortAnswerSolution
+from nti.assessment.interfaces import IQFillInTheBlankWithWordBankSolution
 
 from .ntibase import naqvalue
 from .ntibase import _AbstractNAQPart

@@ -98,4 +98,3 @@ class naqsolution(Base.List.item):
 
 class naqsolexplanation(_LocalContentMixin, Base.Environment):
 	pass
-

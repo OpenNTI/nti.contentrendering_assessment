@@ -26,20 +26,20 @@ from plasTeX.Renderers import render_children
 from nti.contentrendering import plastexids
 from nti.contentrendering import interfaces as crd_interfaces
 
-from ..question import QQuestion
-from ..question import QQuestionSet
+from nti.assessment.question import QQuestion
+from nti.assessment.question import QQuestionSet
 
-from ..interfaces import IQuestion
-from ..interfaces import NTIID_TYPE
-from ..interfaces import IQuestionSet
-from ..interfaces import QUESTION_SET_MIME_TYPE
+from nti.assessment.interfaces import IQuestion
+from nti.assessment.interfaces import NTIID_TYPE
+from nti.assessment.interfaces import IQuestionSet
+from nti.assessment.interfaces import QUESTION_SET_MIME_TYPE
 
-from ..randomized.question import QQuestionBank
-from ..randomized.question import QRandomizedQuestionSet
+from nti.assessment.randomized.question import QQuestionBank
+from nti.assessment.randomized.question import QRandomizedQuestionSet
 
-from ..randomized.interfaces import IQuestionBank
-from ..randomized.interfaces import IQuestionIndexRange
-from ..randomized.interfaces import IRandomizedQuestionSet
+from nti.assessment.randomized.interfaces import IQuestionBank
+from nti.assessment.randomized.interfaces import IQuestionIndexRange
+from nti.assessment.randomized.interfaces import IRandomizedQuestionSet
 
 from .ntibase import _LocalContentMixin
 

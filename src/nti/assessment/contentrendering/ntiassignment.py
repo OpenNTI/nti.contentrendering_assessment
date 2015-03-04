@@ -24,12 +24,12 @@ from nti.contentrendering.interfaces import IEmbeddedContainer
 
 from nti.externalization.datetime import datetime_from_string
 
-from ..assignment import QAssignment
-from ..assignment import QAssignmentPart
-from ..assignment import QTimedAssignment
+from nti.assessment.assignment import QAssignment
+from nti.assessment.assignment import QAssignmentPart
+from nti.assessment.assignment import QTimedAssignment
 
-from ..interfaces import NTIID_TYPE
-from ..interfaces import IQAssignment
+from nti.assessment.interfaces import NTIID_TYPE
+from nti.assessment.interfaces import IQAssignment
 
 from .ntibase import aspveint
 from .ntibase import _LocalContentMixin

@@ -21,12 +21,12 @@ from plasTeX.Renderers import render_children
 
 from nti.contentrendering.interfaces import IRenderedBook
 
+from nti.assessment import hashfile
+from nti.assessment import signature
+
 from nti.externalization.internalization import find_factory_for
 from nti.externalization.externalization import toExternalObject
 from nti.externalization.internalization import update_from_external_object
-
-from .. import hashfile
-from .. import signature
 
 from .interfaces import IAssessmentExtractor
 from .interfaces import ILessonQuestionSetExtractor
