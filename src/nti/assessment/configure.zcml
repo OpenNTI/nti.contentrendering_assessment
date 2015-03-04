@@ -298,7 +298,4 @@
 	<!-- randomized -->
 	<include package=".randomized" file="configure.zcml" />
 
-	<!-- Authoring -->
-	<include package="." file="plastex.zcml" />
-
 </configure>

@@ -25,4 +25,7 @@
 			 for=".ntiassessment.naassignmentref"
 			 provides="nti.contentrendering.interfaces.IJSONTransformer" />
 
+	<!-- Authoring -->
+	<include package="." file="plastex.zcml" />
+
 </configure>

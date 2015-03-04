@@ -9,6 +9,23 @@
 	<include package="zope.component" />
 	<include package="zope.security" />
 
+	<!-- For rendering -->
+	<include package="zope.traversing" />
+	
+	<!-- Register the package under the short name and the legacy long name -->
+	<utility component=".ntiassessment" name="ntiassessment" />
+
+	<utility component=".ntiassessment"
+			 name="nti.contentrendering.plastexpackages.ntiassessment" />
+
+	<adapter factory=".extractors._AssessmentExtractor"
+			 for="nti.contentrendering.interfaces.IRenderedBook"
+			 provides=".interfaces.IAssessmentExtractor" />
+
+	<utility factory=".extractors._AssessmentExtractor"
+			 provides=".interfaces.IAssessmentExtractor"
+			 name="001.AssessmentExtractor" />
+			 
 	<adapter factory=".extractors._LessonQuestionSetExtractor"
 			 for="nti.contentrendering.interfaces.IRenderedBook"
 			 provides=".interfaces.ILessonQuestionSetExtractor" />
