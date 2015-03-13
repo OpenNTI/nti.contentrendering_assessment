@@ -89,10 +89,10 @@ from .ntibase import _LocalContentMixin
 # Solutions
 ###
 
-from nti.assessment.contentrendering.ntisolution import naqsolution 
-from nti.assessment.contentrendering.ntisolution import naqsolutions 
-from nti.assessment.contentrendering.ntisolution import naqsolexplanation
-from nti.assessment.contentrendering.ntisolution import naqsolutionnumname 
+from nti.rendering.assessment.ntisolution import naqsolution 
+from nti.rendering.assessment.ntisolution import naqsolutions 
+from nti.rendering.assessment.ntisolution import naqsolexplanation
+from nti.rendering.assessment.ntisolution import naqsolutionnumname 
 
 naqsolution = naqsolution
 naqsolutions = naqsolutions
@@ -553,18 +553,18 @@ class naqvideo(ntiincludevideo):
 # Question
 ###
 
-from nti.assessment.contentrendering.ntiquestion import naquestion 
-from nti.assessment.contentrendering.ntiquestion import naqindexrange
-from nti.assessment.contentrendering.ntiquestion import naquestionref 
-from nti.assessment.contentrendering.ntiquestion import naquestionset
-from nti.assessment.contentrendering.ntiquestion import naqindexranges
-from nti.assessment.contentrendering.ntiquestion import naquestionbank
-from nti.assessment.contentrendering.ntiquestion import naquestionname
-from nti.assessment.contentrendering.ntiquestion import naquestionsetref
-from nti.assessment.contentrendering.ntiquestion import naquestionbankref
-from nti.assessment.contentrendering.ntiquestion import naquestionsetname
-from nti.assessment.contentrendering.ntiquestion import narandomizedquestionset
-from nti.assessment.contentrendering.ntiquestion import narandomizedquestionsetref
+from nti.rendering.assessment.ntiquestion import naquestion 
+from nti.rendering.assessment.ntiquestion import naqindexrange
+from nti.rendering.assessment.ntiquestion import naquestionref 
+from nti.rendering.assessment.ntiquestion import naquestionset
+from nti.rendering.assessment.ntiquestion import naqindexranges
+from nti.rendering.assessment.ntiquestion import naquestionbank
+from nti.rendering.assessment.ntiquestion import naquestionname
+from nti.rendering.assessment.ntiquestion import naquestionsetref
+from nti.rendering.assessment.ntiquestion import naquestionbankref
+from nti.rendering.assessment.ntiquestion import naquestionsetname
+from nti.rendering.assessment.ntiquestion import narandomizedquestionset
+from nti.rendering.assessment.ntiquestion import narandomizedquestionsetref
 
 naquestion = naquestion
 naquestionref = naquestionref
@@ -582,20 +582,20 @@ narandomizedquestionsetref = narandomizedquestionsetref
 # Alibra
 ###
 
-from nti.assessment.contentrendering.ntialibra import naqinput
-from nti.assessment.contentrendering.ntialibra import naqregex
-from nti.assessment.contentrendering.ntialibra import naqregexes
-from nti.assessment.contentrendering.ntialibra import naqregexref
-from nti.assessment.contentrendering.ntialibra import naqwordbank
-from nti.assessment.contentrendering.ntialibra import naqwordentry
-from nti.assessment.contentrendering.ntialibra import naqblankfield
-from nti.assessment.contentrendering.ntialibra import naqpaireditem
-from nti.assessment.contentrendering.ntialibra import naqpaireditems
-from nti.assessment.contentrendering.ntialibra import naqwordbankref
-from nti.assessment.contentrendering.ntialibra import _WordBankMixIn
-from nti.assessment.contentrendering.ntialibra import naquestionfillintheblankwordbank
-from nti.assessment.contentrendering.ntialibra import naqfillintheblankshortanswerpart
-from nti.assessment.contentrendering.ntialibra import naqfillintheblankwithwordbankpart
+from nti.rendering.assessment.ntialibra import naqinput
+from nti.rendering.assessment.ntialibra import naqregex
+from nti.rendering.assessment.ntialibra import naqregexes
+from nti.rendering.assessment.ntialibra import naqregexref
+from nti.rendering.assessment.ntialibra import naqwordbank
+from nti.rendering.assessment.ntialibra import naqwordentry
+from nti.rendering.assessment.ntialibra import naqblankfield
+from nti.rendering.assessment.ntialibra import naqpaireditem
+from nti.rendering.assessment.ntialibra import naqpaireditems
+from nti.rendering.assessment.ntialibra import naqwordbankref
+from nti.rendering.assessment.ntialibra import _WordBankMixIn
+from nti.rendering.assessment.ntialibra import naquestionfillintheblankwordbank
+from nti.rendering.assessment.ntialibra import naqfillintheblankshortanswerpart
+from nti.rendering.assessment.ntialibra import naqfillintheblankwithwordbankpart
 
 naqregexref = naqregexref
 naqblankfield = naqblankfield
@@ -619,10 +619,10 @@ _LocalContentMixin._asm_ignorable_renderables += (_WordBankMixIn,
 # Assignments
 ###
 
-from nti.assessment.contentrendering.ntiassignment import naassignment 
-from nti.assessment.contentrendering.ntiassignment import naassignmentref
-from nti.assessment.contentrendering.ntiassignment import naassignmentpart 
-from nti.assessment.contentrendering.ntiassignment import naassignmentname
+from nti.rendering.assessment.ntiassignment import naassignment 
+from nti.rendering.assessment.ntiassignment import naassignmentref
+from nti.rendering.assessment.ntiassignment import naassignmentpart 
+from nti.rendering.assessment.ntiassignment import naassignmentname
 
 naassignment = naassignment
 naassignmentref = naassignmentref

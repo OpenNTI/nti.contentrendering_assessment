@@ -18,14 +18,14 @@ from hamcrest import contains_string
 
 import os
 
-from nti.assessment.contentrendering.ntiassessment import naquestionset
-from nti.assessment.contentrendering.ntiassessment import naquestionbank
-from nti.assessment.contentrendering.ntiassessment import naquestionfillintheblankwordbank
+from nti.rendering.assessment.ntiassessment import naquestionset
+from nti.rendering.assessment.ntiassessment import naquestionbank
+from nti.rendering.assessment.ntiassessment import naquestionfillintheblankwordbank
 
 from nti.contentrendering.tests import buildDomFromString as _buildDomFromString
 
-from nti.assessment.contentrendering.tests import _simpleLatexDocument
-from nti.assessment.contentrendering.tests import AssessmentRenderingTestCase
+from nti.rendering.assessment.tests import _simpleLatexDocument
+from nti.rendering.assessment.tests import AssessmentRenderingTestCase
 
 from nti.testing.matchers import is_true, is_false
 

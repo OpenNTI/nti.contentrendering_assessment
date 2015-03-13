@@ -13,20 +13,20 @@ from hamcrest import assert_that
 from hamcrest import has_property
 from hamcrest import contains_string
 
-from nti.assessment.contentrendering.ntiassessment import naquestion
-from nti.assessment.contentrendering.ntiassessment import naquestionbank 
-from nti.assessment.contentrendering.ntiassessment import narandomizedquestionset
-
 from nti.assessment.randomized.interfaces import IQuestionBank
 from nti.assessment.randomized.interfaces import IRandomizedQuestionSet
 from nti.assessment.randomized.interfaces import IQRandomizedMatchingPart
 from nti.assessment.randomized.interfaces import IQRandomizedOrderingPart
 from nti.assessment.randomized.interfaces import IQRandomizedMultipleChoicePart
 
+from nti.rendering.assessment.ntiassessment import naquestion
+from nti.rendering.assessment.ntiassessment import naquestionbank 
+from nti.rendering.assessment.ntiassessment import narandomizedquestionset
+
 from nti.contentrendering.tests import buildDomFromString as _buildDomFromString
 
-from nti.assessment.contentrendering.tests import _simpleLatexDocument
-from nti.assessment.contentrendering.tests import AssessmentRenderingTestCase
+from nti.rendering.assessment.tests import _simpleLatexDocument
+from nti.rendering.assessment.tests import AssessmentRenderingTestCase
 
 from nti.testing.matchers import verifiably_provides
 

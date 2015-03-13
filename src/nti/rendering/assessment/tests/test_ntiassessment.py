@@ -25,13 +25,13 @@ from nti.externalization.externalization import to_external_object
 from nti.externalization.internalization import update_from_external_object
 
 from nti.assessment import interfaces as asm_interfaces
-from nti.assessment.contentrendering.ntiassessment import naquestion, naquestionset
-from nti.assessment.contentrendering.ntiassessment import naquestionfillintheblankwordbank
 
 from nti.contentrendering.tests import buildDomFromString as _buildDomFromString
 
-from nti.assessment.contentrendering.tests import _simpleLatexDocument
-from nti.assessment.contentrendering.tests import AssessmentRenderingTestCase
+from nti.rendering.assessment.tests import _simpleLatexDocument
+from nti.rendering.assessment.tests import AssessmentRenderingTestCase
+from nti.rendering.assessment.ntiassessment import naquestion, naquestionset
+from nti.rendering.assessment.ntiassessment import naquestionfillintheblankwordbank
 
 from nti.externalization.tests import externalizes
 
