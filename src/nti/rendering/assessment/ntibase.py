@@ -207,15 +207,18 @@ class _AbstractNAQPart(_AbstractNonGradableNAQPart):
 								 self.getElementsByTagName('naqsolution') ):
 			unicode(x)
 
+	def _fix_bool_attribute(self, name):
+		if	name in self.attributes and \
+			(self.attributes[name] or '').lower() == ('%s=true' % name):
+			setattr(self, name, True)
+			self.attributes[name] = 'true'
+		else:
+			setattr(self, name, False)
+			self.attributes[name] = 'false'
+			
 	def invoke(self, tex):
 		token = super(_AbstractNAQPart, self).invoke(tex)
-		if	'randomize' in self.attributes and \
-			(self.attributes['randomize'] or '').lower() == 'randomize=true':
-			self.randomize = True
-			self.attributes['randomize'] = 'true'
-		else:
-			self.randomize = False
-			self.attributes['randomize'] = 'false'
+		self._fix_bool_attribute('randomize')
 		return token
 
 class naqvalue(_LocalContentMixin, Base.List.item):
