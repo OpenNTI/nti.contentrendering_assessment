@@ -73,20 +73,75 @@ class _LocalContentMixin(_BaseLocalContentMixin):
 			result = _asm_local_sourcecontent(self)
 		return result
 
-class _AbstractNAQPart(_LocalContentMixin, Base.Environment):
-
-	randomize = False
+class _AbstractNonGradableNAQPart(_LocalContentMixin, Base.Environment):
 
 	#: Defines the type of part this maps too
 	part_interface = None
+
+	part_factory = None
+	hint_interface = IQHTMLHint
+
+	args = ''
+
+	def _asm_hints(self):
+		"""
+		Collects the ``naqhint`` tags found beneath this element,
+		converts them to the type of object identified by ``hint_interface``,
+		and returns them in a list. For use by :meth:`assessment_object`
+		"""
+		hints = []
+		hint_els = self.getElementsByTagName('naqhint')
+		for hint_el in hint_els:
+			hint = self.hint_interface( hint_el._asm_local_content )
+			hints.append( hint )
+		return hints
+
+	def _asm_object_kwargs(self):
+		"""
+		Subclasses may override this to return a dictionary of keyword
+		arguments to pass to ``part_factory`` when creating
+		the corresponding assessment object.
+		"""
+		return {}
+
+	def part_creator(self):
+		# Be careful to turn textContent into plain unicode objects, not
+		# plastex Text subclasses, which are also expensive nodes.
+		result = self.part_factory( content=self._asm_local_content,
+									hints=self._asm_hints(),
+									**self._asm_object_kwargs()	)
+		return result
+
+	@cachedIn('_v_assessment_object')
+	def assessment_object( self ):
+		result = self.part_creator()
+		errors = schema.getValidationErrors( self.part_interface, result )
+		if errors: # pragma: no cover
+			__traceback_info__ = self.part_interface, errors, result
+			raise errors[0][1]
+		return result
+	
+	def _after_render( self, rendered ):
+		super(_AbstractNonGradableNAQPart,self)._after_render( rendered )
+		# The hints don't normally get rendered# by the templates, so make sure they do
+		for x in itertools.chain(self.getElementsByTagName('naqhint'),
+								 self.getElementsByTagName('naqchoice'),
+								 self.getElementsByTagName('naqmlabel'),
+								 self.getElementsByTagName('naqmvalue')):
+			unicode(x)
+
+	def invoke(self, tex):
+		token = super(_AbstractNonGradableNAQPart, self).invoke(tex)
+		return token
+	
+class _AbstractNAQPart(_AbstractNonGradableNAQPart):
+
+	randomize = False
 
 	#: Defines the type of solution this part produces.
 	#: Solution objects will be created by adapting the text content of the solution DOM nodes
 	#: into this interface.
 	soln_interface = None
-
-	part_factory = None
-	hint_interface = IQHTMLHint
 
 	args = '[randomize:str]'
 
@@ -137,53 +192,19 @@ class _AbstractNAQPart(_LocalContentMixin, Base.Environment):
 			return exp_els[0]._asm_local_content
 		return ILatexContentFragment( '' )
 
-	def _asm_hints(self):
-		"""
-		Collects the ``naqhint`` tags found beneath this element,
-		converts them to the type of object identified by ``hint_interface``,
-		and returns them in a list. For use by :meth:`assessment_object`
-		"""
-		hints = []
-		hint_els = self.getElementsByTagName('naqhint')
-		for hint_el in hint_els:
-			hint = self.hint_interface( hint_el._asm_local_content )
-			hints.append( hint )
-		return hints
-
-	def _asm_object_kwargs(self):
-		"""
-		Subclasses may override this to return a dictionary of keyword
-		arguments to pass to ``part_factory`` when creating
-		the corresponding assessment object.
-		"""
-		return {}
-
-	@cachedIn('_v_assessment_object')
-	def assessment_object( self ):
-		# Be careful to turn textContent into plain unicode objects, not
-		# plastex Text subclasses, which are also expensive nodes.
+	def part_creator(self):
 		result = self.part_factory( content=self._asm_local_content,
 									solutions=self._asm_solutions(),
 									explanation=self._asm_explanation(),
 									hints=self._asm_hints(),
 									**self._asm_object_kwargs()	)
-
-		errors = schema.getValidationErrors( self.part_interface, result )
-		if errors: # pragma: no cover
-			__traceback_info__ = self.part_interface, errors, result
-			raise errors[0][1]
 		return result
 
 	def _after_render( self, rendered ):
 		super(_AbstractNAQPart,self)._after_render( rendered )
-		# The hints and explanations don't normally get rendered
-		# by the templates, so make sure they do
+		# The explanations don't normally get rendere by the templates, so make sure they do
 		for x in itertools.chain(self.getElementsByTagName('naqsolexplanation'),
-								 self.getElementsByTagName('naqsolution'),
-								 self.getElementsByTagName('naqhint'),
-								 self.getElementsByTagName('naqchoice'),
-								 self.getElementsByTagName('naqmlabel'),
-								 self.getElementsByTagName('naqmvalue')):
+								 self.getElementsByTagName('naqsolution') ):
 			unicode(x)
 
 	def invoke(self, tex):
