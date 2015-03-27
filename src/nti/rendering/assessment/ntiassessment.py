@@ -128,10 +128,14 @@ class naqsymmathpart(_AbstractNAQPart):
 	soln_interface = as_interfaces.IQLatexSymbolicMathSolution
 
 class naqfreeresponsepart(_AbstractNAQPart):
+
 	part_factory = parts.QFreeResponsePart
 	part_interface = as_interfaces.IQFreeResponsePart
 	soln_interface = as_interfaces.IQFreeResponseSolution
-
+	
+	nongradable_part_factory = parts.QNonGradableFreeResponsePart
+	nongradable_part_interface = as_interfaces.IQNonGradableFreeResponsePart
+	
 class naqmodeledcontentpart(_AbstractNAQPart):
 	"""
 	This is a base part, and while it matches our internal
@@ -139,8 +143,12 @@ class naqmodeledcontentpart(_AbstractNAQPart):
 	External intent is better expressed with :class:`naqessaypart`
 	"""
 	soln_interface = None
+	
 	part_factory = parts.QModeledContentPart
 	part_interface = as_interfaces.IQModeledContentPart
+	
+	nongradable_part_factory = parts.QNonGradableModeledContentPart
+	nongradable_part_interface = as_interfaces.IQNonGradableModeledContentPart
 
 class naqessaypart(naqmodeledcontentpart):
 	r"""
@@ -187,14 +195,32 @@ class naqmultiplechoicepart(_AbstractNAQPart):
 	part_interface = as_interfaces.IQMultipleChoicePart
 	soln_interface = as_interfaces.IQMultipleChoiceSolution
 
-	#forcePars = True
-
+	nongradable_part_factory = parts.QNonGradableMultipleChoicePart
+	nongradable_part_interface = as_interfaces.IQNonGradableMultipleChoicePart
+	
+	randomized_part_factory = randomized_parts.QRandomizedMultipleChoicePart
+	randomized_part_interface = rand_interfaces.IQRandomizedMultipleChoicePart
+	
 	def _asm_choices(self):
 		return [x._asm_local_content for x in self.getElementsByTagName( 'naqchoice' )]
 
 	def _asm_object_kwargs(self):
 		return { 'choices': self._asm_choices() }
 
+	def _asm_part_factory(self):
+		if self.randomize:
+			result = self.randomized_part_factory
+		else:
+			result = super(naqmultiplechoicepart, self)._asm_part_factory()
+		return result
+
+	def _asm_part_interface(self):
+		if self._asm_is_gradable:
+			result = self.randomized_part_interface
+		else:
+			result = super(naqmultiplechoicepart, self)._asm_part_interface()
+		return result
+	
 	def digest( self, tokens ):
 		res = super(naqmultiplechoicepart,self).digest( tokens )
 		# Validate the document structure: we have a naqchoices child with
@@ -222,9 +248,6 @@ class naqmultiplechoicepart(_AbstractNAQPart):
 
 	def invoke(self, tex):
 		token = super(naqmultiplechoicepart, self).invoke(tex)
-		if self.randomize:
-			self.part_factory = randomized_parts.QRandomizedMultipleChoicePart
-			self.part_interface = rand_interfaces.IQRandomizedMultipleChoicePart
 		return token
 
 class naqmultiplechoicemultipleanswerpart(_AbstractNAQPart):
@@ -255,8 +278,11 @@ class naqmultiplechoicemultipleanswerpart(_AbstractNAQPart):
 	part_interface = as_interfaces.IQMultipleChoiceMultipleAnswerPart
 	soln_interface = as_interfaces.IQMultipleChoiceMultipleAnswerSolution
 
-	part_randomized_factory = randomized_parts.QRandomizedMultipleChoiceMultipleAnswerPart
-	part_randomized_interface = rand_interfaces.IQRandomizedMultipleChoiceMultipleAnswerPart
+	nongradable_part_factory = parts.QNonGradableMultipleChoicePart
+	nongradable_part_interface = as_interfaces.IQNonGradableMultipleChoicePart
+	
+	randomized_part_factory = randomized_parts.QRandomizedMultipleChoiceMultipleAnswerPart
+	randomized_part_interface = rand_interfaces.IQRandomizedMultipleChoiceMultipleAnswerPart
 			
 	def _asm_choices(self):
 		return [x._asm_local_content for x in self.getElementsByTagName( 'naqchoice' )]
@@ -275,8 +301,23 @@ class naqmultiplechoicemultipleanswerpart(_AbstractNAQPart):
 		solutions.append(solution)
 		return solutions
 
+	def _asm_part_factory(self):
+		if self.randomize:
+			result = self.randomized_part_factory
+		else:
+			result = super(naqmultiplechoicemultipleanswerpart, self)._asm_part_factory()
+		return result
+
+	def _asm_part_interface(self):
+		if self._asm_is_gradable:
+			result = self.randomized_part_interface
+		else:
+			result = super(naqmultiplechoicemultipleanswerpart, self)._asm_part_interface()
+		return result
+	
 	def digest( self, tokens ):
 		res = super(naqmultiplechoicemultipleanswerpart, self).digest(tokens)
+		
 		# Validate the document structure: we have a naqchoices child
 		# with at least two of its own children, and at least one
 		# weight == 1.  There is no explicit solution
@@ -304,9 +345,6 @@ class naqmultiplechoicemultipleanswerpart(_AbstractNAQPart):
 
 	def invoke(self, tex):
 		token = super(naqmultiplechoicemultipleanswerpart, self).invoke(tex)
-		if self.randomize:
-			self.part_factory = self.part_randomized_factory
-			self.part_interface = self.part_randomized_interface
 		return token
 
 class naqfilepart(_AbstractNAQPart):
@@ -334,9 +372,12 @@ class naqfilepart(_AbstractNAQPart):
 
 	args = "(types:list:str)[size:int]"
 
-	part_interface = as_interfaces.IQFilePart
-	part_factory = parts.QFilePart
 	soln_interface = None
+	part_factory = parts.QFilePart
+	part_interface = as_interfaces.IQFilePart
+		
+	nongradable_part_factory = parts.QNonGradableFilePart
+	nongradable_part_interface = as_interfaces.IQNonGradableFilePart
 
 	_max_file_size = None
 	_allowed_mime_types = ()
@@ -379,6 +420,9 @@ class naqconnectingpart(_AbstractNAQPart):
 	part_interface = as_interfaces.IQConnectingPart
 	soln_interface = as_interfaces.IQConnectingSolution
 	
+	nongradable_part_factory = parts.QNonGradableConnectingPart
+	nongradable_part_interface = as_interfaces.IQNonGradableConnectingPart
+	
 	randomized_part_factory = randomized_parts.QRandomizedConnectingPart
 	randomized_part_interface = rand_interfaces.IQRandomizedConnectingPart
 
@@ -403,8 +447,23 @@ class naqconnectingpart(_AbstractNAQPart):
 			solutions.append( solution )
 		return solutions
 
+	def _asm_part_factory(self):
+		if self.randomize:
+			result = self.randomized_part_factory
+		else:
+			result = super(naqconnectingpart, self)._asm_part_factory()
+		return result
+
+	def _asm_part_interface(self):
+		if self._asm_is_gradable:
+			result = self.randomized_part_interface
+		else:
+			result = super(naqconnectingpart, self)._asm_part_interface()
+		return result
+	
 	def digest( self, tokens ):
 		res = super(naqconnectingpart,self).digest( tokens )
+		
 		# Validate the document structure: we have a naqlabels child with
 		# at least two of its own children, an naqvalues child of equal length
 		# and a proper matching between the two
@@ -438,13 +497,11 @@ class naqconnectingpart(_AbstractNAQPart):
 			_naqsoln.answer = answer
 			_naqsolns.appendChild( _naqsoln )
 			self.insertAfter( _naqsolns, _naqmvalues)
+
 		return res
 
 	def invoke(self, tex):
 		token = super(naqconnectingpart, self).invoke(tex)
-		if self.randomize:
-			self.part_factory = self.randomized_part_factory
-			self.part_interface = self.randomized_part_interface
 		return token
 
 class naqmatchingpart(naqconnectingpart):
@@ -479,6 +536,9 @@ class naqmatchingpart(naqconnectingpart):
 	part_interface = as_interfaces.IQMatchingPart
 	soln_interface = as_interfaces.IQMatchingSolution
 	
+	nongradable_part_factory = parts.QNonGradableMatchingPart
+	nongradable_part_interface = as_interfaces.IQNonGradableMatchingPart
+	
 	randomized_part_factory = randomized_parts.QRandomizedMatchingPart
 	randomized_part_interface = rand_interfaces.IQRandomizedMatchingPart
 
@@ -494,6 +554,9 @@ class naqorderingpart(naqconnectingpart):
 	part_factory = parts.QOrderingPart
 	part_interface = as_interfaces.IQOrderingPart
 	soln_interface = as_interfaces.IQOrderingSolution
+	
+	nongradable_part_factory = parts.QNonGradableOrderingPart
+	nongradable_part_interface = as_interfaces.IQNonGradableOrderingPart
 	
 	randomized_part_factory = randomized_parts.QRandomizedOrderingPart
 	randomized_part_interface = rand_interfaces.IQRandomizedOrderingPart

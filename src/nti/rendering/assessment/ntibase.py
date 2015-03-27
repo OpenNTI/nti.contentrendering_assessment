@@ -104,18 +104,25 @@ class _AbstractNonGradableNAQPart(_LocalContentMixin, Base.Environment):
 		"""
 		return {}
 
-	def part_creator(self):
+	def _asm_part_factory(self):
+		return self.part_factory
+	
+	def _asm_part_interface(self):
+		return self.part_interface
+	
+	def part_creator(self, factory=None):
 		# Be careful to turn textContent into plain unicode objects, not
 		# plastex Text subclasses, which are also expensive nodes.
-		result = self.part_factory( content=self._asm_local_content,
-									hints=self._asm_hints(),
-									**self._asm_object_kwargs()	)
+		factory = factory or self._asm_part_factory()
+		result = factory( content=self._asm_local_content,
+						  hints=self._asm_hints(),
+						  **self._asm_object_kwargs()	)
 		return result
 
 	@cachedIn('_v_assessment_object')
 	def assessment_object( self ):
 		result = self.part_creator()
-		errors = schema.getValidationErrors( self.part_interface, result )
+		errors = schema.getValidationErrors( self._asm_part_interface(), result )
 		if errors: # pragma: no cover
 			__traceback_info__ = self.part_interface, errors, result
 			raise errors[0][1]
@@ -135,15 +142,20 @@ class _AbstractNonGradableNAQPart(_LocalContentMixin, Base.Environment):
 		return token
 	
 class _AbstractNAQPart(_AbstractNonGradableNAQPart):
-
+	
+	gradable = True
 	randomize = False
-
+	
+	#: Defines the nongradable part this maps too
+	nongradable_part_factory = None
+	nongradable_part_interface = None
+	
 	#: Defines the type of solution this part produces.
 	#: Solution objects will be created by adapting the text content of the solution DOM nodes
 	#: into this interface.
 	soln_interface = None
 
-	args = '[randomize:str]'
+	args = '[randomize:str][gradable:str]'
 
 	def _asm_solutions(self):
 		"""
@@ -192,12 +204,37 @@ class _AbstractNAQPart(_AbstractNonGradableNAQPart):
 			return exp_els[0]._asm_local_content
 		return ILatexContentFragment( '' )
 
-	def part_creator(self):
-		result = self.part_factory( content=self._asm_local_content,
-									solutions=self._asm_solutions(),
-									explanation=self._asm_explanation(),
-									hints=self._asm_hints(),
-									**self._asm_object_kwargs()	)
+	@property
+	def _asm_is_gradable(self):
+		result = self.gradable or self.randomize or \
+				 self.nongradable_part_factory is None or \
+				 self.nongradable_part_interface is None
+		return result
+
+	def _asm_part_factory(self):
+		if self._asm_is_gradable:
+			result = self.part_factory
+		else:
+			result = self.nongradable_part_factory
+		return result
+
+	def _asm_part_interface(self):
+		if self._asm_is_gradable:
+			result = self.part_interface
+		else:
+			result = self.nongradable_part_interface
+		return result
+	
+	def part_creator(self, factory=None):
+		factory = factory or self._asm_part_factory()
+		if self._asm_is_gradable:
+			result = self.part_factory( content=self._asm_local_content,
+										solutions=self._asm_solutions(),
+										explanation=self._asm_explanation(),
+										hints=self._asm_hints(),
+										**self._asm_object_kwargs()	)
+		else:
+			result = super(_AbstractNAQPart, self).part_creator(factory=factory)
 		return result
 
 	def _after_render( self, rendered ):
@@ -208,17 +245,18 @@ class _AbstractNAQPart(_AbstractNonGradableNAQPart):
 			unicode(x)
 
 	def _fix_bool_attribute(self, name):
-		if	name in self.attributes and \
-			(self.attributes[name] or '').lower() == ('%s=true' % name):
+		value = self.attributes[name] or '' if name in self.attributes else ''
+		if value.lower() == ('%s=true' % name) or value.lower() == 'true':
 			setattr(self, name, True)
 			self.attributes[name] = 'true'
-		else:
+		elif value.lower() == ('%s=false' % name) or value.lower() == 'false':
 			setattr(self, name, False)
 			self.attributes[name] = 'false'
 			
 	def invoke(self, tex):
 		token = super(_AbstractNAQPart, self).invoke(tex)
 		self._fix_bool_attribute('randomize')
+		self._fix_bool_attribute('gradable')
 		return token
 
 class naqvalue(_LocalContentMixin, Base.List.item):
