@@ -18,20 +18,6 @@
 	<utility component=".ntiassessment"
 			 name="nti.contentrendering.plastexpackages.ntiassessment" />
 
-	<adapter factory=".extractors._AssessmentExtractor"
-			 for="nti.contentrendering.interfaces.IRenderedBook"
-			 provides=".interfaces.IAssessmentExtractor" />
-
-	<utility factory=".extractors._AssessmentExtractor"
-			 provides=".interfaces.IAssessmentExtractor"
-			 name="001.AssessmentExtractor" />
-			 
-	<adapter factory=".extractors._LessonQuestionSetExtractor"
-			 for="nti.contentrendering.interfaces.IRenderedBook"
-			 provides=".interfaces.ILessonQuestionSetExtractor" />
-
-	<utility factory=".extractors._LessonQuestionSetExtractor"
-			 provides=".interfaces.ILessonQuestionSetExtractor"
-			 name="040.LessonQuestionSetExtractor" />
+	<include package=".extractors" file="configure.zcml" />
 
 </configure>
