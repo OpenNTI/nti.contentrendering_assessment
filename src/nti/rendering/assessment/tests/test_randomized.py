@@ -62,7 +62,7 @@ class TestRandomized(AssessmentRenderingTestCase):
 
 		part = part_el.assessment_object()
 		assert_that(part, verifiably_provides(part_el.part_interface))
-		assert_that(part_el.part_interface, is_(IQRandomizedMatchingPart))
+		assert_that(part_el.randomized_part_interface, is_(IQRandomizedMatchingPart))
 		
 	def test_orderingpart_macros(self):
 		example = br"""
@@ -104,7 +104,7 @@ class TestRandomized(AssessmentRenderingTestCase):
 
 		part = part_el.assessment_object()
 		assert_that(part, verifiably_provides(part_el.part_interface))
-		assert_that(part_el.part_interface, is_(IQRandomizedOrderingPart))
+		assert_that(part_el.randomized_part_interface, is_(IQRandomizedOrderingPart))
 		
 	def test_multiple_choice_macros(self):
 		example = br"""
@@ -137,7 +137,7 @@ class TestRandomized(AssessmentRenderingTestCase):
 
 		part = part_el.assessment_object()
 		assert_that(part, verifiably_provides(part_el.part_interface))
-		assert_that(part_el.part_interface, is_(IQRandomizedMultipleChoicePart))
+		assert_that(part_el.randomized_part_interface, is_(IQRandomizedMultipleChoicePart))
 
 	def test_randomizedquestionset_macros(self):
 		example = br"""

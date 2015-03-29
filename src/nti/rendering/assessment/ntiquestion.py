@@ -70,9 +70,9 @@ class naquestion(_LocalContentMixin, Base.Environment, plastexids.NTIIDMixin):
 	forcePars = False
 
 	_ntiid_suffix = 'naq.'
+	_ntiid_type = NTIID_TYPE
 	_ntiid_title_attr_name = 'ref'  # Use our counter to generate IDs if no ID is given
 	_ntiid_allow_missing_title = True
-	_ntiid_type = NTIID_TYPE
 	_ntiid_cache_map_name = '_naquestion_ntiid_map'
 
 	def invoke( self, tex ):
@@ -138,7 +138,7 @@ class naquestionset(Base.List, plastexids.NTIIDMixin):
 		\begin{naquestion}[individual=true]
 			\label{question}
 			...
-		\end{question}
+		\end{naquestion}
 
 		\begin{naquestionset}<My Title>
 			\label{set}
@@ -223,7 +223,7 @@ class narandomizedquestionset(naquestionset):
 		\begin{naquestion}[individual=true]
 			\label{question}
 			...
-		\end{question}
+		\end{naquestion}
 
 		\begin{narandomizedquestionset}<My Title>
 			\label{set}
@@ -268,7 +268,7 @@ class naquestionbank(naquestionset):
 		\begin{naquestion}[individual=true]
 			\label{question}
 			...
-		\end{question}
+		\end{naquestion}
 
 		\begin{naquestionbank}[draw=2]<My Title>
 			\label{set}

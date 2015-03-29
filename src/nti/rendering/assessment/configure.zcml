@@ -12,6 +12,10 @@
 	<!-- This includes nti.contentfragments and nti.contentrendering -->
 	<include package="nti.assessment" />
 	
+	<adapter factory=".adapters._NASurveyRefJSONTransformer"
+			 for=".ntiassessment.nasurveyref"
+			 provides="nti.contentrendering.interfaces.IJSONTransformer" />
+			 
 	<adapter factory=".adapters._NAQuestionSetRefJSONTransformer"
 			 for=".ntiassessment.naquestionsetref"
 			 provides="nti.contentrendering.interfaces.IJSONTransformer" />

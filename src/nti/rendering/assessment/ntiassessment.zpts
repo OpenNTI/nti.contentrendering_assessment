@@ -86,6 +86,15 @@ name: naqwordentry
 # No-Op template for the part questions
 name: naqmlabels naqmlabel naqmvalues naqmvalue naqregexes naqregex naqpaireditems naqpaireditem
 
+name: napoll
+<object type="application/vnd.nextthought.napoll" data-ntiid="the-ntiid" data="the-ntiid" data-canindividual="false" tal:attributes="data-ntiid self/ntiid; data self/ntiid; data-canindividual self/attributes/individual | default">
+<param name="ntiid" value="the-ntiid" tal:attributes="value self/ntiid" />
+<param name="canindividual" value="false" tal:attributes="value self/attributes/individual | default" />
+<div class="napoll">
+	 <span tal:replace="self"></span>
+</div>
+</object>
+
 name: naquestion
 <object type="application/vnd.nextthought.naquestion" data-ntiid="the-ntiid" data="the-ntiid" data-canindividual="false" tal:attributes="data-ntiid self/ntiid; data self/ntiid; data-canindividual self/attributes/individual | default">
 <param name="ntiid" value="the-ntiid" tal:attributes="value self/ntiid" />
@@ -127,6 +136,14 @@ name: naqsolutions
 <span tal:attributes="class string:${self/__class__/__name__} hidden" >
 	<span tal:repeat="item self" tal:attributes="class string:${item/__class__/__name__} hidden; data-nti-units item/units_to_html"></span>
 </span>
+
+name: nasurveyref
+<object class="nasurveyref" >
+	<param name="label" value="Survey Title" tal:attributes="value self/survey/title" />
+	<param name="type" value="Survey MIME Type" tal:attributes="value self/survey/mimeType" />
+	<param name="question-count" value="Number of questions in a survey" tal:attributes="value self/survey/question_count" />
+	<param name="target-ntiid" value="Survey NTIID" tal:attributes="value self/survey/ntiid" />
+</object>
 
 name: naquestionsetref narandomizedquestionsetref
 <object class="naquestionsetref" >

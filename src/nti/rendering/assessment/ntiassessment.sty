@@ -5,11 +5,17 @@
 % Since this package uses the comment package, the [fragile] option is required for use in beamer frames.
 
 %% Define the counters
+\newcounter{napoll}% Define napoll counter
 \newcounter{naquestion}% Define naquestion counter
 \newcounter{naquestionpart}[naquestion]% Define naquestionpart counter. This counter is reset to 0 when counter naquestion is incremented.
 \newcounter{naqchoice}[naquestionpart]% Define naqchoice counter. This counter is reset to 0 when counter naquestionpart is incremented.
 
 %% Define the environments
+% Define the napoll environment
+\newenvironment{napoll}[1][true]
+{\stepcounter{napoll}\@@par\noindent\textbf{\arabic{napoll}. }}
+{\vspace{8pt}}
+
 % Define the naquestion environment
 \newenvironment{naquestion}[1][true]
 {\stepcounter{naquestion}\@@par\noindent\textbf{\arabic{naquestion}. }}

@@ -23,8 +23,8 @@ from plasTeX import Base
 from plasTeX.Base import Crossref
 from plasTeX.Renderers import render_children
 
-from nti.contentrendering import plastexids
-from nti.contentrendering import interfaces as crd_interfaces
+from nti.contentrendering.plastexids import NTIIDMixin
+from nti.contentrendering.interfaces import IEmbeddedContainer
 
 from nti.assessment.poll import QPoll
 from nti.assessment.poll import QSurvey
@@ -33,7 +33,7 @@ from nti.assessment.interfaces import IQPoll
 from nti.assessment.interfaces import IQSurvey
 
 from nti.assessment.interfaces import NTIID_TYPE
-from nti.assessment.interfaces import QUESTION_SET_MIME_TYPE
+from nti.assessment.interfaces import SURVEY_MIME_TYPE
 
 from .ntibase import _LocalContentMixin
 
@@ -43,7 +43,7 @@ class napollname(Base.Command):
 class nasurveyname(Base.Command):
 	unicode = ''
 
-class napoll(_LocalContentMixin, Base.Environment, plastexids.NTIIDMixin):
+class napoll(_LocalContentMixin, Base.Environment, NTIIDMixin):
 	args = ''
 
 	blockType = True
@@ -74,15 +74,16 @@ class napoll(_LocalContentMixin, Base.Environment, plastexids.NTIIDMixin):
 		return ''.join(())
 
 	def _asm_poll_parts(self):
-		# See forcePars.
-		# There may be a better way to make this determination.
-		# naqassignment and the nasurvey don't suffer from this
-		# issue because they can specifically ask for known child
-		# nodes by name...we rely on convention
-		to_iter = (x for x in self.allChildNodes
-				   if hasattr(x, 'tagName') and x.tagName.startswith('naq') and x.tagName.endswith('part'))
+		
+		def _filter(x):
+			result = hasattr(x, 'tagName') and x.tagName.startswith('naq') and \
+					 x.tagName.endswith('part') and hasattr(x, 'assessment_object')
+			if result:
+				x.gradable = False # polls are not gradable
+			return result
 
-		return [x.assessment_object() for x in to_iter if hasattr(x,'assessment_object')]
+		to_iter = (x for x in self.allChildNodes if _filter(x))
+		return [x.assessment_object() for x in to_iter]
 
 	def _createPoll(self):
 		result = QPoll(content=self._asm_local_content,
@@ -101,8 +102,8 @@ class napoll(_LocalContentMixin, Base.Environment, plastexids.NTIIDMixin):
 class napollref(Crossref.ref):
 	pass
 
-@interface.implementer(crd_interfaces.IEmbeddedContainer)
-class nasurvey(Base.List, plastexids.NTIIDMixin):
+@interface.implementer(IEmbeddedContainer)
+class nasurvey(Base.List, NTIIDMixin):
 	r"""
 	Question sets are a list of questions that should be submitted
 	together. For authoring, questions are included in a question
@@ -112,13 +113,13 @@ class nasurvey(Base.List, plastexids.NTIIDMixin):
 	Example::
 
 		\begin{napoll}[individual=true]
-			\label{question}
+			\label{poll}
 			...
-		\end{question}
+		\end{napoll}
 
 		\begin{nasurvey}<My Title>
-			\label{set}
-			\napollref{question}
+			\label{survey}
+			\napollref{poll}
 		\end{nasurvey}
 
 	"""
@@ -126,17 +127,17 @@ class nasurvey(Base.List, plastexids.NTIIDMixin):
 	args = "[options:dict:str] <title:str:source>"
 
 	# Only classes with counters can be labeled, and \label sets the
-	# id property, which in turn is used as part of the NTIID (when no NTIID is set explicitly)
+	# id property, which in turn is used as part of the 
+	# NTIID (when no NTIID is set explicitly)
 	counter = 'nasurvey'
 
-	_ntiid_suffix = 'naq.set.'
 	_ntiid_type = NTIID_TYPE
-	_ntiid_title_attr_name = 'ref'  # Use our counter to generate IDs if no ID is given
+	_ntiid_suffix = 'naq.survey.'
+	_ntiid_title_attr_name = 'ref'
 	_ntiid_allow_missing_title = True
 	_ntiid_cache_map_name = '_nasurvey_ntiid_map'
 
-	#: From IEmbeddedContainer
-	mimeType = QUESTION_SET_MIME_TYPE
+	mimeType = SURVEY_MIME_TYPE
 	
 	def create_survey(self, questions, title, **kwargs):
 		result = QSurvey(questions=questions, title=title)
@@ -184,7 +185,6 @@ class nasurvey(Base.List, plastexids.NTIIDMixin):
 		"""
 		title = self.attributes.get('title') or None
 		if title is None:
-			# SAJ: This code path is bad and needs to go away
 			title_el = self.parentNode
 			while not hasattr(title_el, 'title'):
 				title_el = title_el.parentNode

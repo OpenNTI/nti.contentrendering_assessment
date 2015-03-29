@@ -693,6 +693,24 @@ naassignmentpart = naassignmentpart
 naassignmentname = naassignmentname
 
 ###
+# Polls
+###
+
+from nti.rendering.assessment.ntipoll import napoll 
+from nti.rendering.assessment.ntipoll import nasurvey
+from nti.rendering.assessment.ntipoll import napollref
+from nti.rendering.assessment.ntipoll import napollname 
+from nti.rendering.assessment.ntipoll import nasurveyref
+from nti.rendering.assessment.ntipoll import nasurveyname
+
+napoll = napoll
+nasurvey = nasurvey
+napollref = napollref
+napollname = napollname
+nasurveyref = nasurveyref
+nasurveyname = nasurveyname
+
+###
 # ProcessOptions
 ###
 
@@ -700,8 +718,10 @@ def ProcessOptions( options, document ):
 	# We are not setting up any global state here,
 	# only making changes to the document, so its
 	# fine that this runs each time we are imported
+	document.context.newcounter('napoll')
 	document.context.newcounter('naquestion')
 	document.context.newcounter('naassignment')
+	document.context.newcounter('nasurvey')
 	document.context.newcounter('naquestionset')
 	document.context.newcounter('naqsolutionnum')
 	document.context.newcounter('naquestionbank')

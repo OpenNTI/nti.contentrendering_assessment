@@ -16,6 +16,7 @@ from zope import interface
 
 from plasTeX.Renderers import render_children
 
+from nti.assessment.interfaces import SURVEY_MIME_TYPE
 from nti.assessment.interfaces import QUESTION_SET_MIME_TYPE
 
 from nti.contentrendering.interfaces import IJSONTransformer
@@ -26,6 +27,21 @@ def _render_children(renderer, nodes, strip=True):
 	else:
 		result = nodes.decode("utf-8") if isinstance(nodes, bytes) else nodes
 	return result.strip() if strip and result else result
+
+@interface.implementer(IJSONTransformer)
+class _NASurveyRefJSONTransformer(object):
+	
+	def __init__(self, element):
+		self.el = element
+
+	def transform(self):
+		title = self.el.survey.title
+		title = _render_children(self.el.survey.renderer, title)
+		output = {'label': title}
+		output['MimeType'] = SURVEY_MIME_TYPE
+		output['Target-NTIID'] = self.el.survey.ntiid
+		output['question-count'] = self.el.survey.question_count
+		return output
 
 @interface.implementer(IJSONTransformer)
 class _NAQuestionSetRefJSONTransformer(object):
