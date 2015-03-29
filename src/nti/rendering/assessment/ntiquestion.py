@@ -91,10 +91,6 @@ class naquestion(_LocalContentMixin, Base.Environment, plastexids.NTIIDMixin):
 
 	def _asm_videos(self):
 		videos = []
-		# video_els = self.getElementsByTagName( 'naqvideo' )
-		# for video_el in video_els:
-		#	videos.append( video_el._asm_local_content )
-
 		return ''.join(videos)
 
 	def _asm_question_parts(self):
@@ -103,9 +99,12 @@ class naquestion(_LocalContentMixin, Base.Environment, plastexids.NTIIDMixin):
 		# naqassignment and the naquestionset don't suffer from this
 		# issue because they can specifically ask for known child
 		# nodes by name...we rely on convention
-		to_iter = (x for x in self.allChildNodes
-				   if hasattr(x, 'tagName') and x.tagName.startswith('naq') and x.tagName.endswith('part'))
-
+		def _filter(x):
+			result = hasattr(x, 'tagName') and x.tagName.startswith('naq') and \
+					 x.tagName.endswith('part')
+			return result
+			
+		to_iter = (x for x in self.allChildNodes if _filter(x) )
 		return [x.assessment_object() for x in to_iter if hasattr(x,'assessment_object')]
 
 	def _createQuestion(self):
@@ -144,7 +143,6 @@ class naquestionset(Base.List, plastexids.NTIIDMixin):
 			\label{set}
 			\naquestionref{question}
 		\end{naquestionset}
-
 	"""
 
 	args = "[options:dict:str] <title:str:source>"
@@ -274,7 +272,6 @@ class naquestionbank(naquestionset):
 			\label{set}
 			\naquestionref{question}
 		\end{naquestionbank}
-
 	"""
 	
 	@readproperty
