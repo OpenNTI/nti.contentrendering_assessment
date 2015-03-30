@@ -112,7 +112,7 @@ class nasurvey(Base.List, NTIIDMixin):
 
 	Example::
 
-		\begin{napoll}[individual=true]
+		\begin{napoll}
 			\label{poll}
 			...
 		\end{napoll}
@@ -121,7 +121,6 @@ class nasurvey(Base.List, NTIIDMixin):
 			\label{survey}
 			\napollref{poll}
 		\end{nasurvey}
-
 	"""
 
 	args = "[options:dict:str] <title:str:source>"
