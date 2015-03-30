@@ -113,7 +113,7 @@ class _AbstractNonGradableNAQPart(_LocalContentMixin, Base.Environment):
 	def part_creator(self, factory=None):
 		# Be careful to turn textContent into plain unicode objects, not
 		# plastex Text subclasses, which are also expensive nodes.
-		factory = factory or self._asm_part_factory()
+		factory = self._asm_part_factory() if factory is None else factory
 		result = factory( content=self._asm_local_content,
 						  hints=self._asm_hints(),
 						  **self._asm_object_kwargs()	)
@@ -226,13 +226,13 @@ class _AbstractNAQPart(_AbstractNonGradableNAQPart):
 		return result
 	
 	def part_creator(self, factory=None):
-		factory = factory or self._asm_part_factory()
+		factory =  self._asm_part_factory() if factory is None else factory
 		if self._asm_is_gradable:
-			result = self.part_factory( content=self._asm_local_content,
-										solutions=self._asm_solutions(),
-										explanation=self._asm_explanation(),
-										hints=self._asm_hints(),
-										**self._asm_object_kwargs()	)
+			result = factory( content=self._asm_local_content,
+							  solutions=self._asm_solutions(),
+							  explanation=self._asm_explanation(),
+							  hints=self._asm_hints(),
+							  **self._asm_object_kwargs()	)
 		else:
 			result = super(_AbstractNAQPart, self).part_creator(factory=factory)
 		return result

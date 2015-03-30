@@ -61,7 +61,7 @@ class TestRandomized(AssessmentRenderingTestCase):
 		assert_that(part_el, has_property('randomize', is_(True)))
 
 		part = part_el.assessment_object()
-		assert_that(part, verifiably_provides(part_el.part_interface))
+		assert_that(part, verifiably_provides(part_el.randomized_part_interface))
 		assert_that(part_el.randomized_part_interface, is_(IQRandomizedMatchingPart))
 		
 	def test_orderingpart_macros(self):

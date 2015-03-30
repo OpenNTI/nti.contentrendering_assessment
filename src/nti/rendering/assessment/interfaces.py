@@ -18,3 +18,8 @@ class ILessonQuestionSetExtractor(IRenderedBookExtractor):
 	"""
 	Looks through the rendered book and extracts the question sets in a lesson.
 	"""
+
+class ILessonSurveyExtractor(IRenderedBookExtractor):
+	"""
+	Looks through the rendered book and extracts the surveys in a lesson.
+	"""

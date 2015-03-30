@@ -25,4 +25,12 @@
 			 provides="..interfaces.ILessonQuestionSetExtractor"
 			 name="040.LessonQuestionSetExtractor" />
 
+	<adapter factory=".survey._LessonSurveyExtractor"
+			 for="nti.contentrendering.interfaces.IRenderedBook"
+			 provides="..interfaces.ILessonSurveyExtractor" />
+
+	<utility factory=".survey._LessonSurveyExtractor"
+			 provides="..interfaces.ILessonSurveyExtractor"
+			 name="070.LessonSurveyExtractor" />
+
 </configure>
