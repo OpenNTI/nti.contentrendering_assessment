@@ -87,7 +87,7 @@ name: naqwordentry
 name: naqmlabels naqmlabel naqmvalues naqmvalue naqregexes naqregex naqpaireditems naqpaireditem
 
 name: napoll
-<object type="application/vnd.nextthought.napoll" data-ntiid="the-ntiid" data="the-ntiid" tal:attributes="data-ntiid self/ntiid; data self/ntiid; data-canindividual self/attributes/individual | default">
+<object type="application/vnd.nextthought.napoll" data-ntiid="the-ntiid" data="the-ntiid" tal:attributes="data-ntiid self/ntiid; data self/ntiid; | default">
 <param name="ntiid" value="the-ntiid" tal:attributes="value self/ntiid" />
 <div class="napoll">
 	 <span tal:replace="self"></span>

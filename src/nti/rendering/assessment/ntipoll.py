@@ -9,8 +9,8 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-import six
 from six import text_type
+from six import string_types
 
 from zope import schema
 from zope import interface
@@ -87,7 +87,7 @@ class napoll(_LocalContentMixin, Base.Environment, NTIIDMixin):
 
 	def _createPoll(self):
 		result = QPoll(content=self._asm_local_content,
-					   parts=self._asm_question_parts())
+					   parts=self._asm_poll_parts())
 		return result
 
 	@cachedIn('_v_assessment_object')
@@ -160,7 +160,7 @@ class nasurvey(Base.List, NTIIDMixin):
 		# If the title is ours, we're guaranteed it's a string. It's only in the
 		# weird legacy code path that tries to inherit a title from some arbitrary
 		# parent that it may not be a string
-		if getattr(self, 'renderer', None) and not isinstance(self.title, six.string_types):
+		if getattr(self, 'renderer', None) and not isinstance(self.title, string_types):
 			title = text_type(''.join(render_children(getattr(self, 'renderer'),
 													  self.title)))
 		else:

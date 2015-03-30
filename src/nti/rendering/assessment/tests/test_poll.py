@@ -10,11 +10,11 @@ __docformat__ = "restructuredtext en"
 from hamcrest import is_
 from hamcrest import has_length
 from hamcrest import assert_that
-from hamcrest import has_property
-from hamcrest import contains_string
 
 from nti.assessment.interfaces import IQPoll
 from nti.assessment.interfaces import IQNonGradableMatchingPart
+from nti.assessment.interfaces import IQNonGradableOrderingPart
+from nti.assessment.interfaces import IQNonGradableMultipleChoicePart
 
 from nti.rendering.assessment.ntiassessment import napoll
 
@@ -30,9 +30,9 @@ class TestPoll(AssessmentRenderingTestCase):
 	def test_matchingpart(self):
 		example = br"""
 			\begin{napoll}
-			\labelpqid.7_2_Quiz.1}
-				1. Sequencing. Place the following events in the order that they occurred, from earliest (1) to latest (7).
-				\begin{naqmatchingpart}[randomize=true]
+			\label{pqid.7_2_Poll.1}
+				1. Sequencing. Place the following events in the order that they occurred
+				\begin{naqmatchingpart}
 					\begin{naqmlabels}
 						\naqmlabel[1] 2
 						\naqmlabel[0] 1
@@ -53,90 +53,76 @@ class TestPoll(AssessmentRenderingTestCase):
 
 		naq = dom.getElementsByTagName('napoll')[0]
 		part_el = naq.getElementsByTagName('naqmatchingpart')[0]
-		assert_that(part_el, has_property('randomize', is_(False)))
-		assert_that(part_el, has_property('gradable', is_(False)))
 
 		poll = naq.assessment_object()
 		assert_that(poll, verifiably_provides(IQPoll))
 		
 		part = part_el.assessment_object()
 		assert_that(part, verifiably_provides(part_el.nongradable_part_interface))
-		assert_that(part_el.randomized_part_interface, is_(IQNonGradableMatchingPart))
+		assert_that(part_el.nongradable_part_interface, is_(IQNonGradableMatchingPart))
 		
-# 	def test_orderingpart_macros(self):
-# 		example = br"""
-# 			\begin{naquestion}
-# 			\label{qid.7_2_Quiz.1}
-# 				1. Sequencing. Place the following events in the order that they occurred, from earliest (1) to latest (7).
-# 				\begin{naqorderingpart}[randomize=true]
-# 					\begin{naqmlabels}
-# 						\naqmlabel[4] 1
-# 						\naqmlabel[0] 2
-# 						\naqmlabel[3] 3
-# 						\naqmlabel[1] 4
-# 						\naqmlabel[6] 5
-# 						\naqmlabel[5] 6
-# 						\naqmlabel[2] 7
-# 					\end{naqmlabels}
-# 					\begin{naqmvalues}
-# 						\naqmvalue "Black Thursday"
-# 						\naqmvalue Battle of Anacostia Flats
-# 						\naqmvalue Jesse Owens wins four gold medals
-# 						\naqmvalue "Scottsboro Boys" trial
-# 						\naqmvalue Election of Herbert Hoover
-# 						\naqmvalue "the Hundred Days"
-# 						\naqmvalue Election of Franklin D. Roosevelt
-# 					\end{naqmvalues}
-# 				\end{naqorderingpart}
-# 			\end{naquestion}
-# 			"""
-# 		dom = _buildDomFromString(_simpleLatexDocument((example,)))
-# 		assert_that(dom.getElementsByTagName('naquestion'), has_length(1))
-# 		assert_that(dom.getElementsByTagName('naquestion')[0], is_(naquestion))
-# 
-# 		assert_that(dom.getElementsByTagName('naqmlabel'), has_length(7))
-# 		assert_that(dom.getElementsByTagName('naqmvalue'), has_length(7))
-# 
-# 		naq = dom.getElementsByTagName('naquestion')[0]
-# 		part_el = naq.getElementsByTagName('naqorderingpart')[0]
-# 		assert_that(part_el, has_property('randomize', is_(True)))
-# 
-# 		part = part_el.assessment_object()
-# 		assert_that(part, verifiably_provides(part_el.randomized_part_interface))
-# 		assert_that(part_el.randomized_part_interface, is_(IQRandomizedOrderingPart))
-# 		
-# 	def test_multiple_choice_macros(self):
-# 		example = br"""
-# 			\begin{naquestion}
-# 				Arbitrary prefix content goes here.
-# 				\begin{naqmultiplechoicepart}[randomize=true]
-# 				   Arbitrary content for this part goes here.
-# 				   \begin{naqchoices}
-# 				   		\naqchoice Arbitrary content for the choice.
-# 						\naqchoice[1] Arbitrary content for this choice; this is the right choice.
-# 						\naqchoice[0.5] This choice is half correct.
-# 					\end{naqchoices}
-# 					\begin{naqsolexplanation}
-# 						Arbitrary content explaining how the correct solution is arrived at.
-# 					\end{naqsolexplanation}
-# 				\end{naqmultiplechoicepart}
-# 			\end{naquestion}
-# 			"""
-# 
-# 		dom = _buildDomFromString(_simpleLatexDocument((example,)))
-# 		assert_that(dom.getElementsByTagName('naquestion'), has_length(1))
-# 		assert_that(dom.getElementsByTagName('naquestion')[0], is_(naquestion))
-# 
-# 		assert_that(dom.getElementsByTagName('naqchoice'), has_length(3))
-# 		assert_that(dom.getElementsByTagName('naqsolution'), has_length(2))
-# 
-# 		naq = dom.getElementsByTagName('naquestion')[0]
-# 		part_el = naq.getElementsByTagName('naqmultiplechoicepart')[0]
-# 		assert_that(part_el, has_property('randomize', is_(True)))
-# 
-# 		part = part_el.assessment_object()
-# 		assert_that(part, verifiably_provides(part_el.randomized_part_interface))
-# 		assert_that(part_el.randomized_part_interface, is_(IQRandomizedMultipleChoicePart))
+	def test_orderingpart_macros(self):
+		example = br"""
+			\begin{napoll}
+			\label{pid.7_2_Poll.1}
+				1. Sequencing. Place the following events in the order that they occurred
+				\begin{naqorderingpart}
+					\begin{naqmlabels}
+						\naqmlabel[1] 1
+						\naqmlabel[0] 2
+					\end{naqmlabels}
+					\begin{naqmvalues}
+						\naqmvalue "Black Thursday"
+						\naqmvalue Battle of Anacostia Flats
+					\end{naqmvalues}
+				\end{naqorderingpart}
+			\end{napoll}
+			"""
+		dom = _buildDomFromString(_simpleLatexDocument((example,)))
+		assert_that(dom.getElementsByTagName('napoll'), has_length(1))
+		assert_that(dom.getElementsByTagName('napoll')[0], is_(napoll))
+
+		assert_that(dom.getElementsByTagName('naqmlabel'), has_length(2))
+		assert_that(dom.getElementsByTagName('naqmvalue'), has_length(2))
+
+		naq = dom.getElementsByTagName('napoll')[0]
+		part_el = naq.getElementsByTagName('naqorderingpart')[0]
+
+		part = part_el.assessment_object()
+		assert_that(part, verifiably_provides(part_el.nongradable_part_interface))
+		assert_that(part_el.nongradable_part_interface, is_(IQNonGradableOrderingPart))
+	
+	def test_multiple_choice_macros(self):
+		example = br"""
+			\begin{napoll}
+				Arbitrary prefix content goes here.
+				\begin{naqmultiplechoicepart}
+				   Arbitrary content for this part goes here.
+				   \begin{naqchoices}
+				   		\naqchoice Arbitrary content for the choice.
+						\naqchoice[1] Arbitrary content for this choice; this is the right choice.
+						\naqchoice[0.5] This choice is half correct.
+					\end{naqchoices}
+					\begin{naqsolexplanation}
+						Arbitrary content explaining how the correct solution is arrived at.
+					\end{naqsolexplanation}
+				\end{naqmultiplechoicepart}
+			\end{napoll}
+			"""
+
+		dom = _buildDomFromString(_simpleLatexDocument((example,)))
+		assert_that(dom.getElementsByTagName('napoll'), has_length(1))
+		assert_that(dom.getElementsByTagName('napoll')[0], is_(napoll))
+
+		assert_that(dom.getElementsByTagName('naqchoice'), has_length(3))
+		assert_that(dom.getElementsByTagName('naqsolution'), has_length(2))
+
+		naq = dom.getElementsByTagName('napoll')[0]
+		part_el = naq.getElementsByTagName('naqmultiplechoicepart')[0]
+
+		part = part_el.assessment_object()
+		assert_that(part, verifiably_provides(part_el.nongradable_part_interface))
+		assert_that(part_el.nongradable_part_interface, is_(IQNonGradableMultipleChoicePart))
 # 
 # 	def test_randomizedquestionset_macros(self):
 # 		example = br"""
