@@ -416,7 +416,7 @@ class naqfilepart(_AbstractNAQPart):
 
 class naqconnectingpart(_AbstractNAQPart):
 	
-	part_factory = parts.QConenctingPart
+	part_factory = parts.QConnectingPart
 	part_interface = as_interfaces.IQConnectingPart
 	soln_interface = as_interfaces.IQConnectingSolution
 	
