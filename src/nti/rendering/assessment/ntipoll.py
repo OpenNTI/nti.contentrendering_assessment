@@ -26,8 +26,8 @@ from plasTeX.Renderers import render_children
 from nti.contentrendering.plastexids import NTIIDMixin
 from nti.contentrendering.interfaces import IEmbeddedContainer
 
-from nti.assessment.poll import QPoll
-from nti.assessment.poll import QSurvey
+from nti.assessment.survey import QPoll
+from nti.assessment.survey import QSurvey
 
 from nti.assessment.interfaces import IQPoll
 from nti.assessment.interfaces import IQSurvey
