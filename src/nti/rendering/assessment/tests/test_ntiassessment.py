@@ -76,9 +76,13 @@ class TestMisc(AssessmentRenderingTestCase):
 			assert_that( item, has_property( 'weight', 1.0 ) )
 			assert_that( item, has_property( 'value', values[index] ) )
 
+		# SAJ: Because we are not running the element through the renderer, the
+		# value of the `content` property is the recursive source string of the
+		# macro (it include the source of all children).
+		check_string = u'Arbitrary content goes here. \\begin{naqsolutions} \\naqsolution \\$420\\$ \\naqsolution \\$\\frac{5}{8}\\$ \\naqsolution \\$\\left(3x+2\\right)\\left(2x+3\\right)\\$ \\naqsolution \\$\\surd 2\\$ \\naqsolution \\$\\frac{\\surd \\left(8x+5\\right)\\left(12x+12\\right)}{\\approx 152318}+1204\\$ \\end{naqsolutions} \\begin{naqhints} \\naqhint Some hint \\end{naqhints}'
 		part = part_el.assessment_object()
 		assert_that( part, verifiably_provides( part_el.part_interface ) )
-		assert_that( part.content, is_( "Arbitrary content goes here." ) )
+		assert_that( part.content, is_( check_string ) )
 		assert_that( part.hints, has_length( 1 ) )
 		assert_that( part.hints, contains( verifiably_provides( asm_interfaces.IQHint ) ) )
 
@@ -100,9 +104,13 @@ class TestMisc(AssessmentRenderingTestCase):
 		naq = dom.getElementsByTagName('naquestion')[0]
 		part_el = naq.getElementsByTagName( 'naqfilepart' )[0]
 
+		# SAJ: Because we are not running the element through the renderer, the
+		# value of the `content` property is the recursive source string of the
+		# macro (it include the source of all children).
+		check_string = u'Arbitrary content goes here. \\begin{naqhints} \\naqhint Some hint \\end{naqhints}'
 		part = part_el.assessment_object()
 		assert_that( part, verifiably_provides( part_el.part_interface ) )
-		assert_that( part.content, is_( "Arbitrary content goes here." ) )
+		assert_that( part.content, is_( check_string ) )
 
 		assert_that( part.allowed_extensions, contains( '.txt', '*' ) )
 		assert_that( part.allowed_mime_types, contains( 'application/pdf', 'text/*', '*/*' ) )
@@ -129,9 +137,13 @@ class TestMisc(AssessmentRenderingTestCase):
 		naq = dom.getElementsByTagName('naquestion')[0]
 		part_el = naq.getElementsByTagName( 'naqessaypart' )[0]
 
+		# SAJ: Because we are not running the element through the renderer, the
+		# value of the `content` property is the recursive source string of the
+		# macro (it include the source of all children).
+		check_string = u'Arbitrary content goes here. \\begin{naqhints} \\naqhint Some hint \\end{naqhints}'
 		part = part_el.assessment_object()
 		assert_that( part, verifiably_provides( part_el.part_interface ) )
-		assert_that( part.content, is_( "Arbitrary content goes here." ) )
+		assert_that( part.content, is_( check_string ) )
 
 		assert_that( part.hints, has_length( 1 ) )
 		assert_that( part.hints, contains( verifiably_provides( asm_interfaces.IQHint ) ) )
@@ -160,7 +172,11 @@ class TestMisc(AssessmentRenderingTestCase):
 
 
 		# It's not rendered
-		assert_that( naq.content, is_(''))
+		# SAJ: Because we are not running the element through the renderer, the
+		# value of the `content` property is the recursive source string of the
+		# macro (it include the source of all children).
+		check_string = u"\\label{the.label} Arbitrary content goes here, and there's a blank line, and another before the part: \\begin{naqessaypart} Arbitrary content goes here. \\begin{naqhints} \\naqhint Some hint \\end{naqhints} \\end{naqessaypart}"
+		assert_that( naq.content, is_( check_string ))
 
 	def test_essay_macro_with_blank_line_between_parts(self):
 		example = br"""
@@ -278,13 +294,17 @@ class TestMisc(AssessmentRenderingTestCase):
 		assert_that( qset_object.questions, has_length( 1 ) )
 		assert_that( qset_object.ntiid, contains_string( 'set' ) )
 
+		# SAJ: Because we are not running the element through the renderer, the
+		# value of the `content` property is the recursive source string of the
+		# macro (it include the source of all children).
 		asg_object = dom.getElementsByTagName( 'naassignment' )[0].assessment_object()
 		assert_that( asg_object, has_property( 'parts', has_length( 1 )))
 		assert_that( asg_object.parts[0], has_property( 'question_set', same_instance(qset_object)))
 		assert_that( asg_object.parts[0], has_property( 'auto_grade', is_true()))
 		assert_that( asg_object.parts[0], has_property( 'content', 'Some content.'))
 		assert_that( asg_object.parts[0], has_property( 'title', 'Part Title'))
-		assert_that( asg_object, has_property('content', "Assignment content."))
+		check_string = u'\\label{assignment} Assignment content. \\begin{naassignmentpart}[auto_grade=true]<Part Title>{set} Some content. \\end{naassignmentpart}'
+		assert_that( asg_object, has_property('content', check_string ))
 		assert_that( asg_object.ntiid, contains_string('assignment'))
 		assert_that( asg_object, has_property('title', 'Main Title'))
 		assert_that( asg_object, has_property('is_non_public', False))
@@ -315,11 +335,18 @@ class TestMisc(AssessmentRenderingTestCase):
 			assert_that( part, verifiably_provides( part_el.part_interface ) )
 			assert_that( part.content, is_( output ) )
 
-		assert_content("Arbitrary content goes here.","Arbitrary content goes here.")
-		assert_content( br"Equation: $123 \times 456$.","Equation: ." ) # Fails currently
+		# SAJ: Because we are not running the element through the renderer, the
+		# value of the `content` property is the recursive source string of the
+		# macro (it include the source of all children).
+		check_string = u'Arbitrary content goes here. \\begin{naqsolutions} \\naqsolution Hello \\end{naqsolutions}'
+		assert_content("Arbitrary content goes here.", check_string )
+		check_string = u'Equation: \\$123 \\times 456\\$ . \\begin{naqsolutions} \\naqsolution Hello \\end{naqsolutions}'
+		assert_content( br"Equation: $123 \times 456$.", check_string ) # Fails currently
+		check_string = u'Complex object \\begin{tabular}{cc}1 & 2 \\\\ 3 & 4 \\\\ \\end{tabular} \\begin{naqsolutions} \\naqsolution Hello \\end{naqsolutions}'
 		assert_content( br"Complex object \begin{tabular}{cc} \\ 1 & 2 \\3 & 4\\ \end{tabular}",
-						br"Complex object" ) # Fails currently
-		assert_content( br"Figure \begin{figure}[htbp]\begin{center}\includegraphics[width=100px]{images/wu1_square=3=by=x-2.pdf}\end{center}\end{figure}", br"Figure" ) # Fails currently
+						check_string ) # Fails currently
+		check_string = u'Figure \\begin{figure}[htbp]\\begin{center} \\includegraphics [width=100px]{images/wu1_square=3=by=x-2.pdf}\\end{center}\\end{figure} \\begin{naqsolutions} \\naqsolution Hello \\end{naqsolutions}'
+		assert_content( br"Figure \begin{figure}[htbp]\begin{center}\includegraphics[width=100px]{images/wu1_square=3=by=x-2.pdf}\end{center}\end{figure}", check_string ) # Fails currently
 
 
 	def test_free_response_macros(self):
@@ -350,9 +377,13 @@ class TestMisc(AssessmentRenderingTestCase):
 		naq = dom.getElementsByTagName('naquestion')[0]
 		part_el = naq.getElementsByTagName( 'naqfreeresponsepart' )[0]
 
+		# SAJ: Because we are not running the element through the renderer, the
+		# value of the `content` property is the recursive source string of the
+		# macro (it include the source of all children).
 		part = part_el.assessment_object()
 		assert_that( part, verifiably_provides( part_el.part_interface ) )
-		assert_that( part.content, is_( "Arbitrary content goes here." ) )
+		check_string = u'Arbitrary content goes here. \\begin{naqsolutions} \\naqsolution This is a solution. It may require multiple lines. It may span paragraphs. \\naqsolution This is another solution. \\naqsolution In some cases, \\textit{it} may be complicated: \\$i\\$. \\end{naqsolutions} \\begin{naqhints} \\naqhint Some hint \\end{naqhints}'
+		assert_that( part.content, is_( check_string ) )
 		assert_that( part.solutions[0], has_property( "value", "This is a solution. It may require multiple lines. It may span paragraphs." ) )
 
 	def test_multiple_choice_macros(self):
@@ -390,17 +421,22 @@ class TestMisc(AssessmentRenderingTestCase):
 		assert_that(solns[1], verifiably_provides(part_el.soln_interface))
 		assert_that(solns[1], has_property('weight', 0.5))
 
+		# SAJ: Because we are not running the element through the renderer, the
+		# value of the `content` property is the recursive source string of the
+		# macro (it include the source of all children).
 		part = part_el.assessment_object()
 		assert_that(part.solutions, is_(solns))
 		assert_that(part, verifiably_provides(part_el.part_interface))
-		assert_that(part.content, is_("Arbitrary content for this part goes here."))
+		check_string = u'Arbitrary content for this part goes here. \\begin{naqchoices} \\naqchoice Arbitrary content for the choice. \\naqchoice[1]Arbitrary content for this choice; this is the right choice. \\naqchoice[0.5]This choice is half correct. \\end{naqchoices} \\begin{naqsolutions} \\naqsolution[1.0]1\\naqsolution[0.5]2\\end{naqsolutions} \\begin{naqsolexplanation} Arbitrary content explaining how the correct solution is arrived at. \\end{naqsolexplanation}'
+		assert_that(part.content, is_( check_string ))
 		assert_that(part.explanation, is_("Arbitrary content explaining how the correct solution is arrived at."))
 		assert_that(part, has_property('choices', has_length(3)))
 		assert_that(part.choices, has_item('Arbitrary content for the choice.'))
 
 		quest_el = dom.getElementsByTagName('naquestion')[0]
 		question = quest_el.assessment_object()
-		assert_that(question.content, is_('Arbitrary prefix content goes here.'))
+		check_string = u'Arbitrary prefix content goes here. \\begin{naqmultiplechoicepart} Arbitrary content for this part goes here. \\begin{naqchoices} \\naqchoice Arbitrary content for the choice. \\naqchoice[1]Arbitrary content for this choice; this is the right choice. \\naqchoice[0.5]This choice is half correct. \\end{naqchoices}\\begin{naqsolutions} \\naqsolution[1.0]1\\naqsolution[0.5]2\\end{naqsolutions} \\begin{naqsolexplanation} Arbitrary content explaining how the correct solution is arrived at. \\end{naqsolexplanation} \\end{naqmultiplechoicepart}'
+		assert_that(question.content, is_( check_string ))
 		assert_that(question.parts, contains(part))
 		assert_that(question, has_property('ntiid', 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.1'))
 
@@ -443,15 +479,20 @@ class TestMisc(AssessmentRenderingTestCase):
 		assert_that(solns[0], verifiably_provides(part_el.soln_interface))
 		assert_that(solns[0], has_property('weight', 1.0))
 
+		# SAJ: Because we are not running the element through the renderer, the
+		# value of the `content` property is the recursive source string of the
+		# macro (it include the source of all children).
 		part = part_el.assessment_object()
 		assert_that(part.solutions, is_(solns))
 		assert_that(part, verifiably_provides(part_el.part_interface))
-		assert_that(part.content, is_("Arbitrary content for this part goes here."))
+		check_string = u'Arbitrary content for this part goes here. \\naqblankfield{001}[2] \\naqblankfield{002}[2] \\begin{naqregexes} \\naqregex{001}{^yes\\\\ s*[\\, |\\\\ s]\\\\ s*I will}Yes, I will. \\naqregex{002}{\\\\ s*\\\\ \\\\$ ?\\\\ s?945.20}945.20 \\end{naqregexes} \\begin{naqsolutions} \\naqsolution[1.0]\\end{naqsolutions} \\begin{naqsolexplanation} Arbitrary content explaining how the correct solution is arrived at. \\end{naqsolexplanation}'
+		assert_that(part.content, is_( check_string ))
 		assert_that(part.explanation, is_("Arbitrary content explaining how the correct solution is arrived at."))
 
 		quest_el = dom.getElementsByTagName('naquestion')[0]
 		question = quest_el.assessment_object()
-		assert_that(question.content, is_('Arbitrary prefix content goes here.'))
+		check_string = u'Arbitrary prefix content goes here. \\begin{naqfillintheblankshortanswerpart} Arbitrary content for this part goes here. \\naqblankfield{001}[2] \\naqblankfield{002}[2] \\begin{naqregexes} \\naqregex{001}{^yes\\\\ s*[\\, |\\\\ s]\\\\ s*I will}Yes, I will. \\naqregex{002}{\\\\ s*\\\\ \\\\$ ?\\\\ s?945.20}945.20 \\end{naqregexes}\\begin{naqsolutions} \\naqsolution[1.0]\\end{naqsolutions} \\begin{naqsolexplanation} Arbitrary content explaining how the correct solution is arrived at. \\end{naqsolexplanation} \\end{naqfillintheblankshortanswerpart}'
+		assert_that(question.content, is_( check_string ))
 		assert_that(question.parts, contains(part))
 		assert_that(question, has_property('ntiid', 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.1'))
 
@@ -500,15 +541,20 @@ class TestMisc(AssessmentRenderingTestCase):
 		assert_that(solns[0], verifiably_provides(part_el.soln_interface))
 		assert_that(solns[0], has_property('weight', 1.0))
 
+		# SAJ: Because we are not running the element through the renderer, the
+		# value of the `content` property is the recursive source string of the
+		# macro (it include the source of all children).
 		part = part_el.assessment_object()
 		assert_that(part.solutions, is_(solns))
 		assert_that(part, verifiably_provides(part_el.part_interface))
-		assert_that(part.content, is_("Arbitrary content for this part goes here."))
+		check_string = u'Arbitrary content for this part goes here. \\begin{naqinput} empty fields \\naqblankfield{1}\\naqblankfield{2}\\naqblankfield{3}go here \\end{naqinput} \\begin{naqwordbank}[unique=false]\\naqwordentry{0}{montuno}{es}\\naqwordentry{1}{tiene}{es}\\naqwordentry{2}{borinquen}{es}\\naqwordentry{3}{tierra}{es}\\naqwordentry{4}{alma}{es}\\end{naqwordbank} \\begin{naqpaireditems} \\naqpaireditem{1}{2}\\naqpaireditem{2}{1}\\naqpaireditem{3}{0}\\end{naqpaireditems} \\begin{naqsolutions} \\naqsolution[1.0]\\end{naqsolutions} \\begin{naqsolexplanation} Arbitrary content explaining how the correct solution is arrived at. \\end{naqsolexplanation}'
+		assert_that(part.content, is_( check_string ))
 		assert_that(part.explanation, is_("Arbitrary content explaining how the correct solution is arrived at."))
 
 		quest_el = dom.getElementsByTagName('naquestion')[0]
 		question = quest_el.assessment_object()
-		assert_that(question.content, is_('Arbitrary prefix content goes here.'))
+		check_string = u'Arbitrary prefix content goes here. \\begin{naqfillintheblankwithwordbankpart} Arbitrary content for this part goes here. \\begin{naqinput} empty fields \\naqblankfield{1}\\naqblankfield{2}\\naqblankfield{3}go here \\end{naqinput} \\begin{naqwordbank}[unique=false]\\naqwordentry{0}{montuno}{es}\\naqwordentry{1}{tiene}{es}\\naqwordentry{2}{borinquen}{es}\\naqwordentry{3}{tierra}{es}\\naqwordentry{4}{alma}{es}\\end{naqwordbank} \\begin{naqpaireditems} \\naqpaireditem{1}{2}\\naqpaireditem{2}{1}\\naqpaireditem{3}{0}\\end{naqpaireditems}\\begin{naqsolutions} \\naqsolution[1.0]\\end{naqsolutions} \\begin{naqsolexplanation} Arbitrary content explaining how the correct solution is arrived at. \\end{naqsolexplanation} \\end{naqfillintheblankwithwordbankpart}'
+		assert_that(question.content, is_( check_string ))
 		assert_that(question.parts, contains(part))
 		assert_that(question, has_property('ntiid', 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.1'))
 
@@ -554,9 +600,13 @@ class TestMisc(AssessmentRenderingTestCase):
 		assert_that(dom.getElementsByTagName('naqwordbank'), has_length(2))
 		assert_that(dom.getElementsByTagName('naqwordentry'), has_length(8))
 
+		# SAJ: Because we are not running the element through the renderer, the
+		# value of the `content` property is the recursive source string of the
+		# macro (it include the source of all children).
 		quest_el = dom.getElementsByTagName('naquestionfillintheblankwordbank')[0]
 		assessment = quest_el.assessment_object()
-		assert_that(assessment.content, is_('Salsa and Bleach goes here.'))
+		check_string = u'Salsa and Bleach goes here. \\begin{naqwordbank} \\naqwordentry{100}{shikai}{es}\\naqwordentry{200}{bankai}{es}\\naqwordentry{300}{captain}{es}\\end{naqwordbank} \\begin{naqfillintheblankwithwordbankpart} Arbitrary content for this part goes here. \\begin{naqinput} empty fields \\naqblankfield{1}\\naqblankfield{2}\\naqblankfield{3}go here \\end{naqinput} \\begin{naqwordbank}[unique=false]\\naqwordentry{0}{montuno}{es}\\naqwordentry{1}{tiene}{es}\\naqwordentry{2}{borinquen}{es}\\naqwordentry{3}{tierra}{es}\\naqwordentry{4}{alma}{es}\\end{naqwordbank} \\begin{naqpaireditems} \\naqpaireditem{1}{2}\\naqpaireditem{2}{1}\\naqpaireditem{3}{0}\\end{naqpaireditems}\\begin{naqsolutions} \\naqsolution[1.0]\\end{naqsolutions} \\begin{naqsolexplanation} Arbitrary content explaining how the correct solution is arrived at. \\end{naqsolexplanation} \\end{naqfillintheblankwithwordbankpart}'
+		assert_that(assessment.content, is_( check_string ))
 		assert_that(assessment.parts, has_length(1))
 		assert_that(assessment.wordbank, has_length(3))
 		assert_that(assessment, has_property('ntiid', 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.1'))
@@ -597,17 +647,22 @@ class TestMisc(AssessmentRenderingTestCase):
 		assert_that( solns[0], verifiably_provides( part_el.soln_interface ) )
 		assert_that( solns[0], has_property( 'weight', 1.0 ) )
 
+		# SAJ: Because we are not running the element through the renderer, the
+		# value of the `content` property is the recursive source string of the
+		# macro (it include the source of all children).
 		part = part_el.assessment_object()
 		assert_that( part.solutions, is_( solns ) )
 		assert_that( part, verifiably_provides( part_el.part_interface ) )
-		assert_that( part.content, is_( "Arbitrary content for this part goes here." ) )
+		check_string =  u'Arbitrary content for this part goes here. \\begin{naqchoices} \\naqchoice Arbitrary content for the choice. \\naqchoice[1]This is part of the right answer. \\naqchoice[1]This is the other part of the right answer. \\end{naqchoices} \\begin{naqsolutions} \\naqsolution[1.0]\\end{naqsolutions} \\begin{naqsolexplanation} Arbitrary content explaining how the correct solution is arrived at. \\end{naqsolexplanation}'
+		assert_that( part.content, is_( check_string ) )
 		assert_that( part.explanation, is_( "Arbitrary content explaining how the correct solution is arrived at." ) )
 		assert_that( part, has_property( 'choices', has_length( 3 ) ) )
 		assert_that( part.choices, has_item( 'Arbitrary content for the choice.' ) )
 
 		quest_el = dom.getElementsByTagName('naquestion')[0]
 		question = quest_el.assessment_object()
-		assert_that( question.content, is_( 'Arbitrary prefix content goes here.' ) )
+		check_string = u'Arbitrary prefix content goes here. \\begin{naqmultiplechoicemultipleanswerpart} Arbitrary content for this part goes here. \\begin{naqchoices} \\naqchoice Arbitrary content for the choice. \\naqchoice[1]This is part of the right answer. \\naqchoice[1]This is the other part of the right answer. \\end{naqchoices}\\begin{naqsolutions} \\naqsolution[1.0]\\end{naqsolutions} \\begin{naqsolexplanation} Arbitrary content explaining how the correct solution is arrived at. \\end{naqsolexplanation} \\end{naqmultiplechoicemultipleanswerpart}'
+		assert_that( question.content, is_( check_string ) )
 		assert_that( question.parts, contains( part ) )
 		assert_that( question, has_property( 'ntiid', 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.1' ) )
 
