@@ -8,8 +8,11 @@ __docformat__ = "restructuredtext en"
 # pylint: disable=W0212,R0904
 
 from hamcrest import is_
+from hamcrest import none
+from hamcrest import is_not
 from hamcrest import has_length
 from hamcrest import assert_that
+from hamcrest import has_property
 from hamcrest import contains_string
 
 from nti.assessment.interfaces import IQPoll
@@ -32,7 +35,7 @@ class TestPoll(AssessmentRenderingTestCase):
 
 	def test_matchingpart(self):
 		example = br"""
-			\begin{napoll}
+			\begin{napoll}[not_before_date=2014-11-24,not_after_date=2014-12-04]
 			\label{pqid.7_2_Poll.1}
 				1. Sequencing. Place the following events in the order that they occurred
 				\begin{naqmatchingpart}
@@ -59,6 +62,8 @@ class TestPoll(AssessmentRenderingTestCase):
 
 		poll = naq.assessment_object()
 		assert_that(poll, verifiably_provides(IQPoll))
+		assert_that(poll, has_property('available_for_submission_ending', is_not(none())))
+		assert_that(poll, has_property('available_for_submission_beginning', is_not(none())))
 		
 		part = part_el.assessment_object()
 		assert_that(part, verifiably_provides(part_el.nongradable_part_interface))
@@ -140,7 +145,7 @@ class TestPoll(AssessmentRenderingTestCase):
 			\end{naqessaypart}
 		\end{napoll}
  		
-		\begin{nasurvey}
+		\begin{nasurvey}[not_before_date=2014-11-24,not_after_date=2014-12-04]
 			\label{survey}
 			\napollref{poll1}
 		\end{nasurvey}
@@ -154,6 +159,8 @@ class TestPoll(AssessmentRenderingTestCase):
 		assert_that( dom.getElementsByTagName('nasurvey')[0], is_(nasurvey))
 
 		survey_object = dom.getElementsByTagName('nasurvey')[0].assessment_object()
-		assert_that(survey_object.questions, has_length(1) )
-		assert_that(survey_object.ntiid, contains_string('survey'))
+		assert_that(survey_object, has_property('questions', has_length(1) ))
+		assert_that(survey_object, has_property('ntiid', contains_string('survey')))
+		assert_that(survey_object, has_property('available_for_submission_ending', is_not(none())))
+		assert_that(survey_object, has_property('available_for_submission_beginning', is_not(none())))
 		assert_that(survey_object, verifiably_provides(IQSurvey))

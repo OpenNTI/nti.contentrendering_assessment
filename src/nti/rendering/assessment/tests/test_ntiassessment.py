@@ -162,7 +162,6 @@ class TestMisc(AssessmentRenderingTestCase):
 			\end{naqhints}
 			\end{naqessaypart}
 		\end{naquestion}
-
 		"""
 
 		dom = _buildDomFromString( _simpleLatexDocument( (example,) ) )
@@ -201,7 +200,6 @@ class TestMisc(AssessmentRenderingTestCase):
 			\end{naqfilepart}
 
 		\end{naquestion}
-
 		"""
 
 		dom = _buildDomFromString( _simpleLatexDocument( (example,) ) )
@@ -234,7 +232,6 @@ class TestMisc(AssessmentRenderingTestCase):
 			\label{set}
 			\naquestionref{question}
 		\end{naquestionset}
-
 		"""
 
 		dom = _buildDomFromString( _simpleLatexDocument( (example,) ) )
@@ -280,7 +277,6 @@ class TestMisc(AssessmentRenderingTestCase):
 				Some content.
 			\end{naassignmentpart}
 		\end{naassignment}
-
 		"""
 
 		dom = _buildDomFromString( _simpleLatexDocument( (example,) ) )

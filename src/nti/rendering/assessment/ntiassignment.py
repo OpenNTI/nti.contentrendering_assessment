@@ -22,8 +22,6 @@ from paste.deploy.converters import asbool
 from nti.contentrendering import plastexids
 from nti.contentrendering.interfaces import IEmbeddedContainer
 
-from nti.externalization.datetime import datetime_from_string
-
 from nti.assessment.assignment import QAssignment
 from nti.assessment.assignment import QAssignmentPart
 from nti.assessment.assignment import QTimedAssignment
@@ -31,8 +29,10 @@ from nti.assessment.assignment import QTimedAssignment
 from nti.assessment.interfaces import NTIID_TYPE
 from nti.assessment.interfaces import IQAssignment
 
-from .ntibase import aspveint
 from .ntibase import _LocalContentMixin
+
+from .utils import parse_assessment_datetime
+from .utils import secs_converter as _secs_converter
 
 class naassignmentpart(_LocalContentMixin,
 					   Base.Environment):
@@ -49,7 +49,6 @@ class naassignmentpart(_LocalContentMixin,
 		\begin{naasignmentpart}[auto_grade=true]{set}
 			Local content
 		\end{naassignmentpart}
-
 	"""
 
 	args = "[options:dict:str] <title:str:source> question_set:idref"
@@ -76,7 +75,6 @@ class naassignment(_LocalContentMixin,
 	of the assignment as ``naassignmentpart`` elements.
 
 	Example::
-
 		\begin{naassignment}[not_before_date=2014-01-13,category=homework,public=true,no_submit=true]<Homework>
 			\label{assignment}
 			Some introductory content.
@@ -85,7 +83,6 @@ class naassignment(_LocalContentMixin,
 				Local content
 			\end{naassignmentpart}
 		\end{naquestionset}
-
 	"""
 
 	args = "[options:dict:str] <title:str:source>"
@@ -104,43 +101,25 @@ class naassignment(_LocalContentMixin,
 	#: From IEmbeddedContainer
 	mimeType = u'application/vnd.nextthought.assessment.assignment'
 	
-	def _secs_converter(self, s):
-		if s.endswith('m') or s.endswith('M'):
-			s = s[:-1]
-			result = aspveint(s) * 60
-		elif s.endswith('h') or s.endswith('H'):
-			s = s[:-1]
-			result = aspveint(s) * 3600
-		else:
-			result = aspveint(s)
-		return result
-
+	@property
+	def _local_tzname(self):
+		document = self.ownerDocument
+		userdata = getattr(document, 'userdata', None) or {}
+		return userdata.get('document_timezone_name')
+	
 	@cachedIn('_v_assessment_object')
-	def assessment_object(self):
-		# FIXME: We want these to be relative, not absolute, so they
-		# can be made absolute based on when the course begins.
-		# How to represent that? Probably need some schema transformation
-		# step in nti.externalization? Or some auixilliary data fields?
+	def assessment_object(self):		
+		local_tzname = self._local_tzname
 		options = self.attributes.get('options') or ()
-		def _parse(key, default_time):
-			if key in options:
-				val = options[key]
-				if 'T' not in val:
-					val += default_time
-
-				local_tzname = self.ownerDocument.userdata.get('document_timezone_name')
-				# Now parse it, assuming that any missing timezone should be treated
-				# as local timezone
-				dt = datetime_from_string(val, assume_local=True,
-										  local_tzname=local_tzname)
-				return dt
 
 		# If they give no timestamp, make it midnight
-		not_before = _parse('not_before_date', 'T00:00')
+		not_before = parse_assessment_datetime('not_before_date', options,
+											   'T00:00', local_tzname)
 		# For after, if they gave us no time, make it just before
 		# midnight. Together, this has the effect of intuitively defining
 		# the range of dates as "the first instant of before to the last minute of after"
-		not_after = _parse('not_after_date', 'T23:59')
+		not_after = parse_assessment_datetime('not_after_date', options, 
+											  'T23:59', local_tzname)
 
 		# Public/ForCredit.
 		# It's opt-in for authoring and opt-out for code
@@ -153,7 +132,7 @@ class naassignment(_LocalContentMixin,
 		if 'maximum_time_allowed' in options:
 			factory = QTimedAssignment
 			opt_val = options['maximum_time_allowed']
-			maximum_time_allowed = self._secs_converter(opt_val)
+			maximum_time_allowed = _secs_converter(opt_val)
 			
 		parts = [part.assessment_object() for part in
 				 self.getElementsByTagName('naassignmentpart')]

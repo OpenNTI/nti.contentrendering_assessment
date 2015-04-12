@@ -37,14 +37,34 @@ from nti.assessment.interfaces import SURVEY_MIME_TYPE
 
 from .ntibase import _LocalContentMixin
 
+from .utils import parse_assessment_datetime
+
 class napollname(Base.Command):
 	unicode = ''
 
 class nasurveyname(Base.Command):
 	unicode = ''
 
-class napoll(_LocalContentMixin, Base.Environment, NTIIDMixin):
-	args = ''
+class nainquiry(NTIIDMixin):
+	
+	@property
+	def _local_tzname(self):
+		document = self.ownerDocument
+		userdata = getattr(document, 'userdata', None) or {}
+		return userdata.get('document_timezone_name')
+	
+	def not_before(self, options):
+		result = parse_assessment_datetime(	'not_before_date', options,
+										   	'T00:00', self._local_tzname)
+		return result
+	
+	def not_after(self, options):
+		result = parse_assessment_datetime(	'not_after_date', options, 
+											'T23:59', self._local_tzname)
+		return result
+
+class napoll(_LocalContentMixin, Base.Environment, nainquiry):
+	args = "[options:dict:str]"
 
 	blockType = True
 
@@ -85,14 +105,21 @@ class napoll(_LocalContentMixin, Base.Environment, NTIIDMixin):
 		to_iter = (x for x in self.allChildNodes if _filter(x))
 		return [x.assessment_object() for x in to_iter]
 
-	def _createPoll(self):
+	def _createPoll(self, not_before=None, not_after=None):
 		result = QPoll(content=self._asm_local_content,
-					   parts=self._asm_poll_parts())
+					   parts=self._asm_poll_parts(),
+					   available_for_submission_beginning=not_before,
+					   available_for_submission_ending=not_after)
 		return result
 
 	@cachedIn('_v_assessment_object')
 	def assessment_object(self):
-		result = self._createPoll()
+		# parse dates
+		options = self.attributes.get('options') or ()
+		not_before = self.not_before(options)
+		not_after = self.not_after(options)
+		# create poll
+		result = self._createPoll(not_before, not_after)
 		errors = schema.getValidationErrors(IQPoll, result)
 		if errors: # pragma: no cover
 			raise errors[0][1]
@@ -103,15 +130,14 @@ class napollref(Crossref.ref):
 	pass
 
 @interface.implementer(IEmbeddedContainer)
-class nasurvey(Base.List, NTIIDMixin):
+class nasurvey(Base.List, nainquiry):
 	r"""
-	Question sets are a list of questions that should be submitted
-	together. For authoring, questions are included in a question
-	set by reference, and a question set can be composed of any
-	other labeled questions found within the same processing unit.
+	Surveys are a list of questions that should be submitted
+	together. For authoring, polls are included in a survey
+	by reference, and a survey can be composed of any
+	other labeled poll found within the same processing unit.
 
 	Example::
-
 		\begin{napoll}
 			\label{poll}
 			...
@@ -138,8 +164,10 @@ class nasurvey(Base.List, NTIIDMixin):
 
 	mimeType = SURVEY_MIME_TYPE
 	
-	def create_survey(self, questions, title, **kwargs):
-		result = QSurvey(questions=questions, title=title)
+	def create_survey(self, questions, title, not_before=None, not_after=None, **kwargs):
+		result = QSurvey(questions=questions, title=title,
+						 available_for_submission_beginning=not_before,
+					     available_for_submission_ending=not_after)
 		return result
 	
 	def validate_survey(self, survey):
@@ -150,6 +178,12 @@ class nasurvey(Base.List, NTIIDMixin):
 	
 	@cachedIn('_v_assessment_object')
 	def assessment_object(self):
+		# parse dates
+		options = self.attributes.get('options') or ()
+		not_before = self.not_before(options)
+		not_after = self.not_after(options)
+		
+		# parse poll questions
 		questions = [qref.idref['label'].assessment_object()
 					 for qref in self.getElementsByTagName('napollref')]
 		questions = PersistentList( questions )
@@ -168,7 +202,10 @@ class nasurvey(Base.List, NTIIDMixin):
 
 		title = title.strip() or None
 
-		result = self.create_survey(questions=questions, title=title)
+		result = self.create_survey(questions=questions, 
+									title=title,
+									not_before=not_before,
+									not_after=not_after)
 		self.validate_survey(result)
 		result.ntiid = self.ntiid # copy the id
 		return result
