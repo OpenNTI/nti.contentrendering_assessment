@@ -22,7 +22,6 @@ from nti.contentfragments.interfaces import ILatexContentFragment
 
 from nti.contentrendering.plastexpackages._util import _is_renderable
 from nti.contentrendering.plastexpackages._util import _asm_rendered_textcontent
-from nti.contentrendering.plastexpackages._util import _htmlcontent_rendered_elements
 from nti.contentrendering.plastexpackages._util import LocalContentMixin as _BaseLocalContentMixin
 
 from nti.assessment.interfaces import IQHTMLHint
