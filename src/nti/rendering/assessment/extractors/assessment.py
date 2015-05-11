@@ -56,12 +56,12 @@ class _AssessmentExtractor(object):
 		outpath = outpath or book.contentLocation
 		outpath = os.path.expanduser(outpath)
 		target = os.path.join(outpath, 'assessment_index.json')
-		
+
 		index = {'Items': {}, 'Signatures':{}}
 		documents = book.document.getElementsByTagName('document')
 		if not documents:
 			return
-		
+
 		self._build_index(documents[0], index['Items'], index['Signatures'])
 		index['href'] = index.get('href', 'index.html')
 
@@ -70,10 +70,10 @@ class _AssessmentExtractor(object):
 			# sort_keys for repeatability. Do force ensure_ascii because even though
 			# we're using codes to  encode automatically, the reader might not decode
 			json.dump(index, fp, indent='\t', sort_keys=True, ensure_ascii=True)
-		
+
 		with open(target, "rb") as fp:
 			sha256 = hashfile(fp)
-		
+
 		target = os.path.join(outpath, 'assessment_index.json.sha256')
 		with open(target, "wb") as fp:
 			fp.write(sha256)
@@ -81,7 +81,7 @@ class _AssessmentExtractor(object):
 
 	def _to_external_object(self, obj):
 		return toExternalObject(obj, decorate=False)
-	
+
 	def _build_index(self, element, index, signatures):
 		"""
 		Recurse through the element adding assessment objects to the index,
@@ -93,7 +93,7 @@ class _AssessmentExtractor(object):
 		if self._is_uninteresting(element):
 			# It's important to identify uninteresting nodes because
 			# some uninteresting nodes that would never make it into the TOC or
-			# otherwise be noticed actually can present with hard-coded duplicate 
+			# otherwise be noticed actually can present with hard-coded duplicate
 			# NTIIDs, which would cause us to fail.
 			return
 
@@ -111,8 +111,8 @@ class _AssessmentExtractor(object):
 			element_index['filename'] = getattr(element, 'filename', None)
 			if 	not element_index['filename'] and \
 				getattr(element, 'filenameoverride', None):
-				# FIXME: XXX: We are assuming the filename extension. 
-				# Why aren't we finding these at filename? See EclipseHelp.zpts for 
+				# FIXME: XXX: We are assuming the filename extension.
+				# Why aren't we finding these at filename? See EclipseHelp.zpts for
 				# comparison
 				element_index['filename'] = \
 						getattr(element, 'filenameoverride') + '.html'
@@ -126,41 +126,41 @@ class _AssessmentExtractor(object):
 			if callable(ass_obj):
 				int_obj = ass_obj()
 				# Verify that we can round-trip this object
-				self._ensure_roundtrips(int_obj, provenance=child)  
+				self._ensure_roundtrips(int_obj, provenance=child)
 				ext_obj = self._to_external_object(int_obj)
 				assessment_objects[child.ntiid] = ext_obj
 				signatures[child.ntiid] = self._signature(ext_obj)
 				# assessment_objects are leafs, never have children to worry about
 			elif child.hasChildNodes():  # Recurse for children if needed
 				if getattr(child, 'ntiid', None):
-					# we have a child with an NTIID; make sure we have a 
+					# we have a child with an NTIID; make sure we have a
 					# container for it
 					containing_index = element_index.setdefault('Items', {})
 				else:
-					# an unnamed thing; wrap it up with us; should only 
+					# an unnamed thing; wrap it up with us; should only
 					# have AssessmentItems
 					containing_index = element_index
 				self._build_index(child, containing_index, signatures)
 
 	def _ensure_roundtrips(self, assm_obj, provenance=None):
-		# No need to go into its children, like parts.	
-		ext_obj = self._to_external_object(assm_obj)  
+		# No need to go into its children, like parts.
+		ext_obj = self._to_external_object(assm_obj)
 		__traceback_info__ = provenance, assm_obj, ext_obj
-		
+
 		# Use the class of the object returned as a factory.
-		raw_int_obj = type(assm_obj)() 
-		update_from_external_object(raw_int_obj, ext_obj, require_updater=True, 
+		raw_int_obj = type(assm_obj)()
+		update_from_external_object(raw_int_obj, ext_obj, require_updater=True,
 									notify=False)
 
 		# Also be sure factories can be found
 		factory = find_factory_for(self._to_external_object(assm_obj))
 		assert factory is not None
-		# The ext_obj was mutated by the internalization process, 
+		# The ext_obj was mutated by the internalization process,
 		# so we need to externalize again. Or run a deep copy (?)
 
 	def _signature(self, data):
 		return signature(data)
-		
+
 	def _is_uninteresting(self, element):
 		"""
 		Uninteresting elements do not get an entry in the index. These are

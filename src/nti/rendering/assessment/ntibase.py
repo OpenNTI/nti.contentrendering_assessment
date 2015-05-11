@@ -49,9 +49,8 @@ def _asm_local_sourcecontent(self, ignorable_renderables=()):
 	if not ignorable_renderables:
 		selected_children = self.childNodes
 	else:
-		selected_children = \
-			tuple(node for node in self.childNodes \
-				  if not isinstance(node, ignorable_renderables))
+		selected_children = (node for node in self.childNodes
+							 if not isinstance(node, ignorable_renderables))
 
 	result = ILatexContentFragment(' '.join([x.source for x in selected_children]).strip())
 	return result
@@ -67,10 +66,10 @@ class _LocalContentMixin(_BaseLocalContentMixin):
 	# instead of the following method.
 	@readproperty
 	def _asm_local_content(self):
-		if self.renderer and _is_renderable(self.renderer, self.childNodes):
+		if _is_renderable(self.renderer, self.childNodes):
 			result = _asm_rendered_textcontent(self, self._asm_ignorable_renderables)
 		else:
-			result = _asm_local_sourcecontent(self)
+			result = _asm_local_sourcecontent(self, self._asm_ignorable_renderables)
 		return result
 
 class _AbstractNonGradableNAQPart(_LocalContentMixin, Base.Environment):
@@ -106,10 +105,10 @@ class _AbstractNonGradableNAQPart(_LocalContentMixin, Base.Environment):
 
 	def _asm_part_factory(self):
 		return self.part_factory
-	
+
 	def _asm_part_interface(self):
 		return self.part_interface
-	
+
 	def part_creator(self, factory=None):
 		# Be careful to turn textContent into plain unicode objects, not
 		# plastex Text subclasses, which are also expensive nodes.
@@ -127,7 +126,7 @@ class _AbstractNonGradableNAQPart(_LocalContentMixin, Base.Environment):
 			__traceback_info__ = self.part_interface, errors, result
 			raise errors[0][1]
 		return result
-	
+
 	def _after_render( self, rendered ):
 		super(_AbstractNonGradableNAQPart,self)._after_render( rendered )
 		# The hints don't normally get rendered# by the templates, so make sure they do
@@ -140,16 +139,16 @@ class _AbstractNonGradableNAQPart(_LocalContentMixin, Base.Environment):
 	def invoke(self, tex):
 		token = super(_AbstractNonGradableNAQPart, self).invoke(tex)
 		return token
-	
+
 class _AbstractNAQPart(_AbstractNonGradableNAQPart):
-	
+
 	gradable = True
 	randomize = False
-	
+
 	#: Defines the nongradable part this maps too
 	nongradable_part_factory = None
 	nongradable_part_interface = None
-	
+
 	#: Defines the type of solution this part produces.
 	#: Solution objects will be created by adapting the text content of the solution DOM nodes
 	#: into this interface.
@@ -224,7 +223,7 @@ class _AbstractNAQPart(_AbstractNonGradableNAQPart):
 		else:
 			result = self.nongradable_part_interface
 		return result
-	
+
 	def part_creator(self, factory=None):
 		factory =  self._asm_part_factory() if factory is None else factory
 		if self._asm_is_gradable:
@@ -252,7 +251,7 @@ class _AbstractNAQPart(_AbstractNonGradableNAQPart):
 		elif value.lower() == ('%s=false' % name) or value.lower() == 'false':
 			setattr(self, name, False)
 			self.attributes[name] = 'false'
-			
+
 	def invoke(self, tex):
 		token = super(_AbstractNAQPart, self).invoke(tex)
 		self._fix_bool_attribute('randomize')
@@ -260,11 +259,4 @@ class _AbstractNAQPart(_AbstractNonGradableNAQPart):
 		return token
 
 class naqvalue(_LocalContentMixin, Base.List.item):
-
-	@readproperty
-	def _asm_local_content(self):
-		if _is_renderable(self.renderer, self.childNodes):
-			result = _htmlcontent_rendered_elements(self.renderer, self.childNodes)
-		else:
-			result = ILatexContentFragment(unicode(self.textContent).strip())
-		return result
+	pass

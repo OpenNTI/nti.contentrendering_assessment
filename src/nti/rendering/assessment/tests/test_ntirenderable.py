@@ -46,7 +46,8 @@ class _MockRenderedBook(object):
 class TestRenderables(AssessmentRenderingTestCase):
 
 	def _do_test_render(self, label, ntiid, filename='index.html', units='',
-						 units_html=None, input_encoding=None ):
+						units_html=None, input_encoding=None):
+
 
 		example = br"""
 		\begin{naquestion}[individual=true]%s
@@ -60,20 +61,30 @@ class TestRenderables(AssessmentRenderingTestCase):
 		\end{naquestion}
 		""" % (label,units)
 
-		with RenderContext(_simpleLatexDocument( (example,) ), output_encoding='utf-8', 
+		if units: # Units are rendered only in the solution, which is not rendered in the question anymore
+			example = br"""
+			\begin{naqsolutions}
+				\naqsolution %s Some solution
+			\end{naqsolutions}
+			""" % (units,)
+
+		with RenderContext(_simpleLatexDocument( (example,) ), output_encoding='utf-8',
 						   input_encoding=input_encoding) as ctx:
 			dom  = ctx.dom
 			dom.getElementsByTagName( 'document' )[0].filenameoverride = 'index'
 			render = ResourceRenderer.createResourceRenderer('XHTML', None)
 			render.importDirectory( os.path.join( os.path.dirname(__file__), '..' ) )
 			render.render( dom )
-			
-			index = io.open(os.path.join(ctx.docdir, filename), 'rU', encoding='utf-8' ).read()
-			content = """<object type="application/vnd.nextthought.naquestion" data-ntiid="%(ntiid)s" data="%(ntiid)s""" % { 'ntiid': ntiid }
-			content2 = """<param name="ntiid" value="%(ntiid)s" """ % { 'ntiid': ntiid }
 
-			assert_that( index, contains_string( content ) )
-			assert_that( index, contains_string( content2 ) )
+			with io.open(os.path.join(ctx.docdir, filename), 'rU', encoding='utf-8' ) as f:
+				index = f.read()
+
+			if not units:
+				content = """<object type="application/vnd.nextthought.naquestion" data-ntiid="%(ntiid)s" data="%(ntiid)s""" % { 'ntiid': ntiid }
+				content2 = """<param name="ntiid" value="%(ntiid)s" """ % { 'ntiid': ntiid }
+
+				assert_that( index, contains_string( content ) )
+				assert_that( index, contains_string( content2 ) )
 
 			if units:
 				units_html = units_html or units[1:-1]
@@ -88,13 +99,18 @@ class TestRenderables(AssessmentRenderingTestCase):
 		self._do_test_render( '', 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.1' )
 
 	def test_render_units( self ):
-		self._do_test_render( '', 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.1', units='<unit1,unit2>')
+		self._do_test_render( '', 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.1',
+							  units='<unit1,unit2>')
 
 	def test_render_units_with_percent( self ):
-		self._do_test_render( '', 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.1', units=r'<unit1,\%>', units_html="unit1,%")
+		self._do_test_render( '', 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.1',
+							  units=r'<unit1,\%>',
+							  units_html="unit1,%")
 
 	def test_render_units_with_unicode( self ):
-		self._do_test_render('', 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.1', units=r'<m²>', input_encoding='utf-8')  # m squared, u'\xb2'
+		self._do_test_render('', 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.1',
+							 units=r'<m²>',
+							 input_encoding='utf-8' )# m squared, u'\xb2'
 
 	def test_render_units_with_latex_math_not_allowed( self ):
 		with self.assertRaises(ValueError):
@@ -103,11 +119,11 @@ class TestRenderables(AssessmentRenderingTestCase):
 	def test_assessment_index(self):
 		example = br"""
 			\chapter{Chapter One}
-	
+
 			We have a paragraph.
-	
+
 			\section{Section One}
-	
+
 			\begin{naquestion}[individual=true]\label{testquestion}
 				Arbitrary content goes here.
 				\begin{naqsymmathpart}
@@ -120,7 +136,7 @@ class TestRenderables(AssessmentRenderingTestCase):
 				\end{naqhints}
 				\end{naqsymmathpart}
 			\end{naquestion}
-	
+
 			\begin{naquestionset}\label{testset}
 				\naquestionref{testquestion}
 			\end{naquestionset}
@@ -149,17 +165,20 @@ class TestRenderables(AssessmentRenderingTestCase):
 						'title': 'Section One', # FIXME: We're inheriting this all the way up, which makes no sense
 						'MimeType': 'application/vnd.nextthought.naquestionset',
 						 'NTIID': 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.set.testset',
+						 'ntiid': 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.set.testset',
 						 'questions': [{'Class': 'Question',
 						   'MimeType': 'application/vnd.nextthought.naquestion',
 						   'NTIID': 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.testquestion',
+						   'ntiid': 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.testquestion',
 						   'content': '<a name="testquestion"></a> Arbitrary content goes here.',
 						   'parts': [{'Class': 'SymbolicMathPart',
 							 'MimeType': 'application/vnd.nextthought.assessment.symbolicmathpart',
+							 'allowed_units': ['unit1', 'unit2', ''],
 							 'content': 'Arbitrary content goes here.',
 							 'explanation': '',
 							 'hints': [{'Class': 'HTMLHint',
 							   'MimeType': 'application/vnd.nextthought.assessment.htmlhint',
-							   'value': '<a name="a1e8744a89e9bf4e115903c4322d92e1" ></a>\n\n<p class="par" id="a1e8744a89e9bf4e115903c4322d92e1">Some hint </p>'}],
+							   'value': 'Some hint'}], # XXX We used to render hints but we no longer are. Why?
 							 'solutions': [{'Class': 'LatexSymbolicMathSolution',
 							   'MimeType': 'application/vnd.nextthought.assessment.latexsymbolicmathsolution',
 							   'value': 'Some solution',
@@ -168,14 +187,16 @@ class TestRenderables(AssessmentRenderingTestCase):
 						'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.testquestion': {'Class': 'Question',
 						 'MimeType': 'application/vnd.nextthought.naquestion',
 						 'NTIID': 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.testquestion',
+						 'ntiid': 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.testquestion',
 						 'content': '<a name="testquestion"></a> Arbitrary content goes here.',
 						 'parts': [{'Class': 'SymbolicMathPart',
 						   'MimeType': 'application/vnd.nextthought.assessment.symbolicmathpart',
+						   'allowed_units': ['unit1', 'unit2', ''],
 						   'content': 'Arbitrary content goes here.',
 						   'explanation': '',
 						   'hints': [{'Class': 'HTMLHint',
 							 'MimeType': 'application/vnd.nextthought.assessment.htmlhint',
-							 'value': '<a name="a1e8744a89e9bf4e115903c4322d92e1" ></a>\n\n<p class="par" id="a1e8744a89e9bf4e115903c4322d92e1">Some hint </p>'}],
+							 'value': 'Some hint'}],
 						   'solutions': [{'Class': 'LatexSymbolicMathSolution',
 							 'MimeType': 'application/vnd.nextthought.assessment.latexsymbolicmathsolution',
 							 'value': 'Some solution',
@@ -191,6 +212,7 @@ class TestRenderables(AssessmentRenderingTestCase):
 				   'filename': 'index.html',
 				   'href': 'index.html'}},
 				 'href': 'index.html'}
+			del obj['Signatures']
 			assert_that( obj, is_( exp_value ) )
 
 
@@ -232,6 +254,7 @@ class TestRenderables(AssessmentRenderingTestCase):
 			question = {'Class': 'Question',
 						'MimeType': 'application/vnd.nextthought.naquestion',
 						'NTIID': 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.testquestion',
+						'ntiid': 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.testquestion',
 						'content': '<a name="testquestion"></a> Arbitrary content goes here.',
 						'parts': [{'Class': 'FilePart',
 								   'MimeType': 'application/vnd.nextthought.assessment.filepart',
@@ -262,7 +285,7 @@ class TestRenderables(AssessmentRenderingTestCase):
 										  'href': 'index.html'}
 										  },
 							'href': 'index.html'}
-
+			del obj['Signatures']
 			assert_that( obj, is_( exp_value ) )
 
 	def test_assessment_index_with_assignment(self):
@@ -318,6 +341,7 @@ class TestRenderables(AssessmentRenderingTestCase):
 			question = {'Class': 'Question',
 						'MimeType': 'application/vnd.nextthought.naquestion',
 						'NTIID': 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.testquestion',
+						'ntiid': 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.testquestion',
 						'content': '<a name="testquestion"></a> Arbitrary content goes here.',
 						'parts': [{'Class': 'FilePart',
 								   'MimeType': 'application/vnd.nextthought.assessment.filepart',
@@ -339,12 +363,15 @@ class TestRenderables(AssessmentRenderingTestCase):
 																	 {'Class': 'TimedAssignment',
 																	  'is_non_public': True,
 																	  'category_name': 'default',
+																	  # XXX: JAM: Obviously this is wrong. Hopefully nobody uses it.
+																	  'content': u'\\label{assignment} Assignment content. \\begin{naassignmentpart}[auto_grade=true]<Part Title>{set} Some content. \\end{naassignmentpart}',
 																	  'maximum_time_allowed': 50,
+																	  'no_submit': False,
 																	  'MimeType': 'application/vnd.nextthought.assessment.timedassignment',
 																	  'NTIID': 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.asg.assignment',
+																	  'ntiid': 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.asg.assignment',
 																	  'available_for_submission_beginning': '2014-01-13T06:00:00Z',
 																	  'available_for_submission_ending': None,
-																	  'content': 'Assignment content.',
 																	  'parts': [{'Class': 'AssignmentPart',
 																				 'MimeType': 'application/vnd.nextthought.assessment.assignmentpart',
 																				 'auto_grade': True,
@@ -353,6 +380,7 @@ class TestRenderables(AssessmentRenderingTestCase):
 																								  'title': 'Set Title With % and $',
 																								  'MimeType': 'application/vnd.nextthought.naquestionset',
 																								  'NTIID': 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.set.set',
+																								  'ntiid': 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.set.set',
 																								  'questions': [question]},
 																				 'title': 'Part Title'}],
 																	  'title': 'Main Title'},
@@ -360,6 +388,7 @@ class TestRenderables(AssessmentRenderingTestCase):
 																																  'title': 'Set Title With % and $',
 																																  'MimeType': 'application/vnd.nextthought.naquestionset',
 																																  'NTIID': 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.set.set',
+																																  'ntiid': 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.set.set',
 																																  'questions': [question]},
 																	 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.testquestion': question},
 												 'NTIID': 'tag:nextthought.com,2011-10:testing-HTML-temp.section_one',
@@ -373,13 +402,15 @@ class TestRenderables(AssessmentRenderingTestCase):
 						   'href': 'index.html'}},
 						 'href': 'index.html'}
 
+			del obj['Signatures']
 			assert_that( obj, is_( exp_value ) )
-		
+
+
 	def test_cs_encapsulation_brianna(self):
 		example = """
 		\section{Turingscraft: Encapsulation (10 points)}
 
-		Complete the Turingscraft exercises on encapsulation (first exercise, 20725)  
+		Complete the Turingscraft exercises on encapsulation (first exercise, 20725)
 		\href{https://codelab3.turingscraft.com/codelab/jsp/codelink/codelink.jsp?sac=OKLA-16038-VXTF-22&exssn=00000-20725}{here}.
 
 		\begin{naassignment}[category=no_submit,not_after_date=2014-12-01,public=true]<Turingscraft: Encapsulation (10 points)>
@@ -393,29 +424,29 @@ class TestRenderables(AssessmentRenderingTestCase):
 			transforms.performTransforms(ctx.dom)
 			rdb = ResourceDB( ctx.dom )
 			rdb.generateResourceSets()
-			
+
 			nti_render.render(ctx.dom, 'XHTML', rdb)
-			
+
 			fname = os.path.join(ctx.docdir, 'tag_nextthought_com_2011-10_testing-HTML-temp_0.html')
 			with open(fname, 'r') as f:
 				contents = f.read()
 
 			assert_that( contents,
 						 contains_string('<link rel="next" href="tag_nextthought_com_2011-10_testing-HTML-temp_assignment_Turingscraft_C__Encapsulation.html" title="Turingscraft: Encapsulation (10 points)" />') )
-			
+
 			fname = os.path.join(ctx.docdir, 'tag_nextthought_com_2011-10_testing-HTML-temp_assignment_Turingscraft_C__Encapsulation.html')
 			with open(fname, 'r') as f:
 				contents = f.read()
-				
+
 			assert_that( contents,
 						 contains_string('<span class="naassignment hidden" ></span>') )
-			
+
 			assert_that( contents,
 						 contains_string('<div class="chapter title">Turingscraft: Encapsulation (10 points)</div>') )
-			
+
 			assert_that( contents,
 						 does_not(contains_string('V </p> </div>') ))
-	
+
 	def test_fill_in_the_blank_short_answer_part(self):
 		example = br"""
 				\begin{naquestion}
@@ -450,17 +481,17 @@ class TestRenderables(AssessmentRenderingTestCase):
 			jsons = open(os.path.join(ctx.docdir, 'assessment_index.json' ), 'rU' ).read()
 			jsons = jsons.decode('utf-8')
 			obj = json.loads( jsons )
-			
+
 			parts_key = 'Items/tag:nextthought.com,2011-10:testing-HTML-temp.0/AssessmentItems/tag:nextthought.com,2011-10:testing-NAQ-temp.naq.1/parts'
 			parts = traverse(obj, parts_key, default=None)
 			assert_that(parts, is_not(none()))
 			assert_that(parts, has_length(1))
-			
+
 			solutions = traverse(parts[0], 'solutions', default=None)
 			assert_that(solutions, is_not(none()))
 			assert_that(solutions, has_length(1))
-			
-			assert_that(solutions[0], has_entry('value', 
+
+			assert_that(solutions[0], has_entry('value',
 												has_entry('001', has_entries(u'pattern', u'\\s*\\$?\\s?945.20',
 																			 u'solution', u'$945.20'))))
 
@@ -468,7 +499,7 @@ class TestRenderables(AssessmentRenderingTestCase):
 		path = os.path.join(os.path.dirname(__file__), 'questionbank_ranges.tex')
 		with open(path, "r") as f:
 			source = f.read()
-		
+
 		with RenderContext(_simpleLatexDocument( (source,) )) as ctx:
 			dom  = ctx.dom
 			dom.getElementsByTagName( 'document' )[0].filenameoverride = 'index'
@@ -480,15 +511,15 @@ class TestRenderables(AssessmentRenderingTestCase):
 			rendered_book = _MockRenderedBook()
 			rendered_book.document = dom
 			rendered_book.contentLocation = ctx.docdir
-			
+
 			extractor = component.getAdapter(rendered_book, IAssessmentExtractor)
 			extractor.transform( rendered_book )
 
-			
+
 			jsons = open(os.path.join(ctx.docdir, 'assessment_index.json' ), 'rU' ).read()
 			jsons = jsons.decode('utf-8')
 			obj = json.loads( jsons )
-			
+
 			key = 'Items/tag:nextthought.com,2011-10:testing-HTML-temp.0/AssessmentItems/tag:nextthought.com,2011-10:testing-NAQ-temp.naq.set.qset:GEOG_Unit4_quiz'
 			quiz = traverse(obj, key, default=None)
 			assert_that(quiz, has_entry('questions', has_length(9)))

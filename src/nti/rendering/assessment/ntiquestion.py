@@ -103,7 +103,7 @@ class naquestion(_LocalContentMixin, Base.Environment, plastexids.NTIIDMixin):
 			result = hasattr(x, 'tagName') and x.tagName.startswith('naq') and \
 					 x.tagName.endswith('part')
 			return result
-			
+
 		to_iter = (x for x in self.allChildNodes if _filter(x) )
 		return [x.assessment_object() for x in to_iter if hasattr(x,'assessment_object')]
 
@@ -159,17 +159,17 @@ class naquestionset(Base.List, plastexids.NTIIDMixin):
 
 	#: From IEmbeddedContainer
 	mimeType = QUESTION_SET_MIME_TYPE
-	
+
 	def create_questionset(self, questions, title, **kwargs):
 		result = QQuestionSet(questions=questions, title=title)
 		return result
-	
+
 	def validate_questionset(self, questionset):
 		errors = schema.getValidationErrors(IQuestionSet, questionset)
 		if errors: # pragma: no cover
 			raise errors[0][1]
 		return questionset
-	
+
 	@cachedIn('_v_assessment_object')
 	def assessment_object(self):
 		questions = [qref.idref['label'].assessment_object()
@@ -228,11 +228,11 @@ class narandomizedquestionset(naquestionset):
 			\naquestionref{question}
 		\end{narandomizedquestionset}
 	"""
-	
+
 	def create_questionset(self, questions, title, **kwargs):
 		result = QRandomizedQuestionSet(questions=questions, title=title)
 		return result
-	
+
 	def validate_questionset(self, questionset):
 		errors = schema.getValidationErrors(IRandomizedQuestionSet, questionset)
 		if errors: # pragma: no cover
@@ -241,10 +241,10 @@ class narandomizedquestionset(naquestionset):
 
 class naqindexranges(Base.List):
 	pass
-		
+
 class naqindexrange(Base.List.item):
 	args = 'start:int end:int draw:int'
-	
+
 	def digest(self, tokens):
 		res = super(naqindexrange, self).digest(tokens)
 		start = self.attributes.get('start')
@@ -253,9 +253,9 @@ class naqindexrange(Base.List.item):
 
 		draw = self.attributes.get('draw', 1)
 		assert draw <= (end - start + 1)
-		
+
 		return res
-	
+
 	def _after_render(self, rendered):
 		self._asm_local_content = rendered
 
@@ -273,24 +273,24 @@ class naquestionbank(naquestionset):
 			\naquestionref{question}
 		\end{naquestionbank}
 	"""
-	
+
 	@readproperty
 	def draw(self):
 		options = self.attributes.get('options') or {}
-		draw = options.get('draw') or self.attributes.get('draw') 
+		draw = options.get('draw') or self.attributes.get('draw')
 		return int(draw) if draw else None
-	
+
 	@readproperty
 	def srand(self):
 		options = self.attributes.get('options') or {}
-		srand = options.get('srand') or self.attributes.get('srand') 
+		srand = options.get('srand') or self.attributes.get('srand')
 		return bool(srand) if srand else None
-	
+
 	@readproperty
 	def question_count(self):
 		result = self.draw or super(naquestionbank, self).question_count
 		return unicode(result)
-	
+
 	def create_questionset(self, questions, title, **kwargs):
 		srand = self.srand
 		draw = self.draw or len(questions)
@@ -301,22 +301,22 @@ class naquestionbank(naquestionset):
 		if naqindexranges:
 			result.ranges = getattr(naqindexranges, "ranges", None)
 		return result
-	
+
 	def validate_questionset(self, questionset):
 		errors = schema.getValidationErrors(IQuestionBank, questionset)
 		if errors: # pragma: no cover
 			raise errors[0][1]
 		questionset.validate()
 		return questionset
-	
+
 	def digest(self, tokens):
 		res = super(naquestionbank, self).digest(tokens)
 		if self.macroMode != Base.Environment.MODE_END:
 			questions = self.getElementsByTagName('naquestionref') or ()
-			
+
 			naqindexranges = self.getElementsByTagName('naqindexranges')
 			assert not naqindexranges or len(naqindexranges) == 1
-			
+
 			naqindexranges = naqindexranges[0] if naqindexranges else None
 			if naqindexranges is not None and questions:
 				_indexranges = []
@@ -327,21 +327,21 @@ class naquestionbank(naquestionset):
 								 int(_range.attributes['end'])
 					assert start <= end, "invalid range"
 					assert end < _max_index, "index ouside of range"
-					
+
 					draw = int(_range.attributes.get('draw',1))
 					assert draw <= (end - start + 1), "Invalid draw in range"
 					_indexranges.append((start, end, draw))
-					
+
 				# get ranges
 				_indexranges = [IQuestionIndexRange(x) for x in _indexranges]
 				_indexranges.sort()
-				
+
 				draw = self.draw
 				assert draw, "no draw attribute was specified"
-				
+
 				naqindexranges.ranges = _indexranges
 		return res
-	
+
 	@cachedIn('_v_assessment_object')
 	def assessment_object(self):
 		result = super(naquestionbank, self).assessment_object()
@@ -355,14 +355,14 @@ class naquestionsetref(Crossref.ref):
 	@readproperty
 	def questionset(self):
 		return self.idref['label']
-	
+
 class narandomizedquestionsetref(naquestionsetref):
 	"""
 	A reference to the label of a question set.
 	"""
-	
+
 	randomizedquestionset = naquestionsetref.questionset
-	
+
 class naquestionbankref(naquestionsetref):
 	"""
 	A reference to the label of a question bank.

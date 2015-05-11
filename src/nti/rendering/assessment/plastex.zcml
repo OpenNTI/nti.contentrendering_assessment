@@ -3,7 +3,7 @@
 			xmlns:i18n="http://namespaces.zope.org/i18n"
 			xmlns:zcml="http://namespaces.zope.org/zcml"
 			i18n_domain="zope">
-			
+
 	<include package="zope.component" file="meta.zcml" />
 	<include package="zope.security" file="meta.zcml" />
 	<include package="zope.component" />
@@ -11,7 +11,7 @@
 
 	<!-- For rendering -->
 	<include package="zope.traversing" />
-	
+
 	<!-- Register the package under the short name and the legacy long name -->
 	<utility component=".ntiassessment" name="ntiassessment" />
 

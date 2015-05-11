@@ -30,7 +30,7 @@ def _render_children(renderer, nodes, strip=True):
 
 @interface.implementer(IJSONTransformer)
 class _NASurveyRefJSONTransformer(object):
-	
+
 	def __init__(self, element):
 		self.el = element
 
@@ -45,7 +45,7 @@ class _NASurveyRefJSONTransformer(object):
 
 @interface.implementer(IJSONTransformer)
 class _NAQuestionSetRefJSONTransformer(object):
-	
+
 	def __init__(self, element):
 		self.el = element
 
@@ -60,7 +60,7 @@ class _NAQuestionSetRefJSONTransformer(object):
 
 @interface.implementer(IJSONTransformer)
 class _NAAssignmentRefJSONTransformer(object):
-	
+
 	def __init__(self, element):
 		self.el = element
 
