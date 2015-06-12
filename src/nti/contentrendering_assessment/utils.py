@@ -23,16 +23,14 @@ def secs_converter(s):
 	else:
 		result = aspveint(s)
 	return result
-	
+
 def parse_assessment_datetime(key, options, default_time, local_tzname=None):
 	if key in options:
 		val = options[key]
 		if 'T' not in val:
 			val += default_time
-
 		# Now parse it, assuming that any missing timezone should be treated
 		# as local timezone
-		dt = datetime_from_string(val, assume_local=True,
-								  local_tzname=local_tzname)
+		dt = datetime_from_string(val, assume_local=True, local_tzname=local_tzname)
 		return dt
 	return None

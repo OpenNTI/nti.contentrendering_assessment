@@ -21,13 +21,13 @@ from nti.assessment.interfaces import IQNonGradableMatchingPart
 from nti.assessment.interfaces import IQNonGradableOrderingPart
 from nti.assessment.interfaces import IQNonGradableMultipleChoicePart
 
-from nti.rendering.assessment.ntiassessment import napoll
-from nti.rendering.assessment.ntiassessment import nasurvey
+from nti.contentrendering_assessment.ntiassessment import napoll
+from nti.contentrendering_assessment.ntiassessment import nasurvey
 
 from nti.contentrendering.tests import buildDomFromString as _buildDomFromString
 
-from nti.rendering.assessment.tests import _simpleLatexDocument
-from nti.rendering.assessment.tests import AssessmentRenderingTestCase
+from nti.contentrendering_assessment.tests import _simpleLatexDocument
+from nti.contentrendering_assessment.tests import AssessmentRenderingTestCase
 
 from nti.testing.matchers import verifiably_provides
 

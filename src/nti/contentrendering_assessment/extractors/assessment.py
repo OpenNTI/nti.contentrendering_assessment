@@ -183,5 +183,4 @@ class _AssessmentExtractor(object):
 			setattr(element, cache_attr, boring)
 		except AttributeError:
 			pass
-
 		return boring

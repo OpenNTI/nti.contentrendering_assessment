@@ -20,7 +20,7 @@ TESTS_REQUIRE = [
 ]
 
 setup(
-	name = 'nti.rendering.assessment',
+	name = 'nti.contentrendering_assessment',
 	version = VERSION,
 	author = 'Jason Madden',
 	author_email = 'jason@nextthought.com',
@@ -38,7 +38,7 @@ setup(
 	],
 	packages=find_packages('src'),
 	package_dir={'': 'src'},
-	namespace_packages=['nti', 'nti.rendering'],
+	namespace_packages=['nti'],
 	tests_require=TESTS_REQUIRE,
 	install_requires=[
 		'setuptools',

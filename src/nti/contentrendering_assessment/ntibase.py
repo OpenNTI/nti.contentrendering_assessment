@@ -12,10 +12,14 @@ logger = __import__('logging').getLogger(__name__)
 import itertools
 
 from zope import schema
+
 from zope.cachedescriptors.method import cachedIn
 from zope.cachedescriptors.property import readproperty
 
 from plasTeX import Base
+
+from nti.assessment.interfaces import IQHTMLHint
+from nti.assessment.interfaces import IQMathSolution
 
 from nti.contentfragments.interfaces import LatexContentFragment
 from nti.contentfragments.interfaces import ILatexContentFragment
@@ -23,9 +27,6 @@ from nti.contentfragments.interfaces import ILatexContentFragment
 from nti.contentrendering.plastexpackages._util import _is_renderable
 from nti.contentrendering.plastexpackages._util import _asm_rendered_textcontent
 from nti.contentrendering.plastexpackages._util import LocalContentMixin as _BaseLocalContentMixin
-
-from nti.assessment.interfaces import IQHTMLHint
-from nti.assessment.interfaces import IQMathSolution
 
 def aspveint(obj):
 	try:

@@ -19,14 +19,14 @@ from nti.assessment.randomized.interfaces import IQRandomizedMatchingPart
 from nti.assessment.randomized.interfaces import IQRandomizedOrderingPart
 from nti.assessment.randomized.interfaces import IQRandomizedMultipleChoicePart
 
-from nti.rendering.assessment.ntiassessment import naquestion
-from nti.rendering.assessment.ntiassessment import naquestionbank 
-from nti.rendering.assessment.ntiassessment import narandomizedquestionset
+from nti.contentrendering_assessment.ntiassessment import naquestion
+from nti.contentrendering_assessment.ntiassessment import naquestionbank 
+from nti.contentrendering_assessment.ntiassessment import narandomizedquestionset
 
 from nti.contentrendering.tests import buildDomFromString as _buildDomFromString
 
-from nti.rendering.assessment.tests import _simpleLatexDocument
-from nti.rendering.assessment.tests import AssessmentRenderingTestCase
+from nti.contentrendering_assessment.tests import _simpleLatexDocument
+from nti.contentrendering_assessment.tests import AssessmentRenderingTestCase
 
 from nti.testing.matchers import verifiably_provides
 

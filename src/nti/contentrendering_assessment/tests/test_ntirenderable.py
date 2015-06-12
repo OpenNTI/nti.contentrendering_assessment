@@ -31,12 +31,12 @@ from nti.contentrendering.interfaces import IRenderedBook
 from nti.contentrendering.resources import ResourceRenderer
 from nti.contentrendering.resources.ResourceDB import ResourceDB
 
-from nti.rendering.assessment.interfaces import IAssessmentExtractor
+from nti.contentrendering_assessment.interfaces import IAssessmentExtractor
 
 from nti.contentrendering.tests import RenderContext
 
-from nti.rendering.assessment.tests import _simpleLatexDocument
-from nti.rendering.assessment.tests import AssessmentRenderingTestCase
+from nti.contentrendering_assessment.tests import _simpleLatexDocument
+from nti.contentrendering_assessment.tests import AssessmentRenderingTestCase
 
 @interface.implementer(IRenderedBook)
 class _MockRenderedBook(object):

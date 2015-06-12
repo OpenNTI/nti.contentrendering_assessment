@@ -41,7 +41,7 @@ class _LessonQuestionSetExtractor(object):
 			if questionset_els:
 				found_sets = True
 				self._process_questionsets(dom, questionset_els, topic_map)
-		
+
 		if found_sets:
 			self._process_assignments(dom, assignment_els, topic_map)
 			if savetoc:
@@ -65,7 +65,7 @@ class _LessonQuestionSetExtractor(object):
 			parent_el = el.parentNode
 			if hasattr(parent_el, 'ntiid') and parent_el.tagName.startswith('course'):
 				lesson_el = topic_map.get(parent_el.ntiid)
-			
+
 			while lesson_el is None and parent_el.parentNode is not None:
 				parent_el = parent_el.parentNode
 				if 	hasattr(parent_el, 'ntiid') and \
@@ -99,7 +99,7 @@ class _LessonQuestionSetExtractor(object):
 				lesson_el.appendChild(dom.createTextNode(u'\n'))
 
 	# SAJ: This method is a HACK to mark the parent topic of an assignment as
-	# 'suppressed'. In practice, this is only needed for 'no_submit' assignments 
+	# 'suppressed'. In practice, this is only needed for 'no_submit' assignments
 	# since they have no associated question set to otherwise trigger the marking.
 	# This should move into its  own extractor, but for now it is here.
 	def _process_assignments(self, dom, els, topic_map):

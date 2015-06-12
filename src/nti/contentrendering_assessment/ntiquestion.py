@@ -14,6 +14,7 @@ from six import text_type
 
 from zope import schema
 from zope import interface
+
 from zope.cachedescriptors.method import cachedIn
 from zope.cachedescriptors.property import readproperty
 
@@ -22,9 +23,6 @@ from persistent.list import PersistentList
 from plasTeX import Base
 from plasTeX.Base import Crossref
 from plasTeX.Renderers import render_children
-
-from nti.contentrendering import plastexids
-from nti.contentrendering import interfaces as crd_interfaces
 
 from nti.assessment.question import QQuestion
 from nti.assessment.question import QQuestionSet
@@ -40,6 +38,9 @@ from nti.assessment.randomized.question import QRandomizedQuestionSet
 from nti.assessment.randomized.interfaces import IQuestionBank
 from nti.assessment.randomized.interfaces import IQuestionIndexRange
 from nti.assessment.randomized.interfaces import IRandomizedQuestionSet
+
+from nti.contentrendering import plastexids
+from nti.contentrendering import interfaces as crd_interfaces
 
 from .ntibase import _LocalContentMixin
 

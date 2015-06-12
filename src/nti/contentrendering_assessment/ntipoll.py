@@ -14,6 +14,7 @@ from six import string_types
 
 from zope import schema
 from zope import interface
+
 from zope.cachedescriptors.method import cachedIn
 from zope.cachedescriptors.property import readproperty
 
@@ -23,9 +24,6 @@ from plasTeX import Base
 from plasTeX.Base import Crossref
 from plasTeX.Renderers import render_children
 
-from nti.contentrendering.plastexids import NTIIDMixin
-from nti.contentrendering.interfaces import IEmbeddedContainer
-
 from nti.assessment.survey import QPoll
 from nti.assessment.survey import QSurvey
 
@@ -34,6 +32,9 @@ from nti.assessment.interfaces import IQSurvey
 
 from nti.assessment.interfaces import NTIID_TYPE
 from nti.assessment.interfaces import SURVEY_MIME_TYPE
+
+from nti.contentrendering.plastexids import NTIIDMixin
+from nti.contentrendering.interfaces import IEmbeddedContainer
 
 from .ntibase import _LocalContentMixin
 

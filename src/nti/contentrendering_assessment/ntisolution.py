@@ -23,9 +23,9 @@ class naqsolutions(Base.List):
 	counters = ['naqsolutionnum']
 	args = '[ init:int ]'
 
-	def invoke( self, tex ):
+	def invoke(self, tex):
 		# TODO: Why is this being done?
-		res = super(naqsolutions, self).invoke( tex )
+		res = super(naqsolutions, self).invoke(tex)
 
 		if 'init' in self.attributes and self.attributes['init']:
 			self.ownerDocument.context.counters[self.counters[0]].setcounter(self.attributes['init'])
@@ -34,7 +34,7 @@ class naqsolutions(Base.List):
 
 		return res
 
-	def digest( self, tokens ):
+	def digest(self, tokens):
 		# After digesting loop back over the children moving nodes before
 		# the first item into the first item
 		# TODO: Why is this being done?
@@ -52,7 +52,6 @@ class naqsolutions(Base.List):
 					break
 
 				nodesToMove.append(node)
-
 		return res
 
 class naqsolution(Base.List.item):
@@ -65,36 +64,34 @@ class naqsolution(Base.List.item):
 	# has something like an (escaped) % in it, plasTeX fails to tokenize the list
 	# Instead, we work with the TexFragment object ourself
 
-	def invoke( self, tex ):
+	def invoke(self, tex):
 		# TODO: Why is this being done? Does the counter matter?
 		self.counter = naqsolutions.counters[0]
 		self.position = self.ownerDocument.context.counters[self.counter].value + 1
-		#ignore the list implementation
-		return Base.Command.invoke(self,tex)
+		# ignore the list implementation
+		return Base.Command.invoke(self, tex)
 
 	def units_to_text_list(self):
 		"""Find the units, if any, and return a list of their text values"""
-		units = self.attributes.get( 'units' )
+		units = self.attributes.get('units')
 		if units:
 			# Remove trailing delimiter and surrounding whitespace. For consecutive
 			# text parts, we have to split ourself
 			result = []
 			for x in units:
 				# We could get elements (Macro/Command) or strings (plastex.dom.Text)
-				if getattr( x, 'tagName', None ) == 'math':
-					raise ValueError( "Math cannot be roundtripped in units. Try unicode symbols" )
-				x = unicode(x).rstrip( ',' ).strip()
-				result.extend( x.split( ',' ) )
+				if getattr(x, 'tagName', None) == 'math':
+					raise ValueError("Math cannot be roundtripped in units. Try unicode symbols")
+				x = unicode(x).rstrip(',').strip()
+				result.extend(x.split(','))
 			return result
 
 	def units_to_html(self):
 		units = self.units_to_text_list()
 		if units:
-			return ','.join( units )
+			return ','.join(units)
 
-###
 # Explanations
-###
 
 class naqsolexplanation(_LocalContentMixin, Base.Environment):
 	pass

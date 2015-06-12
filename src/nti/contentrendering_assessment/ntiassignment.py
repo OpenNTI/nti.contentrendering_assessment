@@ -11,6 +11,7 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import schema
 from zope import interface
+
 from zope.cachedescriptors.method import cachedIn
 from zope.cachedescriptors.property import readproperty
 
@@ -19,15 +20,15 @@ from plasTeX.Base import Crossref
 
 from paste.deploy.converters import asbool
 
-from nti.contentrendering import plastexids
-from nti.contentrendering.interfaces import IEmbeddedContainer
-
 from nti.assessment.assignment import QAssignment
 from nti.assessment.assignment import QAssignmentPart
 from nti.assessment.assignment import QTimedAssignment
 
 from nti.assessment.interfaces import NTIID_TYPE
 from nti.assessment.interfaces import IQAssignment
+
+from nti.contentrendering import plastexids
+from nti.contentrendering.interfaces import IEmbeddedContainer
 
 from .ntibase import _LocalContentMixin
 

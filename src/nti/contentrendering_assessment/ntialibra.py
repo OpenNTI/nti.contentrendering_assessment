@@ -16,12 +16,6 @@ from zope.cachedescriptors.property import readproperty
 from plasTeX import Base
 from plasTeX.Renderers import render_children
 
-from nti.contentfragments.interfaces import HTMLContentFragment
-from nti.contentfragments.interfaces import ILatexContentFragment
-
-from nti.contentrendering.plastexpackages._util import _is_renderable
-from nti.contentrendering.plastexpackages._util import _htmlcontent_rendered_elements
-
 from nti.assessment.parts import QFillInTheBlankShortAnswerPart
 from nti.assessment.parts import QFillInTheBlankWithWordBankPart
 from nti.assessment.question import QFillInTheBlankWithWordBankQuestion
@@ -34,18 +28,22 @@ from nti.assessment.interfaces import IQFillInTheBlankWithWordBankPart
 from nti.assessment.interfaces import IQFillInTheBlankShortAnswerSolution
 from nti.assessment.interfaces import IQFillInTheBlankWithWordBankSolution
 
+from nti.contentfragments.interfaces import HTMLContentFragment
+from nti.contentfragments.interfaces import ILatexContentFragment
+
+from nti.contentrendering.plastexpackages._util import _is_renderable
+from nti.contentrendering.plastexpackages._util import _htmlcontent_rendered_elements
+
 from .ntibase import naqvalue
 from .ntibase import _AbstractNAQPart
 from .ntibase import _LocalContentMixin
 
 from .ntiquestion import naquestion
 
-###
 # Parts
-###
 
 class _WordBankMixIn(object):
-	
+
 	def _parse_wordentries(self, naqwordbank):
 		result = []
 		for x in naqwordbank.getElementsByTagName('naqwordentry'):
@@ -57,7 +55,7 @@ class _WordBankMixIn(object):
 				we = IWordEntry(data)
 				result.append(we)
 		return result
-	
+
 	def _asm_entries(self):
 		raise NotImplementedError()
 
@@ -78,7 +76,7 @@ class naqfillintheblankwithwordbankpart(_WordBankMixIn, _AbstractNAQPart):
 			\begin{naqfillintheblankwithwordbankpart}
 				Arbitrary content for this part goes here.
 				\begin{naqinput}
-			       	empty fields \naqblankfield{1} \naqblankfield{2} \naqblankfield{3} go here
+				   	empty fields \naqblankfield{1} \naqblankfield{2} \naqblankfield{3} go here
 				\end{naqinput}
 				\begin{naqwordbank}
 					\naqwordentry{0}{montuno}{es}
@@ -86,8 +84,8 @@ class naqfillintheblankwithwordbankpart(_WordBankMixIn, _AbstractNAQPart):
 					\naqwordentry{2}{borinquen}{es}
 					\naqwordentry{3}{tierra}{es}
 					\naqwordentry{4}{alma}{es}
-	            \end{naqwordbank}
-	            \begin{naqpaireditems}
+				\end{naqwordbank}
+				\begin{naqpaireditems}
 					\naqpaireditem{1}{2}
 					\naqpaireditem{2}{1}
 					\naqpaireditem{3}{0}
@@ -98,7 +96,7 @@ class naqfillintheblankwithwordbankpart(_WordBankMixIn, _AbstractNAQPart):
 			\end{naqfillintheblankwithwordbankpart}
 		\end{naquestion}
 	"""
-	
+
 	part_factory = QFillInTheBlankWithWordBankPart
 	part_interface = IQFillInTheBlankWithWordBankPart
 	soln_interface = IQFillInTheBlankWithWordBankSolution
@@ -112,7 +110,7 @@ class naqfillintheblankwithwordbankpart(_WordBankMixIn, _AbstractNAQPart):
 			entries = self._parse_wordentries(_naqwordbank)
 			result = _naqwordbank, entries
 		return result
-	
+
 	def _asm_object_kwargs(self):
 		return { 'wordbank': self._asm_wordbank(),
 				 'input': self._asm_input() }
@@ -189,11 +187,11 @@ class naqfillintheblankshortanswerpart(_AbstractNAQPart):
 		\begin{naquestion}
 			Arbitrary prefix content goes here.
 			\begin{naqfillintheblankshortanswerpart}
-			    Arbitrary content for this part goes here \naqblankfield{001}[2] \naqblankfield{002}[2]
+				Arbitrary content for this part goes here \naqblankfield{001}[2] \naqblankfield{002}[2]
 				\begin{naqregexes}
 					\naqregex{001}{.*}  Everything.
 					\naqregex{002}{^1\$} Only 1.
-	            \end{naqregexes}
+				\end{naqregexes}
 				\begin{naqsolexplanation}
 					Arbitrary content explaining how the correct solution is arrived at.
 				\end{naqsolexplanation}
@@ -267,7 +265,7 @@ class naqregex(naqvalue):
 	@readproperty
 	def _asm_local_content(self):
 		return unicode(self.textContent).strip()
-	
+
 	def _after_render(self, rendered):
 		self._asm_local_content = rendered
 
@@ -329,38 +327,36 @@ class naqinput(_LocalContentMixin, Base.Environment):
 			result = ILatexContentFragment(unicode(self.textContent).strip())
 		return result
 
-###
 # Questions
-###
 
 def _remove_parts_after_render(self, rendered):
-	## CS: Make sure we only render the children that do not contain any 'question' part,
-	## since those will be rendereds when the part is so.
+	# # CS: Make sure we only render the children that do not contain any 'question' part,
+	# # since those will be rendereds when the part is so.
 	def _check(node):
 		f = lambda x :isinstance(x, (_AbstractNAQPart,))
 		found = any(map(f, node.childNodes)) or f(node)
 		return not found
 
-	## each node in self.childNodes is a plasTeX.Base.TeX.Primitives.par
-	## check its children to see if they contain any question 'part' objects.
-	## do not include them in the asm_local_content
+	# # each node in self.childNodes is a plasTeX.Base.TeX.Primitives.par
+	# # check its children to see if they contain any question 'part' objects.
+	# # do not include them in the asm_local_content
 	selected = [n for n in self.childNodes if _check(n)]
 	output = render_children(self.renderer, selected)
 	output = HTMLContentFragment(''.join(output).strip())
 	return output
 
 class naquestionfillintheblankwordbank(_WordBankMixIn, naquestion):
-		
+
 	def _get_parent(self, element):
 		try:
 			parent = element.parentNode
 			while (parent is not None and not isinstance(parent, _WordBankMixIn)):
-				parent = parent.parentNode 
+				parent = parent.parentNode
 			result = parent
 		except AttributeError:
 			result = None
 		return result
-		
+
 	def _asm_entries(self):
 		_naqwordbank = self.getElementsByTagName('naqwordbank')
 		if not _naqwordbank or self._get_parent(_naqwordbank[0]) != self:

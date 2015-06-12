@@ -21,17 +21,17 @@ from hamcrest import contains_string
 
 from datetime import datetime
 
+from nti.assessment import interfaces as asm_interfaces
+
+from nti.contentrendering_assessment.ntiassessment import naquestion, naquestionset
+from nti.contentrendering_assessment.ntiassessment import naquestionfillintheblankwordbank
+
 from nti.externalization.externalization import to_external_object
 from nti.externalization.internalization import update_from_external_object
 
-from nti.assessment import interfaces as asm_interfaces
-
+from nti.contentrendering_assessment.tests import _simpleLatexDocument
+from nti.contentrendering_assessment.tests import AssessmentRenderingTestCase
 from nti.contentrendering.tests import buildDomFromString as _buildDomFromString
-
-from nti.rendering.assessment.tests import _simpleLatexDocument
-from nti.rendering.assessment.tests import AssessmentRenderingTestCase
-from nti.rendering.assessment.ntiassessment import naquestion, naquestionset
-from nti.rendering.assessment.ntiassessment import naquestionfillintheblankwordbank
 
 from nti.externalization.tests import externalizes
 

@@ -25,7 +25,7 @@ class SharedConfiguringTestLayer(ZopeComponentLayer,
                             'nti.assessment',
                             'nti.externalization',
                             'nti.mimetype',
-                            'nti.rendering.assessment',
+                            'nti.contentrendering_assessment',
                         )
 
     @classmethod

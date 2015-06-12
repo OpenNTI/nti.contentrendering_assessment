@@ -37,7 +37,7 @@ class _LessonSurveyExtractor(object):
 		survey_els = book.document.getElementsByTagName('nasurvey')
 		if survey_els:
 			self._process_surveys(dom, survey_els, topic_map)
-		
+
 		if savetoc and survey_els:
 			book.toc.save()
 
@@ -54,12 +54,12 @@ class _LessonSurveyExtractor(object):
 			if not el.parentNode:
 				continue
 
-			## Discover the nearest topic in the toc that is a 'course' node
+			# Discover the nearest topic in the toc that is a 'course' node
 			lesson_el = None
 			parent_el = el.parentNode
 			if hasattr(parent_el, 'ntiid') and parent_el.tagName.startswith('course'):
 				lesson_el = topic_map.get(parent_el.ntiid)
-			
+
 			while lesson_el is None and parent_el.parentNode is not None:
 				parent_el = parent_el.parentNode
 				if 	hasattr(parent_el, 'ntiid') and \
