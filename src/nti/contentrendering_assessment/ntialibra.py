@@ -9,6 +9,7 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+import re
 import six
 
 from zope.cachedescriptors.property import readproperty
@@ -46,12 +47,16 @@ class _WordBankMixIn(object):
 
 	def _parse_wordentries(self, naqwordbank):
 		result = []
+		from IPython.core.debugger import Tracer; Tracer()()
 		for x in naqwordbank.getElementsByTagName('naqwordentry'):
 			if 'wid' in x.attributes:
+				# if no word attribute is specified then use the renderered content 
+				content = re.sub('\n', '', (x._asm_local_content or '').strip())
+				word = (x.attributes['word'] or u'').strip() or content
 				data = [x.attributes['wid'],
-						x.attributes['word'],
+						word,
 						x.attributes.get('lang'),
-						x._asm_local_content]
+						content]
 				we = IWordEntry(data)
 				result.append(we)
 		return result
@@ -150,7 +155,8 @@ class naqfillintheblankwithwordbankpart(_WordBankMixIn, _AbstractNAQPart):
 				_naqwordentries = _naqwordbank.getElementsByTagName('naqwordentry')
 				assert len(_naqwordentries) > 0, "Must specified at least one word entry"
 				for x in _naqwordentries:
-					assert x.attributes['wid'] and x.attributes['word']
+					word = x.attributes['word'] or x._asm_local_content
+					assert x.attributes['wid'] and word
 
 			assert len(self.getElementsByTagName('naqsolutions')) == 0
 
