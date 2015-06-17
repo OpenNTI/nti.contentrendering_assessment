@@ -47,7 +47,6 @@ class _WordBankMixIn(object):
 
 	def _parse_wordentries(self, naqwordbank):
 		result = []
-		from IPython.core.debugger import Tracer; Tracer()()
 		for x in naqwordbank.getElementsByTagName('naqwordentry'):
 			if 'wid' in x.attributes:
 				# if no word attribute is specified then use the renderered content 
