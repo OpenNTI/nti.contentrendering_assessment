@@ -278,11 +278,11 @@ class naqpaireditem(naqvalue):
 class naqpaireditems(Base.List):
 	args = '[label:idref]'
 
-class naqwordentry(_LocalContentMixin, Base.List.item):
+class naqwordentry(naqvalue):
 	args = 'wid:str word:str lang:str'
 
-	def _after_render(self, rendered):
-		self._asm_local_content = rendered
+	#def _after_render(self, rendered):
+	#	self._asm_local_content = rendered
 
 class naqblankfield(Base.Command):
 	args = 'id:str [maxlength:int]'
@@ -330,16 +330,16 @@ class naqinput(_LocalContentMixin, Base.Environment):
 # Questions
 
 def _remove_parts_after_render(self, rendered):
-	# # CS: Make sure we only render the children that do not contain any 'question' part,
-	# # since those will be rendereds when the part is so.
+	# CS: Make sure we only render the children that do not contain any 'question' part,
+	# since those will be rendereds when the part is so.
 	def _check(node):
 		f = lambda x :isinstance(x, (_AbstractNAQPart,))
 		found = any(map(f, node.childNodes)) or f(node)
 		return not found
 
-	# # each node in self.childNodes is a plasTeX.Base.TeX.Primitives.par
-	# # check its children to see if they contain any question 'part' objects.
-	# # do not include them in the asm_local_content
+	# each node in self.childNodes is a plasTeX.Base.TeX.Primitives.par
+	# check its children to see if they contain any question 'part' objects.
+	# do not include them in the asm_local_content
 	selected = [n for n in self.childNodes if _check(n)]
 	output = render_children(self.renderer, selected)
 	output = HTMLContentFragment(''.join(output).strip())
