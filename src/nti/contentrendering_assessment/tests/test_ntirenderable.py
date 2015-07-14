@@ -19,7 +19,7 @@ from hamcrest import is_not as does_not
 
 import io
 import os
-import anyjson as json
+import simplejson as json
 
 from zope import component
 from zope import interface
@@ -215,7 +215,6 @@ class TestRenderables(AssessmentRenderingTestCase):
 			del obj['Signatures']
 			assert_that( obj, is_( exp_value ) )
 
-
 	def test_assessment_index_with_file_part(self):
 
 		example = br"""
@@ -286,7 +285,10 @@ class TestRenderables(AssessmentRenderingTestCase):
 										  },
 							'href': 'index.html'}
 			del obj['Signatures']
-			assert_that( obj, is_( exp_value ) )
+			
+			obj = json.dumps(obj, indent=4, sort_keys=True) 
+			exp_value =	json.dumps(exp_value, indent=4, sort_keys=True)
+			assert_that(obj, is_(exp_value))
 
 	def test_assessment_index_with_assignment(self):
 
@@ -363,10 +365,12 @@ class TestRenderables(AssessmentRenderingTestCase):
 																	 {'Class': 'TimedAssignment',
 																	  'is_non_public': True,
 																	  'category_name': 'default',
+																	  'CategoryName': "default",
 																	  # XXX: JAM: Obviously this is wrong. Hopefully nobody uses it.
 																	  'content': u'\\label{assignment} Assignment content. \\begin{naassignmentpart}[auto_grade=true]<Part Title>{set} Some content. \\end{naassignmentpart}',
 																	  'maximum_time_allowed': 50,
 																	  'no_submit': False,
+																	  'NoSubmit': False,
 																	  'MimeType': 'application/vnd.nextthought.assessment.timedassignment',
 																	  'NTIID': 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.asg.assignment',
 																	  'ntiid': 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.asg.assignment',
@@ -403,8 +407,10 @@ class TestRenderables(AssessmentRenderingTestCase):
 						 'href': 'index.html'}
 
 			del obj['Signatures']
-			assert_that( obj, is_( exp_value ) )
-
+			
+			obj = json.dumps(obj, indent=4, sort_keys=True) 
+			exp_value = json.dumps(exp_value, indent=4, sort_keys=True)
+			assert_that(obj, is_(exp_value))
 
 	def test_cs_encapsulation_brianna(self):
 		example = """
