@@ -58,6 +58,7 @@ setup(
 		'nti.contentfragments',
 		'nti.contentrendering',
 		'nti.externalization',
+		'nti.mimetype',
 		'nti.plasTeX'
 	],
 	extras_require={
