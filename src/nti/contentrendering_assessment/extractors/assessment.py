@@ -25,6 +25,8 @@ from nti.externalization.internalization import find_factory_for
 from nti.externalization.externalization import toExternalObject
 from nti.externalization.internalization import update_from_external_object
 
+from nti.mimetype.externalization import decorateMimeType
+
 from ..interfaces import IAssessmentExtractor
 
 @interface.implementer(IAssessmentExtractor)
@@ -80,7 +82,9 @@ class _AssessmentExtractor(object):
 		return index
 
 	def _to_external_object(self, obj):
-		return toExternalObject(obj, decorate=False)
+		result = toExternalObject(obj, decorate=False)
+		decorateMimeType(obj, result)
+		return result
 
 	def _build_index(self, element, index, signatures):
 		"""
