@@ -31,6 +31,7 @@ from nti.assessment.interfaces import IQPoll
 from nti.assessment.interfaces import IQSurvey
 
 from nti.assessment.interfaces import NTIID_TYPE
+from nti.assessment.interfaces import POLL_MIME_TYPE
 from nti.assessment.interfaces import SURVEY_MIME_TYPE
 
 from nti.contentrendering.plastexids import NTIIDMixin
@@ -80,6 +81,8 @@ class napoll(_LocalContentMixin, Base.Environment, nainquiry):
 	_ntiid_allow_missing_title = True
 	_ntiid_cache_map_name = '_napoll_ntiid_map'
 
+	mimeType = POLL_MIME_TYPE
+	
 	def invoke( self, tex ):
 		res = super(napoll, self).invoke(tex)
 		return res
