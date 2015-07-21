@@ -22,6 +22,10 @@ from nti.assessment.interfaces import QUESTION_SET_MIME_TYPE
 
 from nti.contentrendering.interfaces import IJSONTransformer
 
+from nti.externalization.interfaces import StandardExternalFields
+
+NTIID = StandardExternalFields.NTIID
+
 def _render_children(renderer, nodes, strip=True):
 	if not isinstance(nodes, six.string_types):
 		result = unicode(''.join(render_children(renderer, nodes)))
@@ -38,7 +42,7 @@ class _NAPollRefJSONTransformer(object):
 	def transform(self):
 		output = {'label': ''}
 		output['MimeType'] = POLL_MIME_TYPE
-		output['Target-NTIID'] = self.el.poll.ntiid
+		output[NTIID] = output['Target-NTIID'] = self.el.poll.ntiid
 		return output
 
 @interface.implementer(IJSONTransformer)
@@ -52,8 +56,8 @@ class _NASurveyRefJSONTransformer(object):
 		title = _render_children(self.el.survey.renderer, title)
 		output = {'label': title}
 		output['MimeType'] = SURVEY_MIME_TYPE
-		output['Target-NTIID'] = self.el.survey.ntiid
 		output['question-count'] = self.el.survey.question_count
+		output[NTIID] = output['Target-NTIID'] = self.el.survey.ntiid
 		return output
 
 @interface.implementer(IJSONTransformer)
@@ -67,8 +71,8 @@ class _NAQuestionSetRefJSONTransformer(object):
 		title = _render_children(self.el.questionset.renderer, title)
 		output = {'label': title}
 		output['MimeType'] = QUESTION_SET_MIME_TYPE
-		output['Target-NTIID'] = self.el.questionset.ntiid
 		output['question-count'] = self.el.questionset.question_count
+		output[NTIID] = output['Target-NTIID'] = self.el.questionset.ntiid
 		return output
 
 @interface.implementer(IJSONTransformer)
@@ -81,7 +85,7 @@ class _NAAssignmentRefJSONTransformer(object):
 		title = self.el.assignment.title
 		title = _render_children(self.el.assignment.renderer, title)
 		output = {'label': title, 'title': title}
-		output['NTIID'] = self.el.assignment.ntiid
+		output[NTIID] = self.el.assignment.ntiid
 		output['MimeType'] = self.el.assignment.mimeType
 		output['Target-NTIID'] = self.el.assignment.ntiid
 		output['ContainerId'] = self.el.assignment.containerId
