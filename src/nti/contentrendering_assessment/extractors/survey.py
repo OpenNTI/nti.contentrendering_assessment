@@ -49,32 +49,42 @@ class _LessonSurveyExtractor(object):
 				result[ntiid] = topic_el
 		return result
 
-	def _process_surveys(self, dom, els, topic_map):
-		for el in els:
-			if not el.parentNode:
-				continue
-
-			# Discover the nearest topic in the toc that is a 'course' node
-			lesson_el = None
-			parent_el = el.parentNode
+	def _parent_finder(self, element, topic_map):
+		lesson_el = None
+		parent_el = element.parentNode
+		while lesson_el is None and parent_el is not None:
 			if hasattr(parent_el, 'ntiid') and parent_el.tagName.startswith('course'):
 				lesson_el = topic_map.get(parent_el.ntiid)
+			parent_el = parent_el.parentNode if lesson_el is None else parent_el
+		return parent_el, lesson_el
 
-			while lesson_el is None and parent_el.parentNode is not None:
-				parent_el = parent_el.parentNode
-				if 	hasattr(parent_el, 'ntiid') and \
-					parent_el.tagName.startswith('course'):
-					lesson_el = topic_map.get(parent_el.ntiid)
+	def _process_inquiry(self, dom, element, topic_map):
+		parent_el, lesson_el = self._parent_finder(element, topic_map)
+		if not parent_el or not lesson_el:
+			return None
 
-			label = title = el.title
+		toc_el = dom.createElement('object')
+		toc_el.setAttribute('mimeType', element.mimeType)
+		toc_el.setAttribute('target-ntiid', element.ntiid)
+
+		if lesson_el:
+			lesson_el.appendChild(toc_el)
+			lesson_el.appendChild(dom.createTextNode(u'\n'))
+		return toc_el
+
+	def _process_surveys(self, dom, els, topic_map):
+		for element in els:
+			toc_el = self._process_inquiry(dom, element, topic_map)
+			if not toc_el:
+				continue
+
+			label = title = element.title
 			if not isinstance(title, six.string_types):
-				label = unicode(''.join(render_children(el.renderer, title)))
+				label = unicode(''.join(render_children(element.renderer, title)))
 
-			toc_el = dom.createElement('object')
 			toc_el.setAttribute('label', label)
-			toc_el.setAttribute('mimeType', el.mimeType)
-			toc_el.setAttribute('target-ntiid', el.ntiid)
-			toc_el.setAttribute('question-count', el.question_count)
-			if lesson_el:
-				lesson_el.appendChild(toc_el)
-				lesson_el.appendChild(dom.createTextNode(u'\n'))
+			toc_el.setAttribute('question-count', element.question_count)
+
+	def _process_polls(self, dom, els, topic_map):
+		for element in els:
+			self._process_inquiry(dom, element, topic_map, self._poll_parent_finder)
