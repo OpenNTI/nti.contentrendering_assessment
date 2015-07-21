@@ -16,6 +16,7 @@ from zope import interface
 
 from plasTeX.Renderers import render_children
 
+from nti.assessment.interfaces import POLL_MIME_TYPE
 from nti.assessment.interfaces import SURVEY_MIME_TYPE
 from nti.assessment.interfaces import QUESTION_SET_MIME_TYPE
 
@@ -27,6 +28,18 @@ def _render_children(renderer, nodes, strip=True):
 	else:
 		result = nodes.decode("utf-8") if isinstance(nodes, bytes) else nodes
 	return result.strip() if strip and result else result
+
+@interface.implementer(IJSONTransformer)
+class _NAPollRefJSONTransformer(object):
+
+	def __init__(self, element):
+		self.el = element
+
+	def transform(self):
+		output = {'label': ''}
+		output['MimeType'] = POLL_MIME_TYPE
+		output['Target-NTIID'] = self.el.poll.ntiid
+		return output
 
 @interface.implementer(IJSONTransformer)
 class _NASurveyRefJSONTransformer(object):
