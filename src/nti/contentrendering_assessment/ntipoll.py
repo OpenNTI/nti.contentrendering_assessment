@@ -33,6 +33,7 @@ from nti.assessment.interfaces import IQSurvey
 from nti.assessment.interfaces import NTIID_TYPE
 from nti.assessment.interfaces import POLL_MIME_TYPE
 from nti.assessment.interfaces import SURVEY_MIME_TYPE
+from nti.assessment.interfaces import DISPLAY_TERMINATION
 
 from nti.contentrendering.plastexids import NTIIDMixin
 from nti.contentrendering.interfaces import IEmbeddedContainer
@@ -55,6 +56,10 @@ class nainquiry(NTIIDMixin):
 		userdata = getattr(document, 'userdata', None) or {}
 		return userdata.get('document_timezone_name')
 	
+	@property
+	def options(self):
+		return self.attributes.get('options') or {}
+		
 	def not_before(self, options):
 		result = parse_assessment_datetime(	'not_before_date', options,
 										   	'T00:00', self._local_tzname)
@@ -63,6 +68,10 @@ class nainquiry(NTIIDMixin):
 	def not_after(self, options):
 		result = parse_assessment_datetime(	'not_after_date', options, 
 											'T23:59', self._local_tzname)
+		return result
+	
+	def display(self, options):
+		result = options.get('display') or DISPLAY_TERMINATION
 		return result
 
 class napoll(_LocalContentMixin, Base.Environment, nainquiry):
@@ -109,21 +118,23 @@ class napoll(_LocalContentMixin, Base.Environment, nainquiry):
 		to_iter = (x for x in self.allChildNodes if _filter(x))
 		return [x.assessment_object() for x in to_iter]
 
-	def _createPoll(self, not_before=None, not_after=None):
+	def _createPoll(self, display=None, not_before=None, not_after=None):
 		result = QPoll(content=self._asm_local_content,
 					   parts=self._asm_poll_parts(),
+					   display=display or DISPLAY_TERMINATION,
 					   available_for_submission_beginning=not_before,
 					   available_for_submission_ending=not_after)
 		return result
 
 	@cachedIn('_v_assessment_object')
 	def assessment_object(self):
-		# parse dates
-		options = self.attributes.get('options') or ()
-		not_before = self.not_before(options)
+		# parse options
+		options = self.options
+		display = self.display(options)
 		not_after = self.not_after(options)
+		not_before = self.not_before(options)
 		# create poll
-		result = self._createPoll(not_before, not_after)
+		result = self._createPoll(display, not_before, not_after)
 		errors = schema.getValidationErrors(IQPoll, result)
 		if errors: # pragma: no cover
 			raise errors[0][1]
@@ -168,8 +179,10 @@ class nasurvey(Base.List, nainquiry):
 
 	mimeType = SURVEY_MIME_TYPE
 	
-	def create_survey(self, questions, title, not_before=None, not_after=None, **kwargs):
+	def create_survey(self, questions, title, display=None, not_before=None, 
+					  not_after=None, **kwargs):
 		result = QSurvey(questions=questions, title=title,
+						 display=display or DISPLAY_TERMINATION,
 						 available_for_submission_beginning=not_before,
 					     available_for_submission_ending=not_after)
 		return result
@@ -182,10 +195,11 @@ class nasurvey(Base.List, nainquiry):
 	
 	@cachedIn('_v_assessment_object')
 	def assessment_object(self):
-		# parse dates
-		options = self.attributes.get('options') or ()
-		not_before = self.not_before(options)
+		# parse options
+		options = self.options
+		display = self.display(options)
 		not_after = self.not_after(options)
+		not_before = self.not_before(options)
 		
 		# parse poll questions
 		questions = [qref.idref['label'].assessment_object()
@@ -208,6 +222,7 @@ class nasurvey(Base.List, nainquiry):
 
 		result = self.create_survey(questions=questions, 
 									title=title,
+									display=display,
 									not_before=not_before,
 									not_after=not_after)
 		self.validate_survey(result)
