@@ -33,7 +33,7 @@ from nti.assessment.interfaces import IQSurvey
 from nti.assessment.interfaces import NTIID_TYPE
 from nti.assessment.interfaces import POLL_MIME_TYPE
 from nti.assessment.interfaces import SURVEY_MIME_TYPE
-from nti.assessment.interfaces import DISPLAY_TERMINATION
+from nti.assessment.interfaces import DISCLOSURE_TERMINATION
 
 from nti.contentrendering.plastexids import NTIIDMixin
 from nti.contentrendering.interfaces import IEmbeddedContainer
@@ -70,8 +70,8 @@ class nainquiry(NTIIDMixin):
 											'T23:59', self._local_tzname)
 		return result
 	
-	def display(self, options):
-		result = options.get('display') or DISPLAY_TERMINATION
+	def disclosure(self, options):
+		result = options.get('disclosure') or DISCLOSURE_TERMINATION
 		return result
 
 class napoll(_LocalContentMixin, Base.Environment, nainquiry):
@@ -118,10 +118,10 @@ class napoll(_LocalContentMixin, Base.Environment, nainquiry):
 		to_iter = (x for x in self.allChildNodes if _filter(x))
 		return [x.assessment_object() for x in to_iter]
 
-	def _createPoll(self, display=None, not_before=None, not_after=None):
+	def _createPoll(self, disclosure=None, not_before=None, not_after=None):
 		result = QPoll(content=self._asm_local_content,
 					   parts=self._asm_poll_parts(),
-					   display=display or DISPLAY_TERMINATION,
+					   disclosure=disclosure or DISCLOSURE_TERMINATION,
 					   available_for_submission_beginning=not_before,
 					   available_for_submission_ending=not_after)
 		return result
@@ -130,11 +130,11 @@ class napoll(_LocalContentMixin, Base.Environment, nainquiry):
 	def assessment_object(self):
 		# parse options
 		options = self.options
-		display = self.display(options)
+		disclosure = self.disclosure(options)
 		not_after = self.not_after(options)
 		not_before = self.not_before(options)
 		# create poll
-		result = self._createPoll(display, not_before, not_after)
+		result = self._createPoll(disclosure, not_before, not_after)
 		errors = schema.getValidationErrors(IQPoll, result)
 		if errors: # pragma: no cover
 			raise errors[0][1]
@@ -179,10 +179,10 @@ class nasurvey(Base.List, nainquiry):
 
 	mimeType = SURVEY_MIME_TYPE
 	
-	def create_survey(self, questions, title, display=None, not_before=None, 
+	def create_survey(self, questions, title, disclosure=None, not_before=None, 
 					  not_after=None, **kwargs):
 		result = QSurvey(questions=questions, title=title,
-						 display=display or DISPLAY_TERMINATION,
+						 disclosure=disclosure or DISCLOSURE_TERMINATION,
 						 available_for_submission_beginning=not_before,
 					     available_for_submission_ending=not_after)
 		return result
@@ -197,7 +197,7 @@ class nasurvey(Base.List, nainquiry):
 	def assessment_object(self):
 		# parse options
 		options = self.options
-		display = self.display(options)
+		disclosure = self.disclosure(options)
 		not_after = self.not_after(options)
 		not_before = self.not_before(options)
 		
@@ -222,7 +222,7 @@ class nasurvey(Base.List, nainquiry):
 
 		result = self.create_survey(questions=questions, 
 									title=title,
-									display=display,
+									disclosure=disclosure,
 									not_before=not_before,
 									not_after=not_after)
 		self.validate_survey(result)
