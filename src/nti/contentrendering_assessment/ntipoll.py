@@ -142,7 +142,10 @@ class napoll(_LocalContentMixin, Base.Environment, nainquiry):
 		return result
 
 class napollref(Crossref.ref):
-	pass
+
+	@readproperty
+	def poll(self):
+		return self.idref['label']
 
 @interface.implementer(IEmbeddedContainer)
 class nasurvey(Base.List, nainquiry):
