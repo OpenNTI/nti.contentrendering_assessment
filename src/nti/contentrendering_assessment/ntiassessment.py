@@ -229,21 +229,23 @@ class naqmultiplechoicepart(_AbstractNAQPart):
 		assert len(_naqchoices) == 1
 		_naqchoices = _naqchoices[0]
 		assert len(_naqchoices) > 1, "Must have more than one choice"
-		assert any( (_naqchoice.attributes['weight'] == 1.0 for _naqchoice in _naqchoices) )
-		assert len(self.getElementsByTagName( 'naqsolutions' )) == 0
+		
+		if self._asm_is_gradable:
+			assert any( (_naqchoice.attributes['weight'] == 1.0 for _naqchoice in _naqchoices) )
+			assert len(self.getElementsByTagName( 'naqsolutions' )) == 0
 
-		# Tranform the implicit solutions into explicit 0-based solutions
-		_naqsolns = self.ownerDocument.createElement( 'naqsolutions' )
-		_naqsolns.macroMode = self.MODE_BEGIN
-		for i, _naqchoice in enumerate(_naqchoices):
-			if _naqchoice.attributes['weight']:
-				_naqsoln = self.ownerDocument.createElement( 'naqsolution' )
-				_naqsoln.attributes['weight'] = _naqchoice.attributes['weight']
-				# Also put the attribute into the argument source, for presentation
-				_naqsoln.argSource = '[%s]' % _naqsoln.attributes['weight']
-				_naqsoln.appendChild( self.ownerDocument.createTextNode( str(i) ) )
-				_naqsolns.appendChild( _naqsoln )
-		self.insertAfter( _naqsolns, _naqchoices )
+			# Tranform the implicit solutions into explicit 0-based solutions
+			_naqsolns = self.ownerDocument.createElement( 'naqsolutions' )
+			_naqsolns.macroMode = self.MODE_BEGIN
+			for i, _naqchoice in enumerate(_naqchoices):
+				if _naqchoice.attributes['weight']:
+					_naqsoln = self.ownerDocument.createElement( 'naqsolution' )
+					_naqsoln.attributes['weight'] = _naqchoice.attributes['weight']
+					# Also put the attribute into the argument source, for presentation
+					_naqsoln.argSource = '[%s]' % _naqsoln.attributes['weight']
+					_naqsoln.appendChild( self.ownerDocument.createTextNode( str(i) ) )
+					_naqsolns.appendChild( _naqsoln )
+			self.insertAfter( _naqsolns, _naqchoices )
 		return res
 
 	def invoke(self, tex):
@@ -326,21 +328,23 @@ class naqmultiplechoicemultipleanswerpart(_AbstractNAQPart):
 
 		_naqchoices = _naqchoices[0]
 		assert len(_naqchoices) > 1, "Must have more than one choice"
-		assert any( (_naqchoice.attributes['weight'] == 1.0 for _naqchoice in _naqchoices) )
 		assert len(self.getElementsByTagName( 'naqsolutions' )) == 0
 
-		# Tranform the implicit solutions into a list of 0-based indices.
-		_naqsolns = self.ownerDocument.createElement( 'naqsolutions' )
-		_naqsolns.macroMode = _naqsolns.MODE_BEGIN
-		_naqsoln = self.ownerDocument.createElement( 'naqsolution' )
-		_naqsoln.attributes['weight'] = 1.0
-		_naqsoln.argSource = '[1.0]'
-		_naqsoln.answer = []
-		for i, _naqchoice in enumerate(_naqchoices):
-			if _naqchoice.attributes['weight'] and _naqchoice.attributes['weight'] == 1:
-				_naqsoln.answer.append( i )
-		_naqsolns.appendChild( _naqsoln )
-		self.insertAfter( _naqsolns, _naqchoices )
+		if self._asm_is_gradable:
+			assert any( (_naqchoice.attributes['weight'] == 1.0 for _naqchoice in _naqchoices) )
+
+			# Tranform the implicit solutions into a list of 0-based indices.
+			_naqsolns = self.ownerDocument.createElement( 'naqsolutions' )
+			_naqsolns.macroMode = _naqsolns.MODE_BEGIN
+			_naqsoln = self.ownerDocument.createElement( 'naqsolution' )
+			_naqsoln.attributes['weight'] = 1.0
+			_naqsoln.argSource = '[1.0]'
+			_naqsoln.answer = []
+			for i, _naqchoice in enumerate(_naqchoices):
+				if _naqchoice.attributes['weight'] and _naqchoice.attributes['weight'] == 1:
+					_naqsoln.answer.append( i )
+			_naqsolns.appendChild( _naqsoln )
+			self.insertAfter( _naqsolns, _naqchoices )
 		return res
 
 	def invoke(self, tex):
