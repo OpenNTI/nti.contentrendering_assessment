@@ -280,8 +280,8 @@ class naqmultiplechoicemultipleanswerpart(_AbstractNAQPart):
 	part_interface = as_interfaces.IQMultipleChoiceMultipleAnswerPart
 	soln_interface = as_interfaces.IQMultipleChoiceMultipleAnswerSolution
 
-	nongradable_part_factory = parts.QNonGradableMultipleChoicePart
-	nongradable_part_interface = as_interfaces.IQNonGradableMultipleChoicePart
+	nongradable_part_factory = parts.QNonGradableMultipleChoiceMultipleAnswerPart
+	nongradable_part_interface = as_interfaces.IQNonGradableMultipleChoiceMultipleAnswerPart
 	
 	randomized_part_factory = randomized_parts.QRandomizedMultipleChoiceMultipleAnswerPart
 	randomized_part_interface = rand_interfaces.IQRandomizedMultipleChoiceMultipleAnswerPart

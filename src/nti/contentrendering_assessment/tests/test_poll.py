@@ -20,6 +20,7 @@ from nti.assessment.interfaces import IQSurvey
 from nti.assessment.interfaces import IQNonGradableMatchingPart
 from nti.assessment.interfaces import IQNonGradableOrderingPart
 from nti.assessment.interfaces import IQNonGradableMultipleChoicePart
+from nti.assessment.interfaces import IQNonGradableMultipleChoiceMultipleAnswerPart
 
 from nti.contentrendering_assessment.ntiassessment import napoll
 from nti.contentrendering_assessment.ntiassessment import nasurvey
@@ -123,7 +124,6 @@ class TestPoll(AssessmentRenderingTestCase):
 		assert_that(dom.getElementsByTagName('napoll')[0], is_(napoll))
 
 		assert_that(dom.getElementsByTagName('naqchoice'), has_length(3))
-		assert_that(dom.getElementsByTagName('naqsolution'), has_length(2))
 
 		naq = dom.getElementsByTagName('napoll')[0]
 		part_el = naq.getElementsByTagName('naqmultiplechoicepart')[0]
@@ -131,6 +131,37 @@ class TestPoll(AssessmentRenderingTestCase):
 		part = part_el.assessment_object()
 		assert_that(part, verifiably_provides(part_el.nongradable_part_interface))
 		assert_that(part_el.nongradable_part_interface, is_(IQNonGradableMultipleChoicePart))
+
+	def test_multiple_choice_multiple_answer_macros(self):
+		example = br"""
+			\begin{napoll}
+				Arbitrary prefix content goes here.
+				\begin{naqmultiplechoicemultipleanswerpart}
+				   Arbitrary content for this part goes here.
+					\begin{naqchoices}
+						\naqchoice 8
+						\naqchoice 9
+						\naqchoice[1] 12
+						\naqchoice[1] 18
+						\naqchoice 21
+						\naqchoice[1] 36
+				  	\end{naqchoices}
+				\end{naqmultiplechoicemultipleanswerpart}
+			\end{napoll}
+			"""
+
+		dom = _buildDomFromString(_simpleLatexDocument((example,)))
+		assert_that(dom.getElementsByTagName('napoll'), has_length(1))
+		assert_that(dom.getElementsByTagName('napoll')[0], is_(napoll))
+
+		assert_that(dom.getElementsByTagName('naqchoice'), has_length(6))
+
+		naq = dom.getElementsByTagName('napoll')[0]
+		part_el = naq.getElementsByTagName('naqmultiplechoicemultipleanswerpart')[0]
+
+		part = part_el.assessment_object()
+		assert_that(part, verifiably_provides(part_el.nongradable_part_interface))
+		assert_that(part_el.nongradable_part_interface, is_(IQNonGradableMultipleChoiceMultipleAnswerPart))
 
 	def test_survey(self):
 		example = br"""
