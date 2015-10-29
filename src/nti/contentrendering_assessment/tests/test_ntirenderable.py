@@ -43,6 +43,17 @@ class _MockRenderedBook(object):
 	document = None
 	contentLocation = None
 
+def remove_keys(data, *keys):
+	if isinstance(data, dict):
+		for x, y in list(data.items()): # mutating
+			if x in keys:
+				data.pop(x, None)
+			else:
+				remove_keys(y, *keys)
+	elif isinstance(data, list):
+		for x in data: # mutating
+			remove_keys(x, *keys)
+
 class TestRenderables(AssessmentRenderingTestCase):
 
 	def _do_test_render(self, label, ntiid, filename='index.html', units='',
@@ -366,6 +377,7 @@ class TestRenderables(AssessmentRenderingTestCase):
 																	  'is_non_public': True,
 																	  'category_name': 'default',
 																	  'CategoryName': "default",
+																	  "Creator": "zope.security.management.system_user",
 																	  # XXX: JAM: Obviously this is wrong. Hopefully nobody uses it.
 																	  'content': u'\\label{assignment} Assignment content. \\begin{naassignmentpart}[auto_grade=true]<Part Title>{set} Some content. \\end{naassignmentpart}',
 																	  'maximum_time_allowed': 50,
@@ -406,9 +418,8 @@ class TestRenderables(AssessmentRenderingTestCase):
 						   'href': 'index.html'}},
 						 'href': 'index.html'}
 
-			del obj['Signatures']
-			
-			obj = json.dumps(obj, indent=4, sort_keys=True) 
+			remove_keys(obj, 'Signatures', 'CreatedTime', 'Last Modified')			
+			obj = json.dumps(obj, indent=4, sort_keys=True) 			
 			exp_value = json.dumps(exp_value, indent=4, sort_keys=True)
 			assert_that(obj, is_(exp_value))
 
