@@ -18,6 +18,8 @@ from zope import interface
 from zope.cachedescriptors.method import cachedIn
 from zope.cachedescriptors.property import readproperty
 
+from paste.deploy.converters import asbool
+
 from persistent.list import PersistentList
 
 from plasTeX import Base
@@ -73,6 +75,12 @@ class nainquiry(NTIIDMixin):
 	def disclosure(self, options):
 		result = options.get('disclosure') or DISCLOSURE_TERMINATION
 		return result
+	
+	def is_non_public(self, options):
+		result = False
+		if 'public' in options and not asbool(options['public']):
+			result = True
+		return result
 
 class napoll(_LocalContentMixin, Base.Environment, nainquiry):
 	args = "[options:dict:str]"
@@ -118,9 +126,10 @@ class napoll(_LocalContentMixin, Base.Environment, nainquiry):
 		to_iter = (x for x in self.allChildNodes if _filter(x))
 		return [x.assessment_object() for x in to_iter]
 
-	def _createPoll(self, disclosure=None, not_before=None, not_after=None):
+	def _createPoll(self, disclosure=None, not_before=None, not_after=None, is_non_public=False):
 		result = QPoll(content=self._asm_local_content,
 					   parts=self._asm_poll_parts(),
+					   is_non_public=is_non_public,
 					   disclosure=disclosure or DISCLOSURE_TERMINATION,
 					   available_for_submission_beginning=not_before,
 					   available_for_submission_ending=not_after)
@@ -133,8 +142,9 @@ class napoll(_LocalContentMixin, Base.Environment, nainquiry):
 		disclosure = self.disclosure(options)
 		not_after = self.not_after(options)
 		not_before = self.not_before(options)
+		is_non_public = self.is_non_public(options)
 		# create poll
-		result = self._createPoll(disclosure, not_before, not_after)
+		result = self._createPoll(disclosure, not_before, not_after, is_non_public)
 		errors = schema.getValidationErrors(IQPoll, result)
 		if errors: # pragma: no cover
 			raise errors[0][1]
@@ -183,8 +193,9 @@ class nasurvey(Base.List, nainquiry):
 	mimeType = SURVEY_MIME_TYPE
 	
 	def create_survey(self, questions, title, disclosure=None, not_before=None, 
-					  not_after=None, **kwargs):
+					  not_after=None, is_non_public=False, **kwargs):
 		result = QSurvey(questions=questions, title=title,
+						 is_non_public=is_non_public,
 						 disclosure=disclosure or DISCLOSURE_TERMINATION,
 						 available_for_submission_beginning=not_before,
 					     available_for_submission_ending=not_after)
@@ -203,6 +214,7 @@ class nasurvey(Base.List, nainquiry):
 		disclosure = self.disclosure(options)
 		not_after = self.not_after(options)
 		not_before = self.not_before(options)
+		is_non_public = self.is_non_public(options)
 		
 		# parse poll questions
 		questions = [qref.idref['label'].assessment_object()
@@ -227,7 +239,8 @@ class nasurvey(Base.List, nainquiry):
 									title=title,
 									disclosure=disclosure,
 									not_before=not_before,
-									not_after=not_after)
+									not_after=not_after,
+									is_non_public=is_non_public)
 		self.validate_survey(result)
 		result.ntiid = self.ntiid # copy the id
 		return result
