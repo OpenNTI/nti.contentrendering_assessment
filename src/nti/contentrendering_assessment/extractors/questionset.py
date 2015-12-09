@@ -107,6 +107,8 @@ class _LessonQuestionSetExtractor(object):
 			if not el.parentNode:
 				continue
 
+			__traceback_info__ = type(el), el
+
 			category = el.attributes.get('options', {}).get('category')
 			if category != u'no_submit':
 				continue
