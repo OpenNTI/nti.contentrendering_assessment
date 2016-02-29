@@ -24,7 +24,11 @@ from nti.contentrendering.interfaces import IJSONTransformer
 
 from nti.externalization.interfaces import StandardExternalFields
 
+TARGET_NTIID = 'Target-NTIID'
+
 NTIID = StandardExternalFields.NTIID
+MIMETYPE = StandardExternalFields.MIMETYPE
+CONTAINER_ID = StandardExternalFields.CONTAINER_ID
 
 def _render_children(renderer, nodes, strip=True):
 	if not isinstance(nodes, six.string_types):
@@ -41,8 +45,8 @@ class _NAPollRefJSONTransformer(object):
 
 	def transform(self):
 		output = {'label': ''}
-		output['MimeType'] = POLL_MIME_TYPE
-		output[NTIID] = output['Target-NTIID'] = self.el.poll.ntiid
+		output[MIMETYPE] = POLL_MIME_TYPE
+		output[NTIID] = output[TARGET_NTIID] = self.el.poll.ntiid
 		return output
 
 @interface.implementer(IJSONTransformer)
@@ -55,9 +59,9 @@ class _NASurveyRefJSONTransformer(object):
 		title = self.el.survey.title
 		title = _render_children(self.el.survey.renderer, title)
 		output = {'label': title}
-		output['MimeType'] = SURVEY_MIME_TYPE
+		output[MIMETYPE] = SURVEY_MIME_TYPE
 		output['question-count'] = self.el.survey.question_count
-		output[NTIID] = output['Target-NTIID'] = self.el.survey.ntiid
+		output[NTIID] = output[TARGET_NTIID] = self.el.survey.ntiid
 		return output
 
 @interface.implementer(IJSONTransformer)
@@ -70,9 +74,9 @@ class _NAQuestionSetRefJSONTransformer(object):
 		title = self.el.questionset.title
 		title = _render_children(self.el.questionset.renderer, title)
 		output = {'label': title}
-		output['MimeType'] = QUESTION_SET_MIME_TYPE
+		output[MIMETYPE] = QUESTION_SET_MIME_TYPE
 		output['question-count'] = self.el.questionset.question_count
-		output[NTIID] = output['Target-NTIID'] = self.el.questionset.ntiid
+		output[NTIID] = output[TARGET_NTIID] = self.el.questionset.ntiid
 		return output
 
 @interface.implementer(IJSONTransformer)
@@ -86,7 +90,7 @@ class _NAAssignmentRefJSONTransformer(object):
 		title = _render_children(self.el.assignment.renderer, title)
 		output = {'label': title, 'title': title}
 		output[NTIID] = self.el.assignment.ntiid
-		output['MimeType'] = self.el.assignment.mimeType
-		output['Target-NTIID'] = self.el.assignment.ntiid
-		output['ContainerId'] = self.el.assignment.containerId
+		output[MIMETYPE] = self.el.assignment.mimeType
+		output[TARGET_NTIID] = self.el.assignment.ntiid
+		output[CONTAINER_ID] = self.el.assignment.containerId
 		return output
