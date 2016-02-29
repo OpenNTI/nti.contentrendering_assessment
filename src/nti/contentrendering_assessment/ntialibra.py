@@ -35,11 +35,11 @@ from nti.contentfragments.interfaces import ILatexContentFragment
 from nti.contentrendering.plastexpackages._util import _is_renderable
 from nti.contentrendering.plastexpackages._util import _htmlcontent_rendered_elements
 
-from .ntibase import naqvalue
-from .ntibase import _AbstractNAQPart
-from .ntibase import _LocalContentMixin
+from nti.contentrendering_assessment.ntibase import naqvalue
+from nti.contentrendering_assessment.ntibase import _AbstractNAQPart
+from nti.contentrendering_assessment.ntibase import _LocalContentMixin
 
-from .ntiquestion import naquestion
+from nti.contentrendering_assessment.ntiquestion import naquestion
 
 # Parts
 
@@ -49,7 +49,7 @@ class _WordBankMixIn(object):
 		result = []
 		for x in naqwordbank.getElementsByTagName('naqwordentry'):
 			if 'wid' in x.attributes:
-				# if no word attribute is specified then use the renderered content 
+				# if no word attribute is specified then use the renderered content
 				content = re.sub('\n', '', (x._asm_local_content or '').strip())
 				word = (x.attributes['word'] or u'').strip() or content
 				data = [x.attributes['wid'],
@@ -286,8 +286,8 @@ class naqpaireditems(Base.List):
 class naqwordentry(naqvalue):
 	args = 'wid:str word:str lang:str'
 
-	#def _after_render(self, rendered):
-	#	self._asm_local_content = rendered
+	# def _after_render(self, rendered):
+	# 	self._asm_local_content = rendered
 
 class naqblankfield(Base.Command):
 	args = 'id:str [maxlength:int]'

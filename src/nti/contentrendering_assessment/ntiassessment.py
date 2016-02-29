@@ -82,8 +82,8 @@ from nti.assessment.randomized import interfaces as rand_interfaces
 
 from nti.contentrendering.plastexpackages.ntilatexmacros import ntiincludevideo
 
-from .ntibase import _AbstractNAQPart
-from .ntibase import _LocalContentMixin
+from nti.contentrendering_assessment.ntibase import _AbstractNAQPart
+from nti.contentrendering_assessment.ntibase import _LocalContentMixin
 
 ###
 # Solutions
