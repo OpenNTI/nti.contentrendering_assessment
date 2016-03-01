@@ -420,7 +420,8 @@ class TestRenderables(AssessmentRenderingTestCase):
 						   'href': 'index.html'}},
 						 'href': 'index.html'}
 
-			remove_keys(obj, 'ID', 'Signatures', 'CreatedTime', 'Last Modified')
+			remove_keys(obj, 'ID', 'Signatures', 'CreatedTime', 'Last Modified',
+						'publishBeginning', 'publishEnding')
 			obj = json.dumps(obj, indent=4, sort_keys=True) 	
 			exp_value = json.dumps(exp_value, indent=4, sort_keys=True)
 			assert_that(obj, is_(exp_value))
