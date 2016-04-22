@@ -45,7 +45,7 @@ class _MockRenderedBook(object):
 
 def remove_keys(data, *keys):
 	if isinstance(data, dict):
-		for x, y in list(data.items()): # mutating
+		for x, y in tuple(data.items()): # mutating
 			if x in keys:
 				data.pop(x, None)
 			else:
