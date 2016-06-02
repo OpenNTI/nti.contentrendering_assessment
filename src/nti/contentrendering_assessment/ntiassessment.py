@@ -77,9 +77,6 @@ from plasTeX.interfaces import IOptionAwarePythonPackage
 from nti.assessment import parts
 from nti.assessment import interfaces as as_interfaces
 
-from nti.assessment.randomized import parts as randomized_parts
-from nti.assessment.randomized import interfaces as rand_interfaces
-
 from nti.contentrendering.plastexpackages.ntilatexmacros import ntiincludevideo
 
 from nti.contentrendering_assessment.ntibase import _AbstractNAQPart
@@ -194,27 +191,13 @@ class naqmultiplechoicepart(_AbstractNAQPart):
 	nongradable_part_factory = parts.QNonGradableMultipleChoicePart
 	nongradable_part_interface = as_interfaces.IQNonGradableMultipleChoicePart
 
-	randomized_part_factory = randomized_parts.QRandomizedMultipleChoicePart
-	randomized_part_interface = rand_interfaces.IQRandomizedMultipleChoicePart
-
 	def _asm_choices(self):
 		return [x._asm_local_content for x in self.getElementsByTagName('naqchoice')]
 
 	def _asm_object_kwargs(self):
-		return { 'choices': self._asm_choices() }
-
-	def _asm_part_factory(self):
-		if self.randomize:
-			result = self.randomized_part_factory
-		else:
-			result = super(naqmultiplechoicepart, self)._asm_part_factory()
-		return result
-
-	def _asm_part_interface(self):
+		result = { 'choices': self._asm_choices() }
 		if self._asm_is_gradable:
-			result = self.randomized_part_interface
-		else:
-			result = super(naqmultiplechoicepart, self)._asm_part_interface()
+			result['randomized'] = self.randomize
 		return result
 
 	def digest(self, tokens):
@@ -279,14 +262,14 @@ class naqmultiplechoicemultipleanswerpart(_AbstractNAQPart):
 	nongradable_part_factory = parts.QNonGradableMultipleChoiceMultipleAnswerPart
 	nongradable_part_interface = as_interfaces.IQNonGradableMultipleChoiceMultipleAnswerPart
 
-	randomized_part_factory = randomized_parts.QRandomizedMultipleChoiceMultipleAnswerPart
-	randomized_part_interface = rand_interfaces.IQRandomizedMultipleChoiceMultipleAnswerPart
-
 	def _asm_choices(self):
 		return [x._asm_local_content for x in self.getElementsByTagName('naqchoice')]
 
 	def _asm_object_kwargs(self):
-		return { 'choices': self._asm_choices() }
+		result = { 'choices': self._asm_choices() }
+		if self._asm_is_gradable:
+			result['randomized'] = self.randomize
+		return result
 
 	def _asm_solutions(self):
 		solutions = []
@@ -298,20 +281,6 @@ class naqmultiplechoicemultipleanswerpart(_AbstractNAQPart):
 			solution.weight = weight
 		solutions.append(solution)
 		return solutions
-
-	def _asm_part_factory(self):
-		if self.randomize:
-			result = self.randomized_part_factory
-		else:
-			result = super(naqmultiplechoicemultipleanswerpart, self)._asm_part_factory()
-		return result
-
-	def _asm_part_interface(self):
-		if self._asm_is_gradable:
-			result = self.randomized_part_interface
-		else:
-			result = super(naqmultiplechoicemultipleanswerpart, self)._asm_part_interface()
-		return result
 
 	def digest(self, tokens):
 		res = super(naqmultiplechoicemultipleanswerpart, self).digest(tokens)
@@ -425,9 +394,6 @@ class naqconnectingpart(_AbstractNAQPart):
 	nongradable_part_factory = parts.QNonGradableConnectingPart
 	nongradable_part_interface = as_interfaces.IQNonGradableConnectingPart
 
-	randomized_part_factory = randomized_parts.QRandomizedConnectingPart
-	randomized_part_interface = rand_interfaces.IQRandomizedConnectingPart
-
 	def _asm_labels(self):
 		return [x._asm_local_content for x in self.getElementsByTagName('naqmlabel')]
 
@@ -435,8 +401,11 @@ class naqconnectingpart(_AbstractNAQPart):
 		return [x._asm_local_content for x in self.getElementsByTagName('naqmvalue')]
 
 	def _asm_object_kwargs(self):
-		return { 'labels': self._asm_labels(),
-				 'values': self._asm_values() }
+		result = {'labels': self._asm_labels(),
+				  'values': self._asm_values() }
+		if self._asm_is_gradable:
+			result['randomized'] = self.randomize
+		return result
 
 	def _asm_solutions(self):
 		solutions = []
@@ -448,20 +417,6 @@ class naqconnectingpart(_AbstractNAQPart):
 				solution.weight = weight
 			solutions.append(solution)
 		return solutions
-
-	def _asm_part_factory(self):
-		if self.randomize:
-			result = self.randomized_part_factory
-		else:
-			result = super(naqconnectingpart, self)._asm_part_factory()
-		return result
-
-	def _asm_part_interface(self):
-		if self._asm_is_gradable:
-			result = self.randomized_part_interface
-		else:
-			result = super(naqconnectingpart, self)._asm_part_interface()
-		return result
 
 	def digest(self, tokens):
 		res = super(naqconnectingpart, self).digest(tokens)
@@ -541,9 +496,6 @@ class naqmatchingpart(naqconnectingpart):
 	nongradable_part_factory = parts.QNonGradableMatchingPart
 	nongradable_part_interface = as_interfaces.IQNonGradableMatchingPart
 
-	randomized_part_factory = randomized_parts.QRandomizedMatchingPart
-	randomized_part_interface = rand_interfaces.IQRandomizedMatchingPart
-
 class naqorderingpart(naqconnectingpart):
 	r"""
 	\begin{naquestion}
@@ -559,9 +511,6 @@ class naqorderingpart(naqconnectingpart):
 
 	nongradable_part_factory = parts.QNonGradableOrderingPart
 	nongradable_part_interface = as_interfaces.IQNonGradableOrderingPart
-
-	randomized_part_factory = randomized_parts.QRandomizedOrderingPart
-	randomized_part_interface = rand_interfaces.IQRandomizedOrderingPart
 
 _LocalContentMixin._asm_ignorable_renderables += (_AbstractNAQPart,)
 

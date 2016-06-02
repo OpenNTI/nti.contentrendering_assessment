@@ -21,6 +21,8 @@ from plasTeX import Base
 from nti.assessment.interfaces import IQHTMLHint
 from nti.assessment.interfaces import IQMathSolution
 
+from nti.common.property import alias
+
 from nti.contentfragments.interfaces import LatexContentFragment
 from nti.contentfragments.interfaces import ILatexContentFragment
 
@@ -154,6 +156,8 @@ class _AbstractNAQPart(_AbstractNonGradableNAQPart):
 	#: into this interface.
 	soln_interface = None
 
+	randomized = alias('randomize')
+
 	args = '[randomize:str][gradable:str]'
 
 	def _asm_solutions(self):
@@ -205,9 +209,10 @@ class _AbstractNAQPart(_AbstractNonGradableNAQPart):
 
 	@property
 	def _asm_is_gradable(self):
-		result = self.gradable or self.randomize or \
-				 self.nongradable_part_factory is None or \
-				 self.nongradable_part_interface is None
+		result = 	self.gradable \
+				 or self.randomize \
+				 or self.nongradable_part_factory is None \
+				 or self.nongradable_part_interface is None
 		return result
 
 	def _asm_part_factory(self):

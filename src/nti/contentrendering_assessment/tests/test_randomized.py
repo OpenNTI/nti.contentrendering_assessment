@@ -13,6 +13,8 @@ from hamcrest import assert_that
 from hamcrest import has_property
 from hamcrest import contains_string
 
+from nti.testing.matchers import verifiably_provides
+
 from nti.assessment.randomized.interfaces import IQuestionBank
 from nti.assessment.randomized.interfaces import IRandomizedQuestionSet
 from nti.assessment.randomized.interfaces import IQRandomizedMatchingPart
@@ -27,8 +29,6 @@ from nti.contentrendering.tests import buildDomFromString as _buildDomFromString
 
 from nti.contentrendering_assessment.tests import _simpleLatexDocument
 from nti.contentrendering_assessment.tests import AssessmentRenderingTestCase
-
-from nti.testing.matchers import verifiably_provides
 
 class TestRandomized(AssessmentRenderingTestCase):
 
@@ -61,8 +61,7 @@ class TestRandomized(AssessmentRenderingTestCase):
 		assert_that(part_el, has_property('randomize', is_(True)))
 
 		part = part_el.assessment_object()
-		assert_that(part, verifiably_provides(part_el.randomized_part_interface))
-		assert_that(part_el.randomized_part_interface, is_(IQRandomizedMatchingPart))
+		assert_that(part, verifiably_provides(IQRandomizedMatchingPart))
 		
 	def test_orderingpart_macros(self):
 		example = br"""
@@ -103,9 +102,8 @@ class TestRandomized(AssessmentRenderingTestCase):
 		assert_that(part_el, has_property('randomize', is_(True)))
 
 		part = part_el.assessment_object()
-		assert_that(part, verifiably_provides(part_el.randomized_part_interface))
-		assert_that(part_el.randomized_part_interface, is_(IQRandomizedOrderingPart))
-		
+		assert_that(part, verifiably_provides(IQRandomizedOrderingPart))
+
 	def test_multiple_choice_macros(self):
 		example = br"""
 			\begin{naquestion}
@@ -136,8 +134,7 @@ class TestRandomized(AssessmentRenderingTestCase):
 		assert_that(part_el, has_property('randomize', is_(True)))
 
 		part = part_el.assessment_object()
-		assert_that(part, verifiably_provides(part_el.randomized_part_interface))
-		assert_that(part_el.randomized_part_interface, is_(IQRandomizedMultipleChoicePart))
+		assert_that(part, verifiably_provides(IQRandomizedMultipleChoicePart))
 
 	def test_randomizedquestionset_macros(self):
 		example = br"""
