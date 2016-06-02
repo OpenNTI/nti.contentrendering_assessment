@@ -190,6 +190,7 @@ class TestRenderables(AssessmentRenderingTestCase):
 							 'hints': [{'Class': 'HTMLHint',
 							   'MimeType': 'application/vnd.nextthought.assessment.htmlhint',
 							   'value': 'Some hint'}], # XXX We used to render hints but we no longer are. Why?
+							 'randomized': False,
 							 'solutions': [{'Class': 'LatexSymbolicMathSolution',
 							   'MimeType': 'application/vnd.nextthought.assessment.latexsymbolicmathsolution',
 							   'value': 'Some solution',
@@ -208,6 +209,7 @@ class TestRenderables(AssessmentRenderingTestCase):
 						   'hints': [{'Class': 'HTMLHint',
 							 'MimeType': 'application/vnd.nextthought.assessment.htmlhint',
 							 'value': 'Some hint'}],
+						   'randomized': False,
 						   'solutions': [{'Class': 'LatexSymbolicMathSolution',
 							 'MimeType': 'application/vnd.nextthought.assessment.latexsymbolicmathsolution',
 							 'value': 'Some solution',
@@ -276,6 +278,7 @@ class TestRenderables(AssessmentRenderingTestCase):
 								   'explanation': u'',
 								   'hints': [],
 								   'max_file_size': None,
+								   'randomized': False,
 								   'solutions': []}]}
 
 			exp_value = {'Items': {'tag:nextthought.com,2011-10:testing-HTML-temp.0':
@@ -301,6 +304,10 @@ class TestRenderables(AssessmentRenderingTestCase):
 			
 			obj = json.dumps(obj, indent=4, sort_keys=True) 
 			exp_value = json.dumps(exp_value, indent=4, sort_keys=True)
+			with open("/tmp/one.json", "w") as fp:
+				fp.write(obj)
+			with open("/tmp/two.json", "w") as fp:
+				fp.write(exp_value)
 			assert_that(obj, is_(exp_value))
 
 	def test_assessment_index_with_assignment(self):
@@ -366,6 +373,7 @@ class TestRenderables(AssessmentRenderingTestCase):
 								   'explanation': u'',
 								   'hints': [],
 								   'max_file_size': None,
+								   'randomized': False,
 								   'solutions': []}]}
 
 			exp_value = {'Items':

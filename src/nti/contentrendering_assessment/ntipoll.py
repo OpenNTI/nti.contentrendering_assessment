@@ -18,9 +18,9 @@ from zope import interface
 from zope.cachedescriptors.method import cachedIn
 from zope.cachedescriptors.property import readproperty
 
-from paste.deploy.converters import asbool
-
 from persistent.list import PersistentList
+
+from paste.deploy.converters import asbool
 
 from plasTeX import Base
 from plasTeX.Base import Crossref
@@ -40,9 +40,9 @@ from nti.assessment.interfaces import DISCLOSURE_TERMINATION
 from nti.contentrendering.plastexids import NTIIDMixin
 from nti.contentrendering.interfaces import IEmbeddedContainer
 
-from .ntibase import _LocalContentMixin
+from nti.contentrendering_assessment.ntibase import _LocalContentMixin
 
-from .utils import parse_assessment_datetime
+from nti.contentrendering_assessment.utils import parse_assessment_datetime
 
 class napollname(Base.Command):
 	unicode = ''
@@ -51,31 +51,31 @@ class nasurveyname(Base.Command):
 	unicode = ''
 
 class nainquiry(NTIIDMixin):
-	
+
 	@property
 	def _local_tzname(self):
 		document = self.ownerDocument
 		userdata = getattr(document, 'userdata', None) or {}
 		return userdata.get('document_timezone_name')
-	
+
 	@property
 	def options(self):
 		return self.attributes.get('options') or {}
-		
+
 	def not_before(self, options):
-		result = parse_assessment_datetime(	'not_before_date', options,
-										   	'T00:00', self._local_tzname)
+		result = parse_assessment_datetime('not_before_date', options,
+										   'T00:00', self._local_tzname)
 		return result
-	
+
 	def not_after(self, options):
-		result = parse_assessment_datetime(	'not_after_date', options, 
-											'T23:59', self._local_tzname)
+		result = parse_assessment_datetime('not_after_date', options,
+										   'T23:59', self._local_tzname)
 		return result
-	
+
 	def disclosure(self, options):
 		result = options.get('disclosure') or DISCLOSURE_TERMINATION
 		return result
-	
+
 	def is_non_public(self, options):
 		result = False
 		if 'public' in options and not asbool(options['public']):
@@ -99,14 +99,14 @@ class napoll(_LocalContentMixin, Base.Environment, nainquiry):
 	_ntiid_cache_map_name = '_napoll_ntiid_map'
 
 	mimeType = POLL_MIME_TYPE
-	
-	def invoke( self, tex ):
+
+	def invoke(self, tex):
 		res = super(napoll, self).invoke(tex)
 		return res
 
 	@property
 	def _ntiid_get_local_part(self):
-		result = self.attributes.get( "pollnum" )
+		result = self.attributes.get("pollnum")
 		if not result:
 			result = super(napoll, self)._ntiid_get_local_part
 		return result
@@ -115,18 +115,19 @@ class napoll(_LocalContentMixin, Base.Environment, nainquiry):
 		return ''.join(())
 
 	def _asm_poll_parts(self):
-		
+
 		def _filter(x):
-			result = hasattr(x, 'tagName') and x.tagName.startswith('naq') and \
-					 x.tagName.endswith('part') and hasattr(x, 'assessment_object')
+			result = 	 hasattr(x, 'tagName') and x.tagName.startswith('naq') \
+					 and x.tagName.endswith('part') and hasattr(x, 'assessment_object')
 			if result:
-				x.gradable = False # polls are not gradable
+				x.gradable = False  # polls are not gradable
 			return result
 
 		to_iter = (x for x in self.allChildNodes if _filter(x))
 		return [x.assessment_object() for x in to_iter]
 
-	def _createPoll(self, disclosure=None, not_before=None, not_after=None, is_non_public=False):
+	def _createPoll(self, disclosure=None, not_before=None,
+					not_after=None, is_non_public=False):
 		result = QPoll(content=self._asm_local_content,
 					   parts=self._asm_poll_parts(),
 					   is_non_public=is_non_public,
@@ -146,9 +147,9 @@ class napoll(_LocalContentMixin, Base.Environment, nainquiry):
 		# create poll
 		result = self._createPoll(disclosure, not_before, not_after, is_non_public)
 		errors = schema.getValidationErrors(IQPoll, result)
-		if errors: # pragma: no cover
+		if errors:  # pragma: no cover
 			raise errors[0][1]
-		result.ntiid = self.ntiid # copy the id
+		result.ntiid = self.ntiid  # copy the id
 		return result
 
 class napollref(Crossref.ref):
@@ -180,7 +181,7 @@ class nasurvey(Base.List, nainquiry):
 	args = "[options:dict:str] <title:str:source>"
 
 	# Only classes with counters can be labeled, and \label sets the
-	# id property, which in turn is used as part of the 
+	# id property, which in turn is used as part of the
 	# NTIID (when no NTIID is set explicitly)
 	counter = 'nasurvey'
 
@@ -191,22 +192,22 @@ class nasurvey(Base.List, nainquiry):
 	_ntiid_cache_map_name = '_nasurvey_ntiid_map'
 
 	mimeType = SURVEY_MIME_TYPE
-	
-	def create_survey(self, questions, title, disclosure=None, not_before=None, 
+
+	def create_survey(self, questions, title, disclosure=None, not_before=None,
 					  not_after=None, is_non_public=False, **kwargs):
 		result = QSurvey(questions=questions, title=title,
 						 is_non_public=is_non_public,
 						 disclosure=disclosure or DISCLOSURE_TERMINATION,
 						 available_for_submission_beginning=not_before,
-					     available_for_submission_ending=not_after)
+						 available_for_submission_ending=not_after)
 		return result
-	
+
 	def validate_survey(self, survey):
 		errors = schema.getValidationErrors(IQSurvey, survey)
-		if errors: # pragma: no cover
+		if errors:  # pragma: no cover
 			raise errors[0][1]
 		return survey
-	
+
 	@cachedIn('_v_assessment_object')
 	def assessment_object(self):
 		# parse options
@@ -215,11 +216,11 @@ class nasurvey(Base.List, nainquiry):
 		not_after = self.not_after(options)
 		not_before = self.not_before(options)
 		is_non_public = self.is_non_public(options)
-		
+
 		# parse poll questions
 		questions = [qref.idref['label'].assessment_object()
 					 for qref in self.getElementsByTagName('napollref')]
-		questions = PersistentList( questions )
+		questions = PersistentList(questions)
 
 		# Note that we may not actually have a renderer, depending on when
 		# in our lifetime this is called (the renderer object mixin is deprecated
@@ -235,14 +236,14 @@ class nasurvey(Base.List, nainquiry):
 
 		title = title.strip() or None
 
-		result = self.create_survey(questions=questions, 
+		result = self.create_survey(questions=questions,
 									title=title,
 									disclosure=disclosure,
 									not_before=not_before,
 									not_after=not_after,
 									is_non_public=is_non_public)
 		self.validate_survey(result)
-		result.ntiid = self.ntiid # copy the id
+		result.ntiid = self.ntiid  # copy the id
 		return result
 
 	@readproperty

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-r"""
+"""
 A macro package to support the writing of assessments inline with
 the rest of content.
 
@@ -85,14 +85,12 @@ from nti.contentrendering.plastexpackages.ntilatexmacros import ntiincludevideo
 from nti.contentrendering_assessment.ntibase import _AbstractNAQPart
 from nti.contentrendering_assessment.ntibase import _LocalContentMixin
 
-###
 # Solutions
-###
 
-from nti.contentrendering_assessment.ntisolution import naqsolution 
-from nti.contentrendering_assessment.ntisolution import naqsolutions 
+from nti.contentrendering_assessment.ntisolution import naqsolution
+from nti.contentrendering_assessment.ntisolution import naqsolutions
 from nti.contentrendering_assessment.ntisolution import naqsolexplanation
-from nti.contentrendering_assessment.ntisolution import naqsolutionnumname 
+from nti.contentrendering_assessment.ntisolution import naqsolutionnumname
 
 naqsolution = naqsolution
 naqsolutions = naqsolutions
@@ -103,9 +101,7 @@ _LocalContentMixin._asm_ignorable_renderables += (naqsolutions,
 												  naqsolution,
 												  naqsolexplanation)
 
-###
 # Parts
-###
 
 # NOTE: Part Node's MUST be named 'naq'XXX'part'
 
@@ -132,10 +128,10 @@ class naqfreeresponsepart(_AbstractNAQPart):
 	part_factory = parts.QFreeResponsePart
 	part_interface = as_interfaces.IQFreeResponsePart
 	soln_interface = as_interfaces.IQFreeResponseSolution
-	
+
 	nongradable_part_factory = parts.QNonGradableFreeResponsePart
 	nongradable_part_interface = as_interfaces.IQNonGradableFreeResponsePart
-	
+
 class naqmodeledcontentpart(_AbstractNAQPart):
 	"""
 	This is a base part, and while it matches our internal
@@ -143,10 +139,10 @@ class naqmodeledcontentpart(_AbstractNAQPart):
 	External intent is better expressed with :class:`naqessaypart`
 	"""
 	soln_interface = None
-	
+
 	part_factory = parts.QModeledContentPart
 	part_interface = as_interfaces.IQModeledContentPart
-	
+
 	nongradable_part_factory = parts.QNonGradableModeledContentPart
 	nongradable_part_interface = as_interfaces.IQNonGradableModeledContentPart
 
@@ -197,12 +193,12 @@ class naqmultiplechoicepart(_AbstractNAQPart):
 
 	nongradable_part_factory = parts.QNonGradableMultipleChoicePart
 	nongradable_part_interface = as_interfaces.IQNonGradableMultipleChoicePart
-	
+
 	randomized_part_factory = randomized_parts.QRandomizedMultipleChoicePart
 	randomized_part_interface = rand_interfaces.IQRandomizedMultipleChoicePart
-	
+
 	def _asm_choices(self):
-		return [x._asm_local_content for x in self.getElementsByTagName( 'naqchoice' )]
+		return [x._asm_local_content for x in self.getElementsByTagName('naqchoice')]
 
 	def _asm_object_kwargs(self):
 		return { 'choices': self._asm_choices() }
@@ -220,32 +216,32 @@ class naqmultiplechoicepart(_AbstractNAQPart):
 		else:
 			result = super(naqmultiplechoicepart, self)._asm_part_interface()
 		return result
-	
-	def digest( self, tokens ):
-		res = super(naqmultiplechoicepart,self).digest( tokens )
+
+	def digest(self, tokens):
+		res = super(naqmultiplechoicepart, self).digest(tokens)
 		# Validate the document structure: we have a naqchoices child with
 		# at least two of its own children, and at least one weight == 1. There is no explicit solution
-		_naqchoices = self.getElementsByTagName( 'naqchoices' )
+		_naqchoices = self.getElementsByTagName('naqchoices')
 		assert len(_naqchoices) == 1
 		_naqchoices = _naqchoices[0]
 		assert len(_naqchoices) > 1, "Must have more than one choice"
-		
+
 		if self._asm_is_gradable:
-			assert any( (_naqchoice.attributes['weight'] == 1.0 for _naqchoice in _naqchoices) )
-			assert len(self.getElementsByTagName( 'naqsolutions' )) == 0
+			assert any((_naqchoice.attributes['weight'] == 1.0 for _naqchoice in _naqchoices))
+			assert len(self.getElementsByTagName('naqsolutions')) == 0
 
 			# Tranform the implicit solutions into explicit 0-based solutions
-			_naqsolns = self.ownerDocument.createElement( 'naqsolutions' )
+			_naqsolns = self.ownerDocument.createElement('naqsolutions')
 			_naqsolns.macroMode = self.MODE_BEGIN
 			for i, _naqchoice in enumerate(_naqchoices):
 				if _naqchoice.attributes['weight']:
-					_naqsoln = self.ownerDocument.createElement( 'naqsolution' )
+					_naqsoln = self.ownerDocument.createElement('naqsolution')
 					_naqsoln.attributes['weight'] = _naqchoice.attributes['weight']
 					# Also put the attribute into the argument source, for presentation
 					_naqsoln.argSource = '[%s]' % _naqsoln.attributes['weight']
-					_naqsoln.appendChild( self.ownerDocument.createTextNode( str(i) ) )
-					_naqsolns.appendChild( _naqsoln )
-			self.insertAfter( _naqsolns, _naqchoices )
+					_naqsoln.appendChild(self.ownerDocument.createTextNode(str(i)))
+					_naqsolns.appendChild(_naqsoln)
+			self.insertAfter(_naqsolns, _naqchoices)
 		return res
 
 	def invoke(self, tex):
@@ -263,12 +259,12 @@ class naqmultiplechoicemultipleanswerpart(_AbstractNAQPart):
 		\begin{naquestion}
 			Arbitrary prefix content goes here.
 			\begin{naqmultiplechoicemultipleanswerpart}
-			        Arbitrary content for this part goes here.
+					Arbitrary content for this part goes here.
 				\begin{naqchoices}
 			   		\naqchoice Arbitrary content for the choices.
 					\naqchoice[1] This is one part of a right choice.
 					\naqchoice[1] This is another part of a right choice.
-	                        \end{naqchoices}
+							\end{naqchoices}
 				\begin{naqsolexplanation}
 					Arbitrary content explaining how the correct solution is arrived at.
 				\end{naqsolexplanation}
@@ -282,12 +278,12 @@ class naqmultiplechoicemultipleanswerpart(_AbstractNAQPart):
 
 	nongradable_part_factory = parts.QNonGradableMultipleChoiceMultipleAnswerPart
 	nongradable_part_interface = as_interfaces.IQNonGradableMultipleChoiceMultipleAnswerPart
-	
+
 	randomized_part_factory = randomized_parts.QRandomizedMultipleChoiceMultipleAnswerPart
 	randomized_part_interface = rand_interfaces.IQRandomizedMultipleChoiceMultipleAnswerPart
-			
+
 	def _asm_choices(self):
-		return [x._asm_local_content for x in self.getElementsByTagName( 'naqchoice' )]
+		return [x._asm_local_content for x in self.getElementsByTagName('naqchoice')]
 
 	def _asm_object_kwargs(self):
 		return { 'choices': self._asm_choices() }
@@ -295,8 +291,8 @@ class naqmultiplechoicemultipleanswerpart(_AbstractNAQPart):
 	def _asm_solutions(self):
 		solutions = []
 		# By definition, there can only be one solution element.
-		solution_el = self.getElementsByTagName( 'naqsolution' )[0]
-		solution = self.soln_interface( solution_el.answer )
+		solution_el = self.getElementsByTagName('naqsolution')[0]
+		solution = self.soln_interface(solution_el.answer)
 		weight = solution_el.attributes['weight']
 		if weight is not None:
 			solution.weight = weight
@@ -316,35 +312,35 @@ class naqmultiplechoicemultipleanswerpart(_AbstractNAQPart):
 		else:
 			result = super(naqmultiplechoicemultipleanswerpart, self)._asm_part_interface()
 		return result
-	
-	def digest( self, tokens ):
+
+	def digest(self, tokens):
 		res = super(naqmultiplechoicemultipleanswerpart, self).digest(tokens)
-		
+
 		# Validate the document structure: we have a naqchoices child
 		# with at least two of its own children, and at least one
 		# weight == 1.  There is no explicit solution
-		_naqchoices = self.getElementsByTagName( 'naqchoices' )
+		_naqchoices = self.getElementsByTagName('naqchoices')
 		assert len(_naqchoices) == 1
 
 		_naqchoices = _naqchoices[0]
 		assert len(_naqchoices) > 1, "Must have more than one choice"
-		assert len(self.getElementsByTagName( 'naqsolutions' )) == 0
+		assert len(self.getElementsByTagName('naqsolutions')) == 0
 
 		if self._asm_is_gradable:
-			assert any( (_naqchoice.attributes['weight'] == 1.0 for _naqchoice in _naqchoices) )
+			assert any((_naqchoice.attributes['weight'] == 1.0 for _naqchoice in _naqchoices))
 
 			# Tranform the implicit solutions into a list of 0-based indices.
-			_naqsolns = self.ownerDocument.createElement( 'naqsolutions' )
+			_naqsolns = self.ownerDocument.createElement('naqsolutions')
 			_naqsolns.macroMode = _naqsolns.MODE_BEGIN
-			_naqsoln = self.ownerDocument.createElement( 'naqsolution' )
+			_naqsoln = self.ownerDocument.createElement('naqsolution')
 			_naqsoln.attributes['weight'] = 1.0
 			_naqsoln.argSource = '[1.0]'
 			_naqsoln.answer = []
 			for i, _naqchoice in enumerate(_naqchoices):
 				if _naqchoice.attributes['weight'] and _naqchoice.attributes['weight'] == 1:
-					_naqsoln.answer.append( i )
-			_naqsolns.appendChild( _naqsoln )
-			self.insertAfter( _naqsolns, _naqchoices )
+					_naqsoln.answer.append(i)
+			_naqsolns.appendChild(_naqsoln)
+			self.insertAfter(_naqsolns, _naqchoices)
 		return res
 
 	def invoke(self, tex):
@@ -356,9 +352,9 @@ class naqfilepart(_AbstractNAQPart):
 	A part specifying that the user must upload a file::
 
 	   \begin{naquestion}
-	       Arbitrary prefix content.
+		   Arbitrary prefix content.
 		   \begin{naqfilepart}(application/pdf,text/*,.txt)[1024]
-		      Arbitrary part content.
+			  Arbitrary part content.
 		   \end{naqfilepart}
 		\end{naquestion}
 
@@ -379,7 +375,7 @@ class naqfilepart(_AbstractNAQPart):
 	soln_interface = None
 	part_factory = parts.QFilePart
 	part_interface = as_interfaces.IQFilePart
-		
+
 	nongradable_part_factory = parts.QNonGradableFilePart
 	nongradable_part_interface = as_interfaces.IQNonGradableFilePart
 
@@ -392,7 +388,9 @@ class naqfilepart(_AbstractNAQPart):
 		return ','.join(self._allowed_mime_types) if self._allowed_mime_types else None
 
 	def _asm_solutions(self):
-		"Solutions currently unsupported"
+		"""
+		Solutions currently unsupported
+		"""
 		return ()
 
 	def _asm_object_kwargs(self):
@@ -403,38 +401,38 @@ class naqfilepart(_AbstractNAQPart):
 				kw[k] = mine
 		return kw
 
-	def digest( self, tokens ):
-		res = super(naqfilepart,self).digest(tokens)
+	def digest(self, tokens):
+		res = super(naqfilepart, self).digest(tokens)
 
 		if self.attributes.get('size'):
-			self._max_file_size = self.attributes['size'] * 1024 # KB to bytes
+			self._max_file_size = self.attributes['size'] * 1024  # KB to bytes
 		if self.attributes.get('types'):
 			for mime_or_ext in self.attributes['types']:
 				if mimeTypeConstraint(mime_or_ext):
 					self._allowed_mime_types += (mime_or_ext,)
 				elif mime_or_ext.startswith('.') or mime_or_ext == '*':
 					self._allowed_extensions += (mime_or_ext,)
-				else: # pragma: no cover
-					raise ValueError("Type is not MIME, extension, or wild", mime_or_ext )
+				else:  # pragma: no cover
+					raise ValueError("Type is not MIME, extension, or wild", mime_or_ext)
 		return res
 
 class naqconnectingpart(_AbstractNAQPart):
-	
+
 	part_factory = parts.QConnectingPart
 	part_interface = as_interfaces.IQConnectingPart
 	soln_interface = as_interfaces.IQConnectingSolution
-	
+
 	nongradable_part_factory = parts.QNonGradableConnectingPart
 	nongradable_part_interface = as_interfaces.IQNonGradableConnectingPart
-	
+
 	randomized_part_factory = randomized_parts.QRandomizedConnectingPart
 	randomized_part_interface = rand_interfaces.IQRandomizedConnectingPart
 
 	def _asm_labels(self):
-		return [x._asm_local_content for x in self.getElementsByTagName( 'naqmlabel' )]
+		return [x._asm_local_content for x in self.getElementsByTagName('naqmlabel')]
 
 	def _asm_values(self):
-		return [x._asm_local_content for x in self.getElementsByTagName( 'naqmvalue' )]
+		return [x._asm_local_content for x in self.getElementsByTagName('naqmvalue')]
 
 	def _asm_object_kwargs(self):
 		return { 'labels': self._asm_labels(),
@@ -444,11 +442,11 @@ class naqconnectingpart(_AbstractNAQPart):
 		solutions = []
 		solution_els = self.getElementsByTagName('naqsolution')
 		for solution_el in solution_els:
-			solution = self.soln_interface( solution_el.answer )
+			solution = self.soln_interface(solution_el.answer)
 			weight = solution_el.attributes['weight']
 			if weight is not None:
 				solution.weight = weight
-			solutions.append( solution )
+			solutions.append(solution)
 		return solutions
 
 	def _asm_part_factory(self):
@@ -464,10 +462,10 @@ class naqconnectingpart(_AbstractNAQPart):
 		else:
 			result = super(naqconnectingpart, self)._asm_part_interface()
 		return result
-	
-	def digest( self, tokens ):
-		res = super(naqconnectingpart,self).digest( tokens )
-		
+
+	def digest(self, tokens):
+		res = super(naqconnectingpart, self).digest(tokens)
+
 		# Validate the document structure: we have a naqlabels child with
 		# at least two of its own children, an naqvalues child of equal length
 		# and a proper matching between the two
@@ -484,7 +482,7 @@ class naqconnectingpart(_AbstractNAQPart):
 			assert len(_naqmvalues) == len(_naqmlabels), "Must have exactly one value per label"
 
 			for i in range(len(_naqmlabels)):
-				assert any( (_naqmlabel.attributes['answer'] == i for _naqmlabel in _naqmlabels) )
+				assert any((_naqmlabel.attributes['answer'] == i for _naqmlabel in _naqmlabels))
 			assert len(self.getElementsByTagName('naqsolutions')) == 0
 
 			# Tranform the implicit solutions into an array
@@ -499,8 +497,8 @@ class naqconnectingpart(_AbstractNAQPart):
 			# Also put the attribute into the argument source, for presentation
 			_naqsoln.argSource = '[%s]' % _naqsoln.attributes['weight']
 			_naqsoln.answer = answer
-			_naqsolns.appendChild( _naqsoln )
-			self.insertAfter( _naqsolns, _naqmvalues)
+			_naqsolns.appendChild(_naqsoln)
+			self.insertAfter(_naqsolns, _naqmvalues)
 
 		return res
 
@@ -539,10 +537,10 @@ class naqmatchingpart(naqconnectingpart):
 	part_factory = parts.QMatchingPart
 	part_interface = as_interfaces.IQMatchingPart
 	soln_interface = as_interfaces.IQMatchingSolution
-	
+
 	nongradable_part_factory = parts.QNonGradableMatchingPart
 	nongradable_part_interface = as_interfaces.IQNonGradableMatchingPart
-	
+
 	randomized_part_factory = randomized_parts.QRandomizedMatchingPart
 	randomized_part_interface = rand_interfaces.IQRandomizedMatchingPart
 
@@ -558,16 +556,16 @@ class naqorderingpart(naqconnectingpart):
 	part_factory = parts.QOrderingPart
 	part_interface = as_interfaces.IQOrderingPart
 	soln_interface = as_interfaces.IQOrderingSolution
-	
+
 	nongradable_part_factory = parts.QNonGradableOrderingPart
 	nongradable_part_interface = as_interfaces.IQNonGradableOrderingPart
-	
+
 	randomized_part_factory = randomized_parts.QRandomizedOrderingPart
 	randomized_part_interface = rand_interfaces.IQRandomizedOrderingPart
 
 _LocalContentMixin._asm_ignorable_renderables += (_AbstractNAQPart,)
 
-from .ntibase import naqvalue
+from nti.contentrendering_assessment.ntibase import naqvalue
 
 class naqchoices(Base.List):
 	pass
@@ -616,13 +614,11 @@ _LocalContentMixin._asm_ignorable_renderables += (naqchoices,
 class naqvideo(ntiincludevideo):
 	blockType = True
 
-###
 # Question
-###
 
-from nti.contentrendering_assessment.ntiquestion import naquestion 
+from nti.contentrendering_assessment.ntiquestion import naquestion
 from nti.contentrendering_assessment.ntiquestion import naqindexrange
-from nti.contentrendering_assessment.ntiquestion import naquestionref 
+from nti.contentrendering_assessment.ntiquestion import naquestionref
 from nti.contentrendering_assessment.ntiquestion import naquestionset
 from nti.contentrendering_assessment.ntiquestion import naqindexranges
 from nti.contentrendering_assessment.ntiquestion import naquestionbank
@@ -645,9 +641,7 @@ naquestionsetname = naquestionsetname
 narandomizedquestionset = narandomizedquestionset
 narandomizedquestionsetref = narandomizedquestionsetref
 
-###
 # Alibra
-###
 
 from nti.contentrendering_assessment.ntialibra import naqinput
 from nti.contentrendering_assessment.ntialibra import naqregex
@@ -682,13 +676,11 @@ _LocalContentMixin._asm_ignorable_renderables += (_WordBankMixIn,
 												  naqpaireditems,
 												  naqindexranges)
 
-###
 # Assignments
-###
 
-from nti.contentrendering_assessment.ntiassignment import naassignment 
+from nti.contentrendering_assessment.ntiassignment import naassignment
 from nti.contentrendering_assessment.ntiassignment import naassignmentref
-from nti.contentrendering_assessment.ntiassignment import naassignmentpart 
+from nti.contentrendering_assessment.ntiassignment import naassignmentpart
 from nti.contentrendering_assessment.ntiassignment import naassignmentname
 
 naassignment = naassignment
@@ -696,14 +688,12 @@ naassignmentref = naassignmentref
 naassignmentpart = naassignmentpart
 naassignmentname = naassignmentname
 
-###
 # Polls
-###
 
-from nti.contentrendering_assessment.ntipoll import napoll 
+from nti.contentrendering_assessment.ntipoll import napoll
 from nti.contentrendering_assessment.ntipoll import nasurvey
 from nti.contentrendering_assessment.ntipoll import napollref
-from nti.contentrendering_assessment.ntipoll import napollname 
+from nti.contentrendering_assessment.ntipoll import napollname
 from nti.contentrendering_assessment.ntipoll import nasurveyref
 from nti.contentrendering_assessment.ntipoll import nasurveyname
 
@@ -714,11 +704,9 @@ napollname = napollname
 nasurveyref = nasurveyref
 nasurveyname = nasurveyname
 
-###
 # ProcessOptions
-###
 
-def ProcessOptions( options, document ):
+def ProcessOptions(options, document):
 	# We are not setting up any global state here,
 	# only making changes to the document, so its
 	# fine that this runs each time we are imported
