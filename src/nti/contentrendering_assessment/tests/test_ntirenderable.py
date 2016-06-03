@@ -301,13 +301,7 @@ class TestRenderables(AssessmentRenderingTestCase):
 										  },
 							'href': 'index.html'}
 			del obj['Signatures']
-			
-			obj = json.dumps(obj, indent=4, sort_keys=True) 
-			exp_value = json.dumps(exp_value, indent=4, sort_keys=True)
-			with open("/tmp/one.json", "w") as fp:
-				fp.write(obj)
-			with open("/tmp/two.json", "w") as fp:
-				fp.write(exp_value)
+			remove_keys(obj, 'CreatedTime', 'Last Modified')
 			assert_that(obj, is_(exp_value))
 
 	def test_assessment_index_with_assignment(self):
