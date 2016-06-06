@@ -24,13 +24,13 @@ from plasTeX import Base
 from plasTeX.Base import Crossref
 from plasTeX.Renderers import render_children
 
-from nti.assessment.question import QQuestion
-from nti.assessment.question import QQuestionSet
-
 from nti.assessment.interfaces import IQuestion
 from nti.assessment.interfaces import NTIID_TYPE
 from nti.assessment.interfaces import IQuestionSet
 from nti.assessment.interfaces import QUESTION_SET_MIME_TYPE
+
+from nti.assessment.question import QQuestion
+from nti.assessment.question import QQuestionSet
 
 from nti.assessment.randomized.question import QQuestionBank
 from nti.assessment.randomized.question import QRandomizedQuestionSet
@@ -282,20 +282,13 @@ class naquestionbank(naquestionset):
 		return int(draw) if draw else None
 
 	@readproperty
-	def srand(self):
-		options = self.attributes.get('options') or {}
-		srand = options.get('srand') or self.attributes.get('srand')
-		return bool(srand) if srand else None
-
-	@readproperty
 	def question_count(self):
 		result = self.draw or super(naquestionbank, self).question_count
 		return unicode(result)
 
 	def create_questionset(self, questions, title, **kwargs):
-		srand = self.srand
 		draw = self.draw or len(questions)
-		result = QQuestionBank(questions=questions, title=title, draw=draw, srand=srand)
+		result = QQuestionBank(questions=questions, title=title, draw=draw)
 		# set ranges
 		naqindexranges = self.getElementsByTagName('naqindexranges')
 		naqindexranges = naqindexranges[0] if naqindexranges else None
