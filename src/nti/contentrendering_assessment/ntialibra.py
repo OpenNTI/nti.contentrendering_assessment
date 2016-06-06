@@ -17,10 +17,6 @@ from zope.cachedescriptors.property import readproperty
 from plasTeX import Base
 from plasTeX.Renderers import render_children
 
-from nti.assessment.parts import QFillInTheBlankShortAnswerPart
-from nti.assessment.parts import QFillInTheBlankWithWordBankPart
-from nti.assessment.question import QFillInTheBlankWithWordBankQuestion
-
 from nti.assessment.interfaces import IRegEx
 from nti.assessment.interfaces import IWordBank
 from nti.assessment.interfaces import IWordEntry
@@ -28,6 +24,11 @@ from nti.assessment.interfaces import IQFillInTheBlankShortAnswerPart
 from nti.assessment.interfaces import IQFillInTheBlankWithWordBankPart
 from nti.assessment.interfaces import IQFillInTheBlankShortAnswerSolution
 from nti.assessment.interfaces import IQFillInTheBlankWithWordBankSolution
+
+from nti.assessment.parts import QFillInTheBlankShortAnswerPart
+from nti.assessment.parts import QFillInTheBlankWithWordBankPart
+
+from nti.assessment.question import QFillInTheBlankWithWordBankQuestion
 
 from nti.contentfragments.interfaces import HTMLContentFragment
 from nti.contentfragments.interfaces import ILatexContentFragment
