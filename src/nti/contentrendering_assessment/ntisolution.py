@@ -11,7 +11,7 @@ logger = __import__('logging').getLogger(__name__)
 
 from plasTeX import Base
 
-from .ntibase import _LocalContentMixin
+from nti.contentrendering_assessment.ntibase import _LocalContentMixin
 
 # Handle custom counter names
 

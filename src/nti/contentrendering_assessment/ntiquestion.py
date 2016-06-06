@@ -42,7 +42,7 @@ from nti.assessment.randomized.interfaces import IRandomizedQuestionSet
 from nti.contentrendering import plastexids
 from nti.contentrendering import interfaces as crd_interfaces
 
-from .ntibase import _LocalContentMixin
+from nti.contentrendering_assessment.ntibase import _LocalContentMixin
 
 class naquestionname(Base.Command):
 	unicode = ''
