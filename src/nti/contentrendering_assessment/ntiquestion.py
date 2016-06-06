@@ -76,8 +76,8 @@ class naquestion(_LocalContentMixin, Base.Environment, plastexids.NTIIDMixin):
 	_ntiid_allow_missing_title = True
 	_ntiid_cache_map_name = '_naquestion_ntiid_map'
 
-	def invoke( self, tex ):
-		_t = super(naquestion,self).invoke(tex)
+	def invoke(self, tex):
+		_t = super(naquestion, self).invoke(tex)
 		if 'individual' in self.attributes and \
 			self.attributes['individual'] == 'individual=true':
 			self.attributes['individual'] = 'true'
@@ -85,9 +85,9 @@ class naquestion(_LocalContentMixin, Base.Environment, plastexids.NTIIDMixin):
 
 	@property
 	def _ntiid_get_local_part(self):
-		result = self.attributes.get( 'probnum' ) or self.attributes.get( "questionnum" )
+		result = self.attributes.get('probnum') or self.attributes.get("questionnum")
 		if not result:
-			result = super(naquestion,self)._ntiid_get_local_part
+			result = super(naquestion, self)._ntiid_get_local_part
 		return result
 
 	def _asm_videos(self):
@@ -105,8 +105,8 @@ class naquestion(_LocalContentMixin, Base.Environment, plastexids.NTIIDMixin):
 					 x.tagName.endswith('part')
 			return result
 
-		to_iter = (x for x in self.allChildNodes if _filter(x) )
-		return [x.assessment_object() for x in to_iter if hasattr(x,'assessment_object')]
+		to_iter = (x for x in self.allChildNodes if _filter(x))
+		return [x.assessment_object() for x in to_iter if hasattr(x, 'assessment_object')]
 
 	def _createQuestion(self):
 		result = QQuestion(content=self._asm_local_content,
@@ -117,9 +117,9 @@ class naquestion(_LocalContentMixin, Base.Environment, plastexids.NTIIDMixin):
 	def assessment_object(self):
 		result = self._createQuestion()
 		errors = schema.getValidationErrors(IQuestion, result)
-		if errors: # pragma: no cover
+		if errors:  # pragma: no cover
 			raise errors[0][1]
-		result.ntiid = self.ntiid # copy the id
+		result.ntiid = self.ntiid  # copy the id
 		return result
 
 class naquestionref(Crossref.ref):
@@ -158,7 +158,7 @@ class naquestionset(Base.List, plastexids.NTIIDMixin):
 	_ntiid_allow_missing_title = True
 	_ntiid_cache_map_name = '_naquestionset_ntiid_map'
 
-	#: From IEmbeddedContainer
+	# : From IEmbeddedContainer
 	mimeType = QUESTION_SET_MIME_TYPE
 
 	def create_questionset(self, questions, title, **kwargs):
@@ -167,7 +167,7 @@ class naquestionset(Base.List, plastexids.NTIIDMixin):
 
 	def validate_questionset(self, questionset):
 		errors = schema.getValidationErrors(IQuestionSet, questionset)
-		if errors: # pragma: no cover
+		if errors:  # pragma: no cover
 			raise errors[0][1]
 		return questionset
 
@@ -175,7 +175,7 @@ class naquestionset(Base.List, plastexids.NTIIDMixin):
 	def assessment_object(self):
 		questions = [qref.idref['label'].assessment_object()
 					 for qref in self.getElementsByTagName('naquestionref')]
-		questions = PersistentList( questions )
+		questions = PersistentList(questions)
 
 		# Note that we may not actually have a renderer, depending on when
 		# in our lifetime this is called (the renderer object mixin is deprecated
@@ -193,7 +193,7 @@ class naquestionset(Base.List, plastexids.NTIIDMixin):
 
 		result = self.create_questionset(questions=questions, title=title)
 		self.validate_questionset(result)
-		result.ntiid = self.ntiid # copy the id
+		result.ntiid = self.ntiid  # copy the id
 		return result
 
 	@readproperty
@@ -236,7 +236,7 @@ class narandomizedquestionset(naquestionset):
 
 	def validate_questionset(self, questionset):
 		errors = schema.getValidationErrors(IRandomizedQuestionSet, questionset)
-		if errors: # pragma: no cover
+		if errors:  # pragma: no cover
 			raise errors[0][1]
 		return questionset
 
@@ -250,7 +250,7 @@ class naqindexrange(Base.List.item):
 		res = super(naqindexrange, self).digest(tokens)
 		start = self.attributes.get('start')
 		end = self.attributes.get('end')
-		assert start >= 0 and end>=0 and start<=end
+		assert start >= 0 and end >= 0 and start <= end
 
 		draw = self.attributes.get('draw', 1)
 		assert draw <= (end - start + 1)
@@ -298,7 +298,7 @@ class naquestionbank(naquestionset):
 
 	def validate_questionset(self, questionset):
 		errors = schema.getValidationErrors(IQuestionBank, questionset)
-		if errors: # pragma: no cover
+		if errors:  # pragma: no cover
 			raise errors[0][1]
 		questionset.validate()
 		return questionset
@@ -322,7 +322,7 @@ class naquestionbank(naquestionset):
 					assert start <= end, "invalid range"
 					assert end < _max_index, "index ouside of range"
 
-					draw = int(_range.attributes.get('draw',1))
+					draw = int(_range.attributes.get('draw', 1))
 					assert draw <= (end - start + 1), "Invalid draw in range"
 					_indexranges.append((start, end, draw))
 

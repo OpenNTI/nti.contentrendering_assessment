@@ -195,7 +195,8 @@ class TestRenderables(AssessmentRenderingTestCase):
 							   'MimeType': 'application/vnd.nextthought.assessment.latexsymbolicmathsolution',
 							   'value': 'Some solution',
 							   'weight': 1.0,
-							   'allowed_units': ['unit1','unit2','']}]}]}]},
+							   'allowed_units': ['unit1','unit2','']}],
+							 'weight': 1.0,}]}]},
 						'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.testquestion': {'Class': 'Question',
 						 'MimeType': 'application/vnd.nextthought.naquestion',
 						 'NTIID': 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.testquestion',
@@ -214,7 +215,8 @@ class TestRenderables(AssessmentRenderingTestCase):
 							 'MimeType': 'application/vnd.nextthought.assessment.latexsymbolicmathsolution',
 							 'value': 'Some solution',
 							 'weight': 1.0,
-							 'allowed_units': ['unit1','unit2','']}]}]}},
+							 'allowed_units': ['unit1','unit2','']}],
+							'weight': 1.0,}]}},
 					   'NTIID': 'tag:nextthought.com,2011-10:testing-HTML-temp.section_one',
 					   'filename': 'tag_nextthought_com_2011-10_testing-HTML-temp_section_one.html',
 					   'href': 'tag_nextthought_com_2011-10_testing-HTML-temp_section_one.html'}},
@@ -279,7 +281,8 @@ class TestRenderables(AssessmentRenderingTestCase):
 								   'hints': [],
 								   'max_file_size': None,
 								   'randomized': False,
-								   'solutions': []}]}
+								   'solutions': [],
+								   'weight': 1.0,}]}
 
 			exp_value = {'Items': {'tag:nextthought.com,2011-10:testing-HTML-temp.0':
 								   {'AssessmentItems': {},
@@ -368,7 +371,8 @@ class TestRenderables(AssessmentRenderingTestCase):
 								   'hints': [],
 								   'max_file_size': None,
 								   'randomized': False,
-								   'solutions': []}]}
+								   'solutions': [],
+								   'weight': 1.0}]}
 
 			exp_value = {'Items':
 						 {'tag:nextthought.com,2011-10:testing-HTML-temp.0':

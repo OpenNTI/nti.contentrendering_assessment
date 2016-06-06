@@ -93,8 +93,8 @@ class _AbstractNonGradableNAQPart(_LocalContentMixin, Base.Environment):
 		hints = []
 		hint_els = self.getElementsByTagName('naqhint')
 		for hint_el in hint_els:
-			hint = self.hint_interface( hint_el._asm_local_content )
-			hints.append( hint )
+			hint = self.hint_interface(hint_el._asm_local_content)
+			hints.append(hint)
 		return hints
 
 	def _asm_object_kwargs(self):
@@ -115,22 +115,22 @@ class _AbstractNonGradableNAQPart(_LocalContentMixin, Base.Environment):
 		# Be careful to turn textContent into plain unicode objects, not
 		# plastex Text subclasses, which are also expensive nodes.
 		factory = self._asm_part_factory() if factory is None else factory
-		result = factory( content=self._asm_local_content,
+		result = factory(content=self._asm_local_content,
 						  hints=self._asm_hints(),
-						  **self._asm_object_kwargs()	)
+						  **self._asm_object_kwargs())
 		return result
 
 	@cachedIn('_v_assessment_object')
-	def assessment_object( self ):
+	def assessment_object(self):
 		result = self.part_creator()
-		errors = schema.getValidationErrors( self._asm_part_interface(), result )
-		if errors: # pragma: no cover
+		errors = schema.getValidationErrors(self._asm_part_interface(), result)
+		if errors:  # pragma: no cover
 			__traceback_info__ = self.part_interface, errors, result
 			raise errors[0][1]
 		return result
 
-	def _after_render( self, rendered ):
-		super(_AbstractNonGradableNAQPart,self)._after_render( rendered )
+	def _after_render(self, rendered):
+		super(_AbstractNonGradableNAQPart, self)._after_render(rendered)
 		# The hints don't normally get rendered# by the templates, so make sure they do
 		for x in itertools.chain(self.getElementsByTagName('naqhint'),
 								 self.getElementsByTagName('naqchoice'),
@@ -144,6 +144,7 @@ class _AbstractNonGradableNAQPart(_LocalContentMixin, Base.Environment):
 
 class _AbstractNAQPart(_AbstractNonGradableNAQPart):
 
+	weight = 1.0
 	gradable = True
 	randomize = False
 
@@ -158,7 +159,7 @@ class _AbstractNAQPart(_AbstractNonGradableNAQPart):
 
 	randomized = alias('randomize')
 
-	args = '[randomize:str][gradable:str]'
+	args = '[randomize:str][gradable:str][weight:str]'
 
 	def _asm_solutions(self):
 		"""
@@ -168,13 +169,13 @@ class _AbstractNAQPart(_AbstractNonGradableNAQPart):
 
 		"""
 		solutions = []
-		solution_els = self.getElementsByTagName( 'naqsolution' )
+		solution_els = self.getElementsByTagName('naqsolution')
 		for solution_el in solution_els:
 			# If the textContent is taken instead of the source of the child element, the
 			# code fails on Latex solutions like $\frac{1}{2}$
 			# TODO: Should this be rendered? In some cases yes, in some cases no?
 			content = ' '.join([c.source.strip() for c in solution_el.childNodes]).strip()
-			if len(content) >= 2 and content.startswith( '$' ) and content.endswith( '$' ):
+			if len(content) >= 2 and content.startswith('$') and content.endswith('$'):
 				content = content[1:-1]
 
 			# Note that this is already a latex content fragment, we don't need
@@ -194,18 +195,18 @@ class _AbstractNAQPart(_AbstractNonGradableNAQPart):
 					allowed_units = ('',)
 				if '' not in allowed_units:
 					allowed_units = list(allowed_units)
-					allowed_units.append( '' )
+					allowed_units.append('')
 				solution.allowed_units = allowed_units
-			solutions.append( solution )
+			solutions.append(solution)
 
 		return solutions
 
 	def _asm_explanation(self):
-		exp_els = self.getElementsByTagName( 'naqsolexplanation' )
+		exp_els = self.getElementsByTagName('naqsolexplanation')
 		assert len(exp_els) <= 1
 		if exp_els:
 			return exp_els[0]._asm_local_content
-		return ILatexContentFragment( '' )
+		return ILatexContentFragment('')
 
 	@property
 	def _asm_is_gradable(self):
@@ -230,22 +231,23 @@ class _AbstractNAQPart(_AbstractNonGradableNAQPart):
 		return result
 
 	def part_creator(self, factory=None):
-		factory =  self._asm_part_factory() if factory is None else factory
+		factory = self._asm_part_factory() if factory is None else factory
 		if self._asm_is_gradable:
-			result = factory( content=self._asm_local_content,
-							  solutions=self._asm_solutions(),
-							  explanation=self._asm_explanation(),
-							  hints=self._asm_hints(),
-							  **self._asm_object_kwargs()	)
+			result = factory(content=self._asm_local_content,
+							 solutions=self._asm_solutions(),
+							 explanation=self._asm_explanation(),
+							 hints=self._asm_hints(),
+							 weight=self.weight,
+							 **self._asm_object_kwargs())
 		else:
 			result = super(_AbstractNAQPart, self).part_creator(factory=factory)
 		return result
 
-	def _after_render( self, rendered ):
-		super(_AbstractNAQPart,self)._after_render( rendered )
+	def _after_render(self, rendered):
+		super(_AbstractNAQPart, self)._after_render(rendered)
 		# The explanations don't normally get rendere by the templates, so make sure they do
 		for x in itertools.chain(self.getElementsByTagName('naqsolexplanation'),
-								 self.getElementsByTagName('naqsolution') ):
+								 self.getElementsByTagName('naqsolution')):
 			unicode(x)
 
 	def _fix_bool_attribute(self, name):
@@ -261,6 +263,10 @@ class _AbstractNAQPart(_AbstractNonGradableNAQPart):
 		token = super(_AbstractNAQPart, self).invoke(tex)
 		self._fix_bool_attribute('randomize')
 		self._fix_bool_attribute('gradable')
+		if 'weight' in self.attributes:
+			weight = self.attributes['weight']
+			self.weight = float(weight) if weight else 1.0
+			assert self.weight >= 0.0 and self.weight <= 1.0, 'Invalid part weight'
 		return token
 
 class naqvalue(_LocalContentMixin, Base.List.item):
