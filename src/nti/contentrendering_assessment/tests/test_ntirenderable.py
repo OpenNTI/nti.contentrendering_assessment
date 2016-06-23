@@ -184,6 +184,7 @@ class TestRenderables(AssessmentRenderingTestCase):
 						   'content': '<a name="testquestion"></a> Arbitrary content goes here.',
 						   'parts': [{'Class': 'SymbolicMathPart',
 							 'MimeType': 'application/vnd.nextthought.assessment.symbolicmathpart',
+							 "NTIID": "tag:nextthought.com,2011-10:testing-NAQPart-temp.naq.testquestion.0",
 							 'allowed_units': ['unit1', 'unit2', ''],
 							 'content': 'Arbitrary content goes here.',
 							 'explanation': '',
@@ -204,6 +205,7 @@ class TestRenderables(AssessmentRenderingTestCase):
 						 'content': '<a name="testquestion"></a> Arbitrary content goes here.',
 						 'parts': [{'Class': 'SymbolicMathPart',
 						   'MimeType': 'application/vnd.nextthought.assessment.symbolicmathpart',
+						   "NTIID": "tag:nextthought.com,2011-10:testing-NAQPart-temp.naq.testquestion.0",
 						   'allowed_units': ['unit1', 'unit2', ''],
 						   'content': 'Arbitrary content goes here.',
 						   'explanation': '',
@@ -228,7 +230,8 @@ class TestRenderables(AssessmentRenderingTestCase):
 				   'href': 'index.html'}},
 				 'href': 'index.html'}
 			del obj['Signatures']
-			remove_keys(obj, 'ID', 'Signatures', 'CreatedTime', 'Last Modified', 'Version')
+			remove_keys(obj, 'ID', 'Signatures', 'CreatedTime', 'Last Modified', 
+						'version', 'tags')
 			assert_that( obj, is_( exp_value ) )
 
 	def test_assessment_index_with_file_part(self):
@@ -274,6 +277,7 @@ class TestRenderables(AssessmentRenderingTestCase):
 						'content': '<a name="testquestion"></a> Arbitrary content goes here.',
 						'parts': [{'Class': 'FilePart',
 								   'MimeType': 'application/vnd.nextthought.assessment.filepart',
+								   "NTIID": "tag:nextthought.com,2011-10:testing-NAQPart-temp.naq.testquestion.0",
 								   'allowed_extensions': [],
 								   'allowed_mime_types': ['application/pdf'],
 								   'content': 'Arbitrary content goes here.',
@@ -304,7 +308,7 @@ class TestRenderables(AssessmentRenderingTestCase):
 										  },
 							'href': 'index.html'}
 			del obj['Signatures']
-			remove_keys(obj, 'CreatedTime', 'Last Modified', 'version')
+			remove_keys(obj, 'CreatedTime', 'Last Modified', 'version', 'tags')
 			assert_that(obj, is_(exp_value))
 
 	def test_assessment_index_with_assignment(self):
@@ -364,6 +368,7 @@ class TestRenderables(AssessmentRenderingTestCase):
 						'content': '<a name="testquestion"></a> Arbitrary content goes here.',
 						'parts': [{'Class': 'FilePart',
 								   'MimeType': 'application/vnd.nextthought.assessment.filepart',
+								   "NTIID": "tag:nextthought.com,2011-10:testing-NAQPart-temp.naq.testquestion.0",
 								   'allowed_extensions': [],
 								   'allowed_mime_types': ['application/pdf'],
 								   'content': 'Arbitrary content goes here.',
@@ -398,6 +403,7 @@ class TestRenderables(AssessmentRenderingTestCase):
 																	  'available_for_submission_ending': None,
 																	  'parts': [{'Class': 'AssignmentPart',
 																				 'MimeType': 'application/vnd.nextthought.assessment.assignmentpart',
+																				 "NTIID": "tag:nextthought.com,2011-10:testing-NAQPart-temp.naq.asg.assignment.0",
 																				 'auto_grade': True,
 																				 'content': 'Some content.',
 																				 'question_set': {'Class': 'QuestionSet',
@@ -427,7 +433,7 @@ class TestRenderables(AssessmentRenderingTestCase):
 						 'href': 'index.html'}
 
 			remove_keys(obj, 'ID', 'Signatures', 'CreatedTime', 'Last Modified',
-						'publishBeginning', 'publishEnding', 'version')
+						'publishBeginning', 'publishEnding', 'version', 'tags')
 			obj = json.dumps(obj, indent=4, sort_keys=True) 	
 			exp_value = json.dumps(exp_value, indent=4, sort_keys=True)
 			assert_that(obj, is_(exp_value))
