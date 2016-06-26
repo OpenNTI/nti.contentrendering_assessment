@@ -271,3 +271,9 @@ class _AbstractNAQPart(_AbstractNonGradableNAQPart):
 
 class naqvalue(_LocalContentMixin, Base.List.item):
 	pass
+
+class naqtag(naqvalue):
+	args = 'word:str'
+
+	# def _after_render(self, rendered):
+	# 	self._asm_local_content = rendered
