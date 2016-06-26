@@ -145,6 +145,7 @@ class naassignment(_LocalContentMixin,
 						 available_for_submission_beginning=not_before,
 						 available_for_submission_ending=not_after,
 						 parts=parts,
+						 tags=self._asm_tags(),
 						 title=self.attributes.get('title'),
 						 is_non_public=is_non_public)
 		if maximum_time_allowed is not None:

@@ -380,5 +380,6 @@ class naquestionfillintheblankwordbank(_WordBankMixIn, naquestion):
 		wordbank = self._asm_wordbank()
 		result = QFillInTheBlankWithWordBankQuestion(content=self._asm_local_content,
 													 parts=self._asm_question_parts(),
+													 tags=self._asm_tags(),
 													 wordbank=wordbank)
 		return result

@@ -112,7 +112,8 @@ class naquestion(_LocalContentMixin, _AbstractNAQTags,
 
 	def _createQuestion(self):
 		result = QQuestion(content=self._asm_local_content,
-						   parts=self._asm_question_parts())
+						   parts=self._asm_question_parts(),
+						   tags=self._asm_tags())
 		return result
 
 	@cachedIn('_v_assessment_object')
@@ -160,7 +161,7 @@ class naquestionset(_AbstractNAQTags, Base.List, plastexids.NTIIDMixin):
 	_ntiid_allow_missing_title = True
 	_ntiid_cache_map_name = '_naquestionset_ntiid_map'
 
-	# : From IEmbeddedContainer
+	#: From IEmbeddedContainer
 	mimeType = QUESTION_SET_MIME_TYPE
 
 	def create_questionset(self, questions, title, **kwargs):
@@ -194,7 +195,8 @@ class naquestionset(_AbstractNAQTags, Base.List, plastexids.NTIIDMixin):
 		title = title.strip() or None
 
 		result = self.create_questionset(questions=questions, title=title)
-		self.validate_questionset(result)
+		result.tags = self._asm_tags() # get tags
+		self.validate_questionset(result) # validate
 		result.ntiid = self.ntiid  # copy the id
 		return result
 
@@ -290,7 +292,9 @@ class naquestionbank(naquestionset):
 
 	def create_questionset(self, questions, title, **kwargs):
 		draw = self.draw or len(questions)
-		result = QQuestionBank(questions=questions, title=title, draw=draw)
+		result = QQuestionBank(questions=questions,
+							   title=title, 
+							   draw=draw)
 		# set ranges
 		naqindexranges = self.getElementsByTagName('naqindexranges')
 		naqindexranges = naqindexranges[0] if naqindexranges else None

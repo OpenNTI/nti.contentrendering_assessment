@@ -132,6 +132,7 @@ class napoll(_LocalContentMixin, Base.Environment, nainquiry):
 		result = QPoll(content=self._asm_local_content,
 					   parts=self._asm_poll_parts(),
 					   is_non_public=is_non_public,
+					   tags=self._asm_tags(),
 					   disclosure=disclosure or DISCLOSURE_TERMINATION,
 					   available_for_submission_beginning=not_before,
 					   available_for_submission_ending=not_after)
@@ -198,6 +199,7 @@ class nasurvey(Base.List, nainquiry):
 					  not_after=None, is_non_public=False, **kwargs):
 		result = QSurvey(questions=questions, title=title,
 						 is_non_public=is_non_public,
+						 tags=self._asm_tags(),
 						 disclosure=disclosure or DISCLOSURE_TERMINATION,
 						 available_for_submission_beginning=not_before,
 						 available_for_submission_ending=not_after)
