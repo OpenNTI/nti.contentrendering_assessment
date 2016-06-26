@@ -84,7 +84,7 @@ name: naqwordentry
 </div>
 
 # No-Op template for the part questions
-name: naqmlabels naqmlabel naqmvalues naqmvalue naqregexes naqregex naqpaireditems naqpaireditem
+name: naqmlabels naqmlabel naqmvalues naqmvalue naqregexes naqregex naqpaireditems naqpaireditem naqtags naqtag
 
 name: napoll
 <object type="application/vnd.nextthought.napoll" data-ntiid="the-ntiid" data="the-ntiid" tal:attributes="data-ntiid self/ntiid; data self/ntiid; | default">

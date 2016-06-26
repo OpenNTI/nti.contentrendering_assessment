@@ -40,6 +40,7 @@ from nti.assessment.interfaces import DISCLOSURE_TERMINATION
 from nti.contentrendering.plastexids import NTIIDMixin
 from nti.contentrendering.interfaces import IEmbeddedContainer
 
+from nti.contentrendering_assessment.ntibase import _AbstractNAQTags
 from nti.contentrendering_assessment.ntibase import _LocalContentMixin
 
 from nti.contentrendering_assessment.utils import parse_assessment_datetime
@@ -50,7 +51,7 @@ class napollname(Base.Command):
 class nasurveyname(Base.Command):
 	unicode = ''
 
-class nainquiry(NTIIDMixin):
+class nainquiry(_AbstractNAQTags, NTIIDMixin):
 
 	@property
 	def _local_tzname(self):

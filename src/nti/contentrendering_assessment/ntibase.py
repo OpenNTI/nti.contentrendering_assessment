@@ -272,8 +272,29 @@ class _AbstractNAQPart(_AbstractNonGradableNAQPart):
 class naqvalue(_LocalContentMixin, Base.List.item):
 	pass
 
+class naqtags(Base.List):
+	pass
+
 class naqtag(naqvalue):
 	args = 'word:str'
 
 	# def _after_render(self, rendered):
 	# 	self._asm_local_content = rendered
+
+class _AbstractNAQTags(object):
+
+	def __init__(self, *args, **kwargs):
+		super(_AbstractNAQTags, self).__init__(*args, **kwargs)
+
+	def _asm_tags(self):
+		"""
+		Collects the ``naqtag`` tags found beneath this element,
+		and returns them in a list. For use by :meth:`assessment_object`
+		"""
+		result = []
+		tags_els = self.getElementsByTagName('naqtag')
+		for tag_el in tags_els:
+			word = tag_el.attributes['word'] or tag_el._asm_local_content
+			if word:
+				result.append(word)
+		return result

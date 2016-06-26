@@ -42,7 +42,8 @@ from nti.assessment.randomized.interfaces import IRandomizedQuestionSet
 from nti.contentrendering import plastexids
 from nti.contentrendering import interfaces as crd_interfaces
 
-from nti.contentrendering_assessment.ntibase import _LocalContentMixin
+from nti.contentrendering_assessment.ntibase import _AbstractNAQTags
+from nti.contentrendering_assessment.ntibase import _LocalContentMixin 
 
 class naquestionname(Base.Command):
 	unicode = ''
@@ -50,7 +51,8 @@ class naquestionname(Base.Command):
 class naquestionsetname(Base.Command):
 	unicode = ''
 
-class naquestion(_LocalContentMixin, Base.Environment, plastexids.NTIIDMixin):
+class naquestion(_LocalContentMixin, _AbstractNAQTags, 
+				 Base.Environment, plastexids.NTIIDMixin):
 	args = '[individual:str]'
 
 	blockType = True
@@ -126,7 +128,7 @@ class naquestionref(Crossref.ref):
 	pass
 
 @interface.implementer(crd_interfaces.IEmbeddedContainer)
-class naquestionset(Base.List, plastexids.NTIIDMixin):
+class naquestionset(_AbstractNAQTags, Base.List, plastexids.NTIIDMixin):
 	r"""
 	Question sets are a list of questions that should be submitted
 	together. For authoring, questions are included in a question

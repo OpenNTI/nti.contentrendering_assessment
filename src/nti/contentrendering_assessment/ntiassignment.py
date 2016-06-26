@@ -30,6 +30,7 @@ from nti.assessment.interfaces import IQAssignment
 from nti.contentrendering import plastexids
 from nti.contentrendering.interfaces import IEmbeddedContainer
 
+from nti.contentrendering_assessment.ntibase import _AbstractNAQTags
 from nti.contentrendering_assessment.ntibase import _LocalContentMixin
 
 from nti.contentrendering_assessment.utils import parse_assessment_datetime
@@ -68,6 +69,7 @@ class naassignmentname(Base.Command):
 
 @interface.implementer(IEmbeddedContainer)
 class naassignment(_LocalContentMixin,
+				   _AbstractNAQTags,
 				   Base.Environment,
 				   plastexids.NTIIDMixin):
 	r"""

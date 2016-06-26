@@ -82,6 +82,14 @@ from nti.contentrendering.plastexpackages.ntilatexmacros import ntiincludevideo
 from nti.contentrendering_assessment.ntibase import _AbstractNAQPart
 from nti.contentrendering_assessment.ntibase import _LocalContentMixin
 
+# Tags
+
+from nti.contentrendering_assessment.ntibase import naqtag
+from nti.contentrendering_assessment.ntibase import naqtags
+
+naqtag = naqtag
+naqtags = naqtags 
+
 # Solutions
 
 from nti.contentrendering_assessment.ntisolution import naqsolution
