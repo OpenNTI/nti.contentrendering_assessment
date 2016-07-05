@@ -23,7 +23,10 @@ import simplejson as json
 
 from zope import component
 from zope import interface
+
 from zope.traversing.api import traverse
+
+from nti.assessment.interfaces import DEFAULT_MAX_SIZE_BYTES
 
 from nti.contentrendering import nti_render
 from nti.contentrendering import transforms
@@ -283,7 +286,7 @@ class TestRenderables(AssessmentRenderingTestCase):
 								   'content': 'Arbitrary content goes here.',
 								   'explanation': u'',
 								   'hints': [],
-								   'max_file_size': None,
+								   'max_file_size': DEFAULT_MAX_SIZE_BYTES,
 								   'randomized': False,
 								   'solutions': [],
 								   'weight': 1.0,}]}
@@ -333,7 +336,7 @@ class TestRenderables(AssessmentRenderingTestCase):
 		\end{naquestionset}
 
 
-		\begin{naassignment}[not_before_date=2014-01-13,maximum_time_allowed=50]<Main Title>
+		\begin{naassignment}[not_before_date=2014-01-13,maximum_time_allowed=60]<Main Title>
 		\label{assignment}
 		Assignment content.
 		\begin{naassignmentpart}[auto_grade=true]<Part Title>{set}
@@ -374,7 +377,7 @@ class TestRenderables(AssessmentRenderingTestCase):
 								   'content': 'Arbitrary content goes here.',
 								   'explanation': u'',
 								   'hints': [],
-								   'max_file_size': None,
+								   'max_file_size': DEFAULT_MAX_SIZE_BYTES,
 								   'randomized': False,
 								   'solutions': [],
 								   'weight': 1.0}]}
@@ -393,7 +396,7 @@ class TestRenderables(AssessmentRenderingTestCase):
 																	  "Creator": "zope.security.management.system_user",
 																	  # XXX: JAM: Obviously this is wrong. Hopefully nobody uses it.
 																	  'content': u'\\label{assignment} Assignment content. \\begin{naassignmentpart}[auto_grade=true]<Part Title>{set} Some content. \\end{naassignmentpart}',
-																	  'maximum_time_allowed': 50,
+																	  'maximum_time_allowed': 60,
 																	  'no_submit': False,
 																	  'NoSubmit': False,
 																	  'MimeType': 'application/vnd.nextthought.assessment.timedassignment',
