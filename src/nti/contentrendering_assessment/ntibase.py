@@ -21,14 +21,14 @@ from plasTeX import Base
 from nti.assessment.interfaces import IQHTMLHint
 from nti.assessment.interfaces import IQMathSolution
 
-from nti.common.property import alias
-
 from nti.contentfragments.interfaces import LatexContentFragment
 from nti.contentfragments.interfaces import ILatexContentFragment
 
 from nti.contentrendering.plastexpackages._util import _is_renderable
 from nti.contentrendering.plastexpackages._util import _asm_rendered_textcontent
 from nti.contentrendering.plastexpackages._util import LocalContentMixin as _BaseLocalContentMixin
+
+from nti.property.property import alias
 
 def aspveint(obj):
 	try:

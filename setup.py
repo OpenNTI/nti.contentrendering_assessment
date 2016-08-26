@@ -59,7 +59,8 @@ setup(
 		'nti.contentrendering',
 		'nti.externalization',
 		'nti.mimetype',
-		'nti.plasTeX'
+		'nti.plasTeX',
+		'nti.property'
 	],
 	extras_require={
 		'test': TESTS_REQUIRE,
