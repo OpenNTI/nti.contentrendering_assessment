@@ -9,5 +9,5 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from .assessment import _AssessmentExtractor  #BWC
-from .questionset import _LessonQuestionSetExtractor #BWC
+from nti.contentrendering_assessment.extractors.assessment import _AssessmentExtractor  # BWC
+from nti.contentrendering_assessment.extractors.questionset import _LessonQuestionSetExtractor  # BWC
