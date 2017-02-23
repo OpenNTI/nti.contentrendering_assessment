@@ -233,7 +233,7 @@ class TestRenderables(AssessmentRenderingTestCase):
 				   'href': 'index.html'}},
 				 'href': 'index.html'}
 			del obj['Signatures']
-			remove_keys(obj, 'ID', 'Signatures', 'CreatedTime', 'Last Modified', 
+			remove_keys(obj, 'ID', 'Signatures', 'CreatedTime', 'Last Modified',
 						'version', 'tags', 'publishLastModified')
 			assert_that( obj, is_( exp_value ) )
 
@@ -439,21 +439,21 @@ class TestRenderables(AssessmentRenderingTestCase):
 			remove_keys(obj, 'ID', 'Signatures', 'CreatedTime', 'Last Modified',
 						'publishBeginning', 'publishEnding', 'version', 'tags',
 						'publishLastModified')
-			obj = json.dumps(obj, indent=4, sort_keys=True) 	
+			obj = json.dumps(obj, indent=4, sort_keys=True)
 			exp_value = json.dumps(exp_value, indent=4, sort_keys=True)
 			assert_that(obj, is_(exp_value))
 
 	def test_cs_encapsulation_brianna(self):
-		example = """
-		\section{Turingscraft: Encapsulation (10 points)}
+		example = br"""
+				\section{Turingscraft: Encapsulation (10 points)}
 
-		Complete the Turingscraft exercises on encapsulation (first exercise, 20725)
-		\href{https://codelab3.turingscraft.com/codelab/jsp/codelink/codelink.jsp?sac=OKLA-16038-VXTF-22&exssn=00000-20725}{here}.
+				Complete the Turingscraft exercises on encapsulation (first exercise, 20725)
+				\href{https://codelab3.turingscraft.com/codelab/jsp/codelink/codelink.jsp?sac=OKLA-16038-VXTF-22&exssn=00000-20725}{here}.
 
-		\begin{naassignment}[category=no_submit,not_after_date=2014-12-01,public=true]<Turingscraft: Encapsulation (10 points)>
-   			 \label{assignment:Turingscraft_C__Encapsulation}
-		\end{naassignment}
-		"""
+				\begin{naassignment}[category=no_submit,not_after_date=2014-12-01,public=true]<Turingscraft: Encapsulation (10 points)>
+		   			 \label{assignment:Turingscraft_C__Encapsulation}
+				\end{naassignment}
+				"""
 		text = _simpleLatexDocument( (example,))
 
 		# Our default rendering process with default output encodings
@@ -462,21 +462,24 @@ class TestRenderables(AssessmentRenderingTestCase):
 			rdb = ResourceDB( ctx.dom )
 			rdb.generateResourceSets()
 
-			nti_render.render(ctx.dom, 'XHTML', rdb)
+			jobname = ctx.dom.userdata['jobname']
+			nti_render.process_document(ctx.dom, jobname, out_format='xhtml')
 
 			fname = os.path.join(ctx.docdir, 'tag_nextthought_com_2011-10_testing-HTML-temp_0.html')
 			with open(fname, 'r') as f:
 				contents = f.read()
 
-			assert_that( contents,
-						 contains_string('<link rel="next" href="tag_nextthought_com_2011-10_testing-HTML-temp_assignment_Turingscraft_C__Encapsulation.html" title="Turingscraft: Encapsulation (10 points)" />') )
+			link = '<link href="tag:nextthought.com,2011-10:testing-HTML-temp.turingscraft:_encapsulation_(10_points)" rel="next" title="Turingscraft: Encapsulation (10 points)" />'
+			assert_that( contents, contains_string(link) )
 
-			fname = os.path.join(ctx.docdir, 'tag_nextthought_com_2011-10_testing-HTML-temp_assignment_Turingscraft_C__Encapsulation.html')
+			# ....was 'tag_nextthought_com_2011-10_testing-HTML-temp_assignment_Turingscraft_C__Encapsulation.html'
+			filename = u'tag_nextthought_com_2011-10_testing-HTML-temp_turingscraft__encapsulation__10_points_.html'
+			fname = os.path.join(ctx.docdir, filename)
 			with open(fname, 'r') as f:
 				contents = f.read()
 
 			assert_that( contents,
-						 contains_string('<span class="naassignment hidden" ></span>') )
+						 contains_string('<span class="naassignment hidden"></span>') )
 
 			assert_that( contents,
 						 contains_string('<div class="chapter title">Turingscraft: Encapsulation (10 points)</div>') )
