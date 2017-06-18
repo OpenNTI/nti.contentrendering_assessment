@@ -82,7 +82,7 @@ class TestProduction(AssessmentRenderingTestCase):
 		assert_that( asg_object.parts[0], has_property( 'question_set', same_instance(qset_object)))
 		
 		assert_that( qset_object, has_length( 5 ) )
-		for idx in xrange(len(qset_object)):
+		for idx in range(len(qset_object)):
 			question = qset_object[idx]
 			assert_that( question, has_length( 1 ) )
 			assert_that( question, has_property('parts', has_length( 1 ) ))
