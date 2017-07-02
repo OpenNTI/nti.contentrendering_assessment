@@ -58,6 +58,6 @@ from nti.contentrendering.tests import simpleLatexDocumentText
 
 
 def _simpleLatexDocument(maths):
-    return simpleLatexDocumentText(preludes=(br'\usepackage{ntiassessment}',),
+    return simpleLatexDocumentText(preludes=(r'\usepackage{ntiassessment}',),
                                    bodies=maths)
 simpleLatexDocument = _simpleLatexDocument
