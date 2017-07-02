@@ -4,13 +4,14 @@
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
 import os
 import codecs
+
 import simplejson as json  # Needed for sort_keys, ensure_ascii
 
 from zope import component
@@ -66,21 +67,21 @@ class _AssessmentExtractor(object):
         self._build_index(documents[0], index['Items'], index['Signatures'])
         index['href'] = index.get('href', 'index.html')
 
-        if items: # check if there is something
+        if items:  # check if there is something
             logger.info("extracting assessments to %s", target)
             with codecs.open(target, 'w', encoding='utf-8') as fp:
                 # sort_keys for repeatability. Do force ensure_ascii because even though
                 # we're using codes to  encode automatically, the reader might not
                 # decode
-                json.dump(index, 
-                          fp, 
-                          indent='\t', 
-                          sort_keys=True, 
+                json.dump(index,
+                          fp,
+                          indent='\t',
+                          sort_keys=True,
                           ensure_ascii=True)
-    
+
             with open(target, "rb") as fp:
                 sha256 = hashfile(fp)
-    
+
             target = os.path.join(outpath, 'assessment_index.json.sha256')
             with open(target, "wb") as fp:
                 fp.write(sha256)
@@ -96,7 +97,7 @@ class _AssessmentExtractor(object):
         keyed off of NTIIDs.
 
         :param dict index: The containing index node. Typically, this will be
-                an ``Items`` dictionary in a containing index.
+               an ``Items`` dictionary in a containing index.
         """
         if self._is_uninteresting(element):
             # It's important to identify uninteresting nodes because
@@ -114,7 +115,7 @@ class _AssessmentExtractor(object):
             element_index = index
         else:
             assert ntiid not in index, \
-            	  ("NTIIDs must be unique", ntiid, index.keys())
+                   ("NTIIDs must be unique", ntiid, index.keys())
             element_index = index[ntiid] = {}
 
             element_index['NTIID'] = ntiid
@@ -161,8 +162,8 @@ class _AssessmentExtractor(object):
 
         # Use the class of the object returned as a factory.
         raw_int_obj = type(assm_obj)()
-        update_from_external_object(raw_int_obj, 
-                                    ext_obj, 
+        update_from_external_object(raw_int_obj,
+                                    ext_obj,
                                     require_updater=True,
                                     notify=False)
 

@@ -5,7 +5,7 @@ adapters for externalizing some assessment objects
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -30,67 +30,72 @@ NTIID = StandardExternalFields.NTIID
 MIMETYPE = StandardExternalFields.MIMETYPE
 CONTAINER_ID = StandardExternalFields.CONTAINER_ID
 
+
 def _render_children(renderer, nodes, strip=True):
-	if not isinstance(nodes, six.string_types):
-		result = unicode(''.join(render_children(renderer, nodes)))
-	else:
-		result = nodes.decode("utf-8") if isinstance(nodes, bytes) else nodes
-	return result.strip() if strip and result else result
+    if not isinstance(nodes, six.string_types):
+        result = u''.join(render_children(renderer, nodes))
+    else:
+        result = nodes.decode("utf-8") if isinstance(nodes, bytes) else nodes
+    return result.strip() if strip and result else result
+
 
 @interface.implementer(IJSONTransformer)
 class _NAPollRefJSONTransformer(object):
 
-	def __init__(self, element):
-		self.el = element
+    def __init__(self, element):
+        self.el = element
 
-	def transform(self):
-		output = {'label': ''}
-		output[MIMETYPE] = POLL_MIME_TYPE
-		output[NTIID] = output[TARGET_NTIID] = self.el.poll.ntiid
-		return output
+    def transform(self):
+        output = {'label': ''}
+        output[MIMETYPE] = POLL_MIME_TYPE
+        output[NTIID] = output[TARGET_NTIID] = self.el.poll.ntiid
+        return output
+
 
 @interface.implementer(IJSONTransformer)
 class _NASurveyRefJSONTransformer(object):
 
-	def __init__(self, element):
-		self.el = element
+    def __init__(self, element):
+        self.el = element
 
-	def transform(self):
-		title = self.el.survey.title
-		title = _render_children(self.el.survey.renderer, title)
-		output = {'label': title}
-		output[MIMETYPE] = SURVEY_MIME_TYPE
-		output['question-count'] = self.el.survey.question_count
-		output[NTIID] = output[TARGET_NTIID] = self.el.survey.ntiid
-		return output
+    def transform(self):
+        title = self.el.survey.title
+        title = _render_children(self.el.survey.renderer, title)
+        output = {'label': title}
+        output[MIMETYPE] = SURVEY_MIME_TYPE
+        output['question-count'] = self.el.survey.question_count
+        output[NTIID] = output[TARGET_NTIID] = self.el.survey.ntiid
+        return output
+
 
 @interface.implementer(IJSONTransformer)
 class _NAQuestionSetRefJSONTransformer(object):
 
-	def __init__(self, element):
-		self.el = element
+    def __init__(self, element):
+        self.el = element
 
-	def transform(self):
-		title = self.el.questionset.title
-		title = _render_children(self.el.questionset.renderer, title)
-		output = {'label': title}
-		output[MIMETYPE] = QUESTION_SET_MIME_TYPE
-		output['question-count'] = self.el.questionset.question_count
-		output[NTIID] = output[TARGET_NTIID] = self.el.questionset.ntiid
-		return output
+    def transform(self):
+        title = self.el.questionset.title
+        title = _render_children(self.el.questionset.renderer, title)
+        output = {'label': title}
+        output[MIMETYPE] = QUESTION_SET_MIME_TYPE
+        output['question-count'] = self.el.questionset.question_count
+        output[NTIID] = output[TARGET_NTIID] = self.el.questionset.ntiid
+        return output
+
 
 @interface.implementer(IJSONTransformer)
 class _NAAssignmentRefJSONTransformer(object):
 
-	def __init__(self, element):
-		self.el = element
+    def __init__(self, element):
+        self.el = element
 
-	def transform(self):
-		title = self.el.assignment.title
-		title = _render_children(self.el.assignment.renderer, title)
-		output = {'label': title, 'title': title}
-		output[NTIID] = self.el.assignment.ntiid
-		output[MIMETYPE] = self.el.assignment.mimeType
-		output[TARGET_NTIID] = self.el.assignment.ntiid
-		output[CONTAINER_ID] = self.el.assignment.containerId
-		return output
+    def transform(self):
+        title = self.el.assignment.title
+        title = _render_children(self.el.assignment.renderer, title)
+        output = {'label': title, 'title': title}
+        output[NTIID] = self.el.assignment.ntiid
+        output[MIMETYPE] = self.el.assignment.mimeType
+        output[TARGET_NTIID] = self.el.assignment.ntiid
+        output[CONTAINER_ID] = self.el.assignment.containerId
+        return output

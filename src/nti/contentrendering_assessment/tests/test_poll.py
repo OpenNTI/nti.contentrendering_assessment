@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 # disable: accessing protected members, too many methods
@@ -14,6 +14,8 @@ from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import has_property
 from hamcrest import contains_string
+
+from nti.testing.matchers import verifiably_provides
 
 from nti.assessment.interfaces import IQPoll
 from nti.assessment.interfaces import IQSurvey
@@ -30,12 +32,11 @@ from nti.contentrendering.tests import buildDomFromString as _buildDomFromString
 from nti.contentrendering_assessment.tests import _simpleLatexDocument
 from nti.contentrendering_assessment.tests import AssessmentRenderingTestCase
 
-from nti.testing.matchers import verifiably_provides
 
 class TestPoll(AssessmentRenderingTestCase):
 
-	def test_matchingpart(self):
-		example = br"""
+    def test_matchingpart(self):
+        example = r"""
 			\begin{napoll}[not_before_date=2014-11-24,not_after_date=2014-12-04]
 			\label{pqid.7_2_Poll.1}
 				1. Sequencing. Place the following events in the order that they occurred
@@ -51,27 +52,31 @@ class TestPoll(AssessmentRenderingTestCase):
 				\end{naqmatchingpart}
 			\end{napoll}
 			"""
-		dom = _buildDomFromString(_simpleLatexDocument((example,)))
-		assert_that(dom.getElementsByTagName('napoll'), has_length(1))
-		assert_that(dom.getElementsByTagName('napoll')[0], is_(napoll))
+        dom = _buildDomFromString(_simpleLatexDocument((example,)))
+        assert_that(dom.getElementsByTagName('napoll'), has_length(1))
+        assert_that(dom.getElementsByTagName('napoll')[0], is_(napoll))
 
-		assert_that(dom.getElementsByTagName('naqmlabel'), has_length(2))
-		assert_that(dom.getElementsByTagName('naqmvalue'), has_length(2))
+        assert_that(dom.getElementsByTagName('naqmlabel'), has_length(2))
+        assert_that(dom.getElementsByTagName('naqmvalue'), has_length(2))
 
-		naq = dom.getElementsByTagName('napoll')[0]
-		part_el = naq.getElementsByTagName('naqmatchingpart')[0]
+        naq = dom.getElementsByTagName('napoll')[0]
+        part_el = naq.getElementsByTagName('naqmatchingpart')[0]
 
-		poll = naq.assessment_object()
-		assert_that(poll, verifiably_provides(IQPoll))
-		assert_that(poll, has_property('available_for_submission_ending', is_not(none())))
-		assert_that(poll, has_property('available_for_submission_beginning', is_not(none())))
-		
-		part = part_el.assessment_object()
-		assert_that(part, verifiably_provides(part_el.nongradable_part_interface))
-		assert_that(part_el.nongradable_part_interface, is_(IQNonGradableMatchingPart))
-		
-	def test_orderingpart_macros(self):
-		example = br"""
+        poll = naq.assessment_object()
+        assert_that(poll, verifiably_provides(IQPoll))
+        assert_that(poll, 
+					has_property('available_for_submission_ending', is_not(none())))
+        assert_that(poll, 
+					has_property('available_for_submission_beginning', is_not(none())))
+
+        part = part_el.assessment_object()
+        assert_that(part, 
+					verifiably_provides(part_el.nongradable_part_interface))
+        assert_that(part_el.nongradable_part_interface,
+                    is_(IQNonGradableMatchingPart))
+
+    def test_orderingpart_macros(self):
+        example = r"""
 			\begin{napoll}
 			\label{pid.7_2_Poll.1}
 				1. Sequencing. Place the following events in the order that they occurred
@@ -87,22 +92,24 @@ class TestPoll(AssessmentRenderingTestCase):
 				\end{naqorderingpart}
 			\end{napoll}
 			"""
-		dom = _buildDomFromString(_simpleLatexDocument((example,)))
-		assert_that(dom.getElementsByTagName('napoll'), has_length(1))
-		assert_that(dom.getElementsByTagName('napoll')[0], is_(napoll))
+        dom = _buildDomFromString(_simpleLatexDocument((example,)))
+        assert_that(dom.getElementsByTagName('napoll'), has_length(1))
+        assert_that(dom.getElementsByTagName('napoll')[0], is_(napoll))
 
-		assert_that(dom.getElementsByTagName('naqmlabel'), has_length(2))
-		assert_that(dom.getElementsByTagName('naqmvalue'), has_length(2))
+        assert_that(dom.getElementsByTagName('naqmlabel'), has_length(2))
+        assert_that(dom.getElementsByTagName('naqmvalue'), has_length(2))
 
-		naq = dom.getElementsByTagName('napoll')[0]
-		part_el = naq.getElementsByTagName('naqorderingpart')[0]
+        naq = dom.getElementsByTagName('napoll')[0]
+        part_el = naq.getElementsByTagName('naqorderingpart')[0]
 
-		part = part_el.assessment_object()
-		assert_that(part, verifiably_provides(part_el.nongradable_part_interface))
-		assert_that(part_el.nongradable_part_interface, is_(IQNonGradableOrderingPart))
-	
-	def test_multiple_choice_macros(self):
-		example = br"""
+        part = part_el.assessment_object()
+        assert_that(part, 
+					verifiably_provides(part_el.nongradable_part_interface))
+        assert_that(part_el.nongradable_part_interface,
+                    is_(IQNonGradableOrderingPart))
+
+    def test_multiple_choice_macros(self):
+        example = r"""
 			\begin{napoll}
 				Arbitrary prefix content goes here.
 				\begin{naqmultiplechoicepart}
@@ -119,21 +126,23 @@ class TestPoll(AssessmentRenderingTestCase):
 			\end{napoll}
 			"""
 
-		dom = _buildDomFromString(_simpleLatexDocument((example,)))
-		assert_that(dom.getElementsByTagName('napoll'), has_length(1))
-		assert_that(dom.getElementsByTagName('napoll')[0], is_(napoll))
+        dom = _buildDomFromString(_simpleLatexDocument((example,)))
+        assert_that(dom.getElementsByTagName('napoll'), has_length(1))
+        assert_that(dom.getElementsByTagName('napoll')[0], is_(napoll))
 
-		assert_that(dom.getElementsByTagName('naqchoice'), has_length(3))
+        assert_that(dom.getElementsByTagName('naqchoice'), has_length(3))
 
-		naq = dom.getElementsByTagName('napoll')[0]
-		part_el = naq.getElementsByTagName('naqmultiplechoicepart')[0]
+        naq = dom.getElementsByTagName('napoll')[0]
+        part_el = naq.getElementsByTagName('naqmultiplechoicepart')[0]
 
-		part = part_el.assessment_object()
-		assert_that(part, verifiably_provides(part_el.nongradable_part_interface))
-		assert_that(part_el.nongradable_part_interface, is_(IQNonGradableMultipleChoicePart))
+        part = part_el.assessment_object()
+        assert_that(part, 
+					verifiably_provides(part_el.nongradable_part_interface))
+        assert_that(part_el.nongradable_part_interface,
+                    is_(IQNonGradableMultipleChoicePart))
 
-	def test_multiple_choice_multiple_answer_macros(self):
-		example = br"""
+    def test_multiple_choice_multiple_answer_macros(self):
+        example = r"""
 			\begin{napoll}
 				Arbitrary prefix content goes here.
 				\begin{naqmultiplechoicemultipleanswerpart}
@@ -150,21 +159,23 @@ class TestPoll(AssessmentRenderingTestCase):
 			\end{napoll}
 			"""
 
-		dom = _buildDomFromString(_simpleLatexDocument((example,)))
-		assert_that(dom.getElementsByTagName('napoll'), has_length(1))
-		assert_that(dom.getElementsByTagName('napoll')[0], is_(napoll))
+        dom = _buildDomFromString(_simpleLatexDocument((example,)))
+        assert_that(dom.getElementsByTagName('napoll'), has_length(1))
+        assert_that(dom.getElementsByTagName('napoll')[0], is_(napoll))
 
-		assert_that(dom.getElementsByTagName('naqchoice'), has_length(6))
+        assert_that(dom.getElementsByTagName('naqchoice'), has_length(6))
 
-		naq = dom.getElementsByTagName('napoll')[0]
-		part_el = naq.getElementsByTagName('naqmultiplechoicemultipleanswerpart')[0]
+        naq = dom.getElementsByTagName('napoll')[0]
+        part_el = naq.getElementsByTagName('naqmultiplechoicemultipleanswerpart')[0]
 
-		part = part_el.assessment_object()
-		assert_that(part, verifiably_provides(part_el.nongradable_part_interface))
-		assert_that(part_el.nongradable_part_interface, is_(IQNonGradableMultipleChoiceMultipleAnswerPart))
+        part = part_el.assessment_object()
+        assert_that(part, 
+					verifiably_provides(part_el.nongradable_part_interface))
+        assert_that(part_el.nongradable_part_interface, 
+					is_(IQNonGradableMultipleChoiceMultipleAnswerPart))
 
-	def test_survey(self):
-		example = br"""
+    def test_survey(self):
+        example = r"""
 		\begin{napoll}
 			\label{poll1}
 			Arbitrary content goes here.
@@ -182,16 +193,19 @@ class TestPoll(AssessmentRenderingTestCase):
 		\end{nasurvey}
 		"""
 
-		dom = _buildDomFromString( _simpleLatexDocument((example,)))
-		assert_that( dom.getElementsByTagName('napoll'), has_length(1) )
-		assert_that( dom.getElementsByTagName('napoll')[0], is_(napoll))
+        dom = _buildDomFromString(_simpleLatexDocument((example,)))
+        assert_that(dom.getElementsByTagName('napoll'), has_length(1))
+        assert_that(dom.getElementsByTagName('napoll')[0], is_(napoll))
 
-		assert_that( dom.getElementsByTagName('nasurvey'), has_length( 1 ) )
-		assert_that( dom.getElementsByTagName('nasurvey')[0], is_(nasurvey))
+        assert_that(dom.getElementsByTagName('nasurvey'), has_length(1))
+        assert_that(dom.getElementsByTagName('nasurvey')[0], is_(nasurvey))
 
-		survey_object = dom.getElementsByTagName('nasurvey')[0].assessment_object()
-		assert_that(survey_object, has_property('questions', has_length(1) ))
-		assert_that(survey_object, has_property('ntiid', contains_string('survey')))
-		assert_that(survey_object, has_property('available_for_submission_ending', is_not(none())))
-		assert_that(survey_object, has_property('available_for_submission_beginning', is_not(none())))
-		assert_that(survey_object, verifiably_provides(IQSurvey))
+        survey_object = dom.getElementsByTagName('nasurvey')[0].assessment_object()
+        assert_that(survey_object, has_property('questions', has_length(1)))
+        assert_that(survey_object, 
+					has_property('ntiid', contains_string('survey')))
+        assert_that(survey_object, 
+					has_property('available_for_submission_ending', is_not(none())))
+        assert_that(survey_object, 
+					has_property('available_for_submission_beginning', is_not(none())))
+        assert_that(survey_object, verifiably_provides(IQSurvey))
