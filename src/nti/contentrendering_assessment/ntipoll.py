@@ -50,6 +50,8 @@ from nti.contentrendering_assessment.ntibase import _LocalContentMixin
 
 from nti.contentrendering_assessment.utils import parse_assessment_datetime
 
+from nti.property.property import alias
+
 
 class napollname(Base.Command):
     unicode = u''
@@ -168,6 +170,8 @@ class napoll(_LocalContentMixin, Base.Environment, nainquiry):
 
 class napollref(naassesmentref):
 
+    assesment = alias('poll')
+
     @readproperty
     def poll(self):
         return self.idref['label']
@@ -285,6 +289,8 @@ class nasurveyref(naassesmentref):
     """
     A reference to the label of a survey.
     """
+    
+    assesment = alias('survey')
 
     @readproperty
     def survey(self):

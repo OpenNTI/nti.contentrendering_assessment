@@ -49,6 +49,8 @@ from nti.contentrendering_assessment.ntibase import naassesmentref
 from nti.contentrendering_assessment.ntibase import _AbstractNAQTags
 from nti.contentrendering_assessment.ntibase import _LocalContentMixin
 
+from nti.property.property import alias
+
 
 class naquestionname(Base.Command):
     unicode = u''
@@ -137,6 +139,8 @@ class naquestion(_LocalContentMixin, _AbstractNAQTags,
 
 class naquestionref(naassesmentref):
     
+    assesment = alias('question')
+
     @readproperty
     def question(self):
         return self.idref['label']
@@ -372,6 +376,8 @@ class naquestionsetref(naassesmentref):
     """
     A reference to the label of a question set.
     """
+
+    assesment = alias('questionset')
 
     @readproperty
     def questionset(self):

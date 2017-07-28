@@ -320,4 +320,9 @@ class _AbstractNAQTags(object):
 
 
 class naassesmentref(Crossref.ref):
+
     to_render = True
+    
+    @property
+    def assesment(self):
+        return None

@@ -38,6 +38,8 @@ from nti.contentrendering_assessment.ntibase import _LocalContentMixin
 from nti.contentrendering_assessment.utils import parse_assessment_datetime
 from nti.contentrendering_assessment.utils import secs_converter as _secs_converter
 
+from nti.property.property import alias
+
 
 class naassignmentpart(_LocalContentMixin,
                        Base.Environment):
@@ -186,6 +188,8 @@ class naassignmentref(naassesmentref):
     """
     A reference to the label of a assignment.
     """
+
+    assesment = alias('assignment')
 
     @readproperty
     def assignment(self):
