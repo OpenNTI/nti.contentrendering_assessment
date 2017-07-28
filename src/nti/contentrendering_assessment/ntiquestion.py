@@ -136,7 +136,10 @@ class naquestion(_LocalContentMixin, _AbstractNAQTags,
 
 
 class naquestionref(naassesmentref):
-    pass
+    
+    @readproperty
+    def question(self):
+        return self.idref['label']
 
 
 @interface.implementer(crd_interfaces.IEmbeddedContainer)
