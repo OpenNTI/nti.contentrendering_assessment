@@ -25,8 +25,6 @@ from paste.deploy.converters import asbool
 
 from plasTeX import Base
 
-from plasTeX.Base import Crossref
-
 from plasTeX.Renderers import render_children
 
 from nti.assessment.interfaces import IQPoll
@@ -46,6 +44,7 @@ from nti.contentrendering.interfaces import IEmbeddedContainer
 
 from nti.contentrendering.plastexids import NTIIDMixin
 
+from nti.contentrendering_assessment.ntibase import naassesmentref
 from nti.contentrendering_assessment.ntibase import _AbstractNAQTags
 from nti.contentrendering_assessment.ntibase import _LocalContentMixin
 
@@ -167,7 +166,7 @@ class napoll(_LocalContentMixin, Base.Environment, nainquiry):
         return result
 
 
-class napollref(Crossref.ref):
+class napollref(naassesmentref):
 
     @readproperty
     def poll(self):
@@ -282,7 +281,7 @@ class nasurvey(Base.List, nainquiry):
         return title
 
 
-class nasurveyref(Crossref.ref):
+class nasurveyref(naassesmentref):
     """
     A reference to the label of a survey.
     """

@@ -23,8 +23,6 @@ from persistent.list import PersistentList
 
 from plasTeX import Base
 
-from plasTeX.Base import Crossref
-
 from plasTeX.Renderers import render_children
 
 from nti.assessment.interfaces import IQuestion
@@ -47,6 +45,7 @@ from nti.contentprocessing._compat import text_
 from nti.contentrendering import plastexids
 from nti.contentrendering import interfaces as crd_interfaces
 
+from nti.contentrendering_assessment.ntibase import naassesmentref
 from nti.contentrendering_assessment.ntibase import _AbstractNAQTags
 from nti.contentrendering_assessment.ntibase import _LocalContentMixin
 
@@ -136,7 +135,7 @@ class naquestion(_LocalContentMixin, _AbstractNAQTags,
         return result
 
 
-class naquestionref(Crossref.ref):
+class naquestionref(naassesmentref):
     pass
 
 
@@ -366,7 +365,7 @@ class naquestionbank(naquestionset):
         return result
 
 
-class naquestionsetref(Crossref.ref):
+class naquestionsetref(naassesmentref):
     """
     A reference to the label of a question set.
     """

@@ -19,6 +19,8 @@ from zope.cachedescriptors.property import readproperty
 
 from plasTeX import Base
 
+from plasTeX.Base import Crossref
+
 from nti.assessment.interfaces import IQHTMLHint
 from nti.assessment.interfaces import IQMathSolution
 
@@ -315,3 +317,7 @@ class _AbstractNAQTags(object):
             if word:
                 result.append(word)
         return result
+
+
+class naassesmentref(Crossref.ref):
+    to_render = True

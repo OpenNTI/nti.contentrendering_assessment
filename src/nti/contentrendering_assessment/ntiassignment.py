@@ -18,8 +18,6 @@ from zope.cachedescriptors.property import readproperty
 
 from plasTeX import Base
 
-from plasTeX.Base import Crossref
-
 from paste.deploy.converters import asbool
 
 from nti.assessment.assignment import QAssignment
@@ -33,6 +31,7 @@ from nti.contentrendering import plastexids
 
 from nti.contentrendering.interfaces import IEmbeddedContainer
 
+from nti.contentrendering_assessment.ntibase import naassesmentref
 from nti.contentrendering_assessment.ntibase import _AbstractNAQTags
 from nti.contentrendering_assessment.ntibase import _LocalContentMixin
 
@@ -183,7 +182,7 @@ class naassignment(_LocalContentMixin,
         return parentNode.ntiid
 
 
-class naassignmentref(Crossref.ref):
+class naassignmentref(naassesmentref):
     """
     A reference to the label of a question set.
     """
