@@ -184,7 +184,7 @@ class naassignment(_LocalContentMixin,
 
 class naassignmentref(naassesmentref):
     """
-    A reference to the label of a question set.
+    A reference to the label of a assignment.
     """
 
     @readproperty

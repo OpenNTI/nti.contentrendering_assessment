@@ -136,6 +136,18 @@ name: naqsolutions
 	<span tal:repeat="item self" tal:attributes="class string:${item/__class__/__name__} hidden; data-nti-units item/units_to_html"></span>
 </span>
 
+name: naquestionref
+<object class="question" tal:condition="not:self/to_render">
+	<param name="type" value="MIME Type" tal:attributes="value self/question/mimeType" />
+	<param name="target-ntiid" value="NTIID" tal:attributes="value self/question/ntiid" />
+</object>
+
+name: napollref
+<object class="poll" tal:condition="not:self/to_render">
+	<param name="type" value="MIME Type" tal:attributes="value self/poll/mimeType" />
+	<param name="target-ntiid" value="NTIID" tal:attributes="value self/poll/ntiid" />
+</object>
+
 name: nasurveyref
 <object class="nasurveyref" >
 	<param name="label" value="Survey Title" tal:attributes="value self/survey/title" />
@@ -158,4 +170,11 @@ name: naquestionbankref
 	<param name="type" value="Question Bank MIME Type" tal:attributes="value self/questionbank/mimeType" />
 	<param name="question-count" value="Number of questions in a Question Bank" tal:attributes="value self/questionbank/draw" />
 	<param name="target-ntiid" value="Question Bank NTIID" tal:attributes="value self/questionbank/ntiid" />
+</object>
+
+name: naassignmentref
+<object class="naassignmentref" tal:condition="not:self/to_render">
+	<param name="label" value="Assignment Title" tal:attributes="value self/assignment/title" />
+	<param name="type" value="Assignment MIME Type" tal:attributes="value self/assignment/mimeType" />
+	<param name="target-ntiid" value="Assignment NTIID" tal:attributes="value self/assignment/ntiid" />
 </object>
