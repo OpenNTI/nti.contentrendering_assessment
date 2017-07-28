@@ -264,7 +264,7 @@ class nasurvey(Base.List, nainquiry):
 
     @readproperty
     def question_count(self):
-        return text_(str(len(self.getElementsByTagName('napollref'))))
+        return text_(len(self.getElementsByTagName('napollref')))
 
     @readproperty
     def title(self):
