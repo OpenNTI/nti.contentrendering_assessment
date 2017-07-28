@@ -129,7 +129,7 @@ name: naqsolexplanation naqhints naqhint naquestionset naquestionbank narandomiz
 <span tal:attributes="class string:${self/__class__/__name__} hidden" ></span>
 
 # No-op template
-name: naassignmentpart
+name: naassignmentpart naassesmentref
 
 name: naqsolutions
 <span tal:attributes="class string:${self/__class__/__name__} hidden" >

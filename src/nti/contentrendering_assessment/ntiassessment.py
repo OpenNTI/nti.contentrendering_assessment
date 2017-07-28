@@ -127,6 +127,13 @@ from nti.contentrendering.plastexpackages.ntilatexmacros import ntiincludevideo
 from nti.contentrendering_assessment.ntibase import _AbstractNAQPart
 from nti.contentrendering_assessment.ntibase import _LocalContentMixin
 
+
+# Refs
+
+from nti.contentrendering_assessment.ntibase import naassesmentref
+
+naassesmentref = naassesmentref
+
 # Tags
 
 from nti.contentrendering_assessment.ntibase import naqtag
@@ -676,6 +683,7 @@ naquestionbankref = naquestionbankref
 naquestionsetname = naquestionsetname
 narandomizedquestionset = narandomizedquestionset
 narandomizedquestionsetref = narandomizedquestionsetref
+
 
 # Alibra
 
