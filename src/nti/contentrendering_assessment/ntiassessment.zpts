@@ -88,40 +88,40 @@ name: naqmlabels naqmlabel naqmvalues naqmvalue naqregexes naqregex naqpairedite
 
 name: napoll
 <object type="application/vnd.nextthought.napoll" data-ntiid="the-ntiid" data="the-ntiid" tal:attributes="data-ntiid self/ntiid; data self/ntiid; | default">
-<param name="ntiid" value="the-ntiid" tal:attributes="value self/ntiid" />
-<div class="napoll">
-	 <span tal:replace="self"></span>
-</div>
+	<param name="ntiid" value="the-ntiid" tal:attributes="value self/ntiid" />
+	<div class="napoll">
+	 	<span tal:replace="self"></span>
+	</div>
 </object>
 
 name: naquestion
 <object type="application/vnd.nextthought.naquestion" data-ntiid="the-ntiid" data="the-ntiid" data-canindividual="false" tal:attributes="data-ntiid self/ntiid; data self/ntiid; data-canindividual self/attributes/individual | default">
-<param name="ntiid" value="the-ntiid" tal:attributes="value self/ntiid" />
-<param name="canindividual" value="false" tal:attributes="value self/attributes/individual | default" />
-<div class="naquestion">
-	 <span tal:replace="self"></span>
-</div>
+	<param name="ntiid" value="the-ntiid" tal:attributes="value self/ntiid" />
+	<param name="canindividual" value="false" tal:attributes="value self/attributes/individual | default" />
+	<div class="naquestion">
+		<span tal:replace="self"></span>
+	</div>
 </object>
 
 name: naquestionfillintheblankwordbank
 <object type="application/vnd.nextthought.naquestionfillintheblankwordbank" data-ntiid="the-ntiid" data="the-ntiid" data-canindividual="false" tal:attributes="data-ntiid self/ntiid; data self/ntiid; data-canindividual self/attributes/individual | default">
-<param name="ntiid" value="the-ntiid" tal:attributes="value self/ntiid" />
-<param name="canindividual" value="false" tal:attributes="value self/attributes/individual | default" />
-<div class="naquestion naquestionfillintheblankwordbank">
-	 <span tal:replace="self" />
-</div>
+	<param name="ntiid" value="the-ntiid" tal:attributes="value self/ntiid" />
+	<param name="canindividual" value="false" tal:attributes="value self/attributes/individual | default" />
+	<div class="naquestion naquestionfillintheblankwordbank">
+		<span tal:replace="self" />
+	</div>
 </object>
 
 name: naqvideo
 <object class="naqvideo" style="display: none" data-ntiid="none">
-<param name="url" tal:attributes="value self/attributes/video_url" />
-<param name="thumbnail" tal:attributes="value self/attributes/thumbnail" />
+	<param name="url" tal:attributes="value self/attributes/video_url" />
+	<param name="thumbnail" tal:attributes="value self/attributes/thumbnail" />
 </object>
 
 name: naqaudio
 <object class="naqaudio" style="display: none" data-ntiid="none">
-<param name="url" tal:attributes="value self/attributes/audio_url" />
-<param name="thumbnail" tal:attributes="value self/attributes/thumbnail" />
+	<param name="url" tal:attributes="value self/attributes/audio_url" />
+	<param name="thumbnail" tal:attributes="value self/attributes/thumbnail" />
 </object>
 
 # Things that shouldn't render, just be placeholders
@@ -136,6 +136,8 @@ name: naqsolutions
 	<span tal:repeat="item self" tal:attributes="class string:${item/__class__/__name__} hidden; data-nti-units item/units_to_html"></span>
 </span>
 
+# assesment refs
+
 name: naquestionref
 <object class="question" tal:condition="not:self/to_render">
 	<param name="type" value="MIME Type" tal:attributes="value self/question/mimeType" />
@@ -149,7 +151,7 @@ name: napollref
 </object>
 
 name: nasurveyref
-<object class="nasurveyref" >
+<object class="nasurveyref">
 	<param name="label" value="Survey Title" tal:attributes="value self/survey/title" />
 	<param name="type" value="Survey MIME Type" tal:attributes="value self/survey/mimeType" />
 	<param name="question-count" value="Number of questions in a survey" tal:attributes="value self/survey/question_count" />
@@ -157,7 +159,7 @@ name: nasurveyref
 </object>
 
 name: naquestionsetref narandomizedquestionsetref
-<object class="naquestionsetref" >
+<object class="naquestionsetref">
 	<param name="label" value="Question Set Title" tal:attributes="value self/questionset/title" />
 	<param name="type" value="Question Set MIME Type" tal:attributes="value self/questionset/mimeType" />
 	<param name="question-count" value="Number of questions in a Question Set" tal:attributes="value self/questionset/question_count" />
@@ -165,7 +167,7 @@ name: naquestionsetref narandomizedquestionsetref
 </object>
 
 name: naquestionbankref
-<object class="naquestionbankref" >
+<object class="naquestionbankref">
 	<param name="label" value="Question Bank Title" tal:attributes="value self/questionbank/title" />
 	<param name="type" value="Question Bank MIME Type" tal:attributes="value self/questionbank/mimeType" />
 	<param name="question-count" value="Number of questions in a Question Bank" tal:attributes="value self/questionbank/draw" />
