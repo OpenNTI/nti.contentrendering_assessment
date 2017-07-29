@@ -19,9 +19,6 @@ from zope import interface
 
 from nti.contentrendering.interfaces import IRenderedBook
 
-from nti.assessment.common import hashfile
-from nti.assessment.common import signature
-
 from nti.contentrendering_assessment.interfaces import IAssessmentExtractor
 
 from nti.externalization.internalization import find_factory_for
@@ -59,12 +56,12 @@ class _AssessmentExtractor(object):
         target = os.path.join(outpath, 'assessment_index.json')
 
         items = {}
-        index = {'Items': items, 'Signatures': {}}
+        index = {'Items': items}
         documents = book.document.getElementsByTagName('document')
         if not documents:
             return
 
-        self._build_index(documents[0], index['Items'], index['Signatures'])
+        self._build_index(documents[0], index['Items'])
         index['href'] = index.get('href', 'index.html')
 
         if items:  # check if there is something
@@ -78,20 +75,13 @@ class _AssessmentExtractor(object):
                           indent='\t',
                           sort_keys=True,
                           ensure_ascii=True)
-
-            with open(target, "rb") as fp:
-                sha256 = hashfile(fp)
-
-            target = os.path.join(outpath, 'assessment_index.json.sha256')
-            with open(target, "wb") as fp:
-                fp.write(sha256)
         return index
 
     def _to_external_object(self, obj):
         result = toExternalObject(obj)
         return result
 
-    def _build_index(self, element, index, signatures):
+    def _build_index(self, element, index):
         """
         Recurse through the element adding assessment objects to the index,
         keyed off of NTIIDs.
@@ -141,7 +131,6 @@ class _AssessmentExtractor(object):
                 self._ensure_roundtrips(int_obj, provenance=child)
                 ext_obj = self._to_external_object(int_obj)
                 assessment_objects[child.ntiid] = ext_obj
-                signatures[child.ntiid] = self._signature(ext_obj)
                 # assessment_objects are leafs, never have children to worry
                 # about
             elif child.hasChildNodes():  # Recurse for children if needed
@@ -153,7 +142,7 @@ class _AssessmentExtractor(object):
                     # an unnamed thing; wrap it up with us; should only
                     # have AssessmentItems
                     containing_index = element_index
-                self._build_index(child, containing_index, signatures)
+                self._build_index(child, containing_index)
 
     def _ensure_roundtrips(self, assm_obj, provenance=None):
         # No need to go into its children, like parts.
@@ -172,9 +161,6 @@ class _AssessmentExtractor(object):
         assert factory is not None
         # The ext_obj was mutated by the internalization process,
         # so we need to externalize again. Or run a deep copy (?)
-
-    def _signature(self, data):
-        return signature(data)
 
     def _is_uninteresting(self, element):
         """

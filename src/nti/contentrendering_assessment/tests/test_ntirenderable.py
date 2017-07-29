@@ -237,7 +237,6 @@ class TestRenderables(AssessmentRenderingTestCase):
                    'filename': 'index.html',
                    'href': 'index.html'}},
                  'href': 'index.html'}
-            del obj['Signatures']
             remove_keys(obj, 'ID', 'Signatures', 'CreatedTime', 'Last Modified',
                         'version', 'tags', 'publishLastModified')
             assert_that( obj, is_( exp_value ) )
@@ -315,7 +314,6 @@ class TestRenderables(AssessmentRenderingTestCase):
                                           'href': 'index.html'}
                                           },
                             'href': 'index.html'}
-            del obj['Signatures']
             remove_keys(obj, 'CreatedTime', 'Last Modified', 'version',
                         'tags', 'publishLastModified')
             assert_that(obj, is_(exp_value))
@@ -441,7 +439,7 @@ class TestRenderables(AssessmentRenderingTestCase):
                            'href': 'index.html'}},
                          'href': 'index.html'}
 
-            remove_keys(obj, 'ID', 'Signatures', 'CreatedTime', 'Last Modified',
+            remove_keys(obj, 'ID', 'CreatedTime', 'Last Modified',
                         'publishBeginning', 'publishEnding', 'version', 'tags',
                         'publishLastModified')
             obj = json.dumps(obj, indent=4, sort_keys=True)
