@@ -328,7 +328,7 @@ class naassesmentref(Crossref.ref):
         return None
 
 
-class naassesment(_LocalContentMixin):
+class naassesment(object):
 
     cached_attribute = '_v_assessment_object'
 
@@ -340,6 +340,7 @@ class naassesment(_LocalContentMixin):
         if not hasattr(self, 'attributes'):
             self.attributes = {}
         self.attributes['NTIID'] = value.ntiid
+        self.attributes['individual'] = 'true'
 
     @assesment.setter
     def assesment(self, value):

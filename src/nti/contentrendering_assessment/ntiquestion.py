@@ -45,6 +45,7 @@ from nti.contentprocessing._compat import text_
 from nti.contentrendering import plastexids
 from nti.contentrendering import interfaces as crd_interfaces
 
+from nti.contentrendering_assessment.ntibase import naassesment
 from nti.contentrendering_assessment.ntibase import naassesmentref
 from nti.contentrendering_assessment.ntibase import _AbstractNAQTags
 from nti.contentrendering_assessment.ntibase import _LocalContentMixin
@@ -60,7 +61,7 @@ class naquestionsetname(Base.Command):
     unicode = u''
 
 
-class naquestion(_LocalContentMixin, _AbstractNAQTags,
+class naquestion(naassesment, _LocalContentMixin, _AbstractNAQTags,
                  Base.Environment, plastexids.NTIIDMixin):
 
     args = '[individual:str]'
@@ -127,7 +128,7 @@ class naquestion(_LocalContentMixin, _AbstractNAQTags,
                            tags=self._asm_tags())
         return result
 
-    @cachedIn('_v_assessment_object')
+    @cachedIn(naassesment.cached_attribute)
     def assessment_object(self):
         result = self._createQuestion()
         errors = schema.getValidationErrors(IQuestion, result)
@@ -147,7 +148,8 @@ class naquestionref(naassesmentref):
 
 
 @interface.implementer(crd_interfaces.IEmbeddedContainer)
-class naquestionset(_AbstractNAQTags, Base.List, plastexids.NTIIDMixin):
+class naquestionset(naassesment, _AbstractNAQTags, Base.List, 
+                    plastexids.NTIIDMixin):
     """
     Question sets are a list of questions that should be submitted
     together. For authoring, questions are included in a question
@@ -193,7 +195,7 @@ class naquestionset(_AbstractNAQTags, Base.List, plastexids.NTIIDMixin):
             raise errors[0][1]
         return questionset
 
-    @cachedIn('_v_assessment_object')
+    @cachedIn(naassesment.cached_attribute)
     def assessment_object(self):
         questions = [qref.idref['label'].assessment_object()
                      for qref in self.getElementsByTagName('naquestionref')]
@@ -365,11 +367,6 @@ class naquestionbank(naquestionset):
 
                 naqindexranges.ranges = _indexranges
         return res
-
-    @cachedIn('_v_assessment_object')
-    def assessment_object(self):
-        result = super(naquestionbank, self).assessment_object()
-        return result
 
 
 class naquestionsetref(naassesmentref):
