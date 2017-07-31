@@ -31,6 +31,7 @@ from nti.contentrendering import plastexids
 
 from nti.contentrendering.interfaces import IEmbeddedContainer
 
+from nti.contentrendering_assessment.ntibase import naassesment
 from nti.contentrendering_assessment.ntibase import naassesmentref
 from nti.contentrendering_assessment.ntibase import _AbstractNAQTags
 from nti.contentrendering_assessment.ntibase import _LocalContentMixin
@@ -41,7 +42,8 @@ from nti.contentrendering_assessment.utils import secs_converter as _secs_conver
 from nti.property.property import alias
 
 
-class naassignmentpart(_LocalContentMixin,
+class naassignmentpart(naassesment,
+                       _LocalContentMixin,
                        Base.Environment):
     """
     One part of an assignment. These are always nested inside
@@ -60,7 +62,10 @@ class naassignmentpart(_LocalContentMixin,
 
     args = "[options:dict:str] <title:str:source> question_set:idref"
 
-    @cachedIn('_v_assessment_object')
+    def _set_assessment_object(self, value):
+        pass
+
+    @cachedIn(naassesment.cached_attribute)
     def assessment_object(self):
         question_set = self.idref['question_set'].assessment_object()
         auto_grade = self.attributes.get('options', {}).get('auto_grade')
@@ -75,7 +80,8 @@ class naassignmentname(Base.Command):
 
 
 @interface.implementer(IEmbeddedContainer)
-class naassignment(_LocalContentMixin,
+class naassignment(naassesment,
+                   _LocalContentMixin,
                    _AbstractNAQTags,
                    Base.Environment,
                    plastexids.NTIIDMixin):
@@ -117,7 +123,7 @@ class naassignment(_LocalContentMixin,
         userdata = getattr(document, 'userdata', None) or {}
         return userdata.get('document_timezone_name')
 
-    @cachedIn('_v_assessment_object')
+    @cachedIn(naassesment.cached_attribute)
     def assessment_object(self):
         local_tzname = self._local_tzname
         options = self.attributes.get('options') or ()
