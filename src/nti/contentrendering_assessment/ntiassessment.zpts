@@ -147,9 +147,10 @@ name: naquestionref
 </object>
 
 name: napollref
-<object class="poll" tal:condition="not:self/to_render">
-	<param name="type" value="MIME Type" tal:attributes="value self/poll/mimeType" />
-	<param name="target-ntiid" value="NTIID" tal:attributes="value self/poll/ntiid" />
+<object tal:condition="not:self/to_render" type="application/vnd.nextthought.napoll" data-ntiid="the-ntiid" data="the-ntiid" 
+		tal:attributes="data-ntiid self/poll/ntiid; data self/poll/ntiid">
+	<param name="ntiid" value="the-ntiid" tal:attributes="value self/poll/ntiid" />
+	<div class="napoll" />
 </object>
 
 name: nasurveyref
