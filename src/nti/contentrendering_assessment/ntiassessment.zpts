@@ -139,9 +139,11 @@ name: naqsolutions
 # assesment refs
 
 name: naquestionref
-<object class="question" tal:condition="not:self/to_render">
-	<param name="type" value="MIME Type" tal:attributes="value self/question/mimeType" />
-	<param name="target-ntiid" value="NTIID" tal:attributes="value self/question/ntiid" />
+<object tal:condition="not:self/to_render" type="application/vnd.nextthought.naquestion" data-ntiid="the-ntiid" data="the-ntiid" data-canindividual="true" 
+		tal:attributes="data-ntiid self/question/ntiid; data self/question/ntiid; data-canindividual default">
+	<param name="ntiid" value="the-ntiid" tal:attributes="value self/question/ntiid" />
+	<param name="canindividual" value="true" />
+	<div class="naquestion" />
 </object>
 
 name: napollref
