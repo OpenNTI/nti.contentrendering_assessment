@@ -326,3 +326,29 @@ class naassesmentref(Crossref.ref):
     @property
     def assesment(self):
         return None
+
+
+class naassesment(_LocalContentMixin):
+
+    cached_attribute = '_v_assessment_object'
+
+    @property
+    def assesment(self):
+        return self.assessment_object()
+    
+    def _set_assessment_object(self, value):
+        if not hasattr(self, 'attributes'):
+            self.attributes = {}
+        self.attributes['NTIID'] = value.ntiid
+
+    @assesment.setter
+    def assesment(self, value):
+        assert value is not None
+        try:
+            cache = getattr(self, self.cached_attribute)
+        except AttributeError:
+            cache = dict()
+            setattr(self, self.cached_attribute, cache)
+        key = cachedIn._get_cache_key()
+        cache[key] = value
+        self._set_assessment_object(value)
