@@ -154,7 +154,7 @@ name: napollref
 </object>
 
 name: nasurveyref
-<object class="nasurveyref" tal:condition="self/to_render">
+<object class="nasurveyref">
 	<param name="label" value="Survey Title" tal:attributes="value self/survey/title" />
 	<param name="type" value="Survey MIME Type" tal:attributes="value self/survey/mimeType" />
 	<param name="question-count" value="Number of questions in a survey" tal:attributes="value self/survey/question_count" />
@@ -162,7 +162,7 @@ name: nasurveyref
 </object>
 
 name: naquestionsetref narandomizedquestionsetref
-<object class="naquestionsetref" tal:condition="self/to_render">
+<object class="naquestionsetref">
 	<param name="label" value="Question Set Title" tal:attributes="value self/questionset/title" />
 	<param name="type" value="Question Set MIME Type" tal:attributes="value self/questionset/mimeType" />
 	<param name="question-count" value="Number of questions in a Question Set" tal:attributes="value self/questionset/question_count" />
@@ -170,7 +170,7 @@ name: naquestionsetref narandomizedquestionsetref
 </object>
 
 name: naquestionbankref
-<object class="naquestionbankref" tal:condition="self/to_render">
+<object class="naquestionbankref">
 	<param name="label" value="Question Bank Title" tal:attributes="value self/questionbank/title" />
 	<param name="type" value="Question Bank MIME Type" tal:attributes="value self/questionbank/mimeType" />
 	<param name="question-count" value="Number of questions in a Question Bank" tal:attributes="value self/questionbank/draw" />
@@ -178,7 +178,7 @@ name: naquestionbankref
 </object>
 
 name: naassignmentref
-<object class="naassignmentref" tal:condition="not:self/to_render">
+<object class="naassignmentref">
 	<param name="label" value="Assignment Title" tal:attributes="value self/assignment/title" />
 	<param name="type" value="Assignment MIME Type" tal:attributes="value self/assignment/mimeType" />
 	<param name="target-ntiid" value="Assignment NTIID" tal:attributes="value self/assignment/ntiid" />
