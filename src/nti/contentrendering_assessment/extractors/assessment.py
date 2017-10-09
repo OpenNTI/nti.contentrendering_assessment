@@ -4,10 +4,9 @@
 .. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 import os
 import codecs
@@ -24,6 +23,8 @@ from nti.contentrendering_assessment.interfaces import IAssessmentExtractor
 from nti.externalization.internalization import find_factory_for
 from nti.externalization.externalization import toExternalObject
 from nti.externalization.internalization import update_from_external_object
+
+logger = __import__('logging').getLogger(__name__)
 
 
 @component.adapter(IRenderedBook)
@@ -51,6 +52,7 @@ class _AssessmentExtractor(object):
         pass
 
     def transform(self, book, savetoc=True, outpath=None):
+        __traceback_info__ = book, savetoc, outpath
         outpath = outpath or book.contentLocation
         outpath = os.path.expanduser(outpath)
         target = os.path.join(outpath, 'assessment_index.json')

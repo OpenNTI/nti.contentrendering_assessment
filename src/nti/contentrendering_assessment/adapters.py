@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-adapters for externalizing some assessment objects
-
 .. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 import six
 
@@ -29,6 +26,8 @@ TARGET_NTIID = 'Target-NTIID'
 NTIID = StandardExternalFields.NTIID
 MIMETYPE = StandardExternalFields.MIMETYPE
 CONTAINER_ID = StandardExternalFields.CONTAINER_ID
+
+logger = __import__('logging').getLogger(__name__)
 
 
 def _render_children(renderer, nodes, strip=True):

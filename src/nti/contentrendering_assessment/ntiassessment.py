@@ -61,10 +61,9 @@ the TeX DOM.
 # "Method __delitem__ is abstract in Node and not overridden"
 # pylint: disable=W0223
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 import os
 
@@ -157,6 +156,9 @@ naqsolutionnumname = naqsolutionnumname
 _LocalContentMixin._asm_ignorable_renderables += (naqsolutions,
                                                   naqsolution,
                                                   naqsolexplanation)
+
+logger = __import__('logging').getLogger(__name__)
+
 
 # Parts
 
