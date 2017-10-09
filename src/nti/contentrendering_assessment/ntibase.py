@@ -4,10 +4,9 @@
 .. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 import itertools
 
@@ -34,6 +33,8 @@ from nti.contentrendering.plastexpackages._util import _asm_rendered_textcontent
 from nti.contentrendering.plastexpackages._util import LocalContentMixin as _BaseLocalContentMixin
 
 from nti.property.property import alias
+
+logger = __import__('logging').getLogger(__name__)
 
 
 def aspveint(obj):

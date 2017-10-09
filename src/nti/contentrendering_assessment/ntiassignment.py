@@ -4,10 +4,9 @@
 .. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 from zope import schema
 from zope import interface
@@ -40,6 +39,8 @@ from nti.contentrendering_assessment.utils import parse_assessment_datetime
 from nti.contentrendering_assessment.utils import secs_converter as _secs_converter
 
 from nti.property.property import alias
+
+logger = __import__('logging').getLogger(__name__)
 
 
 class naassignmentpart(naassesment,

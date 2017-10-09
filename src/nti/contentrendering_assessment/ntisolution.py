@@ -4,16 +4,18 @@
 .. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 from plasTeX import Base
 
 from nti.contentprocessing._compat import text_
 
 from nti.contentrendering_assessment.ntibase import _LocalContentMixin
+
+logger = __import__('logging').getLogger(__name__)
+
 
 # Handle custom counter names
 
