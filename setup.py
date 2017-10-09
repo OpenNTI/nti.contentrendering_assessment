@@ -25,7 +25,6 @@ setup(
     author_email='jason@nextthought.com',
     description="Support for assessment authoring",
     long_description=(_read('README.rst') + '\n\n' + _read("CHANGES.rst")),
-    url="https://github.com/NextThought/nti.contentrendering_assessment",
     license='Apache',
     keywords='assessments authoring content',
     classifiers=[
@@ -36,6 +35,7 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: Implementation :: CPython'
     ],
+    url="https://github.com/NextThought/nti.contentrendering_assessment",
     zip_safe=True,
     packages=find_packages('src'),
     package_dir={'': 'src'},
@@ -66,6 +66,11 @@ setup(
     ],
     extras_require={
         'test': TESTS_REQUIRE,
+        'docs': [
+            'Sphinx',
+            'repoze.sphinx.autointerface',
+            'sphinx_rtd_theme',
+        ],
     },
     entry_points=entry_points
 )
