@@ -186,7 +186,7 @@ class naquestionset(naassesment, _AbstractNAQTags, Base.List,
     #: From IEmbeddedContainer
     mimeType = QUESTION_SET_MIME_TYPE
 
-    def create_questionset(self, questions, title, **kwargs):
+    def create_questionset(self, questions, title, **unused_kwargs):
         result = QQuestionSet(questions=questions, title=title)
         return result
 
