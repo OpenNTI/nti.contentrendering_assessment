@@ -140,25 +140,25 @@ name: naqsolutions
 
 name: naquestionref
 <object tal:condition="not:self/to_render" type="application/vnd.nextthought.naquestion" data-ntiid="the-ntiid" data="the-ntiid" data-canindividual="true" 
-		tal:attributes="data-ntiid self/question/ntiid; data self/question/ntiid; data-canindividual default">
-	<param name="ntiid" value="the-ntiid" tal:attributes="value self/question/ntiid" />
+		tal:attributes="data-ntiid self/assesment/ntiid; data self/assesment/ntiid; data-canindividual default">
+	<param name="ntiid" value="the-ntiid" tal:attributes="value self/assesment/ntiid" />
 	<param name="canindividual" value="true" />
 	<div class="naquestion" />
 </object>
 
 name: napollref
 <object tal:condition="not:self/to_render" type="application/vnd.nextthought.napoll" data-ntiid="the-ntiid" data="the-ntiid" 
-		tal:attributes="data-ntiid self/poll/ntiid; data self/poll/ntiid">
-	<param name="ntiid" value="the-ntiid" tal:attributes="value self/poll/ntiid" />
+		tal:attributes="data-ntiid self/assesment/ntiid; data self/assesment/ntiid">
+	<param name="ntiid" value="the-ntiid" tal:attributes="value self/assesment/ntiid" />
 	<div class="napoll" />
 </object>
 
 name: nasurveyref
 <object class="nasurveyref">
-	<param name="label" value="Survey Title" tal:attributes="value self/survey/title" />
-	<param name="type" value="Survey MIME Type" tal:attributes="value self/survey/mimeType" />
-	<param name="question-count" value="Number of questions in a survey" tal:attributes="value self/survey/question_count" />
-	<param name="target-ntiid" value="Survey NTIID" tal:attributes="value self/survey/ntiid" />
+	<param name="label" value="Survey Title" tal:attributes="value self/assesment/title" />
+	<param name="type" value="Survey MIME Type" tal:attributes="value self/assesment/mimeType" />
+	<param name="question-count" value="Number of questions in a survey" tal:attributes="value self/assesment/question_count" />
+	<param name="target-ntiid" value="Survey NTIID" tal:attributes="value self/assesment/ntiid" />
 </object>
 
 name: naquestionsetref narandomizedquestionsetref
