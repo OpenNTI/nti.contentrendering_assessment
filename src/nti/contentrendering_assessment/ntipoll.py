@@ -214,7 +214,7 @@ class nasurvey(Base.List, nainquiry):
     mimeType = SURVEY_MIME_TYPE
 
     def create_survey(self, questions, title, disclosure=None, not_before=None,
-                      not_after=None, is_non_public=False, **kwargs):
+                      not_after=None, is_non_public=False, **unused_kwargs):
         result = QSurvey(questions=questions, title=title,
                          is_non_public=is_non_public,
                          tags=self._asm_tags(),
