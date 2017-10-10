@@ -163,23 +163,23 @@ name: nasurveyref
 
 name: naquestionsetref narandomizedquestionsetref
 <object class="naquestionsetref">
-	<param name="label" value="Question Set Title" tal:attributes="value self/questionset/title" />
-	<param name="type" value="Question Set MIME Type" tal:attributes="value self/questionset/mimeType" />
-	<param name="question-count" value="Number of questions in a Question Set" tal:attributes="value self/questionset/question_count" />
-	<param name="target-ntiid" value="Question Set NTIID" tal:attributes="value self/questionset/ntiid" />
+	<param name="label" value="Question Set Title" tal:attributes="value self/assesment/title" />
+	<param name="type" value="Question Set MIME Type" tal:attributes="value self/assesment/mimeType" />
+	<param name="question-count" value="Number of questions in a Question Set" tal:attributes="value self/assesment/question_count" />
+	<param name="target-ntiid" value="Question Set NTIID" tal:attributes="value self/assesment/ntiid" />
 </object>
 
 name: naquestionbankref
 <object class="naquestionbankref">
-	<param name="label" value="Question Bank Title" tal:attributes="value self/questionbank/title" />
-	<param name="type" value="Question Bank MIME Type" tal:attributes="value self/questionbank/mimeType" />
-	<param name="question-count" value="Number of questions in a Question Bank" tal:attributes="value self/questionbank/draw" />
-	<param name="target-ntiid" value="Question Bank NTIID" tal:attributes="value self/questionbank/ntiid" />
+	<param name="label" value="Question Bank Title" tal:attributes="value self/assesment/title" />
+	<param name="type" value="Question Bank MIME Type" tal:attributes="value self/assesment/mimeType" />
+	<param name="question-count" value="Number of questions in a Question Bank" tal:attributes="value self/assesment/draw" />
+	<param name="target-ntiid" value="Question Bank NTIID" tal:attributes="value self/assesment/ntiid" />
 </object>
 
 name: naassignmentref
 <object class="naassignmentref">
-	<param name="label" value="Assignment Title" tal:attributes="value self/assignment/title" />
-	<param name="type" value="Assignment MIME Type" tal:attributes="value self/assignment/mimeType" />
-	<param name="target-ntiid" value="Assignment NTIID" tal:attributes="value self/assignment/ntiid" />
+	<param name="label" value="Assignment Title" tal:attributes="value self/assesment/title" />
+	<param name="type" value="Assignment MIME Type" tal:attributes="value self/assesment/mimeType" />
+	<param name="target-ntiid" value="Assignment NTIID" tal:attributes="value self/assesment/ntiid" />
 </object>
