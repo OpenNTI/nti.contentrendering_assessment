@@ -187,7 +187,7 @@ class TestPoll(AssessmentRenderingTestCase):
 			\end{naqessaypart}
 		\end{napoll}
  		
-		\begin{nasurvey}[not_before_date=2014-11-24,not_after_date=2014-12-04]
+		\begin{nasurvey}[not_before_date=2014-11-24,not_after_date=2014-12-04] <Test Survey>
 			\label{survey}
 			\napollref{poll1}
 		\end{nasurvey}
