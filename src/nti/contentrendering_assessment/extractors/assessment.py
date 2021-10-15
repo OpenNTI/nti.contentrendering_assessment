@@ -80,7 +80,8 @@ class _AssessmentExtractor(object):
         return index
 
     def _to_external_object(self, obj):
-        result = toExternalObject(obj)
+        # Need to ensure we include solutions here
+        result = toExternalObject(obj, name='solutions')
         return result
 
     def _build_index(self, element, index):

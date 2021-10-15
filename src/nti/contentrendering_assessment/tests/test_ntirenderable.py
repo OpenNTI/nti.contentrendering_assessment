@@ -558,7 +558,6 @@ class TestRenderables(AssessmentRenderingTestCase):
             extractor = component.getAdapter(rendered_book, IAssessmentExtractor)
             extractor.transform( rendered_book )
 
-
             jsons = open(os.path.join(ctx.docdir, 'assessment_index.json' ), 'rU' ).read()
             jsons = jsons.decode('utf-8')
             obj = json.loads( jsons )
