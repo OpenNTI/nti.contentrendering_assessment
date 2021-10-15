@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
 
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
@@ -19,10 +18,13 @@ from hamcrest import has_property
 from hamcrest import same_instance
 from hamcrest import contains_string
 
+import time
+
 from nti.testing.matchers import is_true
 from nti.testing.matchers import verifiably_provides
 
 from datetime import datetime
+from datetime import timedelta
 
 from nti.assessment.interfaces import IQHint
 
@@ -298,9 +300,12 @@ class TestMisc(AssessmentRenderingTestCase):
         assert_that(asg_object, has_property('title', 'Main Title'))
         assert_that(asg_object, has_property('is_non_public', False))
         assert_that(asg_object, has_property('category_name', 'quizzes'))
+        # This is based on local tz
+        beg_date = datetime(2014, 01, 13, 0, 0)
+        beg_date = beg_date + timedelta(seconds=time.timezone)
         assert_that(asg_object, 
                     has_property('available_for_submission_beginning',
-                                 datetime(2014, 01, 13, 6, 0)))
+                                 beg_date))
 
         ext_obj = to_external_object(asg_object)
         raw_int_obj = type(asg_object)()
