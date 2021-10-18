@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function, unicode_literals, absolute_import, division
-__docformat__ = "restructuredtext en"
 
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
@@ -19,7 +18,11 @@ from hamcrest import is_not as does_not
 
 import io
 import os
+import time
 import simplejson as json
+
+from datetime import datetime
+from datetime import timedelta
 
 from zope import component
 from zope import interface
@@ -386,6 +389,9 @@ class TestRenderables(AssessmentRenderingTestCase):
                                    'solutions': [],
                                    'weight': 1.0}]}
 
+            beg_date = datetime(2014, 01, 13, 0, 0)
+            beg_date = beg_date + timedelta(seconds=time.timezone)
+            beg_date = beg_date.isoformat() + 'Z'
             exp_value = {'Items':
                          {'tag:nextthought.com,2011-10:testing-HTML-temp.0':
                           {'AssessmentItems': {},
@@ -406,7 +412,7 @@ class TestRenderables(AssessmentRenderingTestCase):
                                                                       'MimeType': 'application/vnd.nextthought.assessment.timedassignment',
                                                                       'NTIID': 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.asg.assignment',
                                                                       'ntiid': 'tag:nextthought.com,2011-10:testing-NAQ-temp.naq.asg.assignment',
-                                                                      'available_for_submission_beginning': '2014-01-13T06:00:00Z',
+                                                                      'available_for_submission_beginning': beg_date,
                                                                       'available_for_submission_ending': None,
                                                                       'parts': [{'Class': 'AssignmentPart',
                                                                                  'MimeType': 'application/vnd.nextthought.assessment.assignmentpart',
