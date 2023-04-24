@@ -31,11 +31,12 @@ setup(
         'Intended Audience :: Developers',
         'Natural Language :: English',
         'Operating System :: OS Independent',
+        'License :: OSI Approved :: Apache Software License',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: Implementation :: CPython'
     ],
-    url="https://github.com/NextThought/nti.contentrendering_assessment",
+    url="https://github.com/OpenNTI/nti.contentrendering_assessment",
     zip_safe=True,
     packages=find_packages('src'),
     package_dir={'': 'src'},
